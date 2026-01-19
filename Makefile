@@ -1,5 +1,5 @@
 main:
-	pdflatex main.tex
+	pdflatex -synctex=1 -interaction=nonstopmode --shell-escape main.tex
 
 ci:
 	docker create --name latex dfissore/latex2023:latest && \
