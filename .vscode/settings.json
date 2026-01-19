@@ -5,5 +5,10 @@
     "*.vtc": true,
     "*.aux": true,
     "*.out": true,
+    "*.bbl": true,
+    "*.blg": true,
+    "*.fdb_latexmk": true,
+    "*.fls": true,
+    "*.synctex.gz": true,
   },
 }
