@@ -1,0 +1,126 @@
+\ProvidesPackage{coqtheorem}
+\RequirePackage{xparse}
+\RequirePackage{hyperref}
+\RequirePackage{mfirstuc}
+\RequirePackage{etoolbox}
+\RequirePackage{suffix}
+
+
+\DeclareOption{nolabels}{
+  \def\nolabels{}
+}
+\DeclareOption{countsame}{
+  \def\countsame{}
+}
+\DeclareOption{hidelinks}{
+  \def\hidecoqtheoremlinks
+}
+\DeclareOption{nosections}{
+  \let\nocountsections\relax
+}
+\ProcessOptions\relax
+
+\newcommand{\setCoqFilename}[1]{\def\filename{#1}}
+\newcommand{\setBaseUrl}[1]{\def\baseurl#1}
+\setBaseUrl{{}}
+\setCoqFilename{}
+
+\ifcsdef{nolabels}{\newcommand{\insertlabel}[1]{}}{\newcommand{\insertlabel}[1]{\label{coq:#1}}}
+
+\ifcsdef{hidecoqtheoremlinks}
+{\newcommand{\coqlink}[2][]{{\hypersetup{hidelinks}\ifx{#1}\empty%
+    #2\else{\href{\baseurl\filename.html\##1}{#2}}\fi}}}
+{\newcommand{\coqlink}[2][]{\ifx{#1}\empty%
+    #2\else{\href{\baseurl\filename.html\##1}{#2}}\fi}}
+
+\@ifpackageloaded{paralist}{%
+  \newcommand{\coqitem}[1][]{\stepcounter{enumi}\item[{\coqlink[#1]{\labelenumi}}]}
+}{%
+  \@ifclassloaded{lipics-v2021}
+  {\newcommand{\coqitem}[1][]{\stepcounter{enumi}\item[{\coqlink[#1]{\labelenumi}}]}}
+  {\newcommand{\coqitem}[1][]{\stepcounter{enumi}\item[{\coqlink[#1]{\theenumi.}}]}}
+}%
+
+\newcommand*\ifcounter[1]{%
+  \ifcsname c@#1\endcsname
+    \expandafter\@firstoftwo
+  \else
+    \expandafter\@secondoftwo
+  \fi
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%% If the loaded class is Leibniz Center's LIPIcs
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% \@ifclassloaded{lipics-v2021}
+% {
+\thm@headfont{%
+  \textcolor{darkgray}{$\blacktriangleright$}\nobreakspace\sffamily\bfseries}
+\def\th@remark{%
+  \thm@headfont{%
+    \textcolor{darkgray}{$\blacktriangleright$}\nobreakspace\sffamily}%
+  \normalfont % body font
+  \thm@preskip\topsep \divide\thm@preskip\tw@
+  \thm@postskip\thm@preskip
+}
+\def\@endtheorem{\endtrivlist}%\@endpefalse
+
+\def\theoremname{}
+
+% \let\theorem\relax
+% \let\lemma\relax
+% \let\corollary\relax
+% \let\definition\relax
+% \let\proposition\relax
+% \let\example\relax
+% \let\remark\relax
+\makeatletter
+\@ifundefined{theorem}{}{%
+  \let\theorem\relax
+  \let\endtheorem\relax
+}
+\makeatother
+
+
+\newtheoremstyle{coqtheorem}%
+{}{}%
+{\itshape}{}%
+{\textcolor{darkgray}{$\blacktriangleright$}\nobreakspace\sffamily\bfseries}{.}%  % Note that final punctuation is omitted.
+{.5em}{\coqlink[\theoremname]{\thmname{#1}\thmnumber{ #2}}\normalfont\sffamily\thmnote{ (#3)}}
+
+\theoremstyle{coqtheorem}
+\newtheorem{dummy}{}
+
+\newcommand{\genFancyTheoremEnvironment}[1]{%
+  \expandafter\providecommand\csname #1autorefname\endcsname{\capitalisewords{#1}}
+  \expandafter\newcommand\csname #1Auxautorefname\endcsname{\csname #1autorefname\endcsname}
+  \expandafter\newcommand\csname #1AuxCoqautorefname\endcsname{\csname #1autorefname\endcsname}
+
+  \@ifpackageloaded{cleveref}{
+    \crefformat{#1Aux}{{\capitalisewords{#1}}~##2##1##3}
+    \Crefformat{#1Aux}{{\capitalisewords{#1}}~##2##1##3}
+  }{}
+  
+  \newtheorem{#1Aux}[dummy]{\capitalisewords{#1}}
+    
+  \NewDocumentEnvironment{#1}{oo}%
+  {%
+    \IfValueT{##2}{\def\theoremname{##2}}%
+    \IfValueTF{##1}{\ifx&##1&%
+      \begin{#1Aux}[]%
+        \else\begin{#1Aux}[##1]\fi}%
+        {\begin{#1Aux}[]}
+          \IfValueT{##2}{\insertlabel{##2}}%
+        }%
+        {\end{#1Aux}\def\theoremname{}}
+}
+
+\genFancyTheoremEnvironment{theorem}
+\genFancyTheoremEnvironment{lemma}
+\genFancyTheoremEnvironment{corollary}
+\genFancyTheoremEnvironment{fact}
+\genFancyTheoremEnvironment{definition}
+\genFancyTheoremEnvironment{proposition}
+\genFancyTheoremEnvironment{example}
+\genFancyTheoremEnvironment{remark}
