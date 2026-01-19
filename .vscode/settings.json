@@ -1,9 +1,0 @@
-{
-  // "explorer.excludeGitIgnore": true,
-  "files.exclude": {
-    "*.log": true,
-    "*.vtc": true,
-    "*.aux": true,
-    "*.out": true,
-  },
-}
