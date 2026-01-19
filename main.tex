@@ -3,7 +3,7 @@
 
 \usepackage{minted}
 \usepackage{macro}
-
+\usepackage{xspace}
 %\pdfoutput=1 %uncomment to ensure pdflatex processing (mandatatory e.g. to submit to arXiv)
 %\hideLIPIcs  %uncomment to remove references to LIPIcs series (logo, DOI, ...), e.g. when preparing a pre-final version to be uploaded to arXiv or another public repository
 
@@ -66,6 +66,7 @@
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent convallis orci arcu, eu mollis dolor. Aliquam eleifend suscipit lacinia. Maecenas quam mi, porta ut lacinia sed, convallis ac dui. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse potenti. 
 \end{abstract}
 
+\section{Common code: the language}
 \begin{minted}{coq}
 Inductive Tm := 
   | Tm_Kp    : Kp -> Tm
@@ -109,11 +110,26 @@ is a term with rigid head.
 Definition program := seq R. 
 \end{minted}
 
+A program is made by a list of rules. Rules in \program are indexed by their
+position in the list. Given a list of rules \rules and two indexes $i$ and $j$,
+s.t. $i\neq j$ then, $\rules_i$ has a higher priority then $\rules_j$.
+
 Sigma is a substitution mapping variables to their term instantiation.
 \begin{minted}{coq}
   Definition Sigma := {fmap V -> Tm}.
 \end{minted}
 
+The backchaining algorithm is the function \backchain aims to filter
+only the rules in the program \program having rules unifying with the
+current query $q$ in a given subtitution $\sigma$ using the list of modes $m$.
+In particular \backchain returns for each selected rule $r$ a substitution
+$\sigma'$ that is the substitution obtained by the unification of the query and
+the head of $r$.
+
+$$\backchain\ :\ (\program, \sigma, q) \to \texttt{seq}(\sigma * R)$$
+
+
+\section{Semantics intro}
 
 We propose two operational semantics for a logic program with cut. The two
 semantics are based on different syntaxes, the first syntax (called tree)
@@ -122,6 +138,8 @@ evaloution while the progrma is being intepreted. The second syntax is the
 elpi's syntax, we call it therefore elpi. We aim to prove the equivalence of the
 two semantics together with some interesting lemmas of the cut behavior.
 
+
+\subsection{Tree semantics}
 \begin{minted}{coq}
 Inductive tree :=
   | Bot | OK | Dead
@@ -148,12 +166,82 @@ The And non-terminal $A \land_r B$ represents of a conjunction of two trees
 $A$ and $B$. We call $r$ the reset-point and is used to resume the $B$ state in
 its intial form if some backtracking operation is performed on $A$.
 
-% TODO: define path
+\begin{figure}
+\begin{minted}{coq}
+Inductive step_tag := Expanded | CutBrothers| Failure | Success.
+Fixpoint step s A : (step_tag * tree) :=
+  match A with
+  (* meta *)
+  | OK             => (Success, OK)
+  | Bot | Dead     => (Failure, A)
+  
+  (* lang *)
+  | TA _ cut       => (CutBrothers, OK)
+  | TA pr (call t) => (Expanded, (big_or pr s t))
+
+  (* recursive cases *)
+  | Or A sB B =>
+      if is_dead A then 
+        let r := (step sB B) in
+        (if is_cb r.1 then Expanded else r.1, Or A sB r.2)
+      else
+      let SA := step s A in
+      (if is_cb SA.1 then Expanded else SA.1, Or SA.2 sB (if is_cb SA.1 then cutr B else B))
+  | And A B0 B =>
+      let SA := step s A in
+      if is_sc SA.1 then 
+        let r := (step (get_substS s SA.2) B) in
+        (r.1, And (if is_cb r.1 then cutl A else A) B0 r.2)
+      else (SA.1, And SA.2 B0 B)
+  end.
+\end{minted}
+\caption{Step for tree semantics}
+\end{figure}
+
+\begin{figure}
+  \begin{minted}{coq}
+Fixpoint next_alt b (A : tree) : option (tree) :=
+  match A with
+  | Bot | Dead => None
+  | OK => if b then None else Some OK
+  | TA _ _ => Some A
+  | And A (pr, B0) B =>
+    let build_B0 A := Some (And A (pr, B0) (big_and pr B0)) in
+    let reset := obind build_B0 (next_alt (success A) A) in
+    if success A then
+      match next_alt b B with
+      | None => reset
+      | Some B => Some (And A (pr, B0) B)
+      end
+    else if failed A then reset 
+    else Some (And A (pr, B0) B)
+  | Or A sB B =>
+    if is_dead A then omap (fun x => (Or A sB x)) (next_alt b B)
+    else match next_alt b A with
+      | None => obind (fun x => Some (Or (dead A) sB x)) (next_alt false B)
+      | Some nA => Some (Or nA sB B)
+    end
+end.
+  \end{minted}
+\caption{backtracking operation}
+\end{figure}
+
+The main 
+
+The tree interpreter is made by two fixpoints and an inductive.
+
+
+\marginpar{TODO: define path}
 We make the distinction between some kind of particular trees:
 \begin{enumerate}
-  \item success is a tree with containing a successfull path
+  \item success is a tree with a successfull path
+  \item failed is a tree with a failed path
+  \item dead is a tree with deads states
 \end{enumerate}
 
+
+
+\begin{figure}  
 \begin{minted}{coq}
 Fixpoint valid_tree s :=
   match s with
@@ -170,6 +258,93 @@ Fixpoint valid_tree s :=
         B == B'
   end.
 \end{minted}
+\caption{Valid tree}
+\end{figure}
+\subsection{Elpi semantics}
+
+In order to define the elpi semantics, we need to decorrate the cut
+atom. An atom in the elpi semantcis is defined as follows:
+
+\begin{minted}{coq}
+Inductive G := 
+  | callE : program -> Callable -> G
+  | cutE : alts -> G
+with alts := Al of seq (seq G)
+with goals := Gl of seq goals.
+\end{minted}
+
+We are completely loosing the tree structure. There are no clean reset
+points. The backtracking operation is simpler: it is the tail function.
+The cutr and cutl operations disappears: the alternatives are stored 
+directly in the cutE terminal.
+
+The elpi interpreter is as follows:
+\begin{minted}{coq}
+(*TODO: add system of rules*)
+Inductive nur : Sigma -> goals ->  alts -> Sigma -> alts -> Type :=
+  | StopE s a : nur s nilC a s a
+  | CutE s s1 a ca r gl : nur s gl ca s1 r -> nur s ((cutE ca) ::: gl) a s1 r
+  | CallE p s s1 a b bs gl r t : 
+    F u p t s = [:: b & bs ] -> 
+      nur b.1 (save_goals a gl (a2gs1 p b)) (save_alts a gl ((aa2gs p) bs) ++ a) s1 r -> 
+        nur s ((callE p t) ::: gl) a s1 r
+  | FailE p s s1 s2 t gl a al r : 
+    F u p t s = [::] -> nur s1 a al s2 r -> nur s ((callE p t) ::: gl) ((s1, a) ::: al) s2 r.
+\end{minted}
 
 
+The translation of a tree to a list is as follows:
+
+\begin{minted}{coq}
+(*TODO: add notation for nilC which is [::]*)
+Fixpoint t2l (A: tree) s (bt : alts) : alts :=
+match A with
+| OK => (s, nilC) ::: nilC
+| Bot => nilC
+| Dead => nilC
+| TA _ cut => (s, ((cutE nilC) ::: nilC)) ::: nilC
+| TA pr (call t) => (s, ((callE pr t) ::: nilC)) ::: nilC
+| Or A s1 B => 
+  let lB := t2l B s1 nilC in
+  let lA := t2l A s lB in
+  add_ca_deep bt (lA ++ lB)
+| And A B0 B =>
+  let hd  := r2l B0.1 B0.2 in
+  let lA  := t2l A s bt in
+  if lA is more_alt (slA, x) xs then 
+      (* the reset point exists, it has to be added to all cut-to alternatives *)
+      let xz := add_deepG bt hd x in
+      let xs := add_deep bt hd xs in 
+      (* each alt in xs must have hd has rightmost conjunct  *)
+      let xs := make_lB0 xs hd in
+      (* xs are alternatives that should be added in the deep cuts in B *)
+      let lB   := t2l B slA (xs ++ bt) in
+      (* lB are alternatives, each of them have x has head *)
+      (make_lB01 lB xz) ++ xs
+  else nilC
+end.
+\end{minted}
+
+
+\begin{theorem}[tree\_to\_elpi]
+\begin{align*}
+  \forall A\ \sigma_1\ B\ \sigma_2\ b\ \sigma_0,
+  \vt\ A \to \\
+  \run_u\ \sigma_1\ A\ (Some\ \sigma_2)\ B\ b \to \\
+    \exists x\ xs, 
+      \ttl\ A\ \sigma_1\ \nilC = x ::: xs \land
+      \nur_u\ x.1\ x.2\ xs\ \sigma_2\ (\ttl\ B\ \sigma_0\ \nilC).
+\end{align*}
+
+\end{theorem}
+
+\begin{theorem}[elpi\_to\_tree]
+\begin{align*}
+  \forall \sigma_1\ \sigma_2\ a\ na\ g, \\
+  \nur_u\ \sigma_1\ g\ a\ \sigma_2\ na \to  \\
+  \forall \sigma_0\ t, \vt\ t \to (\ttl\ t\ \sigma_0\ \nilC) = ((\sigma_1,g) ::: a) \to \\
+  \exists t'\ n, \run_u\ \sigma_0\ t\ (Some \sigma_2)\ t'\ n \land \ttl\ t'\ \sigma_0\ \nilC = na.
+\end{align*}
+
+\end{theorem}
 \end{document}
