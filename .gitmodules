@@ -1,0 +1,4 @@
+[submodule "elpi-formalization"]
+	path = elpi-formalization
+	url = git@github.com:FissoreD/elpi-formalization.git
+	branch = ho-check-ffun 
