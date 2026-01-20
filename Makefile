@@ -2,6 +2,7 @@ main:
 	pdflatex -synctex=1 -interaction=nonstopmode --shell-escape main.tex
 
 ci:
+	git submodule update --remote && \
 	docker create --name latex dfissore/latex2023:latest && \
 	docker cp ./ latex:/data/ && docker ps -a && \
 	docker start -i latex && docker cp latex:/data/main.pdf . && \
