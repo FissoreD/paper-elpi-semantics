@@ -140,13 +140,7 @@ two semantics together with some interesting lemmas of the cut behavior.
 
 
 \subsection{Tree semantics}
-\begin{minted}{coq}
-Inductive tree :=
-  | Bot | OK | Dead
-  | TA : program  -> A -> tree
-  | Or  : tree -> (Sigma * tree) -> tree
-  | And : tree -> (program * seq A) -> tree -> tree.
-\end{minted}
+\input{tex_code/tree_def.tex}
 
 In the tree we distinguish 6 main cases: Bot and OK are respectively the
 standard fail $\bot$ and true $\top$ predicates of prolog. Dead is a special
@@ -167,62 +161,13 @@ $A$ and $B$. We call $r$ the reset-point and is used to resume the $B$ state in
 its intial form if some backtracking operation is performed on $A$.
 
 \begin{figure}
-\begin{minted}{coq}
-Inductive step_tag := Expanded | CutBrothers| Failure | Success.
-Fixpoint step s A : (step_tag * tree) :=
-  match A with
-  (* meta *)
-  | OK             => (Success, OK)
-  | Bot | Dead     => (Failure, A)
-  
-  (* lang *)
-  | TA _ cut       => (CutBrothers, OK)
-  | TA pr (call t) => (Expanded, (big_or pr s t))
-
-  (* recursive cases *)
-  | Or A sB B =>
-      if is_dead A then 
-        let r := (step sB B) in
-        (if is_cb r.1 then Expanded else r.1, Or A sB r.2)
-      else
-      let SA := step s A in
-      (if is_cb SA.1 then Expanded else SA.1, Or SA.2 sB (if is_cb SA.1 then cutr B else B))
-  | And A B0 B =>
-      let SA := step s A in
-      if is_sc SA.1 then 
-        let r := (step (get_substS s SA.2) B) in
-        (r.1, And (if is_cb r.1 then cutl A else A) B0 r.2)
-      else (SA.1, And SA.2 B0 B)
-  end.
-\end{minted}
+  \input{tex_code/step_tag.tex}
+  \input{tex_code/step.tex}
 \caption{Step for tree semantics}
 \end{figure}
 
 \begin{figure}
-  \begin{minted}{coq}
-Fixpoint next_alt b (A : tree) : option (tree) :=
-  match A with
-  | Bot | Dead => None
-  | OK => if b then None else Some OK
-  | TA _ _ => Some A
-  | And A (pr, B0) B =>
-    let build_B0 A := Some (And A (pr, B0) (big_and pr B0)) in
-    let reset := obind build_B0 (next_alt (success A) A) in
-    if success A then
-      match next_alt b B with
-      | None => reset
-      | Some B => Some (And A (pr, B0) B)
-      end
-    else if failed A then reset 
-    else Some (And A (pr, B0) B)
-  | Or A sB B =>
-    if is_dead A then omap (fun x => (Or A sB x)) (next_alt b B)
-    else match next_alt b A with
-      | None => obind (fun x => Some (Or (dead A) sB x)) (next_alt false B)
-      | Some nA => Some (Or nA sB B)
-    end
-end.
-  \end{minted}
+  \input{tex_code/next_alt.tex}
 \caption{backtracking operation}
 \end{figure}
 
