@@ -186,22 +186,8 @@ We make the distinction between some kind of particular trees:
 
 
 \begin{figure}  
-\begin{minted}{coq}
-Fixpoint valid_tree s :=
-  match s with
-  | TA _ _ | OK | Bot => true
-  | Dead => false
-  | Or A _ B => 
-    if is_dead A then valid_tree B
-    else valid_tree A && (bbOr B)
-  | And A B0 B => 
-    valid_tree A &&
-      if success A then valid_tree B 
-      else 
-        let B' := big_and B0.1 B0.2 in
-        B == B'
-  end.
-\end{minted}
+  \input{tex_code/valid_tree.tex}
+  $$\texttt{B.bbOr}\ A \iff \exists\ r\ rs, A = \texttt{big\_or\_aux}\ r\ rs \lor A = \texttt{cutr}(\texttt{big\_or\_aux}\ r\ rs)$$
 \caption{Valid tree}
 \end{figure}
 \subsection{Elpi semantics}
@@ -217,13 +203,7 @@ In these operational semantics we need to decorate the cut
 atom with a list of alternative, morally a pointer to a sub-list
 of the overall alternatives. An atom in the elpi semantcis is defined as follows:
 
-\begin{minted}{coq}
-Inductive G := 
-  | callE : program -> Callable -> G
-  | cutE : alts -> G
-with alts := Al of seq (seq G)
-with goals := Gl of seq goals.
-\end{minted}
+\input{tex_code/elpi_def.tex}
 
 We are completely loosing the tree structure. There are no clean reset
 points. The backtracking operation is simpler: it is the tail function.
