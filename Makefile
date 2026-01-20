@@ -1,7 +1,12 @@
+FNAME=main
+
+TEX_CMD = pdflatex -synctex=1 -interaction=nonstopmode --shell-escape ${FNAME}.tex
+
 main:
 	$(MAKE) tex_code && \
-	pdflatex -synctex=1 -interaction=nonstopmode --shell-escape main.tex && \
-	bibtex main.aux
+	${TEX_CMD} && \
+	bibtex ${TEX_CMD} && \
+	${TEX_CMD}
 
 gen = python3 extract_code.py $(1);
 
