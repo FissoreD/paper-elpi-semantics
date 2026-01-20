@@ -75,7 +75,7 @@ def get_snippets(lines):
 def read_file(fname):
     with open(fname) as f:
         lines = f.readlines()
-        print_tex(get_file_cnt(lines), mk_fname(fname))
+        # print_tex(get_file_cnt(lines), mk_fname(fname))
         snippets = get_snippets(lines)
         for fname in snippets:
             lines = snippets[fname]

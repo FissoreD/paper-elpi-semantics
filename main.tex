@@ -227,36 +227,7 @@ Inductive nur : Sigma -> goals ->  alts -> Sigma -> alts -> Type :=
 
 The translation of a tree to a list is as follows:
 
-\begin{minted}{coq}
-(*TODO: add notation for nilC which is [::]*)
-Fixpoint t2l (A: tree) s (bt : alts) : alts :=
-match A with
-| OK => (s, nilC) ::: nilC
-| Bot => nilC
-| Dead => nilC
-| TA _ cut => (s, ((cutE nilC) ::: nilC)) ::: nilC
-| TA pr (call t) => (s, ((callE pr t) ::: nilC)) ::: nilC
-| Or A s1 B => 
-  let lB := t2l B s1 nilC in
-  let lA := t2l A s lB in
-  add_ca_deep bt (lA ++ lB)
-| And A B0 B =>
-  let hd  := r2l B0.1 B0.2 in
-  let lA  := t2l A s bt in
-  if lA is more_alt (slA, x) xs then 
-      (* the reset point exists, it has to be added to all cut-to alternatives *)
-      let xz := add_deepG bt hd x in
-      let xs := add_deep bt hd xs in 
-      (* each alt in xs must have hd has rightmost conjunct  *)
-      let xs := make_lB0 xs hd in
-      (* xs are alternatives that should be added in the deep cuts in B *)
-      let lB   := t2l B slA (xs ++ bt) in
-      (* lB are alternatives, each of them have x has head *)
-      (make_lB01 lB xz) ++ xs
-  else nilC
-end.
-\end{minted}
-
+\input{tex_code/t2l.tex}
 
 \begin{theorem}[tree\_to\_elpi]
 \begin{align*}
