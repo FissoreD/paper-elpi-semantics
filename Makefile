@@ -7,8 +7,11 @@ gen = python3 extract_code.py $(1);
 tex_code:
 	$(foreach F, $(wildcard ./elpi-formalization/theories/*.v), $(call gen,$(F))) true
 
+update_submodule:
+	git submodule update --remote
+
 ci:
-	git submodule update --remote && \
+	$(MAKE) update_submodule && \
 	docker create --name latex dfissore/latex2023:latest && \
 	docker cp ./ latex:/data/ && docker ps -a && \
 	docker start -i latex && docker cp latex:/data/main.pdf . && \
