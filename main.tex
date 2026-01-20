@@ -1,5 +1,5 @@
 
-\documentclass[a4paper,UKenglish,cleveref, autoref, thm-restate]{lipics-v2021}
+\documentclass[a4paper,UKenglish,cleveref, autoref, thm-restate, lineno]{lipics-v2021}
 
 \usepackage{minted}
 \usepackage{macro}
@@ -10,7 +10,6 @@
 %\graphicspath{{./graphics/}}%helpful if your graphic files are in another directory
 
 \bibliographystyle{plainurl}% the mandatory bibstyle
-
 \title{Dummy title} %TODO Please add
 
 %\titlerunning{Dummy short title} %TODO optional, please use if title is longer than one line
@@ -207,6 +206,8 @@ Fixpoint valid_tree s :=
 \end{figure}
 \subsection{Elpi semantics}
 
+TODO \cite{10.1007/BFb0105415} \cite{10.1016/0743-1066(88)90007-6}.
+
 In order to define the elpi semantics, we need to decorrate the cut
 atom. An atom in the elpi semantcis is defined as follows:
 
@@ -292,4 +293,5 @@ end.
 \end{align*}
 
 \end{theorem}
+\bibliography{bib}
 \end{document}
