@@ -1,6 +1,7 @@
 main:
 	$(MAKE) tex_code && \
-	pdflatex -synctex=1 -interaction=nonstopmode --shell-escape main.tex
+	pdflatex -synctex=1 -interaction=nonstopmode --shell-escape main.tex && \
+	bibtex main.aux
 
 gen = python3 extract_code.py $(1);
 

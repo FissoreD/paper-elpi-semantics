@@ -206,10 +206,16 @@ Fixpoint valid_tree s :=
 \end{figure}
 \subsection{Elpi semantics}
 
-TODO \cite{10.1007/BFb0105415} \cite{10.1016/0743-1066(88)90007-6}.
+The Elpi interpreter is based on an operational semantics
+close to the one picked by Pusch in \cite{10.1007/BFb0105415}, in turn
+closely related to the one given by Debray and Mishra in
+\cite[Section 4.3]{10.1016/0743-1066(88)90007-6}. Push mechanized
+the semantics in Isabelle/HOL together with some optimizations that
+are present in the Warren Abstract Machine~\cite{warren1983abstract,10.7551/mitpress/7160.001.0001}.
 
-In order to define the elpi semantics, we need to decorrate the cut
-atom. An atom in the elpi semantcis is defined as follows:
+In these operational semantics we need to decorate the cut
+atom with a list of alternative, morally a pointer to a sub-list
+of the overall alternatives. An atom in the elpi semantcis is defined as follows:
 
 \begin{minted}{coq}
 Inductive G := 
