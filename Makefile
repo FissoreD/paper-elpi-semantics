@@ -3,7 +3,6 @@ FNAME=main
 TEX_CMD = pdflatex -synctex=1 -interaction=nonstopmode --shell-escape 
 
 main:
-	$(MAKE) tex_code && \
 	${TEX_CMD} ${FNAME}.tex && \
 	bibtex ${FNAME}.aux && \
 	${TEX_CMD} ${FNAME}.tex && \
@@ -19,6 +18,7 @@ update_submodule:
 
 ci:
 	$(MAKE) update_submodule && \
+	$(MAKE) tex_code && \
 	docker create --name latex dfissore/latex2023:latest && \
 	docker cp ./ latex:/data/ && docker ps -a && \
 	docker start -i latex && docker cp latex:/data/main.pdf . && \
