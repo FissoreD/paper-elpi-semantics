@@ -19,8 +19,8 @@
     \node (e1) [below=2cm of t1]  {$e_1$};
     \node (e2) [right=2cm of e1]  {$e_2$};
     % letf to right arrows
-    \draw [->_>] (t1) -- (t2);
-    \draw [->_>] (e1) -- (e2);
+    \draw [->] (t1) -- (t2)node[pos=1,xshift=1pt]{*}; ;
+    \draw [->] (e1) -- (e2)node[pos=1,xshift=1pt]{*};
 
     % up to down arrows
     \path [->] (t1) edge node[fill=white, anchor=center]{t2l} (e1);

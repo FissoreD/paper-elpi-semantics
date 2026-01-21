@@ -255,9 +255,27 @@ The translation of a tree to a list is as follows:
 \end{align*}
 
 The proof of \cref{thet} is based on the idea explained in~\cite[Section
-3.3]{yves-equiv}. Reasoning by induction of the 
+3.3]{yves-equiv}. An ideal statement for this lemma would be: given a function
+\texttt{l2t} transforming an elpi state to a tree, we would have have that the
+the execution of an elpi state $e$ is the same as executing \run on the tree
+resulting from $\texttt{l2t}(e)$. However, it is difficult to retrive the
+strucutre of an elpi state and create a tree from it. This is because, in an
+elpi state, we have no information about the scope of an
+atom inside the list.
+This means that multiple different (and non-equivalent) trees
+can be produced from a given elpi state.
+For example the elpi state $[[f X]; [g X]]$ could be represented by
+the tree $((Dead \lor f X) \lor g X)$
 
-\includestandalone[width=.2\textwidth]{trees/e2t_ind}
+
+
+
+\begin{figure}
+  \begin{center}
+    \includestandalone[width=.2\textwidth]{trees/e2t_ind}
+  \end{center}
+\caption{Induction scheme for \cref{thet}}  
+\end{figure}
 
 
 
