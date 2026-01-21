@@ -23,13 +23,21 @@
         "-pdf",
         "%DOC%"
       ]
-    }
+    },
+    {
+      "name": "bibtex",
+      "command": "bibtex",
+      "args": [
+        "%DOCFILE%"
+      ],
+      "env": {}
+    },
   ],
   "latex-workshop.latex.recipes": [
     {
       "name": "pdflatex",
       "tools": [
-        "pdflatex"
+        "pdflatex", "bibtex", "pdflatex", "pdflatex"
       ]
     },
   ]
