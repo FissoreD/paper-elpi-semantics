@@ -1,5 +1,6 @@
 
 \documentclass[a4paper,UKenglish,cleveref, autoref, thm-restate, lineno]{lipics-v2021}
+\usepackage[mode=buildnew]{standalone}% requires -shell-escape
 
 \usepackage{minted}
 \usepackage{macro}
@@ -229,7 +230,10 @@ The translation of a tree to a list is as follows:
 
 \input{tex_code/t2l.tex}
 
-\begin{theorem}[tree\_to\_elpi]
+\newcommand{\thte}{\texttt{tree\_to\_elpi}} % theorem tree to elpi name
+\newcommand{\thet}{\texttt{elpi\_to\_tree}} % theorem elpi to tree name
+
+\begin{theorem}[\thte]
 \begin{align*}
   \forall A\ \sigma_1\ B\ \sigma_2\ b\ \sigma_0,
   \vt\ A \to \\
@@ -241,13 +245,21 @@ The translation of a tree to a list is as follows:
 
 \end{theorem}
 
-\begin{theorem}[elpi\_to\_tree]
+\begin{theorem}[\thet]
+  \label{thet}
 \begin{align*}
   \forall \sigma_1\ \sigma_2\ a\ na\ g, \\
   \nur_u\ \sigma_1\ g\ a\ \sigma_2\ na \to  \\
   \forall \sigma_0\ t, \vt\ t \to (\ttl\ t\ \sigma_0\ \nilC) = ((\sigma_1,g) ::: a) \to \\
-  \exists t'\ n, \run_u\ \sigma_0\ t\ (Some \sigma_2)\ t'\ n \land \ttl\ t'\ \sigma_0\ \nilC = na.
+  \exists t'\ n, \run_u\ \sigma_0\ t\ (Some\ \sigma_2)\ t'\ n \land \ttl\ t'\ \sigma_0\ \nilC = na.
 \end{align*}
+
+The proof of \cref{thet} is based on the idea explained in~\cite[Section
+3.3]{yves-equiv}. Reasoning by induction of the 
+
+\includestandalone[width=.2\textwidth]{trees/e2t_ind}
+
+
 
 \end{theorem}
 \bibliography{bib}

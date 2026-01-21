@@ -40,5 +40,9 @@
         "pdflatex", "bibtex", "pdflatex", "pdflatex"
       ]
     },
+    {
+      "name": "base",
+      "tools": [ "pdflatex" ]
+    },
   ]
 }
