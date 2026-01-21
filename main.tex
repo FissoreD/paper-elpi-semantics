@@ -253,6 +253,7 @@ The translation of a tree to a list is as follows:
   \forall \sigma_0\ t, \vt\ t \to (\ttl\ t\ \sigma_0\ \nilC) = ((\sigma_1,g) ::: a) \to \\
   \exists t'\ n, \run_u\ \sigma_0\ t\ (Some\ \sigma_2)\ t'\ n \land \ttl\ t'\ \sigma_0\ \nilC = na.
 \end{align*}
+\end{theorem}
 
 The proof of \cref{thet} is based on the idea explained in~\cite[Section
 3.3]{yves-equiv}. An ideal statement for this lemma would be: given a function
@@ -260,12 +261,30 @@ The proof of \cref{thet} is based on the idea explained in~\cite[Section
 the execution of an elpi state $e$ is the same as executing \run on the tree
 resulting from $\texttt{l2t}(e)$. However, it is difficult to retrive the
 strucutre of an elpi state and create a tree from it. This is because, in an
-elpi state, we have no information about the scope of an
-atom inside the list.
-This means that multiple different (and non-equivalent) trees
-can be produced from a given elpi state.
-For example the elpi state $[[f X]; [g X]]$ could be represented by
-the tree $((Dead \lor f X) \lor g X)$
+elpi state, we have no clear information about the scope of an atom inside the
+list and, therefore, no evident clue about where this atom should be place in
+the tree. 
+
+Our theorem states that, starting from a valid state $t$
+which translates to a list of alternatives $(\sigma_1, g) :: a$.
+If we run in elpi the list of alternatives, then the execution of the tree $t$
+returns the same result as the execution in elpi. The proof is performed
+by induction on the derivations of the elpi execution. We have $4$
+derivations.
+
+We have $4$ case to analyse:
+
+\begin{enumerate}
+  \item StopE: We have an empty list of goals, and therefore a success.\\
+        By the definition of \vt, we know that $\ttl t = 
+\end{enumerate}
+
+
+
+% This means that multiple different (and non-equivalent) trees
+% can be produced from a given elpi state.
+% For example the elpi state $[[f X]; [g X]]$ could be represented by
+% the tree $((Dead \lor f X) \lor g X)$
 
 
 
@@ -279,6 +298,5 @@ the tree $((Dead \lor f X) \lor g X)$
 
 
 
-\end{theorem}
 \bibliography{bib}
 \end{document}
