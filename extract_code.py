@@ -39,9 +39,6 @@ def print_tex(lines, fout, raw = False):
             l = re.sub(f"===o",r"~$\\Uo$~",l)
             l = re.sub(f"==o",r"~$\\Eo$~",l)
             l = re.sub(f".*% *HIDE.*\n","",l)
-            l = re.sub(f"% label: (.*).* cnt: (.*)",r"~\\customlabel{\g<1>}{(\g<2>)}~",l)
-            l = re.sub(f"type \(~\$([^ ]+)\$~\) ([^\.]+)",r"~\\PYG{k+kd}{type} \\PYG{n+nf}{(\g<1>)} \\PYG{k+kt}{\g<2>}~",l)
-            l = re.sub(f"type (\([^ ]+\)) ([^\.]+)",r"~\\PYG{k+kd}{type} \\PYG{n+nf}{\g<1>} \\PYG{k+kt}{\g<2>}~",l)
             f.write(l)
         if not raw:
             f.write(f"\\end{{{MINT_TAG}}}\n")
