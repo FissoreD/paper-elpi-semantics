@@ -9,7 +9,6 @@
 %\hideLIPIcs  %uncomment to remove references to LIPIcs series (logo, DOI, ...), e.g. when preparing a pre-final version to be uploaded to arXiv or another public repository
 
 %\graphicspath{{./graphics/}}%helpful if your graphic files are in another directory
-\usepackage[margin=1in]{geometry}
 \usepackage{libertine}
 \usepackage{amssymb}
 \usepackage{tikz}   % ← REQUIRED
@@ -195,6 +194,17 @@ We make the distinction between some kind of particular trees:
   \item dead is a tree with deads states
 \end{enumerate}
 
+\subsubsection{The ! by graphics}
+
+In a tree the scope of the cut operator is double.
+
+\begin{figure}[H]
+  \begin{center}
+    \includestandalone[width=.3\textwidth]{./src/tree}
+  \end{center}
+\caption{Induction scheme for \cref{thet}}  
+\end{figure}
+
 
 
 \begin{figure}  
@@ -302,7 +312,7 @@ We have $4$ case to analyse:
 
 \begin{figure}
   \begin{center}
-    \includestandalone[width=.2\textwidth]{trees/e2t_ind}
+    \includestandalone[width=.2\textwidth]{src/e2t_ind}
   \end{center}
 \caption{Induction scheme for \cref{thet}}  
 \end{figure}

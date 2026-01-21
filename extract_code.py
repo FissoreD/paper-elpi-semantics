@@ -30,6 +30,7 @@ def print_tex(lines, fout, raw = False):
             f.write(f"\\begin{{{MINT_TAG}}}\n")
         for l in lines:
             l = clean_line(l)
+            l.replace (" -> ", " → ")
             l = re.sub(f"^ *% +.*\n","",l)   
             l = re.sub(f"%~(.*)",r"~\g<1>",l)   
             l = re.sub(f"^ *%SNIP.*\n","",l)   
