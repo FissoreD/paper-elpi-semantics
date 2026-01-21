@@ -15,7 +15,7 @@
 
 
 \bibliographystyle{plainurl}% the mandatory bibstyle
-\title{Dummy title} %TODO Please add
+\title{Operational semantics for Prolog with Cut in Rocq and its application to determinacy analysis} %TODO Please add
 
 %\titlerunning{Dummy short title} %TODO optional, please use if title is longer than one line
 
@@ -69,6 +69,20 @@
 \begin{abstract}
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent convallis orci arcu, eu mollis dolor. Aliquam eleifend suscipit lacinia. Maecenas quam mi, porta ut lacinia sed, convallis ac dui. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse potenti. 
 \end{abstract}
+
+\section{Introduction}
+
+
+
+
+
+The Elpi interpreter is based on an operational semantics
+close to the one picked by Pusch in \cite{10.1007/BFb0105415}, in turn
+closely related to the one given by Debray and Mishra in
+\cite[Section 4.3]{10.1016/0743-1066(88)90007-6}. Push mechanized
+the semantics in Isabelle/HOL together with some optimizations that
+are present in the Warren Abstract Machine~\cite{warren1983abstract,10.7551/mitpress/7160.001.0001}.
+
 
 \section{Common code: the language}
 \begin{minted}{coq}
