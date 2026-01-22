@@ -1,0 +1,36 @@
+\documentclass[crop,tikz]{standalone}%
+
+\usepackage{../tree}
+
+\begin{document}
+
+\begin{tikzpicture}[distances]
+  \node[orNode] (ROOT) 
+    {\iText{\orN}}
+    child { \nDead{LL} }
+    child [sibling distance=40mm] {  
+      child { \nAnd{LR}
+        child { 
+          \nOr{LRL} 
+            child[distances] { \nOK{ok} }
+            child[distances] { \nCall{fx}{f X} }
+        }
+        child  { 
+          \nOr{LLR}
+          child[distances] { \nDead{dead} }
+          child[distances] { \nOK{ok1} }
+          child[distances] { \nCall{c1}{r X Z} }
+          child[distances] { 
+            \nAnd{and2}
+            child{\nCall{c2}{f X Y}}
+            child{\nCall{c3}{h Y Z}}
+          }
+        }
+      }
+    }
+    child { \nCall{hx}{h X} };
+    \node[draw=red,thick,fit=(dead)(LLR)(c3)] {};
+
+\end{tikzpicture}
+
+\end{document}

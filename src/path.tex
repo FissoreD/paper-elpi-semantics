@@ -7,16 +7,15 @@
 \begin{tikzpicture}[distances]
   \node[orNode] (ROOT) 
     {\iText{\orN}}
+    child { \nDead{LL} }
     child {  
-      \nOr{L} 
-      child { \nDead{LL} }
       child { \nAnd{LR}
         child { 
           \nOr{LRL} 
             child { \nOK{ok} }
             child { \nCall{fx}{f X} }
         }
-        child { \nCall{LLR}{g X} }
+        child { \nCall{LLR}{g X Y} }
       }
     }
     child { \nCall{hx}{h X} };

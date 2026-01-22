@@ -164,16 +164,16 @@ The And non-terminal $A \land_r B$ represents of a conjunction of two trees
 $A$ and $B$. We call $r$ the reset-point and is used to resume the $B$ state in
 its intial form if some backtracking operation is performed on $A$.
 
-\begin{figure}
-  \input{tex_code/step_tag.tex}
-  \input{tex_code/step.tex}
-\caption{Step for tree semantics}
-\end{figure}
+% \begin{figure}
+%   \input{tex_code/step_tag.tex}
+%   \input{tex_code/step.tex}
+% \caption{Step for tree semantics}
+% \end{figure}
 
-\begin{figure}
-  \input{tex_code/next_alt.tex}
-\caption{backtracking operation}
-\end{figure}
+% \begin{figure}
+%   \input{tex_code/next_alt.tex}
+% \caption{backtracking operation}
+% \end{figure}
 
 The interpretation of a tree is performed by two main routines: \step
 and \na that traverse the tree depth-first, left-to-right.
@@ -191,49 +191,51 @@ If this path returns a success, we build a path in the rhs, otherwise,
 we return the lhs. In \cref{tree-ex1} the first non-explored node is g X.
 
 \begin{figure}[H]
-  \begin{subfigure}{0.5\textwidth}
-    \begin{center}\includestandalone[width=.2\textwidth]{src/path}\end{center}
+  \begin{subfigure}{0.25\textwidth}
+    \begin{center}\includestandalone[width=0.8\textwidth]{src/path}\end{center}
+    \caption{Path end := g X Y}
+    \label{tree-ex1} 
   \end{subfigure}
-  \begin{subfigure}{0.5\textwidth}
-    \includestandalone[width=.3\textwidth]{./src/tree}
+  \begin{subfigure}{0.4\textwidth}
+    \includestandalone[width=\textwidth]{./src/path_exp}
+    \caption{Step on g X Y}
+    \label{tree-ex1-exp} 
+  \end{subfigure}
+  \begin{subfigure}{0.3\textwidth}
+    \includestandalone[width=.7\textwidth]{./src/tree}
+    \caption{Scope of the cut}
+    \label{cut-scope} 
   \end{subfigure}
 \caption{Tree with first non explored node g X} 
-\label{tree-ex1} 
 \end{figure}
 
-The step procedure aims to find the first non 
+The \step procedure takes a tree and explores it using the path strategy. A
+success (i.e. a tree with path ending with OK) and failed tree (i.e. a tree with
+path ending with KO or Dead) is returned as it. The two interesting cases are
+when the path ends with a call or a cut. In the former case the call node is
+replace with a new subtree made by the rules returned by the \backchain
+function. If \backchain returns a list $l$,
+if $l$ is empty then KO tree is returned, otherwise
+the call is replaced by right-skewed tree made of $n$ inner Or nodes,
+where $n$ is the length of $l$.
+The root Or-node has KO as left child. The lhs of the other nodes is a
+right-skewed tree of And nodes. The And nodes are again a right-seked tree
+containing then atoms (either cut or call) 
+taken from the list $l$.
 
-, it means essentially
-that in the case of the And and Or terminal, we explore before the left 
-and then the right branch.
+\begin{elpicode}
+g X X.                  % r1
+g X Z :- r X Z.         % r2
+g X Z :- f X Y, h Y Z.  % r3
+\end{elpicode}
 
-\step is in charge of finding the first atom and reduce it.
-In case of a call $c$, a new tree is built from the result of calling \backchain 
-on $c$. \marginpar{dire che creiamo un bigor di bigand}
-
-
-% The tree interpreter is made by two fixpoints and an inductive.
-
-
-\marginpar{TODO: define path}
-We make the distinction between some kind of particular trees:
-\begin{enumerate}
-  \item success is a tree with a successfull path
-  \item failed is a tree with a failed path
-  \item dead is a tree with deads states
-\end{enumerate}
-
-\subsubsection{The ! by graphics}
-
-In a tree the scope of the cut operator is double.
-
-\begin{figure}[H]
-  \begin{center}
-    \includestandalone[width=.3\textwidth]{./src/tree}
-  \end{center}
-\caption{Induction scheme for \cref{thet}}  
-\end{figure}
-
+A step in the tree in \cref{tree-ex1} make a backchain operation over the query
+g X Y and, in the program above, the new tree would be the one in
+\cref{tree-ex1-exp}. We have put a red border aroung the new generated subtree.
+It is a disjunction of four subtrees:
+the first node is the Dead node (by default), the second is OK, since r1
+has no premises, the third and the fourth contains the premises of respectively
+r2 and r3.
 
 
 \begin{figure}  

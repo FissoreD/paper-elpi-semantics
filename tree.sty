@@ -60,39 +60,28 @@
 
 \newcommand{\iText}[1]{\adjustbox{max width=\SIZE}{\small{#1}}}
 
-% labels
-\newcommand{\nOK}[1]{
-  node[okNode](#1)  {\iText{\okN}}
-}
-
-\newcommand{\nOr}[1]{
-  node[orNode](#1)  {\iText{\orN}}
-}
-
-\newcommand{\nAnd}[1]{
-  node[andNode](#1)  {\iText{\andN}}
-}
-
-\newcommand{\nCut}[1]{
-  node[atomNode](#1)  {\iText{\cutN}}
-}
-
-\newcommand{\nCall}[2]{
-  node[atomNode](#1)  {\iText{#2}}
-}
-
-\newcommand{\nAny}[1]{
-  node(#1)  {\iText{\dots}}
-}
-
-\newcommand{\nDead}[1]{
-  node(#1)  {\iText{DEAD}}
-}
-
 \newcommand{\orN}{\ensuremath{Or}}   % or node
 \newcommand{\andN}{\ensuremath{And}} % and node
-\newcommand{\okN}{\ensuremath{OK}} % ok node
-\newcommand{\cutN}{\ensuremath{!}} % ok node
+\newcommand{\okN}{\ensuremath{OK}}
+\newcommand{\cutN}{\ensuremath{!}}
+\newcommand{\koN}{\ensuremath{KO}}
+\newcommand{\deadN}{\ensuremath{Dead}}
+
+\newcommand{\nOK}[1]{ node[okNode](#1)  {\iText{\okN}} }
+\newcommand{\nKO}[1]{ node[okNode](#1)  {\iText{\koN}} }
+\newcommand{\nDead}[1]{ node(#1)  {\iText{\deadN}} }
+
+\newcommand{\nOr}[1]{ node[orNode](#1)  {\iText{\orN}} }
+
+\newcommand{\nAnd}[1]{  node[andNode](#1)  {\iText{\andN}} }
+
+\newcommand{\nCut}[1]{ node[atomNode](#1)  {\iText{\cutN}} }
+
+\newcommand{\nCall}[2]{ node[atomNode](#1)  {\iText{#2}} }
+
+\newcommand{\nAny}[1]{ node(#1)  {\iText{\dots}} }
+
+
 
 
 % \newcommand{\nOK}[1]{\node[text=green] at (#1.center) {\okN}}
