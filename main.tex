@@ -160,9 +160,12 @@ non-terminals $A \lor B_\sigma$ stands for a disjunction between two trees A and
 B. The second tree branch is decorated with a suspended substituion $\sigma$ so
 that, when we backtrack to $B$, we use $\sigma$ as initial substitution for $B$.
 
-The And non-terminal $A \land_r B$ represents of a conjunction of two trees
-$A$ and $B$. We call $r$ the reset-point and is used to resume the $B$ state in
-its intial form if some backtracking operation is performed on $A$.
+The And non-terminal $A \land_{B_0} B$ represents of a conjunction of two trees
+$A$ and $B$. We call $B_0$ the reset-point for $B$ and is used to resume the $B$
+state in its intial form if some backtracking operation is performed on $A$. A
+graphical tree representation is shown in \cref{tree-ex1}. For the sake of
+making our graph more compact, the And and Or non-terminals are n-ary (rather
+than binary), with right-binding priority. We are representing the 
 
 % \begin{figure}
 %   \input{tex_code/step_tag.tex}
@@ -176,7 +179,7 @@ its intial form if some backtracking operation is performed on $A$.
 % \end{figure}
 
 The interpretation of a tree is performed by two main routines: \step
-and \na that traverse the tree depth-first, left-to-right.
+and \na that traverse the tree depth-first, left-to-right. 
 
 We get the first to-be-explored terminal in the tree by getting
 the end of a path. This path is created from a tree traversal
@@ -192,7 +195,7 @@ we return the lhs. In \cref{tree-ex1} the first non-explored node is g X.
 
 \begin{figure}[H]
   \begin{subfigure}{0.25\textwidth}
-    \begin{center}\includestandalone[width=0.8\textwidth]{src/path}\end{center}
+    \begin{center}\includestandalone[width=0.8\textwidth]{./src/path}\end{center}
     \caption{Path end := g X Y}
     \label{tree-ex1} 
   \end{subfigure}
@@ -222,7 +225,7 @@ the call is replaced by right-skewed tree made of $n$ inner Or nodes,
 where $n$ is the length of $l$.
 The root Or-node has KO as left child. The lhs of the other nodes is a
 right-skewed tree of And nodes. The And nodes are again a right-seked tree
-containing then atoms (either cut or call) 
+containing then atoms (either cut or call) \marginpar{dire dei reset point}
 taken from the list $l$.
 
 \begin{elpicode}
@@ -237,11 +240,42 @@ g X Y and, in the program above, the new tree would be the one in
 It is a disjunction of four subtrees:
 the first node is the Dead node (by default), the second is OK, since r1
 has no premises, the third and the fourth contains the premises of respectively
-r2 and r3. \marginpar{dire che le sostituzioni del backchain sono importanti}
+r2 and r3. \marginpar{dire che le sostituzioni del backchain sono importanti e dove sono mess}
 
-\textit{Cut step} The latter case is more delicate since performing a cut
-in a tree has 
+\textit{Cut step} The latter case is delicate since interpreting a cut in a tree
+has three main impacts: at first the cut node is replaced by a OK node, but then
+we need to cut-away the subtrees that are in the scope of the cut: in particular
+we need to soft-kill the left-siblings of the Cut and hard-kill the right-uncles
+of the the Cut.
 
+\begin{definition}[Left-siblings (resp. right-sibling)]
+  Given a node $A$, the left-siblings (resp. right-sibling) of $A$
+  are the list of subtrees sharing the same parent of $A$ and that appear
+  on its left (resp. right).
+\end{definition}
+
+\begin{definition}[Right-uncles]
+  Given a node $A$, the right-uncles of $A$ are the list of right-sibling of the
+  father of $A$.
+\end{definition}
+
+\begin{definition}[Soft-kill]
+  Given a tree $t$, soft-kill replaces all the leaves of the tree with the node
+  KO except for the leaves that are part of the path $p$ of $t$.
+\end{definition}
+
+\begin{definition}[Hard-kill]
+  Given a tree $t$, hard-kill replaces all the leaves of the tree with the node
+  KO
+\end{definition}
+
+An example of the impact of the cut is show in \cref{cut-scope}. The step
+routine interprets the cut if it is at the end of the current path. In the
+example we have tagged in red the arrow $!_l$ indicating which sub-trees is
+soft-killed and $!_r$ indicated which is sub-trees are to be hard-killed.
+
+
+The soft-kill opeartion replace with the KO node all the 
 
 \subsubsection{Valid tree}
 % \begin{figure}  
