@@ -5,8 +5,11 @@
 \begin{document}
 
 \begin{tikzpicture}[distances]
-  \node[orNode] (ROOT) 
-    {\iText{\orN}}
+  \node[andNode,draw=none] (ROOT) {\phantom{A}}
+  node[andNode,draw=none] at (ROOT.center){\andN}
+  node[andNode] at (ROOT.center) {\phantom{A}}
+    child {
+      \nOr{AAA}
     child {  
       \nAnd{L} 
       child { \nOr{LL}
@@ -17,7 +20,10 @@
       }
       child { \nCut{LR} }
     }
-    child { \nAny{R} };
+    child { \nAny{R} }}
+    child { \nAny{M} }
+    ;
+
 
   % \node[text=blue] at (L.center) {\andN};
   % \node[text=blue] at (R.center) {\andN};

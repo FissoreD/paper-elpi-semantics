@@ -5,8 +5,9 @@
 \begin{document}
 
 \begin{tikzpicture}[distances]
-  \node[orNode] (ROOT) 
-    {\iText{\orN}}
+  \node[orNode,draw=none] (ROOT) {\phantom{A}}
+  node[orNode,draw=none] at (ROOT.center){\orN}
+  node[orNode] at (ROOT.center) {\phantom{A}}
     child { \nDead{LL} }
     child [sibling distance=40mm] {  
       child { \nAnd{LR}
