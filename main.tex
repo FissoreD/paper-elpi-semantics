@@ -191,13 +191,17 @@ If this path returns a success, we build a path in the rhs, otherwise,
 we return the lhs. In \cref{tree-ex1} the first non-explored node is g X.
 
 \begin{figure}[H]
-  \begin{center}
-    \includestandalone[width=.2\textwidth]{src/path}
-  \end{center}
+  \begin{subfigure}{0.5\textwidth}
+    \begin{center}\includestandalone[width=.2\textwidth]{src/path}\end{center}
+  \end{subfigure}
+  \begin{subfigure}{0.5\textwidth}
+    \includestandalone[width=.3\textwidth]{./src/tree}
+  \end{subfigure}
 \caption{Tree with first non explored node g X} 
 \label{tree-ex1} 
 \end{figure}
 
+The step procedure aims to find the first non 
 
 , it means essentially
 that in the case of the And and Or terminal, we explore before the left 
