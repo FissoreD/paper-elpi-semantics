@@ -1,0 +1,91 @@
+\usepackage{libertine}
+\usepackage{amssymb}
+\usepackage{ulem}
+\usepackage{../macro}
+
+\newcommand{\xbar}[1]{\ensuremath{\overline{\textrm{#1}}}}
+
+\usepackage[table,dvipsnames]{xcolor}
+\usepackage{graphicx}
+
+%%% Trees
+\usepackage[linguistics]{forest}
+\usepackage{tikz}
+\usetikzlibrary{trees}
+\usetikzlibrary{arrows.meta}
+\usetikzlibrary{shapes.geometric, shapes.misc}
+
+\tikzset{
+  allBlue/.style={
+      draw=blue,
+      text=blue,
+    },
+  rect/.style={
+      shape border rotate=0,
+      regular polygon,
+      regular polygon sides=4,
+      % minimum height=1em,
+      inner sep=0
+    },
+  mtriangle/.style={
+      shape border rotate=0,
+      regular polygon,
+      regular polygon sides=3,
+      % minimum height=1em,
+      inner sep=0
+    },
+  allRed/.style={
+      draw=red,
+      text=red,
+    },
+  andNode/.style={ allBlue, mtriangle },
+  orNode/.style={ allRed, mtriangle },
+  okNode/.style={ draw=green, circle, },
+  atomNode/.style={ draw, rect, }
+}
+
+% labels
+\newcommand{\nOK}[1]{
+  node[okNode](#1)  {\phantom{AB}};
+  \node[text=green] at (#1.center) {\okN}
+}
+
+\newcommand{\nOr}[1]{
+  node[orNode](#1)  {\phantom{AB}};
+  \node[text=red] at (#1.center) {\orN}
+}
+
+\newcommand{\nAnd}[1]{
+  node[andNode](#1)  {\phantom{AB}};
+  \node[text=blue] at (#1.center) {\andN}
+}
+
+\newcommand{\nCut}[1]{
+  node[atomNode](#1)  {\phantom{AB}};
+  \node at (#1.center) {\cutN}
+}
+
+\newcommand{\nCall}[2]{
+  node[atomNode](#1)  {\phantom{AB}};
+  \node at (#1.center) {#2}
+}
+
+\newcommand{\nAny}[1]{
+  node(#1)  {\phantom{AB}};
+  \node at (#1.center) {\dots}
+}
+
+\newcommand{\nDead}[1]{
+  node(#1)  {\phantom{AB}};
+  \node at (#1.center) {DEAD}
+}
+
+\newcommand{\orN}{\ensuremath{Or}}   % or node
+\newcommand{\andN}{\ensuremath{And}} % and node
+\newcommand{\okN}{\ensuremath{OK}} % ok node
+\newcommand{\cutN}{\ensuremath{!}} % ok node
+
+
+% \newcommand{\nOK}[1]{\node[text=green] at (#1.center) {\okN}}
+% \newcommand{\nOK}[1]{\node[text=green] at (#1.center) {\okN}}
+

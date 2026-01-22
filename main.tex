@@ -97,10 +97,11 @@ Inductive A := cut | call : Callable -> A.
 \end{minted}
 
 An atom is the smallest syntactic unit that can be executed in a prolog
-program \program. The execution of an atom, inside a program and a substitution
-either succeeds returining an output substitution, or it fails.
-In both cases it returns a list of choice points, representing suspending
-states that can be resumed for backtracking.
+program \program. 
+% The execution of an atom, inside a program and a substitution
+% either succeeds returining an output substitution, or it fails.
+% In both cases it returns a list of choice points, representing suspending
+% states that can be resumed for backtracking.
 
 \begin{minted}{coq}
 Record R := mkR { head : RCallable; premises : list A }.
@@ -152,8 +153,7 @@ symbol representing a ghost state, that is, a state useful to keep the
 structure of a tree from an execution to another but that is completely ignored
 by the intepretation of the program.
 
-TA, standing for tree-atom, is a terminal of the tree containg an atom and a 
-program. 
+TA, standing for tree-atom, is a terminal of the tree containg an atom.
 
 The two recursive cases of a tree are the Or and the And non-terinals. The Or
 non-terminals $A \lor B_\sigma$ stands for a disjunction between two trees A and
@@ -175,9 +175,40 @@ its intial form if some backtracking operation is performed on $A$.
 \caption{backtracking operation}
 \end{figure}
 
-The main 
+The interpretation of a tree is performed by two main routines: \step
+and \na that traverse the tree depth-first, left-to-right.
 
-The tree interpreter is made by two fixpoints and an inductive.
+We get the first to-be-explored terminal in the tree by getting
+the end of a path. This path is created from a tree traversal
+starting from the roots and immidiatly ends if the tree
+is not niether a disjunction, nor a conjunction: the to-be-explored
+terminal is the tree itself. 
+Otherwise, if the tree is a disjunction, the path continues on
+the left- or the right-subtree depending of if the path of the lhs is
+a dead node. 
+In the case of a conjunction, we look for the path of the lhs.
+If this path returns a success, we build a path in the rhs, otherwise,
+we return the lhs. In \cref{tree-ex1} the first non-explored node is g X.
+
+\begin{figure}[H]
+  \begin{center}
+    \includestandalone[width=.2\textwidth]{src/path}
+  \end{center}
+\caption{Tree with first non explored node g X} 
+\label{tree-ex1} 
+\end{figure}
+
+
+, it means essentially
+that in the case of the And and Or terminal, we explore before the left 
+and then the right branch.
+
+\step is in charge of finding the first atom and reduce it.
+In case of a call $c$, a new tree is built from the result of calling \backchain 
+on $c$. \marginpar{dire che creiamo un bigor di bigand}
+
+
+% The tree interpreter is made by two fixpoints and an inductive.
 
 
 \marginpar{TODO: define path}

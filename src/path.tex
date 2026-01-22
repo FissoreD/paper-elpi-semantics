@@ -8,14 +8,18 @@
   \node[draw,orNode] (ROOT) 
     {\orN}
     child {  
-      \nAnd{L} 
-      child { \nOr{LL}
-        child { \nOK{LLL} }
-        child { \nCall{LLR}{...} }
+      \nOr{L} 
+      child { \nDead{LL} }
+      child { \nAnd{LR}
+        child { 
+          \nOr{LRL} 
+            child { \nOK{ok} }
+            child { \nCall{fx}{f X} }
+        }
+        child { \nCall{LLR}{g X} }
       }
-      child { \nCut{LR} }
     }
-    child { \nCall{R}{...} };
+    child { \nCall{hx}{h X} };
 
   % \node[text=blue] at (L.center) {\andN};
   % \node[text=blue] at (R.center) {\andN};
@@ -24,8 +28,6 @@
   % \nOK{LLL};
     % \draw[very thick,-{latex[length=2.5mm,width=2.5mm]},blue] (A)..controls +(south east:15cm) and +(south west:11cm)..(B);
     % \draw[draw, thick, red, ->] (LR) to[bend left] (LLR);
-    \path [thick, red, ->] (LR) edge[bend left=30] node[above]{\cutl} (LL);
-    \path [thick, red, ->] (LR) edge[bend left=30] node[right]{\cutr} (R);
 
 \end{tikzpicture}
 
