@@ -202,7 +202,7 @@ we return the lhs. In \cref{tree-ex1} the first non-explored node is g X.
     \label{tree-ex1-exp} 
   \end{subfigure}
   \begin{subfigure}{0.3\textwidth}
-    \includestandalone[width=.7\textwidth]{./src/tree}
+    \includestandalone[width=.7\textwidth]{./src/tree_cut}
     \caption{Scope of the cut}
     \label{cut-scope} 
   \end{subfigure}
@@ -212,7 +212,9 @@ we return the lhs. In \cref{tree-ex1} the first non-explored node is g X.
 The \step procedure takes a tree and explores it using the path strategy. A
 success (i.e. a tree with path ending with OK) and failed tree (i.e. a tree with
 path ending with KO or Dead) is returned as it. The two interesting cases are
-when the path ends with a call or a cut. In the former case the call node is
+when the path ends with a call or a cut. 
+
+\textit{Call step} In the former case the call node is
 replace with a new subtree made by the rules returned by the \backchain
 function. If \backchain returns a list $l$,
 if $l$ is empty then KO tree is returned, otherwise
@@ -235,14 +237,18 @@ g X Y and, in the program above, the new tree would be the one in
 It is a disjunction of four subtrees:
 the first node is the Dead node (by default), the second is OK, since r1
 has no premises, the third and the fourth contains the premises of respectively
-r2 and r3.
+r2 and r3. \marginpar{dire che le sostituzioni del backchain sono importanti}
+
+\textit{Cut step} The latter case is more delicate since performing a cut
+in a tree has 
 
 
-\begin{figure}  
-  \input{tex_code/valid_tree.tex}
-  $$\texttt{B.bbOr}\ A \iff \exists\ r\ rs, A = \texttt{big\_or\_aux}\ r\ rs \lor A = \texttt{cutr}(\texttt{big\_or\_aux}\ r\ rs)$$
-\caption{Valid tree}
-\end{figure}
+\subsubsection{Valid tree}
+% \begin{figure}  
+%   \input{tex_code/valid_tree.tex}
+%   $$\texttt{B.bbOr}\ A \iff \exists\ r\ rs, A = \texttt{big\_or\_aux}\ r\ rs \lor A = \texttt{cutr}(\texttt{big\_or\_aux}\ r\ rs)$$
+% \caption{Valid tree}
+% \end{figure}
 \subsection{Elpi semantics}
 
 The Elpi interpreter is based on an operational semantics
