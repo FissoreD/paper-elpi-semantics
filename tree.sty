@@ -47,13 +47,18 @@
     draw=green,
     text=green,
   },
+  allOrange/.style={
+    draw=orange,
+    text=orange,
+  },
   allBlack/.style={
     % draw=blue,
     text=black,
   },
   andNode/.style={ allBlue, mtriangle },
-  orNode/.style={ allRed, mtriangle },
+  orNode/.style={ allOrange, mtriangle },
   okNode/.style={ allGreen, circle, },
+  koNode/.style={ allRed, circle, },
   atomNode/.style={ allBlack, rect, },
   distances/.style={level distance=13mm, sibling distance=13mm}
 }
@@ -67,18 +72,21 @@
 \newcommand{\koN}{\ensuremath{KO}}
 \newcommand{\deadN}{\ensuremath{Dead}}
 
-\newcommand{\nOK}[1]{ node[okNode](#1)  {\iText{\okN}} }
-\newcommand{\nKO}[1]{ node[okNode](#1)  {\iText{\koN}} }
-\newcommand{\nDead}[1]{ node(#1)  {\iText{\deadN}} }
+% ARGUMEMTS: NODE TYPE, NODE TXT, NODE TAG
+\newcommand{\nodebuild}[3]{
+  node[#1](#2){\phantom{A}}                 %
+  node[#1,draw=none] at (#2.center){#3} %
+  node[#1]at (#2.center){\phantom{A}}                 %
+}
 
-\newcommand{\nOr}[1]{ node[orNode](#1)  {\iText{\orN}} }
+\newcommand{\nOK}[1]{ \nodebuild{okNode}{#1}{\okN} }
+\newcommand{\nKO}[1]{ \nodebuild{koNode}{#1}{\koN} }
+\newcommand{\nDead}[1]{ \nodebuild{koNode}{#1}{\deadN} }
 
-\newcommand{\nAnd}[1]{  node[andNode](#1)  {\iText{\andN}} }
-
-\newcommand{\nCut}[1]{ node[atomNode](#1)  {\iText{\cutN}} }
-
-\newcommand{\nCall}[2]{ node[atomNode](#1)  {\iText{#2}} }
-
+\newcommand{\nOr}[1]{ \nodebuild{orNode}{#1}{\orN} }
+\newcommand{\nAnd}[1]{ \nodebuild{andNode}{#1}{\andN} }
+\newcommand{\nCut}[1]{ \nodebuild{atomNode}{#1}{\cutN} }
+\newcommand{\nCall}[2]{ \nodebuild{atomNode}{#1}{#2} }
 \newcommand{\nAny}[1]{ node(#1)  {\iText{\dots}} }
 
 

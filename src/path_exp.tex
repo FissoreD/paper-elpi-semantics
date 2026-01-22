@@ -17,7 +17,7 @@
         }
         child  { 
           \nOr{LLR}
-          child[distances] { \nDead{dead} }
+          child[distances] { \nKO{ko} }
           child[distances] { \nOK{ok1} }
           child[distances] { \nCall{c1}{r X Z} }
           child[distances] { 
@@ -29,7 +29,7 @@
       }
     }
     child { \nCall{hx}{h X} };
-    \node[draw=red,thick,fit=(dead)(LLR)(c3)] {};
+    \node[draw=red,thick,fit=(ko)(LLR)(c3)] {};
 
 \end{tikzpicture}
 
