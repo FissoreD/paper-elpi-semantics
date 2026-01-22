@@ -4,9 +4,9 @@
 
 \begin{document}
 
-\begin{tikzpicture}[sibling distance=2cm]
-  \node[draw,orNode] (ROOT) 
-    {\orN}
+\begin{tikzpicture}[level distance=8mm, sibling distance=8mm]
+  \node[orNode] (ROOT) 
+    {\iText{\orN}}
     child {  
       \nOr{L} 
       child { \nDead{LL} }
@@ -20,15 +20,6 @@
       }
     }
     child { \nCall{hx}{h X} };
-
-  % \node[text=blue] at (L.center) {\andN};
-  % \node[text=blue] at (R.center) {\andN};
-  % \node[text=red] at (LL.center) {\orN};
-  % \node[text=green] at (LLL.center) {\okN};
-  % \nOK{LLL};
-    % \draw[very thick,-{latex[length=2.5mm,width=2.5mm]},blue] (A)..controls +(south east:15cm) and +(south west:11cm)..(B);
-    % \draw[draw, thick, red, ->] (LR) to[bend left] (LLR);
-
 \end{tikzpicture}
 
 \end{document}

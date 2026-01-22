@@ -7,7 +7,9 @@
 
 \usepackage[table,dvipsnames]{xcolor}
 \usepackage{graphicx}
+\usepackage{adjustbox}
 
+\newcommand{\SIZE}{10pt}
 %%% Trees
 \usepackage[linguistics]{forest}
 \usepackage{tikz}
@@ -15,11 +17,9 @@
 \usetikzlibrary{arrows.meta}
 \usetikzlibrary{shapes.geometric, shapes.misc}
 
+% \newcommand{\}{def}
+
 \tikzset{
-  allBlue/.style={
-      draw=blue,
-      text=blue,
-    },
   rect/.style={
       shape border rotate=0,
       regular polygon,
@@ -32,52 +32,60 @@
       regular polygon,
       regular polygon sides=3,
       % minimum height=1em,
+      text width=\SIZE,
       inner sep=0
     },
   allRed/.style={
       draw=red,
       text=red,
     },
+  allBlue/.style={
+    draw=blue,
+    text=blue,
+  },
+  allGreen/.style={
+    draw=green,
+    text=green,
+  },
+  allBlack/.style={
+    % draw=blue,
+    text=black,
+  },
   andNode/.style={ allBlue, mtriangle },
   orNode/.style={ allRed, mtriangle },
-  okNode/.style={ draw=green, circle, },
-  atomNode/.style={ draw, rect, }
+  okNode/.style={ allGreen, circle, },
+  atomNode/.style={ allBlack, rect, }
 }
+
+\newcommand{\iText}[1]{\adjustbox{max width=\SIZE}{\small{#1}}}
 
 % labels
 \newcommand{\nOK}[1]{
-  node[okNode](#1)  {\phantom{AB}};
-  \node[text=green] at (#1.center) {\okN}
+  node[okNode](#1)  {\iText{\okN}}
 }
 
 \newcommand{\nOr}[1]{
-  node[orNode](#1)  {\phantom{AB}};
-  \node[text=red] at (#1.center) {\orN}
+  node[orNode](#1)  {\iText{\orN}}
 }
 
 \newcommand{\nAnd}[1]{
-  node[andNode](#1)  {\phantom{AB}};
-  \node[text=blue] at (#1.center) {\andN}
+  node[andNode](#1)  {\iText{\andN}}
 }
 
 \newcommand{\nCut}[1]{
-  node[atomNode](#1)  {\phantom{AB}};
-  \node at (#1.center) {\cutN}
+  node[atomNode](#1)  {\iText{\cutN}}
 }
 
 \newcommand{\nCall}[2]{
-  node[atomNode](#1)  {\phantom{AB}};
-  \node at (#1.center) {#2}
+  node[atomNode](#1)  {\iText{#2}}
 }
 
 \newcommand{\nAny}[1]{
-  node(#1)  {\phantom{AB}};
-  \node at (#1.center) {\dots}
+  node(#1)  {\iText{\dots}}
 }
 
 \newcommand{\nDead}[1]{
-  node(#1)  {\phantom{AB}};
-  \node at (#1.center) {DEAD}
+  node(#1)  {\iText{DEAD}}
 }
 
 \newcommand{\orN}{\ensuremath{Or}}   % or node
