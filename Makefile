@@ -16,6 +16,11 @@ tex_code:
 update_submodule:
 	git submodule update --remote
 
+all:
+	$(MAKE) update_submodule && \
+	$(MAKE) tex_code && \
+	$(MAKE) main
+
 ci:
 	$(MAKE) update_submodule && \
 	$(MAKE) tex_code && \
