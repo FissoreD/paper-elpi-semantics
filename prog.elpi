@@ -1,0 +1,4 @@
+f 1 2.      f 2 3.     r 2 4.
+g X X.                  % r1
+g X Z :- r X Z, !.      % r2
+g X Z :- f X Y, f Y Z.  % r3
