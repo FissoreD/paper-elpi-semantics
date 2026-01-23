@@ -73,47 +73,43 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent convallis orci
 \section{Introduction}
 
 
-Elpi is a dialect of
-\(\lambda\)Prolog (see \cite{1991miller-pf,Miller_Nadathur_2012,dunchev15lpar,TASSI_2019}) used as an
-extension language for the Rocq Prover (formerly the Coq proof
-assistant) that has become an important piece of infrastructure. Several
-projects and libraries depend on Elpi~\cite{krebbers25,Trakt,Trocq,Maas2024,fissore2023,fissore2024},
-for example the Hierarchy-Builder library-structuring tool~\cite{cohen_et_al:LIPIcs.FSCD.2020.34},
-and Derive~\cite{tassi2018,tassi2019,tassi2023}, a program-and-proof synthesis framework with industrial
-applications at SkyLabs AI.
+Elpi is a dialect of \(\lambda\)Prolog (see \cite{1991miller-pf,Miller_Nadathur_2012,dunchev15lpar,TASSI_2019})
+used as an extension language for the Rocq prover (formerly the Coq proof
+assistant). Elpi has become an important infrastructure component: several
+projects and libraries depend on it~\cite{krebbers25,Trakt,Trocq,Maas2024,fissore2023,fissore2024}.
+Examples include the Hierarchy-Builder library-structuring tool~\cite{cohen_et_al:LIPIcs.FSCD.2020.34}
+and Derive~\cite{tassi2018,tassi2019,tassi2023}, a program-and-proof synthesis
+framework with industrial applications at SkyLabs AI.
 
-In version 3 Elpi was equipped with a static analysis for
-determinacy~\cite{10.1007/978-3-032-15981-6_5} to tame backtracking.
-Rocq users are familiar with functional programming but not necessarily
-with logic programming and uncontrolled backtracking is a recurrent source
-of inefficient and hard-to-debug code. The static analysis identifies
-``functions'', i.e., predicates that commit to the first result they
-generate by leaving no \emph{choice points} (opportunities for backtracking).
+Starting with version 3, Elpi gained a static analysis for
+determinacy~\cite{10.1007/978-3-032-15981-6_5} to help users tame
+backtracking. Rocq users are familiar with functional programming but
+not necessarily with logic programming and uncontrolled backtracking
+is a common source of inefficiency and makes debugging harder. The
+determinacy checkers identifies predicates that behave like functions,
+i.e., predicates that commit to their first solution and leave no
+\emph{choice points} (places where backtracking could resume).
 
-This paper is a first step toward the mechanization in the Rocq Prover of the
-static analysis from~\cite{10.1007/978-3-032-15981-6_5} and it focusses
-on the control operator \emph{cut}. Tis operator is both the alley to
-control backtracking and the enemy when it comes to describing the semantics of
-the language that becomes operational departing from the realm of logic.
+This paper reports our first steps towards a mechanization, in the Rocq
+prover, of the determinacy analysis from~\cite{10.1007/978-3-032-15981-6_5}.
+We focus on the control operator \emph{cut}, which is useful to restrict
+backtracking but makes the semantic depart from a pure logical reading.
 
-This paper describes the mechanization of two operational semantics for Prolog.
-One operatioanl semantic
-is based on a stack of choice points and reflects closely the implementation of
-Elpi. This semantics is close to the one mechanized by Pusch in
-Isabelle/HOL~\cite{10.1007/BFb0105415}, in turn closely related to the one
-given by Debray and Mishra in \cite[Section 4.3]{10.1016/0743-1066(88)90007-6}.
-This semantics is well suited to describe some optimizations that
-are present in the standard Prolog abstract
-machine~\cite{warren1983abstract,10.7551/mitpress/7160.001.0001}, but
-is not amenable to reason about the scope of cut, that is paramount in
-the study of determinacy. Hence we introduce a tree-based
-semantics where the branches cut by the cut operator are explicit and we
-prove it is equivalent to the stack-based one. Finally, using the tree-based
-semantics we establish that predicates where each rule passes the static
-analysis for determinacy do not leave choice points.
+We formalize two operational semantics for Prolog with cut. The first is a
+stack-based semantics that closely models Elpi's implementation and is
+similar to the semantics mechanized by Pusch in Isabelle/HOL~\cite{10.1007/BFb0105415}
+and to the model of Debray and Mishra~\cite[Sec.~4.3]{10.1016/0743-1066(88)90007-6}.
+This stack-based semantics is a good starting point to study further
+optimizations used by standard Prolog abstract machines~\cite{warren1983abstract,10.7551/mitpress/7160.001.0001},
+but it makes reasoning about the scope of \emph{cut} difficult. To address
+that limitation we introduce a tree-based semantics in which the branches
+pruned by \emph{cut} are explicit and we prove the two semantics equivalent.
+Using the tree-based semantics we then show that if every rule of a
+predicate passes the determinacy analysis, the predicate does not leave any
+choice points.
 
 \section{Common code: the language}
-\begin{minted}{coq}
+\begin{coqcode}
 Inductive Tm := 
   | Tm_Kp    : Kp -> Tm
   | Tm_Kd    : Kd -> Tm
@@ -128,15 +124,15 @@ Inductive Callable :=
 Inductive RCallable := 
   | RCallable_Kp   : Kp -> RCallable
   | RCallable_Comb : RCallable -> Tm -> RCallable.
-\end{minted}
+\end{coqcode}
 
 A callable term is a term without a data constructor as functor.
 
 An rcallable is a term with rigid head.
 
-\begin{minted}{coq}
+\begin{coqcode}
 Inductive A := cut | call : Callable -> A.
-\end{minted}
+\end{coqcode}
 
 An atom is the smallest syntactic unit that can be executed in a prolog
 program \program. 
@@ -145,17 +141,17 @@ program \program.
 % In both cases it returns a list of choice points, representing suspending
 % states that can be resumed for backtracking.
 
-\begin{minted}{coq}
+\begin{coqcode}
 Record R := mkR { head : RCallable; premises : list A }.
-\end{minted}
+\end{coqcode}
 
 We exploit the typing system to ensure that the head of a "valid" rule
 is a term with rigid head.
 
-\begin{minted}{coq}
+\begin{coqcode}
 (*simpler than in the code: signatures of preds are hidden*)
 Definition program := seq R. 
-\end{minted}
+\end{coqcode}
 
 A program is made by a list of rules. Rules in \program are indexed by their
 position in the list. Given a list of rules \rules and two indexes $i$ and $j$,
@@ -172,9 +168,9 @@ heads and body are translated in the natural way.
 
 
 Sigma is a substitution mapping variables to their term instantiation.
-\begin{minted}{coq}
+\begin{coqcode}
   Definition Sigma := {fmap V -> Tm}.
-\end{minted}
+\end{coqcode}
 
 The backchaining algorithm is the function \backchain aims to filter
 only the rules in the program \program having rules unifying with the
