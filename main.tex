@@ -73,16 +73,44 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent convallis orci
 \section{Introduction}
 
 
+Elpi is a dialect of
+\(\lambda\)Prolog (see \cite{1991miller-pf,Miller_Nadathur_2012,dunchev15lpar,TASSI_2019}) used as an
+extension language for the Rocq Prover (formerly the Coq proof
+assistant) that has become an important piece of infrastructure. Several
+projects and libraries depend on Elpi~\cite{krebbers25,Trakt,Trocq,Maas2024,fissore2023,fissore2024},
+for example the Hierarchy-Builder library-structuring tool~\cite{cohen_et_al:LIPIcs.FSCD.2020.34},
+and Derive~\cite{tassi2018,tassi2019,tassi2023}, a program-and-proof synthesis framework with industrial
+applications at SkyLabs AI.
 
+In version 3 Elpi was equipped with a static analysis for
+determinacy~\cite{10.1007/978-3-032-15981-6_5} to tame backtracking.
+Rocq users are familiar with functional programming but not necessarily
+with logic programming and uncontrolled backtracking is a recurrent source
+of inefficient and hard-to-debug code. The static analysis identifies
+``functions'', i.e., predicates that commit to the first result they
+generate by leaving no \emph{choice points} (opportunities for backtracking).
 
+This paper is a first step toward the mechanization in the Rocq Prover of the
+static analysis from~\cite{10.1007/978-3-032-15981-6_5} and it focusses
+on the control operator \emph{cut}. Tis operator is both the alley to
+control backtracking and the enemy when it comes to describing the semantics of
+the language that becomes operational departing from the realm of logic.
 
-The Elpi interpreter is based on an operational semantics
-close to the one picked by Pusch in \cite{10.1007/BFb0105415}, in turn
-closely related to the one given by Debray and Mishra in
-\cite[Section 4.3]{10.1016/0743-1066(88)90007-6}. Push mechanized
-the semantics in Isabelle/HOL together with some optimizations that
-are present in the Warren Abstract Machine~\cite{warren1983abstract,10.7551/mitpress/7160.001.0001}.
-
+This paper describes the mechanization of two operational semantics for Prolog.
+One operatioanl semantic
+is based on a stack of choice points and reflects closely the implementation of
+Elpi. This semantics is close to the one mechanized by Pusch in
+Isabelle/HOL~\cite{10.1007/BFb0105415}, in turn closely related to the one
+given by Debray and Mishra in \cite[Section 4.3]{10.1016/0743-1066(88)90007-6}.
+This semantics is well suited to describe some optimizations that
+are present in the standard Prolog abstract
+machine~\cite{warren1983abstract,10.7551/mitpress/7160.001.0001}, but
+is not amenable to reason about the scope of cut, that is paramount in
+the study of determinacy. Hence we introduce a tree-based
+semantics where the branches cut by the cut operator are explicit and we
+prove it is equivalent to the stack-based one. Finally, using the tree-based
+semantics we establish that predicates where each rule passes the static
+analysis for determinacy do not leave choice points.
 
 \section{Common code: the language}
 \begin{minted}{coq}
