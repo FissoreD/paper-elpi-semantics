@@ -10,17 +10,19 @@
   node[andNode] at (ROOT.center) {\phantom{A}}
     child {
       \nOr{AAA}
-    child {  
-      \nAnd{L} 
-      child { \nOr{LL}
-        child { \nOK{LLL} }
-        child { 
-          \nAny{LLR}
+      child {  
+        \nAnd{L} 
+        child { \nOr{LL}
+          child { \nOK{LLL} }
+          child { \nAny{LLR} }
+          child { \nAny{LLR1} }
         }
+        child { \nOK{LOK} }
+        child { \nCut{LR} }
       }
-      child { \nCut{LR} }
+      child { \nAny{R1} }
+      child { \nAny{R2} }
     }
-    child { \nAny{R} }}
     child { \nAny{M} }
     ;
 
@@ -32,8 +34,10 @@
   % \nOK{LLL};
     % \draw[very thick,-{latex[length=2.5mm,width=2.5mm]},blue] (A)..controls +(south east:15cm) and +(south west:11cm)..(B);
     % \draw[draw, thick, red, ->] (LR) to[bend left] (LLR);
-    \path [thick, red, ->] (LR) edge[bend left=30] node[above]{\cutl} (LL);
-    \path [thick, red, ->] (LR) edge[bend left=30] node[right]{\cutr} (R);
+    \path [thick, red, ->] (LR) edge[bend left=30] node[above]{\cutl} (LOK);
+    \path [thick, red, ->] (LR) edge[bend left=30] node[below]{\cutl} (LL);
+    \path [thick, red, ->] (LR) edge[bend right=30] node[right]{\cutr} (R1);
+    \path [thick, red, ->] (LR) edge[bend right=30] node[right]{\cutr} (R2);
 
 \end{tikzpicture}
 
