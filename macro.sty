@@ -2,19 +2,27 @@
 \newcommand{\backchain}{\ensuremath{\mathcal{B}}\xspace}
 \newcommand{\rules}{\ensuremath{\mathcal{R}}\xspace}
 
-\newcommand{\ttl}{\texttt{t2l}\xspace}
-\newcommand{\run}{\texttt{run}\xspace}
-\newcommand{\nur}{\texttt{nur}\xspace}
-\newcommand{\vt}{\texttt{vt}\xspace} % valid_tree
-\newcommand{\nilC}{\ensuremath{\varnothing}\xspace}
-\newcommand{\step}{\texttt{step}\xspace}
-\newcommand{\na}{\texttt{next\_alt}\xspace}
+\newcommand{\codenames}[1]{\texttt{#1}\xspace}
+
+\newcommand{\ttl}{\codenames{t2l}}
+\newcommand{\run}{\codenames{run}}
+\newcommand{\nur}{\codenames{nur}}
+\newcommand{\vt}{\codenames{vt}} % valid_tree
+\newcommand{\step}{\codenames{step}}
+\newcommand{\na}{\codenames{next\_alt}}
+\newcommand{\tree}{\codenames{tree}}
+\newcommand{\sigmaF}{\codenames{sigma}}
+\newcommand{\programF}{\codenames{program}}
+\newcommand{\steptag}{\codenames{step\_tag}}
 
 \newcommand{\cutr}{\ensuremath{!_r}}
 \newcommand{\cutl}{\ensuremath{!_l}}
+\newcommand{\nilC}{\ensuremath{\varnothing}\xspace}
 
 \newcommand{\elpiIn}[1]{\mintinline[fontsize=\small,escapeinside=~~]{elpi}{#1}}
 \newcommand{\coqIn}[1]{\mintinline[fontsize=\small,escapeinside=~~]{coq}{#1}}
+\newcommand{\eI}[1]{\text{\elpiIn{#1}}}
+\newcommand{\cI}[1]{\text{\coqIn{#1}}}
 
 
 \newenvironment{coqcode}{%

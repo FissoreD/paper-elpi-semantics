@@ -181,39 +181,72 @@ the head of $r$.
 
 $$\backchain\ :\ (\program, \sigma, q) \to \texttt{seq}(\sigma * R)$$
 
+\subsection{The cut operator}
+
+The semantics of the cut operator we have chosen in the Elpi language is the
+hard cut operator used in standard SWI-Prolog. It has two main roles: it
+eliminates alternatives that are chonologically created both at the same moment
+as, and after, the creation of the cut operator in the execution state. 
+
+As a small example of this high-level definition. Let's take the program in
+\cref{fig:prog} and the query $q =$~\elpiIn{g 2 Z}. All the $3$ rules for
+\eI{g} can be used on the $q$. They are executed in order of the definition
+in the progrma, i.e., r1 is tried first then r2 and finally r3.
+
+The first rule has no premises returns the assignement \eI{Z = 2}.
+We however are not finished, there are still two non-explored alternatives
+consiting in the premises of $r2$ and $r3$.
+
+The premises of $r2$ are ``\eI{r 2 Z, !}''. In this sequent the role of the cut
+become evident: if it is executed, i.e. \eI{r 2 Z} succeeds, then the premises
+of $r3$ will be cut away, since they have been created at the same time of the
+creation of the cut in the alternatives list; moreover, if the call \eI{r 2 Z}
+leaves alternatives, only the first is committed and the other are discarded,
+since these alternatives would have a depper depth then the cut itself.
+
+Concretely speaking, \eI{r 2 Z} will provide two alternatives, assigning
+\eI{Z} respectively to \eI{4} and \eI{8}. The second solution is discaded by the
+cut.
+
 
 \section{Semantics intro}
 
 We propose two operational semantics for a logic program with cut. The two
 semantics are based on different syntaxes, the first syntax (called tree)
-exploits a tree-like structure and is ideal to have a graphical view of its
-evaloution while the progrma is being intepreted. The second syntax is the
-elpi's syntax, we call it therefore elpi. We aim to prove the equivalence of the
-two semantics together with some interesting lemmas of the cut behavior.
+exploits a tree-like structure and is ideal both to have a graphical view of its
+evolution while the state is being intepreted and to prove lemmas over it. The
+second syntax, called elpi, is the elpi's syntax and has the advantage of
+reducing the computational cost of cutting and backtracking alternatives by
+using shared pointers. We aim to prove the equivalence of the two semantics
+together with some interesting lemmas of the cut behavior.
 
 
 \subsection{Tree semantics}
 \input{tex_code/tree_def.tex}
 
-In the tree we distinguish 6 main cases: Bot and OK are respectively the
-standard fail $\bot$ and true $\top$ predicates of prolog. Dead is a special
-symbol representing a ghost state, that is, a state useful to keep the
-structure of a tree from an execution to another but that is completely ignored
-by the intepretation of the program.
+In the tree we distinguish 6 main cases: Bot, Ok and Dead are special
+meta-symbol representing respectively a failed, successful and dead state. While
+the first two symbols are of immiediate understanding, we use Dead to represent
+ghost state, that is, it allows to keep the structure of a tree from an
+execution to another. A Dead tree is completely ignored by the intepretation of
+the program. 
 
-TA, standing for tree-atom, is a terminal of the tree containg an atom.
+TA (acronym for tree-atom) is the constructor of atoms in the tree is a terminal
+of the tree containg an atom.
 
 The two recursive cases of a tree are the Or and the And non-terinals. The Or
 non-terminals $A \lor B_\sigma$ stands for a disjunction between two trees A and
 B. The second tree branch is decorated with a suspended substituion $\sigma$ so
 that, when we backtrack to $B$, we use $\sigma$ as initial substitution for $B$.
 
-The And non-terminal $A \land_{B_0} B$ represents of a conjunction of two trees
-$A$ and $B$. We call $B_0$ the reset-point for $B$ and is used to resume the $B$
+The And non-terminal $A \land_{B_0} B$ represents a conjunction of two trees $A$
+and $B$. We call $B_0$ the reset-point for $B$ and is used to resume the $B$
 state in its intial form if some backtracking operation is performed on $A$. A
 graphical tree representation is shown in \cref{tree-ex1}. For the sake of
 making our graph more compact, the And and Or non-terminals are n-ary (rather
-than binary), with right-binding priority. We are representing the 
+than binary), with right-binding priority. The Bot and Dead terminals are the
+neutral element in the Or-list and OK is the neutral element of the And-list.
+
 
 % \begin{figure}
 %   \input{tex_code/step_tag.tex}
@@ -227,21 +260,44 @@ than binary), with right-binding priority. We are representing the
 % \end{figure}
 
 The interpretation of a tree is performed by two main routines: \step
-and \na that traverse the tree depth-first, left-to-right. 
+and \na that traverse the tree depth-first, left-to-right. Then, then \run
+inductive makes the transitive closure of step \step and \na: it iterates the
+calls to its auxiliary functions. In \cref{eq:run-types} we give the type
+contrats of these symbols
 
-We get the first to-be-explored terminal in the tree by getting
-the end of a path. This path is created from a tree traversal
-starting from the roots and immidiatly ends if the tree
-is not niether a disjunction, nor a conjunction: the to-be-explored
-terminal is the tree itself. 
+\begin{align}\label{eq:run-types}
+  &\text{\coqIn{Inductive step_tag := Expanded | CutBrothers| Failure | Success.}}\\
+  &\text{\coqIn{Definition step : program -> sigma -> tree -> (step_tag * tree) := ...}}\\
+  &\text{\coqIn{Definition next_alt : bool -> tree -> option tree := ...}}\\
+  &\text{\coqIn{Inductive run (p : program): Sigma -> tree -> Sigma -> tree -> bool -> Type := ...}}
+\end{align}
+
+\begin{figure}
+  \begin{subfigure}{0.45\textwidth}
+  \input{tex_code/is_dead.tex}
+  \label{fig:dead}
+  \end{subfigure}
+  \begin{subfigure}{0.45\textwidth}
+  \input{tex_code/path_end.tex}
+  \label{fig:pathend}
+  \end{subfigure}
+  \caption{isdead and pathend}
+\end{figure}
+
+A particular tree we want to identify is a is\_dead tree. This tree has the
+property to never produce a solution and deals with terminal ending in Dead
+states. Its definition is in \cref{fig:dead}.
+In a non-dead tree, we get the first-to-beexplored node via path-end
+the path\_end routine shown in \cref{fig:pathend}.
+The path-end is either the tree itself if the tree is a terminal.
 Otherwise, if the tree is a disjunction, the path continues on
-the left- or the right-subtree depending of if the path of the lhs is
-a dead node. 
-In the case of a conjunction, we look for the path of the lhs.
-If this path returns a success, we build a path in the rhs, otherwise,
-we return the lhs. In \cref{tree-ex1} the first non-explored node is g X.
-
-\begin{figure}[H]
+the left- or the right-subtree depending of if the the lhs is
+a Dead node. 
+In the case of a conjunction, it is more interesting to see what happens.
+If the path-end $p$ of the lhs is a success then we look for 
+the path-end in the rhs, otherwise we return $p$.
+In \cref{tree-ex1} the path-end g X.
+\begin{figure}
   \begin{subfigure}{0.25\textwidth}
     \begin{center}\includestandalone[width=0.8\textwidth]{./src/path}\end{center}
     \caption{Path end := g X Y}
@@ -257,13 +313,23 @@ we return the lhs. In \cref{tree-ex1} the first non-explored node is g X.
     \caption{Scope of the cut}
     \label{cut-scope} 
   \end{subfigure}
-\caption{Tree with first non explored node g X} 
+\caption{Some tree representations} 
 \end{figure}
 
-The \step procedure takes a tree and explores it using the path strategy. A
-success (i.e. a tree with path ending with OK) and failed tree (i.e. a tree with
-path ending with KO or Dead) is returned as it. The two interesting cases are
-when the path ends with a call or a cut. 
+
+Below we define two special kind of trees depending on their path-end
+\input{tex_code/succ_path.tex}
+\input{tex_code/failed_path.tex}
+
+The \step procedure takes a program a substitution and a tree and returns a
+\steptag together with the oupdated tree. The \steptag is a tag telling what
+kind of internal tree step has been performed. It is either a call expansion
+(\cI{Expanded}) or the evaluation of an internal cut (i.e. a cut appering below
+a Or), a supeficial cut evaluation (\cI{CutBrothers}), i.e. a cut having only
+And-nodes as fathers, \cI{Failure} or \cI{Success} if the tree is either
+successT or failedT.
+Therefore, the two interesting cases of a tree step are the step of a call
+and the step of a cut.
 
 \textit{Call step} In the former case the call node is
 replace with a new subtree made by the rules returned by the \backchain
@@ -276,11 +342,11 @@ right-skewed tree of And nodes. The And nodes are again a right-seked tree
 containing then atoms (either cut or call) \marginpar{dire dei reset point}
 taken from the list $l$.
 
-A step in the tree in \cref{tree-ex1} make a backchain operation over the query
-g X Y and, in the program defined in \cref{fig:prog}, the new tree would be the one in
+A step in the tree of \cref{tree-ex1} makes a backchain operation over the query
+\eI{g X Y} and, in the program defined in \cref{fig:prog}, the new tree would be the one in
 \cref{tree-ex1-exp}. We have put a red border aroung the new generated subtree.
 It is a disjunction of four subtrees:
-the first node is the Dead node (by default), the second is OK, since r1
+the first node is the KO node (by default), the second is OK, since r1
 has no premises, the third and the fourth contains the premises of respectively
 r2 and r3. \marginpar{dire che le sostituzioni del backchain sono importanti e dove sono mess}
 
@@ -326,6 +392,8 @@ soft-killed and $!_r$ indicated which is sub-trees are to be hard-killed.
 % \caption{Valid tree}
 % \end{figure}
 \subsection{Elpi semantics}
+
+TODO: dire che la semantica ad albero è puù faicle per le prove
 
 The Elpi interpreter is based on an operational semantics
 close to the one picked by Pusch in \cite{10.1007/BFb0105415}, in turn

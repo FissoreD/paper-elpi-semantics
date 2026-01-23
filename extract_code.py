@@ -53,14 +53,14 @@ def get_snippets(lines):
     name = ""
     curgrp = []
     for l in lines:
-        m = re.match(rf"^{re.escape(OPEN_COMMENT)}ENDSNIP",l)
+        m = re.match(rf"^ *{re.escape(OPEN_COMMENT)}ENDSNIP",l)
         if not (m is None):
             snips[name] = curgrp
             ingrp = False
             curgrp = []
         if ingrp is True:
             curgrp = curgrp + [l]
-        m = re.match(rf"^{re.escape(OPEN_COMMENT)}SNIP: *(.*) *{re.escape(END_COMMENT)}$",l)
+        m = re.match(rf"^ *{re.escape(OPEN_COMMENT)}SNIP: *(.*) *{re.escape(END_COMMENT)}$",l)
         if not (m is None):
             ingrp = True
             name = m.group(1)
