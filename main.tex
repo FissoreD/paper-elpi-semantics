@@ -224,28 +224,29 @@ together with some interesting lemmas of the cut behavior.
 \subsection{Tree semantics}
 \input{tex_code/tree_def.tex}
 
-In the tree we distinguish 6 main cases: Bot, Ok and Dead are special
-meta-symbol representing respectively a failed, successful and dead state. While
-the first two symbols are of immiediate understanding, we use Dead to represent
-ghost state, that is, it allows to keep the structure of a tree from an
-execution to another. A Dead tree is completely ignored by the intepretation of
-the program. 
+In the tree we distinguish 6 main cases: \koC, \okC, and \deadC are special
+meta-symbols representing, respectively, a failed, a successful, and a dead
+terminal. These symbols are considered meta because they are internal
+intermediate symbols used to give structure to the tree. While the first two
+symbols are of immiediate understanding, we use \deadC to represent ghost state,
+that is, the \deadC symbol is always ignored by the tree interpreter.
 
-TA (acronym for tree-atom) is the constructor of atoms in the tree is a terminal
-of the tree containg an atom.
+\taC (acronym for tree-atom) is the constructor of atoms in the tree.
 
-The two recursive cases of a tree are the Or and the And non-terinals. The Or
-non-terminals $A \lor B_\sigma$ stands for a disjunction between two trees A and
-B. The second tree branch is decorated with a suspended substituion $\sigma$ so
-that, when we backtrack to $B$, we use $\sigma$ as initial substitution for $B$.
+The two recursive cases of a tree are the \orC and \andC non-terminals. The \orC
+non-terminal \(A \lor B_\sigma\) denotes a disjunction between two trees \(A\) and
+\(B\). The second branch is annotated with a suspended substitution \(\sigma\) so
+that, upon backtracking to \(B\), \(\sigma\) is used as the initial substitution
+for the execution of \(B\).
 
-The And non-terminal $A \land_{B_0} B$ represents a conjunction of two trees $A$
-and $B$. We call $B_0$ the reset-point for $B$ and is used to resume the $B$
-state in its intial form if some backtracking operation is performed on $A$. A
-graphical tree representation is shown in \cref{tree-ex1}. For the sake of
-making our graph more compact, the And and Or non-terminals are n-ary (rather
-than binary), with right-binding priority. The Bot and Dead terminals are the
-neutral element in the Or-list and OK is the neutral element of the And-list.
+The \andC non-terminal \(A \land_{B_0} B\) represents a conjunction of two trees \(A\)
+and \(B\). We call \(B_0\) the reset point for \(B\); it is used to restore the state
+of \(B\) to its initial form if a backtracking operation occurs on \(A\).
+
+A graphical representation of the tree is shown in \cref{tree-ex1}. To make the
+graph more compact, the \andC and \orC non-terminals are n-ary rather than binary,
+with right-binding priority. The \koC and \deadC terminals act as the neutral elements
+in the \orC list, while \okC is the neutral element of the \andC list.
 
 
 % \begin{figure}
@@ -259,16 +260,19 @@ neutral element in the Or-list and OK is the neutral element of the And-list.
 % \caption{backtracking operation}
 % \end{figure}
 
-The interpretation of a tree is performed by two main routines: \step
-and \na that traverse the tree depth-first, left-to-right. Then, then \run
-inductive makes the transitive closure of step \step and \na: it iterates the
-calls to its auxiliary functions. In \cref{eq:run-types} we give the type
-contrats of these symbols
+The interpretation of a tree is performed by two main routines: \step and \na
+that traverse the tree depth-first, left-to-right. Then, then \run inductive
+makes the transitive closure of step \step and \na: it iterates the calls to its
+auxiliary functions. In \cref{eq:stepT,eq:naT,eq:runT} we give the types
+contrats of these symbols.
 
-\begin{align}\label{eq:run-types}
+\begin{align}\label{eq:steptag}
   &\text{\coqIn{Inductive step_tag := Expanded | CutBrothers| Failure | Success.}}\\
+  \label{eq:stepT}
   &\text{\coqIn{Definition step : program -> sigma -> tree -> (step_tag * tree) := ...}}\\
+  \label{eq:naT}
   &\text{\coqIn{Definition next_alt : bool -> tree -> option tree := ...}}\\
+  \label{eq:runT}
   &\text{\coqIn{Inductive run (p : program): Sigma -> tree -> Sigma -> tree -> bool -> Type := ...}}
 \end{align}
 

@@ -1,9 +1,42 @@
-\newcommand{\program}{\ensuremath{\mathcal{P}}\xspace}
-\newcommand{\backchain}{\ensuremath{\mathcal{B}}\xspace}
-\newcommand{\rules}{\ensuremath{\mathcal{R}}\xspace}
 
 \newcommand{\codenames}[1]{\texttt{#1}\xspace}
+%  _________     _______  ______  _____ 
+% |__   __\ \   / /  __ \|  ____|/ ____|
+%    | |   \ \_/ /| |__) | |__  | (___  
+%    | |    \   / |  ___/|  __|  \___ \ 
+%    | |     | |  | |    | |____ ____) |
+%    |_|     |_|  |_|    |______|_____/ 
+\newcommand{\program}{\ensuremath{\mathcal{P}}\xspace}
+\newcommand{\rules}{\ensuremath{\mathcal{R}}\xspace}
 
+%  _______ _____  ______ ______    _____ ____  _   _  _____ _______ 
+% |__   __|  __ \|  ____|  ____|  / ____/ __ \| \ | |/ ____|__   __|
+%    | |  | |__) | |__  | |__    | |   | |  | |  \| | (___    | |   
+%    | |  |  _  /|  __| |  __|   | |   | |  | | . ` |\___ \   | |   
+%    | |  | | \ \| |____| |____  | |___| |__| | |\  |____) |  | |_  
+%    |_|  |_|  \_\______|______|  \_____\____/|_| \_|_____/   |_(_) 
+
+\newcommand{\orC}{\codenames{Or}}   % or node
+\newcommand{\andC}{\codenames{And}} % and node
+\newcommand{\okC}{\codenames{OK}}
+\newcommand{\cutC}{\codenames{Cut}}
+\newcommand{\koC}{\codenames{KO}}
+\newcommand{\deadC}{\codenames{Dead}}
+\newcommand{\taC}{\codenames{TA}}
+
+%  ______ _    _ _   _  _____ _______ _____ ____  _   _  _____ 
+% |  ____| |  | | \ | |/ ____|__   __|_   _/ __ \| \ | |/ ____|
+% | |__  | |  | |  \| | |       | |    | || |  | |  \| | (___  
+% |  __| | |  | | . ` | |       | |    | || |  | | . ` |\___ \ 
+% | |    | |__| | |\  | |____   | |   _| || |__| | |\  |____) |
+% |_|     \____/|_| \_|\_____|  |_|  |_____\____/|_| \_|_____/ 
+
+
+
+\newcommand{\backchain}{\ensuremath{\mathcal{B}}\xspace}
+\newcommand{\cutr}{\ensuremath{!_r}}
+\newcommand{\cutl}{\ensuremath{!_l}}
+\newcommand{\nilC}{\ensuremath{\varnothing}\xspace}
 \newcommand{\ttl}{\codenames{t2l}}
 \newcommand{\run}{\codenames{run}}
 \newcommand{\nur}{\codenames{nur}}
@@ -15,15 +48,19 @@
 \newcommand{\programF}{\codenames{program}}
 \newcommand{\steptag}{\codenames{step\_tag}}
 
-\newcommand{\cutr}{\ensuremath{!_r}}
-\newcommand{\cutl}{\ensuremath{!_l}}
-\newcommand{\nilC}{\ensuremath{\varnothing}\xspace}
+
+%  __  __ _____ _   _ _______ ______ _____  
+% |  \/  |_   _| \ | |__   __|  ____|  __ \ 
+% | \  / | | | |  \| |  | |  | |__  | |  | |
+% | |\/| | | | | . ` |  | |  |  __| | |  | |
+% | |  | |_| |_| |\  |  | |  | |____| |__| |
+% |_|  |_|_____|_| \_|  |_|  |______|_____/ 
+
 
 \newcommand{\elpiIn}[1]{\mintinline[fontsize=\small,escapeinside=~~]{elpi}{#1}}
 \newcommand{\coqIn}[1]{\mintinline[fontsize=\small,escapeinside=~~]{coq}{#1}}
 \newcommand{\eI}[1]{\text{\elpiIn{#1}}}
 \newcommand{\cI}[1]{\text{\coqIn{#1}}}
-
 
 \newenvironment{coqcode}{%
   \vspace{0.2em}%
