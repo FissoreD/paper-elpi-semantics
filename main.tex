@@ -159,7 +159,17 @@ Definition program := seq R.
 
 A program is made by a list of rules. Rules in \program are indexed by their
 position in the list. Given a list of rules \rules and two indexes $i$ and $j$,
-s.t. $i\neq j$ then, $\rules_i$ has a higher priority then $\rules_j$.
+s.t. $i\neq j$ then, $\rules_i$\ has a higher priority then $\rules_j$.
+
+\begin{figure}[!h]
+\inputminted[fontsize=\small,autogobble,escapeinside=~~,mathescape=true,frame=leftline,framerule=0pt,framesep=1em]{elpi}{./prog.elpi}
+\caption{Small program example}
+\label{fig:prog}
+\end{figure}
+
+The elpi program above would be translated as a list of $6$ elements where the
+heads and body are translated in the natural way.
+
 
 Sigma is a substitution mapping variables to their term instantiation.
 \begin{minted}{coq}
@@ -243,11 +253,11 @@ we return the lhs. In \cref{tree-ex1} the first non-explored node is g X.
   \end{subfigure}
   \begin{subfigure}{0.4\textwidth}
     \includestandalone[width=\textwidth]{./src/path_exp}
-    \caption{Step on g X Y}
+    \caption{Step on g X Y using \cref{fig:prog}}
     \label{tree-ex1-exp} 
   \end{subfigure}
   \begin{subfigure}{0.3\textwidth}
-    \includestandalone[width=.7\textwidth]{./src/tree_cut}
+    \includestandalone[width=1\textwidth]{./src/tree_cut}
     \caption{Scope of the cut}
     \label{cut-scope} 
   \end{subfigure}
@@ -270,14 +280,8 @@ right-skewed tree of And nodes. The And nodes are again a right-seked tree
 containing then atoms (either cut or call) \marginpar{dire dei reset point}
 taken from the list $l$.
 
-\begin{elpicode}
-g X X.                  % r1
-g X Z :- r X Z.         % r2
-g X Z :- f X Y, h Y Z.  % r3
-\end{elpicode}
-
 A step in the tree in \cref{tree-ex1} make a backchain operation over the query
-g X Y and, in the program above, the new tree would be the one in
+g X Y and, in the program defined in \cref{fig:prog}, the new tree would be the one in
 \cref{tree-ex1-exp}. We have put a red border aroung the new generated subtree.
 It is a disjunction of four subtrees:
 the first node is the Dead node (by default), the second is OK, since r1
@@ -317,7 +321,7 @@ example we have tagged in red the arrow $!_l$ indicating which sub-trees is
 soft-killed and $!_r$ indicated which is sub-trees are to be hard-killed.
 
 
-The soft-kill opeartion replace with the KO node all the 
+\subsubsection{Execution example}
 
 \subsubsection{Valid tree}
 % \begin{figure}  
