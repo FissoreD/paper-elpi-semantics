@@ -27,6 +27,19 @@
 }
 \crefname{defline}{Definition}{Definitions} % singular / plural
 
+\newcounter{deflemma}
+\newcommand{\deflemma}[2][]{
+  \refstepcounter{deflemma}%
+  \noindent
+  \begin{minipage}{0.9\linewidth}\input{#2}\end{minipage}
+  \hfill(\thedeflemma)%
+  \ifx&#1&\else\label{#1}\fi
+  \par
+
+}
+\crefname{deflemma}{Lemma}{Lemmas} % singular / plural
+\newcommand{\mvspace}{\vspace{5pt}}
+
 %  _________     _______  ______  _____ 
 % |__   __\ \   / /  __ \|  ____|/ ____|
 %    | |   \ \_/ /| |__) | |__  | (___  

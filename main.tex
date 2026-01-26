@@ -269,13 +269,13 @@ makes the transitive closure of step \step and \na: it iterates the calls to its
 auxiliary functions. In \cref{eq:stepT,eq:naT,eq:runT} we give the types
 contrats of these symbols where \cI{fv} is a set of variable names.
 
-\vspace{5pt}
+\mvspace{}
 \codeline[eq:steptag]{tex_code/step_tag.tex}
 \codeline[eq:stepT]{tex_code/step_sig.tex}
 \codeline[eq:naT]{tex_code/next_alt.tex}
 \codeline[eq:runT]{tex_code/run_sig.tex}
 
-\vspace{5pt}
+\mvspace{}
 A particular tree we want to identify is a \isdead tree (defined in \cref{fig:dead}). This tree has the
 property to never produce a solution: it is eiher the \deadC tree
 or both branches of \orC are dead, or the lhs of \andC is dead. In the 
@@ -333,36 +333,38 @@ Below we define two special kind of trees depending on their pathend.
 \defline[def:success]{tex_code/succ_path.tex}
 \defline[def:failed]{tex_code/failed_path.tex}
 
-The \step procedure takes a program a substitution and a tree and returns a
-\steptag together with a new tree. The \steptag is a tag telling what
-kind of internal tree step has been performed. \cI{CutBrothers} stands
-for the interpretation of a superficial cut, i.e. a cut having only
-\andC-nodes as fathers; \cI{Expanded} stands for interpretation of non-superficial
-or predicate calls; \cI{Failure} and \cI{Success} are returned for respectively
-\success and \failed trees. 
+The \step procedure takes as input a program, a set of free variables (fv), a
+substitution, and a tree, and returns an updated set of free variables, a
+\steptag, and an updated tree.  
 
-\begin{lemma}[success\_step]
-  $\forall p\ s\ T, \success\ T \to \step\ p\ s\ T = (\cI{Success}, T)$
-\end{lemma}
+Free variables are those variables that appear in a tree; they are used in the
+backchaining operation to refresh the variables in the program.  
 
-\begin{lemma}[failed\_step]
-  $\forall p\ s\ T, \failed\ T \to \step\ p\ s\ T = (\cI{Failure}, T)$
-\end{lemma}
+The \steptag indicates the type of internal tree step that has been performed.
+\cI{CutBrothers} denotes the interpretation of a superficial cut, i.e., a cut
+whose parent nodes are all \andC-nodes. \cI{Expanded} denotes the interpretation
+of non-superficial cuts or predicate calls. \cI{Failure} and \cI{Success} are
+returned for, respectively, \failed and \success trees.
 
 
 The step procedure is intended to interpretate atoms,
-that is, it returnes the identity for tree 
-Therefore, the two interesting cases of a tree step are the step of a call
-and the step of a cut.
+that is, it returnes the identity for \success and \failed tree.
 
-\textit{Call step} In the former case the call node is
-replace with a new subtree made by the rules returned by the \backchain
-function. If \backchain returns a list $l$,
-if $l$ is empty then KO tree is returned, otherwise
-the call is replaced by right-skewed tree made of $n$ inner Or nodes,
+\mvspace{}
+\deflemma[lemma:success]{tex_code/success_step.tex}
+\deflemma[lemma:success]{tex_code/failed_step.tex}
+\mvspace{}
+
+Therefore, the two interesting cases of a tree the interpretation of 
+trees with path-end equal to a call or a cut atom.
+
+\textit{Call step} The interpretation of a call $c$ is performed by replacing
+the call wrt the result of the \backchain $c$, then
+if $l$ is empty then \koC tree is returned, otherwise
+the call is replaced by right-skewed tree made of $n$ inner \orC nodes,
 where $n$ is the length of $l$.
-The root Or-node has KO as left child. The lhs of the other nodes is a
-right-skewed tree of And nodes. The And nodes are again a right-seked tree
+The root has \koC as left child. The lhs of the other nodes is a
+right-skewed tree of \andC nodes. The \andC nodes are again a right-seked tree
 containing then atoms (either cut or call) \marginpar{dire dei reset point}
 taken from the list $l$.
 
@@ -370,15 +372,15 @@ A step in the tree of \cref{tree-ex1} makes a backchain operation over the query
 \eI{g X Y} and, in the program defined in \cref{fig:prog}, the new tree would be the one in
 \cref{tree-ex1-exp}. We have put a red border aroung the new generated subtree.
 It is a disjunction of four subtrees:
-the first node is the KO node (by default), the second is OK, since r1
+the first node is the \koC node (by default), the second is \okC, since r1
 has no premises, the third and the fourth contains the premises of respectively
 r2 and r3. \marginpar{dire che le sostituzioni del backchain sono importanti e dove sono mess}
 
 \textit{Cut step} The latter case is delicate since interpreting a cut in a tree
-has three main impacts: at first the cut node is replaced by a OK node, but then
-we need to cut-away the subtrees that are in the scope of the cut: in particular
-we need to soft-kill the left-siblings of the Cut and hard-kill the right-uncles
-of the the Cut.
+has three main impacts: at first it is replaced by the \okC node, then
+some special subtrees, in the scope of the \cutC, are cut away: in particular
+we need to soft-kill the left-siblings of the \cutC and hard-kill the right-uncles
+of the the \cutC.
 
 \begin{definition}[Left-siblings (resp. right-sibling)]
   Given a node $A$, the left-siblings (resp. right-sibling) of $A$

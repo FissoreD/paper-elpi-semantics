@@ -10,3 +10,4 @@
 *.synctex.gz
 _minted-main
 tex_code
+tmp
