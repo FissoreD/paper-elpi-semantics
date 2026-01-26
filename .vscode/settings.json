@@ -42,7 +42,7 @@
     },
     {
       "name": "base",
-      "tools": [ "pdflatex" ]
+      "tools": [ "pdflatex", "pdflatex" ]
     },
   ]
 }

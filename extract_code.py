@@ -18,6 +18,9 @@ def get_file_cnt(lines):
 def clean_line(l):
     # COMMENT
     l = re.sub(fr"^ *{re.escape(OPEN_COMMENT)}.*\n","",l)
+    
+    l = l.replace("successT", "success")
+    l = l.replace("failedT", "failed")
     return l
 
 def print_tex(lines, fout, raw = False):
@@ -30,16 +33,6 @@ def print_tex(lines, fout, raw = False):
             f.write(f"\\begin{{{MINT_TAG}}}\n")
         for l in lines:
             l = clean_line(l)
-            l.replace (" -> ", " → ")
-            l = re.sub(f"^ *% +.*\n","",l)   
-            l = re.sub(f"%~(.*)",r"~\g<1>",l)   
-            l = re.sub(f"^ *%SNIP.*\n","",l)   
-            l = re.sub(f"^ *%ENDSNIP.*\n","",l)   
-            l = re.sub(f"^ *%%%.*\n","",l)   
-            l = re.sub(f"==l",r"~$\\Ue$~",l) 
-            l = re.sub(f"===o",r"~$\\Uo$~",l)
-            l = re.sub(f"==o",r"~$\\Eo$~",l)
-            l = re.sub(f".*% *HIDE.*\n","",l)
             f.write(l)
         if not raw:
             f.write(f"\\end{{{MINT_TAG}}}\n")

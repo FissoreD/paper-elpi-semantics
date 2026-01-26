@@ -241,7 +241,10 @@ for the execution of \(B\).
 
 The \andC non-terminal \(A \land_{B_0} B\) represents a conjunction of two trees \(A\)
 and \(B\). We call \(B_0\) the reset point for \(B\); it is used to restore the state
-of \(B\) to its initial form if a backtracking operation occurs on \(A\).
+of \(B\) to its initial form if a backtracking operation occurs on \(A\). Intuitively
+in prolog-like syntax, in a tree \(A \land_{B_0} B\), if \ttl is the function
+flattening the tree in a list of sequents disjnction and $\ttl (A) = A_1,\dots, A_n$, 
+then we would have $(A_1, \ttl\ B); (A_2, B0); \dots; (A_n, B0)$.
 
 A graphical representation of the tree is shown in \cref{tree-ex1}. To make the
 graph more compact, the \andC and \orC non-terminals are n-ary rather than binary,
@@ -264,17 +267,20 @@ The interpretation of a tree is performed by two main routines: \step and \na
 that traverse the tree depth-first, left-to-right. Then, then \run inductive
 makes the transitive closure of step \step and \na: it iterates the calls to its
 auxiliary functions. In \cref{eq:stepT,eq:naT,eq:runT} we give the types
-contrats of these symbols.
+contrats of these symbols where \cI{fv} is a set of variable names.
 
-\begin{align}\label{eq:steptag}
-  &\text{\coqIn{Inductive step_tag := Expanded | CutBrothers| Failure | Success.}}\\
-  \label{eq:stepT}
-  &\text{\coqIn{Definition step : program -> sigma -> tree -> (step_tag * tree) := ...}}\\
-  \label{eq:naT}
-  &\text{\coqIn{Definition next_alt : bool -> tree -> option tree := ...}}\\
-  \label{eq:runT}
-  &\text{\coqIn{Inductive run (p : program): Sigma -> tree -> Sigma -> tree -> bool -> Type := ...}}
-\end{align}
+\vspace{5pt}
+\codeline[eq:steptag]{tex_code/step_tag.tex}
+\codeline[eq:stepT]{tex_code/step_sig.tex}
+\codeline[eq:naT]{tex_code/next_alt.tex}
+\codeline[eq:runT]{tex_code/run_sig.tex}
+
+\vspace{5pt}
+A particular tree we want to identify is a \isdead tree (defined in \cref{fig:dead}). This tree has the
+property to never produce a solution: it is eiher the \deadC tree
+or both branches of \orC are dead, or the lhs of \andC is dead. In the 
+latter case, we note that $B$ can be non-dead, but this is not a problem
+since the interpreter can run $B$ only if $A$ is non-dead.
 
 \begin{figure}
   \begin{subfigure}{0.45\textwidth}
@@ -289,17 +295,15 @@ contrats of these symbols.
   \end{subfigure}
 \end{figure}
 
-A particular tree we want to identify is a \isdead tree. This tree has the
-property to never produce a solution: it is eiher the \deadC tree
-or the lhs of \andC is dead or both branches of \orC are dead;
-\isdead is defined in \cref{fig:dead}.
-In a non-\isdead tree, we get the first-to-be-explored node via \pathend,
+The prolog interpreter explores the state in DFS strategy, it finds
+the ``first-to-be-explored'' (ftbe) atom of the tree and then interpretes it.
+In a non-\isdead tree, we get the ftbe node via \pathend,
 shown in \cref{fig:pathend}.
 The \pathend is either the tree itself if the tree is a leaf.
 Otherwise, if the tree is a disjunction, the path continues on
 the left- or the right-subtree depending of if the the lhs is
-a \isdead tree, here, for example, we see how the interpreted is ignoring
-a ghost state. 
+a \isdead tree. In the \orC case we are clearing ignoring the dead (ghost) state.
+
 In the case of a conjunction, it is more interesting to see what happens.
 If the \pathend $p$ of the lhs is a success then we look for 
 the \pathend in the rhs, otherwise we return $p$.
@@ -325,16 +329,29 @@ In \cref{tree-ex1} the \pathend of the tree is \eI{g X}.
 
 
 Below we define two special kind of trees depending on their pathend.
-\input{tex_code/succ_path.tex}
-\input{tex_code/failed_path.tex}
+
+\defline[def:success]{tex_code/succ_path.tex}
+\defline[def:failed]{tex_code/failed_path.tex}
 
 The \step procedure takes a program a substitution and a tree and returns a
-\steptag together with the oupdated tree. The \steptag is a tag telling what
-kind of internal tree step has been performed. It is either a call expansion
-(\cI{Expanded}) or the evaluation of an internal cut (i.e. a cut appering below
-a \orC), a supeficial cut evaluation (\cI{CutBrothers}), i.e. a cut having only
-\andC-nodes as fathers, \cI{Failure} or \cI{Success} if the tree is either
-\success or \failed. Stepping on a conjunction gives the 
+\steptag together with a new tree. The \steptag is a tag telling what
+kind of internal tree step has been performed. \cI{CutBrothers} stands
+for the interpretation of a superficial cut, i.e. a cut having only
+\andC-nodes as fathers; \cI{Expanded} stands for interpretation of non-superficial
+or predicate calls; \cI{Failure} and \cI{Success} are returned for respectively
+\success and \failed trees. 
+
+\begin{lemma}[success\_step]
+  $\forall p\ s\ T, \success\ T \to \step\ p\ s\ T = (\cI{Success}, T)$
+\end{lemma}
+
+\begin{lemma}[failed\_step]
+  $\forall p\ s\ T, \failed\ T \to \step\ p\ s\ T = (\cI{Failure}, T)$
+\end{lemma}
+
+
+The step procedure is intended to interpretate atoms,
+that is, it returnes the identity for tree 
 Therefore, the two interesting cases of a tree step are the step of a call
 and the step of a cut.
 

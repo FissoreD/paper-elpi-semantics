@@ -1,5 +1,32 @@
 
-\newcommand{\codenames}[1]{\texttt{#1}\xspace}
+\newcommand{\codenames}[1]{\ensuremath{#1}\xspace}
+
+% INLINE MINTED
+\newcounter{codeline}
+\newcommand{\codeline}[2][]{
+    \refstepcounter{codeline}%
+    \noindent
+    \begin{minipage}{0.9\linewidth}\input{#2}\end{minipage}
+    \hfill(\thecodeline)%
+    \ifx&#1&\else\label{#1}\fi
+    \par
+    
+}
+\crefname{codeline}{Type}{Types} % singular / plural
+
+
+\newcounter{defline}
+\newcommand{\defline}[2][]{
+  \refstepcounter{defline}%
+  \noindent
+  \begin{minipage}{0.9\linewidth}\input{#2}\end{minipage}
+  \hfill(\thedefline)%
+  \ifx&#1&\else\label{#1}\fi
+  \par
+
+}
+\crefname{defline}{Definition}{Definitions} % singular / plural
+
 %  _________     _______  ______  _____ 
 % |__   __\ \   / /  __ \|  ____|/ ____|
 %    | |   \ \_/ /| |__) | |__  | (___  
@@ -38,8 +65,8 @@
 \newcommand{\nilC}{\ensuremath{\varnothing}\xspace}
 
 \newcommand{\isdead}{\codenames{is\_dead}}
-\newcommand{\success}{\codenames{successT}}
-\newcommand{\failed}{\codenames{failedT}}
+\newcommand{\success}{\codenames{success}}
+\newcommand{\failed}{\codenames{failed}}
 
 \newcommand{\pathend}{\codenames{path\_end}}
 \newcommand{\ttl}{\codenames{t2l}}
@@ -68,19 +95,19 @@
 \newcommand{\cI}[1]{\text{\coqIn{#1}}}
 
 \newenvironment{coqcode}{%
-  \vspace{0.2em}%
+  % \vspace{0.2em}%
   \VerbatimEnvironment
   \begin{minted}[fontsize=\small,autogobble,escapeinside=~~,mathescape=true,frame=leftline,framerule=0pt,framesep=1em]{coq}%
 }{%
   \end{minted}%
-  \vspace{0.2em}%
+  % \vspace{0.2em}%
 }
 
 \newenvironment{elpicode}{%
-  \vspace{0.2em}%
+  % \vspace{0.2em}%
   \VerbatimEnvironment
   \begin{minted}[fontsize=\small,autogobble,escapeinside=~~,mathescape=true,frame=leftline,framerule=0pt,framesep=1em]{elpi}%
 }{%
   \end{minted}%
-  \vspace{0.2em}%
+  % \vspace{0.2e m}%
 }
