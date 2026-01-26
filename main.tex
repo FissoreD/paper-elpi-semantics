@@ -279,28 +279,31 @@ contrats of these symbols.
 \begin{figure}
   \begin{subfigure}{0.45\textwidth}
   \input{tex_code/is_dead.tex}
+  \caption{Defintion of \isdead}
   \label{fig:dead}
   \end{subfigure}
   \begin{subfigure}{0.45\textwidth}
   \input{tex_code/path_end.tex}
+  \caption{Defintion of \pathend}
   \label{fig:pathend}
   \end{subfigure}
-  \caption{isdead and pathend}
 \end{figure}
 
-A particular tree we want to identify is a is\_dead tree. This tree has the
-property to never produce a solution and deals with terminal ending in Dead
-states. Its definition is in \cref{fig:dead}.
-In a non-dead tree, we get the first-to-beexplored node via path-end
-the path\_end routine shown in \cref{fig:pathend}.
-The path-end is either the tree itself if the tree is a terminal.
+A particular tree we want to identify is a \isdead tree. This tree has the
+property to never produce a solution: it is eiher the \deadC tree
+or the lhs of \andC is dead or both branches of \orC are dead;
+\isdead is defined in \cref{fig:dead}.
+In a non-\isdead tree, we get the first-to-be-explored node via \pathend,
+shown in \cref{fig:pathend}.
+The \pathend is either the tree itself if the tree is a leaf.
 Otherwise, if the tree is a disjunction, the path continues on
 the left- or the right-subtree depending of if the the lhs is
-a Dead node. 
+a \isdead tree, here, for example, we see how the interpreted is ignoring
+a ghost state. 
 In the case of a conjunction, it is more interesting to see what happens.
-If the path-end $p$ of the lhs is a success then we look for 
-the path-end in the rhs, otherwise we return $p$.
-In \cref{tree-ex1} the path-end g X.
+If the \pathend $p$ of the lhs is a success then we look for 
+the \pathend in the rhs, otherwise we return $p$.
+In \cref{tree-ex1} the \pathend of the tree is \eI{g X}.
 \begin{figure}
   \begin{subfigure}{0.25\textwidth}
     \begin{center}\includestandalone[width=0.8\textwidth]{./src/path}\end{center}
@@ -321,7 +324,7 @@ In \cref{tree-ex1} the path-end g X.
 \end{figure}
 
 
-Below we define two special kind of trees depending on their path-end
+Below we define two special kind of trees depending on their pathend.
 \input{tex_code/succ_path.tex}
 \input{tex_code/failed_path.tex}
 
@@ -329,9 +332,9 @@ The \step procedure takes a program a substitution and a tree and returns a
 \steptag together with the oupdated tree. The \steptag is a tag telling what
 kind of internal tree step has been performed. It is either a call expansion
 (\cI{Expanded}) or the evaluation of an internal cut (i.e. a cut appering below
-a Or), a supeficial cut evaluation (\cI{CutBrothers}), i.e. a cut having only
-And-nodes as fathers, \cI{Failure} or \cI{Success} if the tree is either
-successT or failedT.
+a \orC), a supeficial cut evaluation (\cI{CutBrothers}), i.e. a cut having only
+\andC-nodes as fathers, \cI{Failure} or \cI{Success} if the tree is either
+\success or \failed. Stepping on a conjunction gives the 
 Therefore, the two interesting cases of a tree step are the step of a call
 and the step of a cut.
 
