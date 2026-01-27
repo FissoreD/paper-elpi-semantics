@@ -42,25 +42,28 @@ def mk_fname(fname):
 
 def get_snippets(lines):
     snips = {}
-    ingrp = False
-    name = ""
-    curgrp = []
+    cursnips = []
+    curnames = []
+    # invariant the length of cursnips and curnames is the same
     for l in lines:
-        m = re.match(rf"^ *{re.escape(OPEN_COMMENT)}ENDSNIP",l)
-        if not (m is None):
-            snips[name] = curgrp
-            ingrp = False
-            curgrp = []
-        if ingrp is True:
-            curgrp = curgrp + [l]
         m = re.match(rf"^ *{re.escape(OPEN_COMMENT)}SNIP: *(.*) *{re.escape(END_COMMENT)}$",l)
-        if not (m is None):
-            ingrp = True
+        if m is not None:
+            # entering a new snip
             name = m.group(1)
-            if name in snips:
-                curgrp = snips[name]
+            curnames.append(name)
+            # if we open again a closed snippet we add the content to the previous snip
+            cursnips.append(cursnips[name] if name in cursnips else [])
+        else:
+            m = re.match(rf"^ *{re.escape(OPEN_COMMENT)}ENDSNIP",l)
+            if m is None:
+                # we are not exiting, we add the new line l to all current snips
+                # note that if cursnips is the empty list nothing is done
+                for x in cursnips:
+                    x.append(l)
             else:
-                curgrp = []
+                # we are exiting a snippet, by default we close the 
+                if len(cursnips)>0:
+                    snips[curnames.pop()] = cursnips.pop()
     return snips
 
 def read_file(fname):
@@ -68,8 +71,7 @@ def read_file(fname):
         lines = f.readlines()
         # print_tex(get_file_cnt(lines), mk_fname(fname))
         snippets = get_snippets(lines)
-        for fname in snippets:
-            lines = snippets[fname]
+        for (fname,lines) in snippets.items():
             print_tex(lines, fname + ".tex")
             # print_tex(lines, fname + "_raw.tex", True)
 
