@@ -49,7 +49,7 @@ def get_snippets(lines):
         m = re.match(rf"^ *{re.escape(OPEN_COMMENT)}SNIP: *(.*) *{re.escape(END_COMMENT)}$",l)
         if m is not None:
             # entering a new snip
-            name = m.group(1)
+            name = m.group(1).strip()
             curnames.append(name)
             # if we open again a closed snippet we add the content to the previous snip
             cursnips.append(cursnips[name] if name in cursnips else [])
