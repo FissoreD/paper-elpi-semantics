@@ -135,37 +135,43 @@ a term accepting predicates only predicates as functors.
 \deftypes[type:atom]{tex_code/atom_type.tex}
 \deftypes[type:r]{tex_code/R_type.tex}
 \deftypes[type:prog]{tex_code/program_type.tex}
-\deftypes[type:signa]{tex_code/sigma_type.tex}
+\deftypes[type:sigma]{tex_code/sigma_type.tex}
+\deftypes[type:bc]{tex_code/bc_type.tex}
 \mvspace{}
 
+A rule (see~\cref{type:r}) is made a head of type term and a list of premises,
+the premises are atoms. A program (see~\cref{type:prog}) is made by a list of
+rules and a mapping from predicates to their signatures. The type sigT is the
+classic type from the simply typed lambda calculus, i.e. it is either a base
+type or an arrow. We decorate arrows to know the mode of the lhs type.
 
-We exploit the typing system to ensure that the head of a "valid" rule
-is a term with rigid head.
+A substitution (see \cref{type:sigma}) is a mapping from variables to terms.
+It is the output of a successful query and is often called the output of
+a query.
 
-A program is made by a list of rules. Rules in \program are indexed by their
-position in the list. Given a list of rules \rules and two indexes $i$ and $j$,
-s.t. $i\neq j$ then, $\rules_i$\ has a higher priority then $\rules_j$.
+\input{tex_code/unif_type.tex}
+
+The backchain function (bc, see~\cref{type:bc}) filters the rules in the program
+that can be used on a given query. It takes: a unifcator $U$ which explains how
+to unify terms up to standard unifcation (for output terms) or matching (for
+input terms); a program $P$ to explore and filter; a set $S$ of free variable
+(fvS) allowing to fresh the program $P$ by renaming the its variables; a query
+$q$; and the substitution $\sigma$ in which the query $q$ lives. The result of a
+backchain operation is couple made of an extension of $S$ containing the new
+variables that have been allocated during the unification phase and a list of
+filtered rules $r$ accompagnate by their a subistution. This substitution is the
+result of the unification of $q$ with the head of each rule in $r$.
+
+Below we have an example of a simple elpi program which will be used in the
+following section of the paper as an example to show how backtracking and
+the cut operator works in the semantcis we propose. The translation
+of these rules in the Rocq representation is straightforword.
 
 \begin{figure}[!h]
 \inputminted[fontsize=\small,autogobble,escapeinside=~~,mathescape=true,frame=leftline,framerule=0pt,framesep=1em]{elpi}{./prog.elpi}
-\caption{Small program example}
+\caption{Small elpi program example}
 \label{fig:prog}
 \end{figure}
-
-The elpi program above would be translated as a list of $6$ elements where the
-heads and body are translated in the natural way.
-
-
-Sigma is a substitution mapping variables to their term instantiation.
-
-The backchaining algorithm is the function \backchain aims to filter
-only the rules in the program \program having rules unifying with the
-current query $q$ in a given subtitution $\sigma$ using the list of modes $m$.
-In particular \backchain returns for each selected rule $r$ a substitution
-$\sigma'$ that is the substitution obtained by the unification of the query and
-the head of $r$.
-
-$$\backchain\ :\ (\program, \sigma, q) \to \texttt{seq}(\sigma * R)$$
 
 \subsection{The cut operator}
 
