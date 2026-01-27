@@ -15,7 +15,7 @@
 
 
 \bibliographystyle{plainurl}% the mandatory bibstyle
-\title{Operational semantics for Prolog with Cut in Rocq and its application to determinacy analysis} %TODO Please add
+\title{Operational semantics for Prolog with Cut in \rocqP and its application to determinacy analysis} %TODO Please add
 
 %\titlerunning{Dummy short title} %TODO optional, please use if title is longer than one line
 
@@ -73,34 +73,34 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent convallis orci
 \section{Introduction}
 
 
-Elpi is a dialect of \(\lambda\)Prolog (see \cite{1991miller-pf,Miller_Nadathur_2012,dunchev15lpar,TASSI_2019})
-used as an extension language for the Rocq prover (formerly the Coq proof
-assistant). Elpi has become an important infrastructure component: several
+\elpiP is a dialect of \lprologP (see \cite{1991miller-pf,Miller_Nadathur_2012,dunchev15lpar,TASSI_2019})
+used as an extension language for the \rocqP prover (formerly the \coqP proof
+assistant). \elpiP has become an important infrastructure component: several
 projects and libraries depend on it~\cite{krebbers25,Trakt,Trocq,Maas2024,fissore2023,fissore2024}.
 Examples include the Hierarchy-Builder library-structuring tool~\cite{cohen_et_al:LIPIcs.FSCD.2020.34}
 and Derive~\cite{tassi2018,tassi2019,tassi2023}, a program-and-proof synthesis
 framework with industrial applications at SkyLabs AI.
 
-Starting with version 3, Elpi gained a static analysis for
+Starting with version 3, \elpiP gained a static analysis for
 determinacy~\cite{10.1007/978-3-032-15981-6_5} to help users tame
-backtracking. Rocq users are familiar with functional programming but
+backtracking. \rocqP users are familiar with functional programming but
 not necessarily with logic programming and uncontrolled backtracking
 is a common source of inefficiency and makes debugging harder. The
 determinacy checkers identifies predicates that behave like functions,
 i.e., predicates that commit to their first solution and leave no
 \emph{choice points} (places where backtracking could resume).
 
-This paper reports our first steps towards a mechanization, in the Rocq
+This paper reports our first steps towards a mechanization, in the \rocqP
 prover, of the determinacy analysis from~\cite{10.1007/978-3-032-15981-6_5}.
 We focus on the control operator \emph{cut}, which is useful to restrict
 backtracking but makes the semantic depart from a pure logical reading.
 
-We formalize two operational semantics for Prolog with cut. The first is a
-stack-based semantics that closely models Elpi's implementation and is
-similar to the semantics mechanized by Pusch in Isabelle/HOL~\cite{10.1007/BFb0105415}
+We formalize two operational semantics for \prologP with cut. The first is a
+stack-based semantics that closely models \elpiP's implementation and is
+similar to the semantics mechanized by Pusch in \isabelleP~\cite{10.1007/BFb0105415}
 and to the model of Debray and Mishra~\cite[Sec.~4.3]{10.1016/0743-1066(88)90007-6}.
 This stack-based semantics is a good starting point to study further
-optimizations used by standard Prolog abstract machines~\cite{warren1983abstract,10.7551/mitpress/7160.001.0001},
+optimizations used by standard \prologP abstract machines~\cite{warren1983abstract,10.7551/mitpress/7160.001.0001},
 but it makes reasoning about the scope of \emph{cut} difficult. To address
 that limitation we introduce a tree-based semantics in which the branches
 pruned by \emph{cut} are explicit and we prove the two semantics equivalent.
@@ -123,7 +123,7 @@ predicate does not leave any choice points.
   \label{fig:tm-call}
 \end{figure}
 
-Before going to the two semantcis, we show the piece of data structure that
+Before going to the two semantcis, we show the piece of data structure that \marginpar{put unif and program in variable: hides from types}
 are shared by the them. The smallest unit of code that we can use in the
 langauge is an atom. The atom inductive (see~\cref{type:atom}) is
 either a cut or a call. A call
@@ -162,20 +162,20 @@ variables that have been allocated during the unification phase and a list of
 filtered rules $r$ accompagnate by their a subistution. This substitution is the
 result of the unification of $q$ with the head of each rule in $r$.
 
-Below we have an example of a simple elpi program which will be used in the
+In \cref{fig:prog}, we have an example of a simple \elpiP program which will be used in the
 following section of the paper as an example to show how backtracking and
 the cut operator works in the semantcis we propose. The translation
-of these rules in the Rocq representation is straightforword.
+of these rules in the \rocqP representation is straightforword.
 
 \begin{figure}[!h]
 \inputminted[fontsize=\small,autogobble,escapeinside=~~,mathescape=true,frame=leftline,framerule=0pt,framesep=1em]{elpi}{./prog.elpi}
-\caption{Small elpi program example}
+\caption{Small \elpiP program example}
 \label{fig:prog}
 \end{figure}
 
 \subsection{The cut operator}
 
-The semantics of the cut operator adopted in the \textsc{Elpi} language
+The semantics of the cut operator adopted in the \textsc{\elpiP} language
 corresponds to the \emph{hard cut} operator of standard \textsc{SWI-Prolog}.
 This operator has two primary purposes. First, it eliminates all
 alternatives that are created either simultaneously with, or after, the
@@ -212,7 +212,7 @@ We propose two operational semantics for a logic program with cut. The two
 semantics are based on different syntaxes, the first syntax (called tree)
 exploits a tree-like structure and is ideal both to have a graphical view of its
 evolution while the state is being intepreted and to prove lemmas over it. The
-second syntax, called elpi, is the elpi's syntax and has the advantage of
+second syntax, called elpi, is the \elpiP's syntax and has the advantage of
 reducing the computational cost of cutting and backtracking alternatives by
 using shared pointers. We aim to prove the equivalence of the two semantics
 together with some interesting lemmas of the cut behavior.
@@ -414,11 +414,11 @@ soft-killed and $!_r$ indicated which is sub-trees are to be hard-killed.
 %   $$\texttt{B.bbOr}\ A \iff \exists\ r\ rs, A = \texttt{big\_or\_aux}\ r\ rs \lor A = \texttt{cutr}(\texttt{big\_or\_aux}\ r\ rs)$$
 % \caption{Valid tree}
 % \end{figure}
-\subsection{Elpi semantics}
+\subsection{\elpiP semantics}
 
 TODO: dire che la semantica ad albero è puù faicle per le prove
 
-The Elpi interpreter is based on an operational semantics
+The \elpiP interpreter is based on an operational semantics
 close to the one picked by Pusch in \cite{10.1007/BFb0105415}, in turn
 closely related to the one given by Debray and Mishra in
 \cite[Section 4.3]{10.1016/0743-1066(88)90007-6}. Push mechanized
