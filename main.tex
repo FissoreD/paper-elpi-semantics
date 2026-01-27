@@ -175,30 +175,35 @@ of these rules in the Rocq representation is straightforword.
 
 \subsection{The cut operator}
 
-The semantics of the cut operator we have chosen in the Elpi language is the
-hard cut operator used in standard SWI-Prolog. It has two main roles: it
-eliminates alternatives that are chonologically created both at the same moment
-as, and after, the creation of the cut operator in the execution state. 
+The semantics of the cut operator adopted in the \textsc{Elpi} language
+corresponds to the \emph{hard cut} operator of standard \textsc{SWI-Prolog}.
+This operator has two primary purposes. First, it eliminates all
+alternatives that are created either simultaneously with, or after, the
+introduction of the cut into the execution state.
 
-As a small example of this high-level definition. Let's take the program in
-\cref{fig:prog} and the query $q =$~\elpiIn{g 2 Z}. All the $3$ rules for
-\eI{g} can be used on the $q$. They are executed in order of the definition
-in the progrma, i.e., r1 is tried first then r2 and finally r3.
+To illustrate this high-level description, consider the program shown in
+\cref{fig:prog} and the query $q = \elpiIn{g 2 Z}$. All three rules for
+\eI{g} can be used on the query $q$. They are tried according to their
+order of appearance in the program: rule $r_1$ is tried first, followed by
+$r_2$, and $r_3$.
 
-The first rule has no premises returns the assignement \eI{Z = 2}.
-We however are not finished, there are still two non-explored alternatives
-consiting in the premises of $r2$ and $r3$.
+The first rule has no premises and immediately returns the assignment
+\eI{Z = 2}. However, the computation does not terminate at this point, since
+two additional unexplored alternatives remain, corresponding to the premises
+of rules $r_2$ and $r_3$.
 
-The premises of $r2$ are ``\eI{r 2 Z, !}''. In this sequent the role of the cut
-become evident: if it is executed, i.e. \eI{r 2 Z} succeeds, then the premises
-of $r3$ will be cut away, since they have been created at the same time of the
-creation of the cut in the alternatives list; moreover, if the call \eI{r 2 Z}
-leaves alternatives, only the first is committed and the other are discarded,
-since these alternatives would have a depper depth then the cut itself.
+The premises of rule $r_2$ are \eI{r 2 Z, !}. At this stage, the role of the
+cut becomes apparent. If the premise \eI{r 2 Z} succeeds, the cut commits to
+this choice and removes the premises of rule $r_3$ from the alternative list,
+as they were generated at the same point as the cut. Moreover, if
+the call \eI{r 2 Z} itself produces multiple alternatives, only the first one
+is committed, while the remaining alternatives are discarded. This is because
+such alternatives have been created at a deeper depth in the search tree than the cut.
 
-Concretely speaking, \eI{r 2 Z} will provide two alternatives, assigning
-\eI{Z} respectively to \eI{4} and \eI{8}. The second solution is discaded by the
-cut.
+Concretely, the call \eI{r 2 Z} yields two solutions, assigning \eI{Z} the
+values \eI{4} and \eI{8}, respectively. The second solution is eliminated by
+the cut, and only the first assignment is preserved.
+
 
 
 \section{Semantics intro}
