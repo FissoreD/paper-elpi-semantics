@@ -238,12 +238,12 @@ for the execution of \(B\).
 
 The \andC non-terminal \(A \land_{B_0} B\) represents a conjunction of two trees \(A\)
 and \(B\). We call \(B_0\) the reset point for \(B\); it is used to restore the state
-of \(B\) to its initial form if a backtracking operation occurs on \(A\). Intuitively
-in prolog-like syntax, in a tree \(A \land_{B_0} B\), if \ttl is the function
-flattening the tree in a list of sequents disjnction and $\ttl (A) = A_1,\dots, A_n$, 
-then we would have $(A_1, \ttl\ B); (A_2, B_0); \dots; (A_n, B_0)$.
+of \(B\) to its initial form if a backtracking operation occurs on \(A\). Intuitively,
+let \ttl be the function flattening a tree in a list of sequents disjnction, 
+in \prologP-like syntax the tree \(A \land_{B_0} B\)
+becomes $(A_1, \ttl\ B); (A_2, B_0); \dots; (A_n, B_0)$ where  $\ttl (A) = A_1,\dots, A_n$.
 
-A graphical representation of the tree is shown in \cref{tree-ex1}. To make the
+A graphical representation of a tree is shown in \cref{tree-ex1}. To make the
 graph more compact, the \andC and \orC non-terminals are n-ary rather than binary,
 with right-binding priority. The \koC and \deadC terminals act as the neutral elements
 in the \orC list, while \okC is the neutral element of the \andC list.
@@ -330,6 +330,8 @@ Below we define two special kind of trees depending on their pathend.
 \defline[def:success]{tex_code/succ_path.tex}
 \defline[def:failed]{tex_code/failed_path.tex}
 
+\subsubsection{The \step procedure}
+
 The \step procedure takes as input a program, a set of free variables (fv), a
 substitution, and a tree, and returns an updated set of free variables, a
 \steptag, and an updated tree.  
@@ -352,18 +354,18 @@ that is, it returnes the identity for \success and \failed tree.
 \deflemma[lemma:success]{tex_code/failed_step.tex}
 \mvspace{}
 
-Therefore, the two interesting cases of a tree the interpretation of 
-trees with path-end equal to a call or a cut atom.
+Therefore, \step produces interesting results if the path-end 
+of the input tree is either a call or a cut.
 
-\textit{Call step} The interpretation of a call $c$ is performed by replacing
-the call wrt the result of the \backchain $c$, then
-if $l$ is empty then \koC tree is returned, otherwise
-the call is replaced by right-skewed tree made of $n$ inner \orC nodes,
+\textit{Call step} The interpretation of a call $c$ stars by calling the \marginpar{if we go right in the tree, the subst is the one in the or...}
+\backchain function on $c$. The output list $l$ is taken to 
+represent build the new subtree.
+If $l$ is empty then \koC tree is returned, otherwise
+the subtree is a right-skewed tree made of $n$ inner \orC nodes,
 where $n$ is the length of $l$.
 The root has \koC as left child. The lhs of the other nodes is a
 right-skewed tree of \andC nodes. The \andC nodes are again a right-seked tree
-containing then atoms (either cut or call) \marginpar{dire dei reset point}
-taken from the list $l$.
+containing premises of the selected rule \marginpar{dire dei reset point}.
 
 A step in the tree of \cref{tree-ex1} makes a backchain operation over the query
 \eI{g X Y} and, in the program defined in \cref{fig:prog}, the new tree would be the one in
@@ -371,7 +373,7 @@ A step in the tree of \cref{tree-ex1} makes a backchain operation over the query
 It is a disjunction of four subtrees:
 the first node is the \koC node (by default), the second is \okC, since r1
 has no premises, the third and the fourth contains the premises of respectively
-r2 and r3. \marginpar{dire che le sostituzioni del backchain sono importanti e dove sono mess}
+$r_2$ and $r_3$. \marginpar{dire che le sostituzioni del backchain sono importanti e dove sono mess}
 
 \textit{Cut step} The latter case is delicate since interpreting a cut in a tree
 has three main impacts: at first it is replaced by the \okC node, then
@@ -390,25 +392,37 @@ of the the \cutC.
   father of $A$.
 \end{definition}
 
-\begin{definition}[Soft-kill]
-  Given a tree $t$, soft-kill replaces all the leaves of the tree with the node
-  KO except for the leaves that are part of the path $p$ of $t$.
+\begin{definition}[Soft-kill, \cutl]
+  Given a successfull tree $t$, soft-kill replaces all the leaves of the tree with the node
+  \koC except for the path in $t$ leading to the \okC node.
 \end{definition}
 
-\begin{definition}[Hard-kill]
+\begin{definition}[Hard-kill, \cutr]
   Given a tree $t$, hard-kill replaces all the leaves of the tree with the node
-  KO
+  \koC
 \end{definition}
 
 An example of the impact of the cut is show in \cref{cut-scope}. The step
-routine interprets the cut if it is at the end of the current path. In the
-example we have tagged in red the arrow $!_l$ indicating which sub-trees is
-soft-killed and $!_r$ indicated which is sub-trees are to be hard-killed.
+routine interprets the cut since it is the node in its path-end. In the example
+we have $4$ arrow tagged with the \cutl or \cutr symbols. The \cutl arrows go
+left and soft-kill the pointed subtree, in particular, we can note that both
+pointed subtree have a success node, this is beacuse, in order to evaluate the
+cut in the figure, we need a successful path leading to it. The \cutl procedure
+will keep the two \okC nodes since they are essential to reach the cut, and will
+kill all the leaves in the other subtrees, for those specific subtrees, \cutl
+behaves as \cutr. The \cutr procedure, instead, immediately starts by removing
+all leaves in the trees pointed by the red arrows.
 
 
-\subsubsection{Execution example}
+\subsubsection{The \na procedure}
+
+\subsubsection{The \run inductive}
+
 
 \subsubsection{Valid tree}
+
+Reasoning on a the tree semantics allows to identify an invariant that
+
 % \begin{figure}  
 %   \input{tex_code/valid_tree.tex}
 %   $$\texttt{B.bbOr}\ A \iff \exists\ r\ rs, A = \texttt{big\_or\_aux}\ r\ rs \lor A = \texttt{cutr}(\texttt{big\_or\_aux}\ r\ rs)$$
