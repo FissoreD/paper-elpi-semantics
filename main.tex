@@ -411,10 +411,32 @@ cut in the figure, we need a successful path leading to it. The \cutl procedure
 will keep the two \okC nodes since they are essential to reach the cut, and will
 kill all the leaves in the other subtrees, for those specific subtrees, \cutl
 behaves as \cutr. The \cutr procedure, instead, immediately starts by removing
-all leaves in the trees pointed by the red arrows.
+all leaves in the trees pointed by the red arrows. \marginpar{dire che step non aggiunge mai nuovi dead}
 
 
 \subsubsection{The \na procedure}
+
+It is evident that the \step alone is not sufficient to reproduce entirely the
+behavior of the full \elpiP solver. For example \step does not perform any
+backtracking at all: it does not backtrack neither for failures, nor for
+success. For example if a state is success then it would be interesting to find
+the next solution. To do so, we have a \na procedure which aims to deadify
+subtrees, that is it is allowed to transform \okC or \koC leaves into \deadC, so
+that the \step procedure is allowed to ignore the new ghosts states and move on.
+The boolean taken by \na tells if it is needed to kill \okC nodes or not.
+
+For example, in \cref{tree-ex1-exp} the step procedure has created a failed
+state: its path-end ends in \koC. The expected behavior of \na is to take
+this \koC node and make it a \deadC. This allows \step to continue the
+exploration of the tree. In particular, the path-end of this new state end
+in \okC. The step leaves the state unchanged producing the new substitution.\marginpar{subst taken form the or}
+This solution however is not unique, we should be able to backtrack on this
+successful state. To do so we can call \na and it will deadify the \okC node
+allowing \step to proceed on r X Z.
+
+More concretely the code for \na is show in 
+
+
 
 \subsubsection{The \run inductive}
 
