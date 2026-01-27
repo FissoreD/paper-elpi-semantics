@@ -2,17 +2,17 @@
 \newcommand{\codenames}[1]{\ensuremath{#1}\xspace}
 
 % INLINE MINTED
-\newcounter{codeline}
-\newcommand{\codeline}[2][]{
-    \refstepcounter{codeline}%
+\newcounter{deftypes}
+\newcommand{\deftypes}[2][]{
+    \refstepcounter{deftypes}%
     \noindent
     \begin{minipage}{0.9\linewidth}\input{#2}\end{minipage}
-    \hfill(\thecodeline)%
+    \hfill(\thedeftypes)%
     \ifx&#1&\else\label{#1}\fi
     \par
     
 }
-\crefname{codeline}{Type}{Types} % singular / plural
+\crefname{deftypes}{Type}{Types} % singular / plural
 
 
 \newcounter{defline}

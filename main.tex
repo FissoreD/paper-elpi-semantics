@@ -109,49 +109,38 @@ predicate passes the determinacy analysis, the call to a deterministic
 predicate does not leave any choice points.
 
 \section{Common code: the language}
-\begin{coqcode}
-Inductive Tm := 
-  | Tm_Kp    : Kp -> Tm
-  | Tm_Kd    : Kd -> Tm
-  | Tm_V     : V  -> Tm
-  | Tm_Comb  : Tm -> Tm -> Tm.
 
-Inductive Callable := 
-  | Callable_Kp   : Kp -> Callable
-  | Callable_V    : V -> Callable
-  | Callable_Comb : Callable -> Tm -> Callable.
+\begin{figure}
+  \input{tex_code/base_type.tex}
 
-Inductive RCallable := 
-  | RCallable_Kp   : Kp -> RCallable
-  | RCallable_Comb : RCallable -> Tm -> RCallable.
-\end{coqcode}
+  \begin{minipage}{0.49\textwidth}
+  \input{tex_code/tm_type.tex}
+  \end{minipage}
+  \begin{minipage}{0.49\textwidth}
+  \input{tex_code/call_type.tex}
+  \end{minipage}
+  \caption{Tm and Callable types}
+  \label{fig:tm-call}
+\end{figure}
 
-A callable term is a term without a data constructor as functor.
+Before going to the two semantcis, we show the piece of data structure that
+are shared by the them. The smallest unit of code that we can use in the
+langauge is an atom. The atom inductive (see~\cref{type:atom}) is
+either a cut or a call. A call
+carries a callable term~(see \cref{fig:tm-call}). A term (Tm) is either a predicate,
+a datum, a variable or the binary application of a term to another. A Callable is 
+a term accepting predicates only predicates as functors.
 
-An rcallable is a term with rigid head.
+\mvspace{}
+\deftypes[type:atom]{tex_code/atom_type.tex}
+\deftypes[type:r]{tex_code/R_type.tex}
+\deftypes[type:prog]{tex_code/program_type.tex}
+\deftypes[type:signa]{tex_code/sigma_type.tex}
+\mvspace{}
 
-\begin{coqcode}
-Inductive A := cut | call : Callable -> A.
-\end{coqcode}
-
-An atom is the smallest syntactic unit that can be executed in a prolog
-program \program. 
-% The execution of an atom, inside a program and a substitution
-% either succeeds returining an output substitution, or it fails.
-% In both cases it returns a list of choice points, representing suspending
-% states that can be resumed for backtracking.
-
-\begin{coqcode}
-Record R := mkR { head : RCallable; premises : list A }.
-\end{coqcode}
 
 We exploit the typing system to ensure that the head of a "valid" rule
 is a term with rigid head.
-
-\begin{coqcode}
-(*simpler than in the code: signatures of preds are hidden*)
-Definition program := seq R. 
-\end{coqcode}
 
 A program is made by a list of rules. Rules in \program are indexed by their
 position in the list. Given a list of rules \rules and two indexes $i$ and $j$,
@@ -168,9 +157,6 @@ heads and body are translated in the natural way.
 
 
 Sigma is a substitution mapping variables to their term instantiation.
-\begin{coqcode}
-  Definition Sigma := {fmap V -> Tm}.
-\end{coqcode}
 
 The backchaining algorithm is the function \backchain aims to filter
 only the rules in the program \program having rules unifying with the
@@ -270,10 +256,10 @@ auxiliary functions. In \cref{eq:stepT,eq:naT,eq:runT} we give the types
 contrats of these symbols where \cI{fv} is a set of variable names.
 
 \mvspace{}
-\codeline[eq:steptag]{tex_code/step_tag.tex}
-\codeline[eq:stepT]{tex_code/step_sig.tex}
-\codeline[eq:naT]{tex_code/next_alt.tex}
-\codeline[eq:runT]{tex_code/run_sig.tex}
+\deftypes[eq:steptag]{tex_code/step_tag.tex}
+\deftypes[eq:stepT]{tex_code/step_sig.tex}
+\deftypes[eq:naT]{tex_code/next_alt.tex}
+\deftypes[eq:runT]{tex_code/run_sig.tex}
 
 \mvspace{}
 A particular tree we want to identify is a \isdead tree (defined in \cref{fig:dead}). This tree has the
