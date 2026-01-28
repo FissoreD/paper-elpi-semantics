@@ -1,0 +1,26 @@
+\crefname{deftypes}{Type}{Types} % singular / plural
+
+
+\newcounter{defline}
+\newcommand{\defline}[2][]{
+  \refstepcounter{defline}%
+  \noindent
+  \begin{minipage}{0.9\linewidth}\input{#2}\end{minipage}
+  \hfill(\thedefline)%
+  \ifx&#1&\else\label{#1}\fi
+  \par
+
+}
+\crefname{defline}{Definition}{Definitions} % singular / plural
+
+\newcounter{deflemma}
+\newcommand{\deflemma}[2][]{
+  \refstepcounter{deflemma}%
+  \noindent
+  \begin{minipage}{0.9\linewidth}\input{#2}\end{minipage}
+  \hfill(\thedeflemma)%
+  \ifx&#1&\else\label{#1}\fi
+  \par
+
+}
+\crefname{deflemma}{Lemma}{Lemmas} % singular / plural

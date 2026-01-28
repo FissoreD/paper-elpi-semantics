@@ -4,6 +4,7 @@
 
 \usepackage{minted}
 \usepackage{macro}
+\usepackage{custom_ref}
 \usepackage{xspace}
 %\pdfoutput=1 %uncomment to ensure pdflatex processing (mandatatory e.g. to submit to arXiv)
 %\hideLIPIcs  %uncomment to remove references to LIPIcs series (logo, DOI, ...), e.g. when preparing a pre-final version to be uploaded to arXiv or another public repository
@@ -221,7 +222,7 @@ together with some interesting lemmas of the cut behavior.
 \subsection{Tree semantics}
 \input{tex_code/tree_def.tex}
 
-In the tree we distinguish 6 main cases: \koC, \okC, and \deadC are special
+In the tree we distinguish 5 main cases: \koC, \okC, and are special
 meta-symbols representing, respectively, a failed, a successful, and a dead
 terminal. These symbols are considered meta because they are internal
 intermediate symbols used to give structure to the tree. While the first two
