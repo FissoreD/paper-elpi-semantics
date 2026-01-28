@@ -223,17 +223,18 @@ together with some interesting lemmas of the cut behavior.
 \input{tex_code/tree_def.tex}
 
 In the tree we distinguish 5 main cases: \koC, \okC, and are special
-meta-symbols representing, respectively, a failed, a successful, and a dead
+meta-symbols representing, respectively, the failed and a successful
 terminal. These symbols are considered meta because they are internal
-intermediate symbols used to give structure to the tree. While the first two
-symbols are of immiediate understanding, we use \deadC to represent ghost state,
-that is, the \deadC symbol is always ignored by the tree interpreter.
+intermediate symbols used to give structure to the tree.
 
-\taC (acronym for tree-atom) is the constructor of atoms in the tree.
+The \taC constructor (acronym for tree-atom) is the constructor of atoms in the
+tree.
 
 The two recursive cases of a tree are the \orC and \andC non-terminals. The \orC
 non-terminal \(A \lor B_\sigma\) denotes a disjunction between two trees \(A\) and
-\(B\). The second branch is annotated with a suspended substitution \(\sigma\) so
+\(B\). The first branch is optional, if absent it represents a dead tree,
+i.e. a tree that has been entirely.
+The second branch is annotated with a suspended substitution \(\sigma\) so
 that, upon backtracking to \(B\), \(\sigma\) is used as the initial substitution
 for the execution of \(B\).
 
@@ -303,12 +304,12 @@ the \pathend in the rhs, otherwise we return $p$.
 In \cref{tree-ex1} the \pathend of the tree is \eI{g X}.
 \begin{figure}
   \begin{subfigure}{0.25\textwidth}
-    \begin{center}\includestandalone[width=0.8\textwidth]{./src/path}\end{center}
+    \begin{center}\includestandalone[width=\textwidth]{./src/path2}\end{center}
     \caption{Path end := g X Y}
     \label{tree-ex1} 
   \end{subfigure}
   \begin{subfigure}{0.4\textwidth}
-    \includestandalone[width=\textwidth]{./src/path_exp}
+    \includestandalone[width=\textwidth]{./src/path_exp2}
     \caption{Step on g X Y using \cref{fig:prog}}
     \label{tree-ex1-exp} 
   \end{subfigure}

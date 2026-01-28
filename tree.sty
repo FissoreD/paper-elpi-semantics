@@ -28,12 +28,12 @@
       inner sep=0
     },
   mtriangle/.style={
-      shape border rotate=0,
+      % shape border rotate=0,
       regular polygon,
-      regular polygon sides=3,
+      regular polygon sides=8,
       % minimum height=1em,
-      text width=\SIZE,
-      inner sep=0
+      % text width=\SIZE,
+      % inner sep=0
     },
   allRed/.style={
       draw=red,
@@ -65,11 +65,11 @@
 
 \newcommand{\iText}[1]{\adjustbox{max width=\SIZE}{\small{#1}}}
 
-\newcommand{\orN}{\ensuremath{Or}}   % or node
-\newcommand{\andN}{\ensuremath{And}} % and node
-\newcommand{\okN}{\ensuremath{OK}}
+\newcommand{\orN}{\ensuremath{\lor}}   % or node
+\newcommand{\andN}{\ensuremath{\land}} % and node
+\newcommand{\okN}{\ensuremath{\top}}
 \newcommand{\cutN}{\ensuremath{!}}
-\newcommand{\koN}{\ensuremath{KO}}
+\newcommand{\koN}{\ensuremath{\bot}}
 \newcommand{\deadN}{X}
 
 % ARGUMEMTS: NODE TYPE, NODE TXT, NODE TAG
