@@ -263,14 +263,14 @@ in the \orC list, while \okC is the neutral element of the \andC list.
 The interpretation of a tree is performed by two main routines: \step and \na
 that traverse the tree depth-first, left-to-right. Then, then \run inductive
 makes the transitive closure of step \step and \na: it iterates the calls to its
-auxiliary functions. In \cref{eq:stepT,eq:naT,eq:runT} we give the types
+auxiliary functions. In \cref{type:stepT,type:naT,type:runT} we give the types
 contrats of these symbols where \cI{fv} is a set of variable names.
 
 \mvspace{}
-\deftypes[eq:steptag]{tex_code/step_tag.tex}
-\deftypes[eq:stepT]{tex_code/step_sig.tex}
-\deftypes[eq:naT]{tex_code/next_alt.tex}
-\deftypes[eq:runT]{tex_code/run_sig.tex}
+\deftypes[type:steptag]{tex_code/step_tag.tex}
+\deftypes[type:stepT]{tex_code/step_sig.tex}
+\deftypes[type:naT]{tex_code/next_alt.tex}
+\deftypes[type:runT]{tex_code/run_sig.tex}
 
 \mvspace{}
 A particular tree we want to identify is a \isdead tree (defined in \cref{fig:dead}). This tree has the
@@ -280,11 +280,6 @@ latter case, we note that $B$ can be non-dead, but this is not a problem
 since the interpreter can run $B$ only if $A$ is non-dead.
 
 \begin{figure}
-  \begin{subfigure}{0.45\textwidth}
-  \input{tex_code/is_dead.tex}
-  \caption{Defintion of \isdead}
-  \label{fig:dead}
-  \end{subfigure}
   \begin{subfigure}{0.45\textwidth}
   \input{tex_code/path_end.tex}
   \caption{Defintion of \pathend}
@@ -351,7 +346,7 @@ that is, it returnes the identity for \success and \failed tree.
 
 \mvspace{}
 \deflemma[lemma:success]{tex_code/success_step.tex}
-\deflemma[lemma:success]{tex_code/failed_step.tex}
+\deflemma[lemma:failed]{tex_code/failed_step.tex}
 \mvspace{}
 
 Therefore, \step produces interesting results if the path-end 
@@ -417,11 +412,19 @@ all leaves in the trees pointed by the red arrows. \marginpar{dire che step non 
 \subsubsection{The \na procedure}
 
 It is evident that the \step alone is not sufficient to reproduce entirely the
-behavior of the full \elpiP solver. For example \step does not perform any
+behavior of the full \elpiP solver. In particular, \step does not perform any
 backtracking at all: it does not backtrack neither for failures, nor for
-success. For example if a state is success then it would be interesting to find
-the next solution. To do so, we have a \na procedure which aims to deadify
-subtrees, that is it is allowed to transform \okC or \koC leaves into \deadC, so
+success, from \cref{lemma:success,lemma:failed}, \step returns the identity. To
+do so, we have the \na procedure: its signature is provided in \cref{type:naT}
+and its implementation in \cref{fig:na}.
+
+The \na procedure takes a boolean and a tree and return a new tree if it
+still contains an alternative. The intuition of \na is to introduce 
+trasnform failed (or success) path into dead-path by inserting new Dead nodes.
+ The boolean tells if there success leaves
+should be 
+
+that is it is allowed to transform \okC or \koC leaves into \deadC, so
 that the \step procedure is allowed to ignore the new ghosts states and move on.
 The boolean taken by \na tells if it is needed to kill \okC nodes or not.
 
@@ -435,6 +438,12 @@ successful state. To do so we can call \na and it will deadify the \okC node
 allowing \step to proceed on r X Z.
 
 More concretely the code for \na is show in 
+
+\begin{figure}
+  \input{tex_code/next_alt_code.tex}
+  \caption{\na implementation}
+  \label{fig:na}
+\end{figure}
 
 
 
