@@ -5,41 +5,34 @@
 
 \begin{document}
 
-\begin{tikzpicture}[distances]
-  \node[andNode,draw=none] (ROOT) {\phantom{A}}
-  node[andNode,draw=none] at (ROOT.center){\andN}
-  node[andNode] at (ROOT.center) {\phantom{A}}
-    child {
-      \nOr{AAA}
-      child {  
-        \nAnd{L} 
-        child { \nOr{LL}
-          child { \nOK{LLL} }
-          child { \nAny{LLR} }
-          child { \nAny{LLR1} }
-        }
-        child { \nOK{LOK} }
-        child { \nCut{LR} }
-      }
-      child { \nAny{R1} }
-      child { \nAny{R2} }
-    }
-    child { \nAny{M} }
-    ;
 
-
-  % \node[text=blue] at (L.center) {\andN};
-  % \node[text=blue] at (R.center) {\andN};
-  % \node[text=red] at (LL.center) {\orN};
-  % \node[text=green] at (LLL.center) {\okN};
-  % \nOK{LLL};
-    % \draw[very thick,-{latex[length=2.5mm,width=2.5mm]},blue] (A)..controls +(south east:15cm) and +(south west:11cm)..(B);
-    % \draw[draw, thick, red, ->] (LR) to[bend left] (LLR);
-    \path [thick, red, ->] (LR) edge[bend left=30] node[above]{\cutl} (LOK);
-    \path [thick, red, ->] (LR) edge[bend left=30] node[below]{\cutl} (LL);
-    \path [thick, red, ->] (LR) edge[bend right=30] node[right]{\cutr} (R1);
-    \path [thick, red, ->] (LR) edge[bend right=30] node[right]{\cutr} (R2);
-
-\end{tikzpicture}
+\begin{forest}
+for tree={
+  % minimum height=5em,
+  l sep=3em, s sep=3em,
+  align=right
+}
+[\andN,andNode
+    [\orN,orNode
+      [\andN,andNode
+        [\orN, orNode, name=s1
+          [\okN,okNode]
+          [\dots]
+          [\dots]
+        ]
+        [\okN,okNode, name=s2]
+        [\cutN, name=cut]
+      ] 
+      [\dots, name=u1]
+      [\dots, name=u2]
+    ]
+    [\dots]
+] 
+% \draw[thick,red,->,out=south west,in=south east] (cut) -- node[right] {$\vec{a}$} (s1);
+\path [thick, red, ->] (cut) edge[bend left=40] node[below]{\cutl} (s1);
+\path [thick, red, ->] (cut) edge[bend left=30] node[above]{\cutl} (s2);
+\path [thick, red, ->] (cut) edge[bend right=30] node[right]{\cutr} (u1);
+\path [thick, red, ->] (cut) edge[bend right=30] node[right]{\cutr} (u2);
+\end{forest}
 
 \end{document}

@@ -233,7 +233,7 @@ tree.
 The two recursive cases of a tree are the \orC and \andC non-terminals. The \orC
 non-terminal \(A \lor B_\sigma\) denotes a disjunction between two trees \(A\) and
 \(B\). The first branch is optional, if absent it represents a dead tree,
-i.e. a tree that has been entirely.
+i.e. a tree that has been entirely explored.
 The second branch is annotated with a suspended substitution \(\sigma\) so
 that, upon backtracking to \(B\), \(\sigma\) is used as the initial substitution
 for the execution of \(B\).
@@ -247,7 +247,7 @@ becomes $(A_1, \ttl\ B); (A_2, B_0); \dots; (A_n, B_0)$ where  $\ttl (A) = A_1,\
 
 A graphical representation of a tree is shown in \cref{tree-ex1}. To make the
 graph more compact, the \andC and \orC non-terminals are n-ary rather than binary,
-with right-binding priority. The \koC and \deadC terminals act as the neutral elements
+with right-binding priority. The \koC terminal act as the neutral elements
 in the \orC list, while \okC is the neutral element of the \andC list.
 
 
@@ -275,11 +275,11 @@ contrats of these symbols where \cI{fv} is a set of variable names.
 \deftypes[type:runT]{tex_code/run_sig.tex}
 
 \mvspace{}
-A particular tree we want to identify is a \isdead tree (defined in \cref{fig:dead}). This tree has the
-property to never produce a solution: it is eiher the \deadC tree
-or both branches of \orC are dead, or the lhs of \andC is dead. In the 
-latter case, we note that $B$ can be non-dead, but this is not a problem
-since the interpreter can run $B$ only if $A$ is non-dead.
+% A particular tree we want to identify is a \isdead tree (defined in \cref{fig:dead}). This tree has the
+% property to never produce a solution: it is eiher the \deadC tree
+% or both branches of \orC are dead, or the lhs of \andC is dead. In the 
+% latter case, we note that $B$ can be non-dead, but this is not a problem
+% since the interpreter can run $B$ only if $A$ is non-dead.
 
 \begin{figure}
   \begin{subfigure}{0.45\textwidth}
@@ -426,13 +426,13 @@ trasnform failed (or success) path into dead-path by inserting new Dead nodes.
  The boolean tells if there success leaves
 should be 
 
-that is it is allowed to transform \okC or \koC leaves into \deadC, so
-that the \step procedure is allowed to ignore the new ghosts states and move on.
-The boolean taken by \na tells if it is needed to kill \okC nodes or not.
+% that is it is allowed to transform \okC or \koC leaves into \deadC, so
+% that the \step procedure is allowed to ignore the new ghosts states and move on.
+% The boolean taken by \na tells if it is needed to kill \okC nodes or not.
 
 For example, in \cref{tree-ex1-exp} the step procedure has created a failed
 state: its path-end ends in \koC. The expected behavior of \na is to take
-this \koC node and make it a \deadC. This allows \step to continue the
+this \koC node and make it a .... This allows \step to continue the
 exploration of the tree. In particular, the path-end of this new state end
 in \okC. The step leaves the state unchanged producing the new substitution.\marginpar{subst taken form the or}
 This solution however is not unique, we should be able to backtrack on this
