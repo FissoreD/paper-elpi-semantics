@@ -31,6 +31,19 @@
 }
 \newcommand{\mvspace}{\vspace{5pt}}
 
+\usepackage{bussproofs}
+\newenvironment{myRule}[1]{%
+  \begin{minipage}{#1\textwidth}
+    \centering
+    \begin{prooftree}%
+      } % Here will be put the body
+      {
+    \end{prooftree}
+    \vspace{2pt}
+  \end{minipage}
+}
+
+
 %  _________     _______  ______  _____ 
 % |__   __\ \   / /  __ \|  ____|/ ____|
 %    | |   \ \_/ /| |__) | |__  | (___  
