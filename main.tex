@@ -284,26 +284,35 @@ contrats of these symbols where \cI{fvS} is a set of variable names.
 \begin{figure}
   \begin{subfigure}{0.45\textwidth}
   \input{tex_code/get_end.tex}
-  \caption{Defintion of \pathend}
-  \label{fig:pathend}
+  \caption{Defintion of \getend}
+  \label{fig:getend}
   \end{subfigure}
 \end{figure}
 
+The tree interpreter, as in prolog, explores the state in DFS strategy,
+to discover the substitution and the leaf of the tree that should
+be interpreted.
+The \getend routine, shown in~\cref{fig:getend}, accomplishes to this task.
+The \getend returns its inputs if the tree is a leaf.
+Otherwise, if the tree is a disjunction, the path continues on
+the left subtree, if it exists, otherwise it recursively 
+retrieves the wanted piece of information in the rhs 
+using the substitution stored in the \orC branch: the current
+substition when we cross the rhs of a \orC is the one store in the Or
+node itself.
+In the case of a conjunction,
+if the to-be-explored leaf in the lhs is \okC, then we look for 
+the \getend in the rhs, otherwise we return the result of the lhs.
+
+We derive the following two functions from \getend:
+
+\mvspace{}
 \defline[def:get_subst]{tex_code/get_subst.tex}
 \defline[def:path_end]{tex_code/path_end.tex}
 
-The prolog interpreter explores the state in DFS strategy, it finds
-the ``first-to-be-explored'' atom of the tree and then interpretes it.
-We get the this particular node via \pathend,
-shown in \cref{fig:pathend}.
-The \pathend is either the tree itself if the tree is a leaf.
-Otherwise, if the tree is a disjunction, the path continues on
-the left subtree, if it exists, or on the right-subtree otherwise.
-In the case of a conjunction,
-if the \pathend $p$ of the lhs leads to a \okC node then we look for 
-the \pathend in the rhs, otherwise we return $p$.
 
-In \cref{tree-ex1} the \pathend of the tree is \eI{g X}.
+\mvspace{}
+In \cref{tree-ex1} the \pathend of the tree is \eI{g X Y}.
 
 \begin{figure}
   \begin{subfigure}{0.25\textwidth}
@@ -325,10 +334,13 @@ In \cref{tree-ex1} the \pathend of the tree is \eI{g X}.
 \end{figure}
 
 
-Below we define two special kind of trees depending on their \pathend.
+Below we define three special kinds of trees depending on their \pathend.
 
 \defline[def:success]{tex_code/succ_path.tex}
 \defline[def:failed]{tex_code/failed_path.tex}
+\defline[def:pathatom]{tex_code/path_atom.tex}
+
+The latter definition identifies path ending in an atom.
 
 \subsubsection{The \step procedure}
 
@@ -339,8 +351,7 @@ substitution, and a tree, and returns an updated set of free variables, a
 Free variables are those variables that appear in a tree; they are used and
 updated when a backchaining operation takes place.
 
-The \steptag (see~\cref{type:steptag}) indicates the type of internal tree step 
-that has been performed.
+The \steptag (see~\cref{type:steptag}) indicates the kind of an internal tree step:
 \cI{CutBrothers} denotes the interpretation of a superficial cut, i.e., a cut
 whose parent nodes are all \andC-nodes. \cI{Expanded} denotes the interpretation
 of non-superficial cuts or predicate calls. \cI{Failure} and \cI{Success} are
@@ -348,7 +359,7 @@ returned for, respectively, \failed and \success trees.
 
 
 The step procedure is intended to interpretate atoms,
-that is, it transforms the tree if the its \pathend is an atom,
+that is, it transforms the tree iff its \pathend is an atom,
 otherwsise, it returnes the identity.
 
 \mvspace{}
@@ -356,7 +367,7 @@ otherwsise, it returnes the identity.
 \deflemma[lemma:failed]{tex_code/failed_step.tex}
 \mvspace{}
 
-\textit{Call step} The interpretation of a call $c$ stars by calling the \marginpar{if we go right in the tree, the subst is the one in the or...}
+\textit{Call step} The interpretation of a call $c$ stars by calling the
 \backchain function on $c$. The output list $l$ is taken to 
 represent build the new subtree.
 If $l$ is empty then \koC tree is returned, otherwise
@@ -374,8 +385,8 @@ the first node is the \koC node (by default), the second is \okC, since r1
 has no premises, the third and the fourth contains the premises of respectively
 $r_2$ and $r_3$. \marginpar{dire che le sostituzioni del backchain sono importanti e dove sono mess}
 
-\textit{Cut step} The latter case is delicate since interpreting a cut in a tree
-has three main impacts: at first it is replaced by the \okC node, then
+\textit{Cut step} The cut case is delicate, since interpreting a cut in a tree
+has three main impacts: at first the cut is replaced by the \okC node, then
 some special subtrees, in the scope of the \cutC, are cut away: in particular
 we need to soft-kill the left-siblings of the \cutC and hard-kill the right-uncles
 of the the \cutC.
@@ -391,42 +402,52 @@ of the the \cutC.
   father of $A$.
 \end{definition}
 
-\begin{definition}[Soft-kill, \cutl]
-  Given a successfull tree $t$, soft-kill replaces all the leaves of the tree with the node
-  \koC except for the path in $t$ leading to the \okC node.
-\end{definition}
-
 \begin{definition}[Hard-kill, \cutr]
-  Given a tree $t$, hard-kill replaces all the leaves of the tree with the node
-  \koC
+  Given a tree $t$, hard-kill replaces the given subtree with the \koC node
 \end{definition}
 
-An example of the impact of the cut is show in \cref{cut-scope}. The step
-routine interprets the cut since it is the node in its path-end. In the example
+\begin{definition}[Soft-kill, \cutl]
+  Given a successfull tree $t$, soft-kill replaces with \koC all subtrees
+  that are not part of the path in $t$ leading to the \okC node.
+\end{definition}
+
+
+An example of the impact of the cut is show in \cref{cut-scope},
+the dashed triangles represent generic trees. The step
+routine interprets the cut since it is the node in its path-end:
+we pass throgh a and and all trees on the left of the
+cut are successful. In the example
 we have $4$ arrow tagged with the \cutl or \cutr symbols. The \cutl arrows go
-left and soft-kill the pointed subtree, in particular, we can note that both
-pointed subtree have a success node, this is beacuse, in order to evaluate the
-cut in the figure, we need a successful path leading to it. The \cutl procedure
-will keep the two \okC nodes since they are essential to reach the cut, and will
-kill all the leaves in the other subtrees, for those specific subtrees, \cutl
-behaves as \cutr. The \cutr procedure, instead, immediately starts by removing
-all leaves in the trees pointed by the red arrows. \marginpar{dire che step non aggiunge mai nuovi dead}
+left and soft-kill the pointed subtree, it
+keeps \okC nodes since they are part of the tree leading to the cut, and replaces
+the other subtrees with \koC. The \cutr procedure replaces the nodes
+pointed by the arrows with \koC.
 
 
 \subsubsection{The \na procedure}
 
 It is evident that the \step alone is not sufficient to reproduce entirely the
 behavior of the full \elpiP solver. In particular, \step does not perform any
-backtracking at all: it does not backtrack neither for failures, nor for
-success, from \cref{lemma:success,lemma:failed}, \step returns the identity. To
-do so, we have the \na procedure: its signature is provided in \cref{type:naT}
+backtracking nor it cleans success. From 
+\cref{lemma:success,lemma:failed}, \step returns the identity. In order
+to continue the computation on these particular trees, we
+need the \na procedure: its signature is provided in \cref{type:naT}
 and its implementation in \cref{fig:na}.
 
 The \na procedure takes a boolean and a tree and return a new tree if it
-still contains an alternative. The intuition of \na is to introduce 
-trasnform failed (or success) path into dead-path by inserting new Dead nodes.
- The boolean tells if there success leaves
-should be 
+still contains an alternative. The idea behind \na is to 
+clean recursively remove every subtree in DFS order if its \pathend is
+a failure. Moreover, if the boolean passed to \na is true, then it
+erases the first successful path in the tree.
+
+An interesting property of \na is the following, allowing to see how \na
+complements \step.
+
+\mvspace{}
+\deflemma[lemma:pathna]{tex_code/path_atom_next_alt_id.tex}
+\mvspace{}
+
+
 
 % that is it is allowed to transform \okC or \koC leaves into \deadC, so
 % that the \step procedure is allowed to ignore the new ghosts states and move on.
@@ -441,8 +462,6 @@ This solution however is not unique, we should be able to backtrack on this
 successful state. To do so we can call \na and it will deadify the \okC node
 allowing \step to proceed on r X Z.
 
-More concretely the code for \na is show in 
-
 \begin{figure}
   \input{tex_code/next_alt_code.tex}
   \caption{\na implementation}
@@ -452,6 +471,9 @@ More concretely the code for \na is show in
 
 
 \subsubsection{The \run inductive}
+
+The run inductive is nothing but the transitive closure of the \step and \na
+
 
 
 \subsubsection{Valid tree}
