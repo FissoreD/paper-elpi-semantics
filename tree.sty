@@ -30,11 +30,21 @@
   mtriangle/.style={
       % shape border rotate=0,
       regular polygon,
-      regular polygon sides=8,
-      % minimum height=1em,
+      regular polygon sides=3,
+      dashed,
+      draw,
+      minimum height=4em,
       % text width=\SIZE,
       % inner sep=0
     },
+  moct/.style={
+    % shape border rotate=0,
+    regular polygon,
+    regular polygon sides=8,
+    % minimum height=1em,
+    % text width=\SIZE,
+    % inner sep=0
+  },
   allRed/.style={
       draw=red,
       text=red,
@@ -55,8 +65,8 @@
     % draw=blue,
     text=black,
   },
-  andNode/.style={ allBlue, mtriangle },
-  orNode/.style={ allOrange, mtriangle },
+  andNode/.style={ allBlue, moct },
+  orNode/.style={ allOrange, moct },
   okNode/.style={ allGreen, circle, },
   koNode/.style={ allRed, circle, },
   atomNode/.style={ allBlack, rect, },

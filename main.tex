@@ -266,7 +266,7 @@ The interpretation of a tree is performed by two main routines: \step and \na
 that traverse the tree depth-first, left-to-right. Then, then \run inductive
 makes the transitive closure of step \step and \na: it iterates the calls to its
 auxiliary functions. In \cref{type:stepT,type:naT,type:runT} we give the types
-contrats of these symbols where \cI{fv} is a set of variable names.
+contrats of these symbols where \cI{fvS} is a set of variable names.
 
 \mvspace{}
 \deftypes[type:steptag]{tex_code/step_tag.tex}
@@ -290,18 +290,18 @@ contrats of these symbols where \cI{fv} is a set of variable names.
 \end{figure}
 
 The prolog interpreter explores the state in DFS strategy, it finds
-the ``first-to-be-explored'' (ftbe) atom of the tree and then interpretes it.
-In a non-\isdead tree, we get the ftbe node via \pathend,
+the ``first-to-be-explored'' atom of the tree and then interpretes it.
+We get the this particular node via \pathend,
 shown in \cref{fig:pathend}.
 The \pathend is either the tree itself if the tree is a leaf.
 Otherwise, if the tree is a disjunction, the path continues on
-the left- or the right-subtree depending of if the the lhs is
-a \isdead tree. In the \orC case we are clearing ignoring the dead (ghost) state.
-
-In the case of a conjunction, it is more interesting to see what happens.
-If the \pathend $p$ of the lhs is a success then we look for 
+the left subtree, if it exists, or on the right-subtree otherwise.
+In the case of a conjunction,
+if the \pathend $p$ of the lhs leads to a \okC node then we look for 
 the \pathend in the rhs, otherwise we return $p$.
+
 In \cref{tree-ex1} the \pathend of the tree is \eI{g X}.
+
 \begin{figure}
   \begin{subfigure}{0.25\textwidth}
     \begin{center}\includestandalone[width=\textwidth]{./src/path2}\end{center}
@@ -314,7 +314,7 @@ In \cref{tree-ex1} the \pathend of the tree is \eI{g X}.
     \label{tree-ex1-exp} 
   \end{subfigure}
   \begin{subfigure}{0.3\textwidth}
-    \includestandalone[width=1\textwidth]{./src/tree_cut}
+    \includestandalone[width=1\textwidth]{./src/tree_cut2}
     \caption{Scope of the cut}
     \label{cut-scope} 
   \end{subfigure}
@@ -322,7 +322,7 @@ In \cref{tree-ex1} the \pathend of the tree is \eI{g X}.
 \end{figure}
 
 
-Below we define two special kind of trees depending on their pathend.
+Below we define two special kind of trees depending on their \pathend.
 
 \defline[def:success]{tex_code/succ_path.tex}
 \defline[def:failed]{tex_code/failed_path.tex}
@@ -333,10 +333,11 @@ The \step procedure takes as input a program, a set of free variables (fv), a
 substitution, and a tree, and returns an updated set of free variables, a
 \steptag, and an updated tree.  
 
-Free variables are those variables that appear in a tree; they are used in the
-backchaining operation to refresh the variables in the program.  
+Free variables are those variables that appear in a tree; they are used and
+updated when a backchaining operation takes place.
 
-The \steptag indicates the type of internal tree step that has been performed.
+The \steptag (see~\cref{type:steptag}) indicates the type of internal tree step 
+that has been performed.
 \cI{CutBrothers} denotes the interpretation of a superficial cut, i.e., a cut
 whose parent nodes are all \andC-nodes. \cI{Expanded} denotes the interpretation
 of non-superficial cuts or predicate calls. \cI{Failure} and \cI{Success} are
@@ -344,15 +345,13 @@ returned for, respectively, \failed and \success trees.
 
 
 The step procedure is intended to interpretate atoms,
-that is, it returnes the identity for \success and \failed tree.
+that is, it transforms the tree if the its \pathend is an atom,
+otherwsise, it returnes the identity.
 
 \mvspace{}
 \deflemma[lemma:success]{tex_code/success_step.tex}
 \deflemma[lemma:failed]{tex_code/failed_step.tex}
 \mvspace{}
-
-Therefore, \step produces interesting results if the path-end 
-of the input tree is either a call or a cut.
 
 \textit{Call step} The interpretation of a call $c$ stars by calling the \marginpar{if we go right in the tree, the subst is the one in the or...}
 \backchain function on $c$. The output list $l$ is taken to 

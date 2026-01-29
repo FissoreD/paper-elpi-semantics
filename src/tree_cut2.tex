@@ -17,16 +17,16 @@ for tree={
       [\andN,andNode
         [\orN, orNode, name=s1
           [\okN,okNode]
-          [\dots]
-          [\dots]
+          [, mtriangle]
+          [, mtriangle]
         ]
         [\okN,okNode, name=s2]
         [\cutN, name=cut]
       ] 
-      [\dots, name=u1]
-      [\dots, name=u2]
+      [, mtriangle, name=u1]
+      [, mtriangle, name=u2]
     ]
-    [\dots]
+    [, mtriangle]
 ] 
 % \draw[thick,red,->,out=south west,in=south east] (cut) -- node[right] {$\vec{a}$} (s1);
 \path [thick, red, ->] (cut) edge[bend left=40] node[below]{\cutl} (s1);
