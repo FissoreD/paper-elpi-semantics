@@ -220,7 +220,7 @@ using shared pointers. We aim to prove the equivalence of the two semantics
 together with some interesting lemmas of the cut behavior.
 
 
-\subsection{Tree semantics}
+\section{Tree semantics}
 \input{tex_code/tree_def.tex}
 
 In the tree we distinguish 5 main cases: \koC, \okC, and are special
@@ -348,7 +348,7 @@ Below we define three special kinds of trees depending on their \pathend.
 
 The latter definition identifies path ending in an atom.
 
-\subsubsection{The \step procedure}
+\subsection{The \step procedure}
 
 The \step procedure takes as input a program, a set of free variables (fv), a
 substitution, and a tree, and returns an updated set of free variables, a
@@ -430,7 +430,7 @@ the other subtrees with \koC. The \cutr procedure replaces the nodes
 pointed by the arrows with \koC.
 
 
-\subsubsection{The \na procedure}
+\subsection{The \na procedure}
 
 It is evident that the \step alone is not sufficient to reproduce entirely the
 behavior of the full expected prolog interpreter. In particular, 
@@ -504,7 +504,7 @@ allowing \step to proceed on r X Z.
 
 
 
-\subsubsection{The \run inductive}
+\subsection{The \run inductive}
 
 The inductive procedure \run is modeled as a function: it takes as input a
 program, a set of free variables, an initial substitution $\sigma_0$, and a tree
@@ -552,7 +552,7 @@ exists, \run is recursively called on it.
   \label{fig:run-rules}
 \end{figure}
 
-\subsubsection{Valid tree}
+\subsection{Valid trees}
 
 The inductive tree allows one to generate a large number of
 trees, some of which are not valid, in the sense that they cannot be produced
@@ -579,7 +579,7 @@ the right-skewed tree containing the conjunctions of the atoms present in the
 reset point $B_0$. In other words, the rhs coincides with the reset point.
 If the lhs is a success tree, then the rhs must be a valid tree.
 
-\subsection{\elpiP semantics}
+\section{\elpiP semantics}
 
 We now want to introduce the elpi semantics. The interpreter we show reflects
 the interpreter of the \elpiP language and is an operational semantics
@@ -601,23 +601,21 @@ The cutr and cutl operations disappears: the alternatives are stored
 directly in the cutE terminal.
 
 The elpi interpreter is as follows:
-\begin{minted}{coq}
-(*TODO: add system of rules*)
-Inductive nur : Sigma -> goals ->  alts -> Sigma -> alts -> Type :=
-  | StopE s a : nur s nilC a s a
-  | CutE s s1 a ca r gl : nur s gl ca s1 r -> nur s ((cutE ca) ::: gl) a s1 r
-  | CallE p s s1 a b bs gl r t : 
-    F u p t s = [:: b & bs ] -> 
-      nur b.1 (save_goals a gl (a2gs1 p b)) (save_alts a gl ((aa2gs p) bs) ++ a) s1 r -> 
-        nur s ((callE p t) ::: gl) a s1 r
-  | FailE p s s1 s2 t gl a al r : 
-    F u p t s = [::] -> nur s1 a al s2 r -> nur s ((callE p t) ::: gl) ((s1, a) ::: al) s2 r.
-\end{minted}
 
+\mvspace{}
+\deftypes[type:nur]{tex_code/nur_type.tex}
+\mvspace{}
+
+
+\input{tex_code/nur.tex}
+
+\subsection{From trees to lists}
 
 The translation of a tree to a list is as follows:
 
 \input{tex_code/t2l.tex}
+
+\section{Semantic equivalence}
 
 \newcommand{\thte}{\texttt{tree\_to\_elpi}} % theorem tree to elpi name
 \newcommand{\thet}{\texttt{elpi\_to\_tree}} % theorem elpi to tree name
