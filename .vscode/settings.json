@@ -1,15 +1,15 @@
 {
   // "explorer.excludeGitIgnore": true,
   "files.exclude": {
-    "*.log": true,
-    "*.vtc": true,
-    "*.aux": true,
-    "*.out": true,
-    "*.bbl": true,
-    "*.blg": true,
-    "*.fdb_latexmk": true,
-    "*.fls": true,
-    "*.synctex.gz": true,
+    "**/*.log": true,
+    "**/*.vtc": true,
+    "**/*.aux": true,
+    "**/*.out": true,
+    "**/*.bbl": true,
+    "**/*.blg": true,
+    "**/*.fdb_latexmk": true,
+    "**/*.fls": true,
+    "**/*.synctex.gz": true,
   },
   "latex-workshop.latex.tools": [
     {
@@ -36,9 +36,7 @@
   "latex-workshop.latex.recipes": [
     {
       "name": "pdflatex",
-      "tools": [
-        "pdflatex", "bibtex", "pdflatex", "pdflatex"
-      ]
+      "tools": [ "pdflatex", "bibtex", "pdflatex", "pdflatex" ]
     },
     {
       "name": "base",

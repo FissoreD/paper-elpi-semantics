@@ -1,0 +1,30 @@
+\documentclass[crop,tikz]{standalone}%
+
+\usepackage{../../tree}
+\usepackage{../../macro}
+
+\begin{document}
+
+\begin{forest}
+for tree={
+  l sep=3em, s sep=3em,
+  align=right
+}
+[\orN,orNode
+  % [\koN, koNode]
+  % [\okN, okNode,edge label={node[midway,right] {$\sigma_0$}}]
+  [\andN, andNode,edge label={node[midway,right] {$\sigma_1$}}
+    [\orN,orNode, name=s1
+      % [\koN,koNode]
+      [\okN,okNode,edge label={node[midway,right] {$\sigma_3$}}]
+      [\koN,koNode]
+    ]
+    [\okN,okNode,name=cut]
+  ]
+  [\koN,koNode, name=s2]
+] 
+\path [thick, red, ->] (cut) edge[bend left=40] node[below]{\cutl} (s1);
+\path [thick, red, ->] (cut) edge[bend left=30] node[right]{\cutr} (s2);
+\end{forest}
+
+\end{document}

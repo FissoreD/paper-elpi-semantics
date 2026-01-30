@@ -434,24 +434,31 @@ pointed by the arrows with \koC.
 \subsubsection{The \na procedure}
 
 It is evident that the \step alone is not sufficient to reproduce entirely the
-behavior of the full \elpiP solver. In particular, \step does not perform any
-backtracking nor it cleans success. From 
-\cref{lemma:success,lemma:failed}, \step returns the identity. In order
+behavior of the full expected prolog interpreter. In particular, 
+we need to bracktrack on failures. Moreover, in case of success,
+we should return a state where the state in cleaned of the success itself,
+this is essential to, non deterministically, find all the
+solution of a given query.
+By \cref{lemma:success,lemma:failed}, we know that \step returns the identity
+on successful and failed states. In order
 to continue the computation on these particular trees, we
-need the \na procedure: its signature is provided in \cref{type:naT}
+need the \na procedure aiming to expecially work with
+failed and successful trees:
 and its implementation in \cref{fig:na}.
 
-The \na procedure takes a boolean and a tree and return a new tree if it
-still contains an alternative. The idea behind \na is to 
-clean recursively remove every subtree in DFS order if its \pathend is
+The \na procedure takes a boolean and a tree, clean it from failures
+or success and returns a new tree if this tree still contains
+a non explored path. The idea behind \na is to 
+clean recursively every subtree in DFS order if its \pathend is
 a failure. Moreover, if the boolean passed to \na is true, then it
 erases the first successful path in the tree.
 
-An interesting property of \na is the following, allowing to see how \na
+Some interesting property of \na are shown below and allow to see how \na
 complements \step.
 
 \mvspace{}
 \deflemma[lemma:pathna]{tex_code/path_atom_next_alt_id.tex}
+\deflemma[lemma:nafailedf]{tex_code/na_failed.tex}
 \mvspace{}
 
 

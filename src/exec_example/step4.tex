@@ -1,0 +1,27 @@
+\documentclass[crop,tikz]{standalone}%
+
+\usepackage{../../tree}
+
+\begin{document}
+
+\begin{forest}
+for tree={
+  % minimum height=5em,
+  l sep=3em, s sep=3em,
+  align=right
+}
+[\orN,orNode
+  % [\koN, koNode]
+  % [\okN, okNode,edge label={node[midway,right] {$\sigma_0$}}]
+  [\andN, andNode,edge label={node[midway,right] {$\sigma_1$}}
+    [r X Z]
+    [!]
+  ]
+  [\andN,andNode,edge label={node[midway,right] {$\sigma_2$}}
+    [f X Y]
+    [f Y Z]
+  ]
+] 
+\end{forest}
+
+\end{document}
