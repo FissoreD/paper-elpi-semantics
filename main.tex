@@ -452,6 +452,27 @@ clean recursively every subtree in DFS order if its \pathend is
 a failure. Moreover, if the boolean passed to \na is true, then it
 erases the first successful path in the tree.
 
+The base cases of \na are immidiate.
+The \orC case is rathere intuitive: if the lhs of the \orC does
+not exist we look for the \na in the rhs. Otherwise, we look for the \na
+in the lhs, if this \na does not exists, we look for the \na in the rhs.
+
+We want to spend few words about the \andC case, since the reset point $B0$
+for $B$ plays an important role. 
+The \na in an \andC tree should consider two cases: if the lhs succeeds, then
+the \na should be retrived in the rhs. If this alternative does not exists
+it means that the rhs has entirely been explored. We need to erase the success
+in the lhs and try to find if a non-explored alternative exists. If so,
+we return a new tree with the new lhs and the rhs is built from the reset point.
+\cI{big_and} is a trivial function build a right-skewed tree of and nodes
+where the leaves are the atoms written in the reset point.
+We need to reuse the reset point since,
+the step procedure in \andC trees
+evaluates the rhs of a \andC tree if the lhs succeeds.
+This evaluation is dependent on the subsitution in the lhs tree.
+Therefore, if we need to backtrack in the lhs, we need to reset the
+rhs.
+
 Some interesting property of \na are shown below and allow to see how \na
 complements \step.
 
@@ -485,23 +506,32 @@ allowing \step to proceed on r X Z.
 
 \subsubsection{The \run inductive}
 
-The run inductive is nothing but the transitive closure of the \step and \na
+The inductive procedure \run is modeled as a function: it takes as input a
+program, a set of free variables, an initial substitution $\sigma_0$, and a tree
+$t_0$, and returns a substitution $\sigma_1$ together with an optional updated
+tree $t_1$. The substitution $\sigma_1$ represents the most-general unificator
+that makes the execution of the tree $t_0$ succeed starting from the initial
+substitution $\sigma_0$, $\sigma_1$ is an extension of $\sigma_0$.
+The tree $t_1$ is the updated tree containing the alternatives that have
+not yet been explored. If the tree contains no solution, then \texttt{None} is
+returned.
 
-% \newcommand{\inferCut}[1]{
-%   \begin{myRule}{#1}
-%     \AxiomC{}
-%     \RightLabelM{\ruleInferCut}
-%     \UnaryInfC{\inferCmdArr{\ctx}{\cut}{(\detI, \top)}}
-%   \end{myRule}
-% }
+The procedure \run is based on three main derivation rules, shown in
+\cref{fig:run-rules}. If the \pathend of the tree $t$ is a success, the input
+substitution is returned and the input tree is cleaned of its successful
+path. If the \pathend of the tree is an atom, then \step is
+invoked to evaluate this atom, and \run is recursively called on the new
+tree. Finally, if the \pathend of the tree is a failure,
+\na is called to clear the failed path; if the resulting cleaned tree
+exists, \run is recursively called on it.
+\begin{figure}[h]
 
   \begin{prooftree}
-    \AxiomC{$\success A$}
+    \AxiomC{$\success\ A$}
     \RightLabel{$\run\_done$}
     \UnaryInfC{$\run\ fv\ s_1\ A\ (\getsubst\ s_1\ A)\ (\na\ \top\ A)$}
   \end{prooftree}
 
-  
   \begin{prooftree}
     \AxiomC{$\pathatom\ A$}
     \AxiomC{$\step\ u\ p\ fv_0\ s_1\ A\ = (fv_1,\ st,\ B)$}
@@ -516,16 +546,39 @@ The run inductive is nothing but the transitive closure of the \step and \na
     \AxiomC{$\run\ fv_0\ s1\ B\ s_2\ r$}
     \RightLabel{$\run\_fail$}
     \TrinaryInfC{$\run\ fv_0\ s_1\ A\ s_2\ r$}
-  \end{prooftree}
+  \end{prooftree}  
+
+  \caption{Rule system for \run}
+  \label{fig:run-rules}
+\end{figure}
+
 \subsubsection{Valid tree}
 
-Reasoning on a the tree semantics allows to identify an invariant that
+The inductive tree allows one to generate a large number of
+trees, some of which are not valid, in the sense that they cannot be produced
+starting from a given query. The class of valid trees is characterized by the
+following function.
 
-% \begin{figure}  
-%   \input{tex_code/valid_tree.tex}
-%   $$\texttt{B.bbOr}\ A \iff \exists\ r\ rs, A = \texttt{big\_or\_aux}\ r\ rs \lor A = \texttt{cutr}(\texttt{big\_or\_aux}\ r\ rs)$$
-% \caption{Valid tree}
-% \end{figure}
+\input{tex_code/valid_tree.tex}
+
+Once again, the most interesting cases to analyze are \orC and \andC.
+
+For the \orC constructor, we distinguish two cases depending on whether the
+left-hand side (lhs) exists. If it does not exist, then the right-hand side
+(rhs) must be a valid tree. Otherwise, the lhs must itself be a valid tree,
+and the rhs is either the \koC tree, since it may have been removed by the
+evaluation of a superficial cut in the lhs, or it has not yet been explored.
+In the latter case, it is a \cI{base_or} tree, namely the right-skewed tree
+formed by a disjunction of conjunctions.
+
+For the \andC constructor, the lhs is required to be a valid tree. The shape
+of the rhs depends on whether the lhs represents a success. If the lhs is not
+successful, then the rhs has never been explored: the procedures \step and
+\na modify the rhs only when the lhs succeeds. In this case, the lhs must be
+the right-skewed tree containing the conjunctions of the atoms present in the
+reset point $B_0$. In other words, the rhs coincides with the reset point.
+If the lhs is a success tree, then the rhs must be a valid tree.
+
 \subsection{\elpiP semantics}
 
 TODO: dire che la semantica ad albero è puù faicle per le prove
