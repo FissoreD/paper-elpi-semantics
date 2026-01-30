@@ -175,6 +175,8 @@ of these rules in the \rocqP representation is straightforword.
 \end{figure}
 
 \subsection{The cut operator}
+\marginpar{se metti r1 = g A B :- f A B. allora g e f sono funzioni, e puoi
+spiegare anche l'idea del detcheck qui}
 
 The semantics of the cut operator adopted in the \textsc{\elpiP} language
 corresponds to the \emph{hard cut} operator of standard \textsc{SWI-Prolog}.
@@ -228,9 +230,11 @@ terminal. These symbols are considered meta because they are internal
 intermediate symbols used to give structure to the tree.
 
 The \taC constructor (acronym for tree-atom) is the constructor of atoms in the
-tree.
+tree. \marginpar{TA = Todo/Goal?}
 
-The two recursive cases of a tree are the \orC and \andC non-terminals. The \orC
+The two recursive cases of a tree are the \orC and \andC non-terminals. 
+\marginpar{non-terminal è roba di grammatiche, usa nodes/constructors}
+The \orC
 non-terminal \(A \lor B_\sigma\) denotes a disjunction between two trees \(A\) and
 \(B\). The first branch is optional, if absent it represents a dead tree,
 i.e. a tree that has been entirely explored.
@@ -244,10 +248,13 @@ of \(B\) to its initial form if a backtracking operation occurs on \(A\). Intuit
 let \ttl be the function flattening a tree in a list of sequents disjnction, 
 in \prologP-like syntax the tree \(A \land_{B_0} B\)
 becomes $(A_1, \ttl\ B); (A_2, B_0); \dots; (A_n, B_0)$ where  $\ttl (A) = A_1,\dots, A_n$.
+\marginpar{t2l nope, metti un r3 = g X Z :- r .., f .., !, 
+e rifatti all'esempio della sezione prima (fai in modo che f funzioni solo con
+la seconda regola per r)}
 
 A graphical representation of a tree is shown in \cref{tree-ex1}. To make the
 graph more compact, the \andC and \orC non-terminals are n-ary rather than binary,
-with right-binding priority. The \koC terminal act as the neutral elements
+with right-binding priority. \marginpar{associate to the...} The \koC terminal act as the neutral elements 
 in the \orC list, while \okC is the neutral element of the \andC list.
 
 
@@ -265,7 +272,7 @@ in the \orC list, while \okC is the neutral element of the \andC list.
 The interpretation of a tree is performed by two main routines: \step and \na
 that traverse the tree depth-first, left-to-right. Then, then \run inductive
 makes the transitive closure of step \step and \na: it iterates the calls to its
-auxiliary functions. In \cref{type:stepT,type:naT,type:runT} we give the types
+auxiliary functions.\marginpar{as much as needed, indee prolog programs do not necessarily terminate} In \cref{type:stepT,type:naT,type:runT} we give the types
 contrats of these symbols where \cI{fvS} is a set of variable names.
 
 \mvspace{}
@@ -274,12 +281,21 @@ contrats of these symbols where \cI{fvS} is a set of variable names.
 \deftypes[type:naT]{tex_code/next_alt.tex}
 \deftypes[type:runT]{tex_code/run_sig.tex}
 
+<<<<<<< HEAD
 \mvspace{}
 % A particular tree we want to identify is a \isdead tree (defined in \cref{fig:dead}). This tree has the
 % property to never produce a solution: it is eiher the \deadC tree
 % or both branches of \orC are dead, or the lhs of \andC is dead. In the 
 % latter case, we note that $B$ can be non-dead, but this is not a problem
 % since the interpreter can run $B$ only if $A$ is non-dead.
+=======
+\mvspace{}\marginpar{non dovrebbe essere option(Sigma * tree)?}
+A particular tree we want to identify is a \isdead tree (defined in \cref{fig:dead}). This tree has the
+property to never produce a solution: it is eiher the \deadC tree
+or both branches of \orC are dead, or the lhs of \andC is dead. In the 
+latter case, we note that $B$ can be non-dead, but this is not a problem
+since the interpreter can run $B$ only if $A$ is non-dead.
+>>>>>>> a760751 (comments)
 
 \begin{figure}
   \begin{subfigure}{0.45\textwidth}
