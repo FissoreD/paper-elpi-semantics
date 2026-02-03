@@ -139,7 +139,7 @@ a term accepting predicates only predicates as functors.
 \deftypes[type:bc]{tex_code/bc_type.tex}
 \mvspace{}
 
-A rule (see~\cref{type:r}) is made a head of type term and a list of premises,
+A rule (see~\cref{type:r}) is made a head of type term and a list of premises,\marginpar{!!!: controllare il tipo di bc nel testo}
 the premises are atoms. A program (see~\cref{type:prog}) is made by a list of
 rules and a mapping from predicates to their signatures. The type sigT is the
 classic type from the simply typed lambda calculus, i.e. it is either a base
@@ -616,9 +616,15 @@ The call can either succeed (\textsc{CallE}) or fail (\textsc{FailE}). In the
 latter case, a backchaining operation is mandatory: the first goal does not
 succeed, we need to take the head of the alternatives, and make it the new list
 of goals to be explored. In the former case, we need to build a new state and
-this ask some attention. When we are calling a rules, 
+this ask some attention. When we successfully call a predicate, multiple
+rules may be used, by the SLD algorithm, the first rule should be
+tried at first and then, if it fails that the other rules should be tried.
+The translation of a rules to a list is done by taking its premises (the)
 
 
+
+
+\section{Semantic equivalence}
 
 \subsection{From trees to lists}
 
@@ -626,7 +632,6 @@ The translation of a tree to a list is as follows:
 
 \input{tex_code/t2l.tex}
 
-\section{Semantic equivalence}
 
 \newcommand{\thte}{\texttt{tree\_to\_elpi}} % theorem tree to elpi name
 \newcommand{\thet}{\texttt{elpi\_to\_tree}} % theorem elpi to tree name
