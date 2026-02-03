@@ -581,18 +581,18 @@ with a pointer to an elpi state, and are used to keep trace of the alternatives
 that should be kept when a cut is interpreted. We call these, special,
 alternatives the cut-to alternatives.
 
+
 % We are completely loosing the tree structure. There are no clean reset
 % points. The backtracking operation is simpler: it is the tail function.
 % The cutr and cutl operations disappears: the alternatives are stored 
 % directly in the cutE terminal.
 
-The elpi interpreter is as follows:
+\begin{figure}
+  \input{tex_code/stepE.tex}
 
-\mvspace{}
-\deftypes[type:nur]{tex_code/nur_type.tex}
-\mvspace{}
-
-\begin{figure}[h]
+  \mvspace{}
+  \deftypes[type:nur]{tex_code/nur_type.tex}
+  \mvspace{}
 
   \input{tex_code/nurbp.tex}
 
@@ -600,9 +600,15 @@ The elpi interpreter is as follows:
   \label{fig:nur-rules}
 \end{figure}
 
+The idea of the elpi interpreter is to recieve a list of alternatives. The first
+alternative is a list of goals. Four cases should be taken into account. They
+are shown in \cref{fig:nur-rules}. In order to simplify the goal retrieval, we
+have split the head of the alternatives for the tail to immediately find it in
+the inductive. Note that an empty list of alternative represents, by definition,
+a failing state. If the goal list is empty , then we have, by definition a success
 
 
-\input{tex_code/nur.tex}
+
 
 \subsection{From trees to lists}
 
