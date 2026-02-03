@@ -526,27 +526,7 @@ tree. Finally, if the \pathend of the tree is a failure,
 exists, \run is recursively called on it.
 \begin{figure}[h]
 
-  \begin{prooftree}
-    \AxiomC{$\success\ A$}
-    \RightLabel{$\run\_done$}
-    \UnaryInfC{$\run\ fv\ s_1\ A\ (\getsubst\ s_1\ A)\ (\na\ \top\ A)$}
-  \end{prooftree}
-
-  \begin{prooftree}
-    \AxiomC{$\pathatom\ A$}
-    \AxiomC{$\step\ u\ p\ fv_0\ s_1\ A\ = (fv_1,\ st,\ B)$}
-    \AxiomC{$\run\ fv_1\ s_1\ B\ s_2\ r$}
-    \RightLabel{$\run\_step$}
-    \TrinaryInfC{$\run\ fv_0\ s_1\ A\ s_2\ r$}
-  \end{prooftree}
-
-  \begin{prooftree}
-    \AxiomC{$\failed\ A$}
-    \AxiomC{$\na\ \bot\ A = Some\ B$}
-    \AxiomC{$\run\ fv_0\ s1\ B\ s_2\ r$}
-    \RightLabel{$\run\_fail$}
-    \TrinaryInfC{$\run\ fv_0\ s_1\ A\ s_2\ r$}
-  \end{prooftree}  
+  \input{tex_code/runbp.tex}
 
   \caption{Rule system for \run}
   \label{fig:run-rules}
@@ -589,22 +569,37 @@ closely related to the one given by Debray and Mishra in
 the semantics in Isabelle/HOL together with some optimizations that
 are present in the Warren Abstract Machine~\cite{warren1983abstract,10.7551/mitpress/7160.001.0001}.
 
-In these operational semantics we need to decorate the cut
-atom with a list of alternative, morally a pointer to a sub-list
-of the overall alternatives. An atom in the elpi semantcis is defined as follows:
+The inductive representing a state of the \elpiP language is shown below.
 
 \input{tex_code/elpi_def.tex}
 
-We are completely loosing the tree structure. There are no clean reset
-points. The backtracking operation is simpler: it is the tail function.
-The cutr and cutl operations disappears: the alternatives are stored 
-directly in the cutE terminal.
+An elpi state is an enhanced two-dimension list. The outermost list represents
+the list of alternatives in disjunction accompagnate with the substitution that
+should be used to for their interpretation. The innermost list is a list of
+atom, representing a list of goals in cunjunctions. These goals are decorated
+with a pointer to an elpi state, and are used to keep trace of the alternatives
+that should be kept when a cut is interpreted. We call these, special,
+alternatives the cut-to alternatives.
+
+% We are completely loosing the tree structure. There are no clean reset
+% points. The backtracking operation is simpler: it is the tail function.
+% The cutr and cutl operations disappears: the alternatives are stored 
+% directly in the cutE terminal.
 
 The elpi interpreter is as follows:
 
 \mvspace{}
 \deftypes[type:nur]{tex_code/nur_type.tex}
 \mvspace{}
+
+\begin{figure}[h]
+
+  \input{tex_code/nurbp.tex}
+
+  \caption{Rule system for \nur}
+  \label{fig:nur-rules}
+\end{figure}
+
 
 
 \input{tex_code/nur.tex}
