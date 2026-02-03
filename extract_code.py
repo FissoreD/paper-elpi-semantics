@@ -118,6 +118,10 @@ def latexify(expr):
 def flatten(xss):
     return [x for xs in xss for x in xs]
 
+# Returns the bussproof representation of an inductive:
+# it does not work for:
+# inductive with hypothesis containing arrows
+# mutual recursive inductives
 class bussproof(C):
     def __init__(self):
         super(bussproof,self).__init__("(*","*)","tex_code","v","prooftree:","endprooftree")
@@ -174,7 +178,6 @@ class bussproof(C):
         for i in lines[1:]:
             cnt += "\n"+self.parse_inductive(i)
         super().write(fout,cnt)
-
 
 if __name__ == "__main__":
     fname = sys.argv[1]
