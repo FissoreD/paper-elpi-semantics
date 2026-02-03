@@ -129,20 +129,19 @@ class bussproof(C):
 
         n = len(hyps)
         if n == 0:
+            n = 1
             lines.append(f"  \\AxiomC{{}}")
 
         lines.append(f"  \\RightLabel{{\\textsc{{{latexify(name)}}}}}")
 
-        if n == 0:
-            lines.append(f"  \\UnaryInfC{{$${latexify(concl)}$$}}")
-        elif n == 1:
-            lines.append(f"  \\UnaryInfC{{$${latexify(concl)}$$}}")
-        elif n == 2:
-            lines.append(f"  \\BinaryInfC{{$${latexify(concl)}$$}}")
-        elif n == 3:
-            lines.append(f"  \\TrinaryInfC{{$${latexify(concl)}$$}}")
-        else:
+        L = ["Unary","Binary","Trinary"]
+
+        if n > len(L):
             raise ValueError("Too many premises for bussproofs")
+        else:
+            tag = L[n-1]
+
+        lines.append(f"  \\{tag}InfC{{$${latexify(concl)}$$}}")
 
         lines.append("\\end{prooftree}")
         return "\n".join(lines)
