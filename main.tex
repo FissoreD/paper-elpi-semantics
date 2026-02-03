@@ -586,7 +586,6 @@ alternatives the cut-to alternatives.
 % points. The backtracking operation is simpler: it is the tail function.
 % The cutr and cutl operations disappears: the alternatives are stored 
 % directly in the cutE terminal.
-
 \begin{figure}
   \input{tex_code/stepE.tex}
 
@@ -600,13 +599,24 @@ alternatives the cut-to alternatives.
   \label{fig:nur-rules}
 \end{figure}
 
-The idea of the elpi interpreter is to recieve a list of alternatives. The first
-alternative is a list of goals. Four cases should be taken into account. They
-are shown in \cref{fig:nur-rules}. In order to simplify the goal retrieval, we
-have split the head of the alternatives for the tail to immediately find it in
-the inductive. Note that an empty list of alternative represents, by definition,
-a failing state. If the goal list is empty , then we have, by definition a success
+The idea of the \textsc{Elpi} interpreter is to receive a list of alternatives.
+The first alternative consists of a list of goals. Four cases must be taken
+into account; they are shown in \cref{fig:nur-rules}. In order to simplify goal
+retrieval, we split the head of the alternatives from the tail, so that it can
+be immediately matched in the inductive definition. Note that an empty list of
+alternatives represents, by definition, a failing state. If the goal list is
+empty (\textsc{StopE}), then we have, by definition, a success, and the input
+solution together with the list of alternatives is returned. If the goal list
+starts with a cut (\textsc{CutE}), then the current alternatives are erased in
+favour of the cut alternatives, and a recursive call is made on the remaining
+goal list.
 
+Finally, we must consider the case in which the goal list starts with a call.
+The call can either succeed (\textsc{CallE}) or fail (\textsc{FailE}). In the
+latter case, a backchaining operation is mandatory: the first goal does not
+succeed, we need to take the head of the alternatives, and make it the new list
+of goals to be explored. In the former case, we need to build a new state and
+this ask some attention. When we are calling a rules, 
 
 
 

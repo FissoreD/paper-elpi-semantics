@@ -120,7 +120,7 @@ def flatten(xss):
 
 class bussproof(C):
     def __init__(self):
-        super(bussproof,self).__init__("(*","*)","tex_code","v","BP:","ENDBP")
+        super(bussproof,self).__init__("(*","*)","tex_code","v","prooftree:","endprooftree")
 
     def print_bp(self,name,hyps,concl):
         lines = ["\\begin{prooftree}"]
