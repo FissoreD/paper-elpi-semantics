@@ -6,6 +6,7 @@
 \usepackage{macro}
 \usepackage{custom_ref}
 \usepackage{tree}
+\usepackage{mathtools}
 
 %\pdfoutput=1 %uncomment to ensure pdflatex processing (mandatatory e.g. to submit to arXiv)
 %\hideLIPIcs  %uncomment to remove references to LIPIcs series (logo, DOI, ...), e.g. when preparing a pre-final version to be uploaded to arXiv or another public repository
@@ -290,9 +291,18 @@ contrats of these symbols where \cI{fvS} is a set of variable names.
 \begin{figure}
   \begin{subfigure}{0.45\textwidth}
   \input{tex_code/get_end.tex}
+  \end{subfigure}
+  \begin{subfigure}{0.45\textwidth}
+\input{tex_code/get_subst.tex}
+\input{tex_code/path_end.tex}
+\input{tex_code/succ_path.tex}
+\input{tex_code/failed_path.tex}
+\input{tex_code/path_atom.tex}
+
+  \end{subfigure}
+
   \caption{Defintion of \getend}
   \label{fig:getend}
-  \end{subfigure}
 \end{figure}
 
 The tree interpreter, as in prolog, explores the state in DFS strategy,
@@ -526,7 +536,31 @@ tree. Finally, if the \pathend of the tree is a failure,
 exists, \run is recursively called on it.
 \begin{figure}[h]
 
+<<<<<<< HEAD
   \input{tex_code/runbp.tex}
+=======
+  \begin{prooftree}
+    \AxiomC{$\success\ A$}
+    \RightLabel{$\run\_done$}
+    \UnaryInfC{$\run\ fv\ s_1\ A\ (\getsubst\ s_1\ A)\ (\na\ \top\ A)$}
+  \end{prooftree}
+
+  \begin{prooftree}
+    \AxiomC{$\pathatom\ A$}
+    \AxiomC{$\step\ u\ p\ fv_0\ s_1\ A\ = (fv_1,\ st,\ B)$}
+    \AxiomC{$\run\ fv_1\ s_1\ B\ s_2\ r$}
+    \RightLabel{$\run\_step$}
+    \TrinaryInfC{$\run\ fv_0\ s_1\ A\ s_2\ r$}
+  \end{prooftree}
+
+  \begin{prooftree}
+    \AxiomC{$\failed\ A$}
+    \AxiomC{$\na\ \bot\ A = \mathrm{Some}\ B$}
+    \AxiomC{$\run\ fv_0\ s1\ B\ s_2\ r$}
+    \RightLabel{$\run\_fail$}
+    \TrinaryInfC{$\run\ fv_0\ s_1\ A\ s_2\ r$}
+  \end{prooftree}  
+>>>>>>> 2f245d6 (aestetic)
 
   \caption{Rule system for \run}
   \label{fig:run-rules}
@@ -698,6 +732,30 @@ We have $4$ case to analyse:
   \end{center}
 \caption{Induction scheme for \cref{thet}}  
 \end{figure}
+
+\section{Case study: determinacy alanysis}
+
+we mechanize the first order part of xxx.
+
+snippet det, main thm, invariant det tree (valid tree prev section?)
+
+proof induciton on exec, step/next alt preserving invariant
+proved by induction on the tree.
+
+with list semantics cut and next alt requires to express
+a link btween the ca or next alts and the current goal,
+which is non trivial without an intermediate data
+strature like the tree
+
+\section{Related work}
+
+prolog semantics, King lost
+
+yves for the proof technique
+
+
+\section{Conclusion}
+
 
 \bibliography{bib}
 \end{document}

@@ -11,6 +11,17 @@ import os, sys, re
 def clean_line_global(l):
     l = l.replace("successT", "success")
     l = l.replace("failedT", "failed")
+    l = l.replace("Sigma", "~$\\Sigma$~")
+    # l = l.replace("tree", "~$\\tau$~")
+    l = l.replace("empty", "~$\\epsilon$~")
+    l = l.replace("fvS", "~$\\mathcal{F}_{\\!\\!\\nu}$~")
+    l = l.replace("bool", "~$\\mathbb{B}$~")
+    l = l.replace("program", "~$\\mathbb{P}$~")
+    l = l.replace("<->", "~$\\leftrightarrow$~")
+    l = l.replace("->", "~$\\to$~")
+    l = l.replace("=>", "~$\\Rightarrow$~")
+    l = l.replace(":=", "~$\\coloneq$~")
+    l = l.replace("step_tag", "tag") # FIXME
     return l
 
 def latexify(expr):
