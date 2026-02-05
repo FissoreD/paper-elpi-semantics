@@ -21,6 +21,10 @@ def clean_line_global(l):
     l = l.replace("->", "~$\\to$~")
     l = l.replace("=>", "~$\\Rightarrow$~")
     l = l.replace(":=", "~$\\coloneq$~")
+    l = l.replace("forall", "~$\\forall$~")
+    l = l.replace("exists", "~$\\exists$~")
+    for i in range(10):
+        l = l.replace(f"s{i}", f"~$s_{i}$~")
     l = l.replace("step_tag", "tag") # FIXME
     return l
 

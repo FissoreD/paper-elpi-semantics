@@ -658,9 +658,10 @@ list of goals $gl$ to each of these new lists.
 
 \section{Semantic equivalence}
 
-The equivalence between the two semantics is possible under two conditions:
-we need to work with "valid states", i.e. state that can be generated from
-a query of type call.
+The equivalence between the two semantics is possible under two conditions: we
+need to work with ``valid states'', i.e. all of those states that can be
+generated from a call. Secondly, we need a to translate trees state into elpi
+states.
 
 \subsection{From trees to lists}
 
@@ -672,29 +673,36 @@ The translation of a tree to a list is as follows:
 \newcommand{\thte}{\texttt{tree\_to\_elpi}} % theorem tree to elpi name
 \newcommand{\thet}{\texttt{elpi\_to\_tree}} % theorem elpi to tree name
 
-\begin{theorem}[\thte]
-\begin{align*}
-  \forall A\ \sigma_1\ B\ \sigma_2\ b\ \sigma_0,
-  \vt\ A \to \\
-  \run_u\ \sigma_1\ A\ (Some\ \sigma_2)\ B\ b \to \\
-    \exists x\ xs, 
-      \ttl\ A\ \sigma_1\ \nilC = x ::: xs \land
-      \nur_u\ x.1\ x.2\ xs\ \sigma_2\ (\ttl\ B\ \sigma_0\ \nilC).
-\end{align*}
+\mvspace{}
+\deflemma[th:t1]{tex_code/tree_to_elpi.tex}
 
-\end{theorem}
+% \begin{theorem}[\thte]
+% \begin{align*}
+%   \forall A\ \sigma_1\ B\ \sigma_2\ b\ \sigma_0,
+%   \vt\ A \to \\
+%   \run_u\ \sigma_1\ A\ (Some\ \sigma_2)\ B\ b \to \\
+%     \exists x\ xs, 
+%       \ttl\ A\ \sigma_1\ \nilC = x ::: xs \land
+%       \nur_u\ x.1\ x.2\ xs\ \sigma_2\ (\ttl\ B\ \sigma_0\ \nilC).
+% \end{align*}
 
-\begin{theorem}[\thet]
-  \label{thet}
-\begin{align*}
-  \forall \sigma_1\ \sigma_2\ a\ na\ g, \\
-  \nur_u\ \sigma_1\ g\ a\ \sigma_2\ na \to  \\
-  \forall \sigma_0\ t, \vt\ t \to (\ttl\ t\ \sigma_0\ \nilC) = ((\sigma_1,g) ::: a) \to \\
-  \exists t'\ n, \run_u\ \sigma_0\ t\ (Some\ \sigma_2)\ t'\ n \land \ttl\ t'\ \sigma_0\ \nilC = na.
-\end{align*}
-\end{theorem}
+% \end{theorem}
 
-The proof of \cref{thet} is based on the idea explained in~\cite[Section
+\mvspace{}
+\deflemma[th:t2]{tex_code/elpi_to_tree.tex}
+
+\mvspace{}
+% \begin{theorem}[\thet]
+%   \label{thet}
+% \begin{align*}
+%   \forall \sigma_1\ \sigma_2\ a\ na\ g, \\
+%   \nur_u\ \sigma_1\ g\ a\ \sigma_2\ na \to  \\
+%   \forall \sigma_0\ t, \vt\ t \to (\ttl\ t\ \sigma_0\ \nilC) = ((\sigma_1,g) ::: a) \to \\
+%   \exists t'\ n, \run_u\ \sigma_0\ t\ (Some\ \sigma_2)\ t'\ n \land \ttl\ t'\ \sigma_0\ \nilC = na.
+% \end{align*}
+% \end{theorem}
+
+The proof of \cref{th:t2} is based on the idea explained in~\cite[Section
 3.3]{yves-equiv}. An ideal statement for this lemma would be: given a function
 \texttt{l2t} transforming an elpi state to a tree, we would have have that the
 the execution of an elpi state $e$ is the same as executing \run on the tree
