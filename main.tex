@@ -646,19 +646,24 @@ favour of the cut alternatives, and a recursive call is made on the remaining
 goal list.
 
 Finally, we must consider the case in which the goal list starts with a call.
-The call can either succeed (\textsc{CallE}) or fail (\textsc{FailE}). In the
-latter case, a backchaining operation is mandatory: the first goal does not
+The call can either fail (\textsc{FailE}) or succeed (\textsc{CallE}). We
+distinguish the two cases by looking if the backchaining operation returns
+zero or more rules. We have wrapped this task in the \emph{stepE}
+procedure, which also updates the goal and cut-alternative list. The fail case,
+is relatively easy: the first goal does not
 succeed, we need to take the head of the alternatives, and make it the new list
-of goals to be explored. In the former case, we need to build a new state and
-this ask some attention. When we successfully call a predicate, multiple
-rules may be used, by the SLD algorithm, the first rule should be
-tried at first and then, if it fails that the other rules should be tried.
-The translation of a rules to a list is done by taking its premises (the)
+of goals to be explored.
 
-
-
+The case in which backchaining produces a non empty list, the \emph{save\_alts}
+routine is in cahrge of: taking the list of premises and add to each atom the
+the list of alternatives $a$ as their new cut-alternatives, then it append the
+list of goals $gl$ to each of these new lists.
 
 \section{Semantic equivalence}
+
+The equivalence between the two semantics is possible under two conditions:
+we need to work with "valid states", i.e. state that can be generated from
+a query of type call.
 
 \subsection{From trees to lists}
 
