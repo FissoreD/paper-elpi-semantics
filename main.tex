@@ -537,27 +537,27 @@ exists, \run is recursively called on it.
 \begin{figure}[h]
 
   \input{tex_code/runbp.tex}
-  \begin{prooftree}
-    \AxiomC{$\success\ A$}
-    \RightLabel{$\run\_done$}
-    \UnaryInfC{$\run\ fv\ s_1\ A\ (\getsubst\ s_1\ A)\ (\na\ \top\ A)$}
-  \end{prooftree}
+  % \begin{prooftree}
+  %   \AxiomC{$\success\ A$}
+  %   \RightLabel{$\run\_done$}
+  %   \UnaryInfC{$\run\ fv\ s_1\ A\ (\getsubst\ s_1\ A)\ (\na\ \top\ A)$}
+  % \end{prooftree}
 
-  \begin{prooftree}
-    \AxiomC{$\pathatom\ A$}
-    \AxiomC{$\step\ u\ p\ fv_0\ s_1\ A\ = (fv_1,\ st,\ B)$}
-    \AxiomC{$\run\ fv_1\ s_1\ B\ s_2\ r$}
-    \RightLabel{$\run\_step$}
-    \TrinaryInfC{$\run\ fv_0\ s_1\ A\ s_2\ r$}
-  \end{prooftree}
+  % \begin{prooftree}
+  %   \AxiomC{$\pathatom\ A$}
+  %   \AxiomC{$\step\ u\ p\ fv_0\ s_1\ A\ = (fv_1,\ st,\ B)$}
+  %   \AxiomC{$\run\ fv_1\ s_1\ B\ s_2\ r$}
+  %   \RightLabel{$\run\_step$}
+  %   \TrinaryInfC{$\run\ fv_0\ s_1\ A\ s_2\ r$}
+  % \end{prooftree}
 
-  \begin{prooftree}
-    \AxiomC{$\failed\ A$}
-    \AxiomC{$\na\ \bot\ A = \mathrm{Some}\ B$}
-    \AxiomC{$\run\ fv_0\ s1\ B\ s_2\ r$}
-    \RightLabel{$\run\_fail$}
-    \TrinaryInfC{$\run\ fv_0\ s_1\ A\ s_2\ r$}
-  \end{prooftree}  
+  % \begin{prooftree}
+  %   \AxiomC{$\failed\ A$}
+  %   \AxiomC{$\na\ \bot\ A = \mathrm{Some}\ B$}
+  %   \AxiomC{$\run\ fv_0\ s1\ B\ s_2\ r$}
+  %   \RightLabel{$\run\_fail$}
+  %   \TrinaryInfC{$\run\ fv_0\ s_1\ A\ s_2\ r$}
+  % \end{prooftree}  
 
   \caption{Rule system for \run}
   \label{fig:run-rules}

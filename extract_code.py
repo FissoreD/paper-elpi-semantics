@@ -168,7 +168,7 @@ class bussproof(C):
         return l
     
     def split_hyps(self,hyps):
-        hyps = hyps.split("->")
+        hyps = hyps.split("~$\\to$~")
         hyps = [self.clean_line(i) for i in hyps]
         return hyps
 
