@@ -8,41 +8,46 @@ import os, sys, re
 # OPEN_TAG = "SNIP:"
 # CLOSE_TAG = "ENDSNIP"
 
-def clean_line_global(l):
+def clean_line_global(l,escape):
+    def esc(l):
+        return f"~${l}$~" if escape else l
+    def esc1(l):
+        return f"~{l}~" if escape else l
     l = l.replace("successT", "success")
     l = l.replace("failedT", "failed")
-    l = l.replace("Sigma", "~$\\Sigma$~")
-    # l = l.replace("tree", "~$\\tau$~")
-    l = l.replace("empty", "~$\\epsilon$~")
-    l = l.replace("fvS", "~$\\mathcal{F}_{\\!\\!\\nu}$~")
-    l = l.replace("bool", "~$\\mathbb{B}$~")
-    l = l.replace("program", "~$\\mathbb{P}$~")
-    l = l.replace("<->", "~$\\leftrightarrow$~")
-    l = l.replace("->", "~$\\to$~")
-    l = l.replace("=>", "~$\\Rightarrow$~")
-    l = l.replace(":=", "~$\\coloneq$~")
-    l = l.replace("forall", "~$\\forall$~")
-    l = l.replace("exists", "~$\\exists$~")
+    l = l.replace("Sigma", esc("\\Sigma"))
+    # l = l.replace("tree", esc("\\tau"))
+    l = l.replace("empty", esc("\\epsilon"))
+    l = l.replace("fvS", esc("\\mathcal{F}_{\\!\\!\\nu}"))
+    l = l.replace("bool", esc("\\mathbb{B}"))
+    l = l.replace("program", esc("\\mathbb{P}"))
+    l = l.replace("<->", esc("\\leftrightarrow"))
+    l = l.replace("->", esc("\\to"))
+    l = l.replace("=>", esc("\\Rightarrow"))
+    l = l.replace(":=", esc("\\coloneq"))
+    l = l.replace("forall", esc("\\forall"))
+    l = l.replace("exists", esc("\\exists"))
     for i in range(10):
-        l = l.replace(f"s{i}", f"~$s_{i}$~")
+        l = l.replace(f"s{i}", esc1(f"$s_{i}$"))
     l = l.replace("step_tag", "tag") # FIXME
     return l
 
-def latexify(expr):
-    expr = expr.replace("->", r"\to")
-    expr = expr.replace("_", r"\_")
-    expr = expr.replace("(", r"(")
-    expr = expr.replace(")", r")")
-    return expr.strip()
+# def latexify(expr):
+#     expr = expr.replace("->", r"\to")
+#     expr = expr.replace("_", r"\_")
+#     expr = expr.replace("(", r"(")
+#     expr = expr.replace(")", r")")
+#     return expr.strip()
 
 class C:
-    def __init__(self,oc,ec,od,ext,ot,ct):
+    def __init__(self,oc,ec,od,ext,ot,ct,esc):
         self.OPEN_COMMENT = oc
         self.END_COMMENT = ec
         self.OUT_DIR = od
         self.EXTENSION = ext
         self.OPEN_TAG = ot
         self.CLOSE_TAG = ct
+        self.escape = esc
 
     def get_file_cnt(self,lines):
         res = []
@@ -52,11 +57,14 @@ class C:
             res = lines[indexBegin+1:indexEnd]
         finally:
             return res
+        
+    def clean_comment(self,l):
+        # COMMENT
+        return re.sub(fr"^ *{re.escape(self.OPEN_COMMENT)}.*\n","",l)
+
 
     def clean_line(self,l):
-        # COMMENT
-        l = re.sub(fr"^ *{re.escape(self.OPEN_COMMENT)}.*\n","",l)
-        return clean_line_global(l)
+        return clean_line_global(l,self.escape)
         
 
     def mk_fname(self,fname):
@@ -109,7 +117,7 @@ class C:
 
 class snip(C):
     def __init__(self,mintag):
-        super(snip,self).__init__("(*","*)","tex_code","v","SNIP:","ENDSNIP")
+        super(snip,self).__init__("(*","*)","tex_code","v","SNIP:","ENDSNIP",True)
         self.MINT_TAG = mintag
 
     def print_tex(self,lines, fout, raw = False):
@@ -118,17 +126,10 @@ class snip(C):
         if not raw:
             cnt += (f"\\begin{{{self.MINT_TAG}}}\n")
         for l in lines:
-            cnt += self.clean_line(l)
+            cnt += self.clean_line(self.clean_comment(l))
         if not raw:
             cnt += f"\\end{{{self.MINT_TAG}}}\n"
         super().write(fout,cnt)
-
-def latexify(expr):
-    expr = expr.replace("->", r"\to")
-    expr = expr.replace("_", r"\_")
-    expr = expr.replace("(", r"(")
-    expr = expr.replace(")", r")")
-    return expr.strip()
 
 def flatten(xss):
     return [x for xs in xss for x in xs]
@@ -139,19 +140,19 @@ def flatten(xss):
 # mutual recursive inductives
 class bussproof(C):
     def __init__(self):
-        super(bussproof,self).__init__("(*","*)","tex_code","v","prooftree:","endprooftree")
+        super(bussproof,self).__init__("(*","*)","tex_code","v","prooftree:","endprooftree",False)
 
     def print_bp(self,name,hyps,concl):
         lines = ["\\begin{prooftree}"]
         for s in hyps:
-            lines.append(f"  \\AxiomC{{$${latexify(s)}$$}}")
+            lines.append(f"  \\AxiomC{{{(s)}}}")
 
         n = len(hyps)
         if n == 0:
             n = 1
             lines.append(f"  \\AxiomC{{}}")
 
-        lines.append(f"  \\RightLabel{{\\textsc{{{latexify(name)}}}}}")
+        lines.append(f"  \\RightLabel{{\\textsc{{{(name)}}}}}")
 
         L = ["Unary","Binary","Trinary"]
 
@@ -160,32 +161,31 @@ class bussproof(C):
         else:
             tag = L[n-1]
 
-        lines.append(f"  \\{tag}InfC{{$${latexify(concl)}$$}}")
+        lines.append(f"  \\{tag}InfC{{{(concl)}}}")
 
         lines.append("\\end{prooftree}")
         return "\n".join(lines)
 
     def clean_line(self, l):
-        l = l.replace("\n","")
-        l = l.replace("&", "\&")
-        l = l.strip()
-        return l
+        l = l.replace("_","\_")
+        l = l.replace("&","\&")
+        return super().clean_line(l)
     
     def split_hyps(self,hyps):
-        hyps = hyps.split("~$\\to$~")
+        hyps = hyps.split("->")
         hyps = [self.clean_line(i) for i in hyps]
         return hyps
 
     def parse_inductive (self,l):
         l = l.split(":",1)
-        cname = l[0].split(maxsplit=1)[0]
+        cname = self.clean_line(l[0].split(maxsplit=1)[0])
         hyps = flatten([self.split_hyps(i) for i in l[1:]])
         return self.print_bp(cname, hyps[:-1],hyps[-1])
 
     # each constructor should be on a new line
     def print_tex(self,lines, fout, raw = False):
         for (i,e) in enumerate(lines):
-            lines[i] = super().clean_line(e)
+            lines[i] = self.clean_comment(e).replace("\n","").strip().strip(".")
             
         lines = "".join(lines)
         lines = lines.split("|")
