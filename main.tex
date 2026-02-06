@@ -641,9 +641,8 @@ states. In the next to subsection we propose the two functions \vast and \ttl.
 The inductive tree allows one to generate a large number of
 trees, some of which are not valid, in the sense that they cannot be produced
 starting from a given query. The class of valid trees is characterized by the
-following function.
+function shown in \cref{fig:vt}.
 
-\input{tex_code/valid_tree.tex}
 
 Once again, the most interesting cases to analyze are \orC and \andC.
 
@@ -666,13 +665,26 @@ If the lhs is a success tree, then the rhs must be a valid tree.
 
 \subsection{From trees to lists}
 
-The translation of a tree to a list is as follows:
+The translation of a tree to a list is shown in \cref{fig:ttl}
 
-\input{tex_code/t2l.tex}
+\begin{figure}  
+
+  \begin{subfigure}{0.44\textwidth}
+    \input{tex_code/valid_tree.tex}
+    \caption{Valid tree}
+    \label{fig:vt}
+  \end{subfigure}
+  \begin{subfigure}{.55\textwidth}
+    \input{tex_code/t2l.tex}
+    \caption{Tree to list}
+    \label{fig:ttl}
+  \end{subfigure}
+\caption{Valid tree and Tree to list}
+\end{figure}
 
 
-\newcommand{\thte}{\texttt{tree\_to\_elpi}} % theorem tree to elpi name
-\newcommand{\thet}{\texttt{elpi\_to\_tree}} % theorem elpi to tree name
+% \newcommand{\thte}{\texttt{tree\_to\_elpi}} % theorem tree to elpi name
+% \newcommand{\thet}{\texttt{elpi\_to\_tree}} % theorem elpi to tree name
 
 \subsection{Equivalence theorems}
 
