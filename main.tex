@@ -687,9 +687,9 @@ The translation of a tree to a list is shown in \cref{fig:ttl}. It takes the
 tree to be translated, a substitution (called $s$), a list of alternatives, called
 \emph{bt}. The substitution $s$ tells what is the subsitution of the 
 alternative we are building and is updated when going to the
-rhs of the \orC constructor. The \emph{bt} list represents the alternatives 
-of the right-sibling of the current subtree. They are useful to know if 
-they should be added to the current goal as cut alternatives.
+rhs of the \orC constructor. The \emph{bt} list represents the future 
+alternatives list that have the same depth of the current tree root. 
+They are useful to know if they should be added to the current goal as cut alternatives.
 
 An \okC node represent a success in a tree, then the translation of this state
 returns a singleton list with the cuple $(s, [::])$: there is one alternative
@@ -714,16 +714,17 @@ Then we prepend the translated lhs to the translated rhs and add $bt$ with
 We compile the \andC case by translating its lhs to the list $lA$ and reset
 point to the list $lB0$. Then, thanks to \texttt{add\_deep}, we recrusively
 append $lB0$ to the alternatives born in $lA$, i.e. we leave unchanged the
-pointers to $bt$ if any in $lA$. The list 
+pointers to $bt$, if any, in $lA$. We finally need to treat cases whenever
+the list $lA$ is empty or not. In the former case the empty list is returned,
+otherwise, we hasve a list $[::(s_0,gs)\&al]$. By the semantics of
+the \andC in the \run interpreter, the rhs of the \andC represent the
+sequent of goals to be executed after the first alternative in the lhs,\marginpar{alternative in tree? rephrase}
+it corresponds to the list of goals $gs$.
+The reset point $B0$ is to be appended to the next alternatives in the lhs,
+that is the queue of $lA$, that is $al$.
 
-Final
-
-This translation may returns an empty list, this means there are no alternatives
-in the lhs then, the rhs is usless and ignored. Otherwise, we have the list
-$[::(s_0,gs) \& al]$. By the \run semantics, we know that the rhs of a \andC
-stands for a list of alternatives that should be run only after the 
-path atom 
-
+We note therefore that the compilation of $lB$ is done by passing the
+alternatives $al ++ bt$ since the alternatives in $al$ are to be\dots
 
 
 
