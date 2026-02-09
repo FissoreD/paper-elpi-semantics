@@ -1,6 +1,7 @@
 \documentclass[crop,tikz]{standalone}%
 
 \usepackage{../../tree}
+\usepackage{../../macro}
 
 \begin{document}
 
@@ -13,20 +14,23 @@ for tree={
 [\orN,orNode
  [\deadN, deadNode,edge=dashed]
   [\andN, andNode,edge label={node[midway,right] {$\sigma_1$}}
-    [\orN,orNode
+    [\orN,orNode,name=s1
       [\deadN, deadNode,edge=dashed]
-      [\okN,okNode,edge label={node[midway,right] {$\sigma_3$}}]
+      [\deadN, deadNode,edge=dashed]
       [\okN,okNode,edge label={node[midway,right] {$\sigma_4$}}]
-      [\okN,okNode,edge label={node[midway,right] {$\sigma_5$}}]
+      [\koN, koNode]
     ]
-    [\koN, koNode]
-    [\okN,okNode,edge label={node[midway,right] {$\sigma_6$}}]
+    [\orN,orNode,name=s3
+      [\deadN, deadNode,edge=dashed]
+      [\okN,okNode,edge label={node[midway,right] {$\sigma_6$}}]
+    ]
+    [\okN,okNode,name=cut]
   ]
-  [\andN,andNode,edge label={node[midway,right] {$\sigma_2$}}
-    [f X Y]
-    [f Y Z]
-  ]
+  [\koN, koNode,name=s2]
 ] 
+\path [thick, red, ->] (cut) edge[bend right=30] node[below]{\cutl} (s1);
+\path [thick, red, ->] (cut) edge[bend right=30] node[below]{\cutl} (s3);
+\path [thick, red, ->] (cut) edge[bend right=30] node[right]{\cutr} (s2);
 \end{forest}
 
 \end{document}
