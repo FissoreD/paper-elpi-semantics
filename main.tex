@@ -111,7 +111,7 @@ predicate does not leave any choice points.
 
 \section{Common code: the language}
 
-\begin{figure}[ht]
+\begin{figure}
   \input{tex_code/base_type.tex}
 
   \begin{minipage}{0.49\textwidth}
@@ -150,7 +150,8 @@ application. We decorate arrows to know the mode (input or output) of the
 application argument.
 
 A substitution (see \cref{type:sigma}) is a mapping from variables to terms.
-It is the output of a successful query.
+It is the output of a successful query. The empty substitution is noted
+$\epsilon$.
 
 The backchain function (bc, see~\cref{type:bc}) takes: a unifcator $U$; a
 program $P$; a set $fv$ of free variables ($\mathcal{F}_{\!\!\nu}$); a query
@@ -232,24 +233,24 @@ together with some interesting lemmas of the cut behavior.
 \input{tex_code/tree_def.tex}
 
 In the tree we distinguish 5 main cases: \koC, \okC, and are special
-meta-symbols representing, respectively, the failed and a successful
-terminal. These symbols are considered meta because they are internal
+meta-symbols representing, respectively, the basic failed and a successful
+trees. These symbols are considered meta because they are internal
 intermediate symbols used to give structure to the tree.
 
 The \taC constructor (acronym for tree-atom) is the constructor of atoms in the
-tree. \marginpar{TA = Todo/Goal?}
+tree. They are either the cut operator or a call, in these cases, the
+interpreter should evaluate the atom by either cutting the subtrees in the scope
+of the cut or backchaining the call in the program.
 
-The two recursive cases of a tree are the \orC and \andC non-terminals. 
-\marginpar{non-terminal è roba di grammatiche, usa nodes/constructors}
-The \orC
-non-terminal \(A \lor B_\sigma\) denotes a disjunction between two trees \(A\) and
+The two recursive cases of a tree are the \orC and \andC nodes. 
+The \orC node \(A \lor B_\sigma\) denotes a disjunction between two trees \(A\) and
 \(B\). The first branch is optional, if absent it represents a dead tree,
 i.e. a tree that has been entirely explored.
 The second branch is annotated with a suspended substitution \(\sigma\) so
 that, upon backtracking to \(B\), \(\sigma\) is used as the initial substitution
 for the execution of \(B\).
 
-The \andC non-terminal \(A \land_{B_0} B\) represents a conjunction of two trees \(A\)
+The \andC node \(A \land_{B_0} B\) represents a conjunction of two trees \(A\)
 and \(B\). We call \(B_0\) the reset point for \(B\); it is used to restore the state
 of \(B\) to its initial form if a backtracking operation occurs on \(A\). Intuitively,
 let \ttl be the function flattening a tree in a list of sequents disjnction, 
@@ -260,8 +261,8 @@ e rifatti all'esempio della sezione prima (fai in modo che f funzioni solo con
 la seconda regola per r)}
 
 A graphical representation of a tree is shown in \cref{tree-ex1}. To make the
-graph more compact, the \andC and \orC non-terminals are n-ary rather than binary,
-with right-binding priority. \marginpar{associate to the...} The \koC terminal act as the neutral elements 
+graph more compact, the \andC and \orC nodes are n-ary rather than binary,
+and associate to the right. The \koC node acts as the neutral elements 
 in the \orC list, while \okC is the neutral element of the \andC list.
 
 
@@ -456,7 +457,7 @@ we should return a tree cleaned of its success,
 this is essential to, non deterministically, find the next
 solution of a given query.
 By \cref{lemma:success,lemma:failed}, we know that \step returns the identity
-on successful and failed states. In order
+on successful and failed trees. In order
 to continue the computation on these particular trees, we
 need the \na procedure aiming to expecially work with
 failed and successful trees:
@@ -639,7 +640,7 @@ list of goals $gl$ to each of these new lists.
 \section{Semantic equivalence}
 
 The equivalence between the two semantics is possible under two conditions: we
-need to work with ``valid states'', i.e. all of those states that can be
+need to work with ``valid tree'', i.e. all of those trees that can be
 generated from a call. Secondly, we need to translate trees into elpi
 states. In the next to subsection we propose the two functions \vast and \ttl.
 
