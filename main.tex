@@ -210,7 +210,7 @@ To illustrate the high-level description of \emph{cut}, consider the program $P$
 subsitution returns the list 
 $[(\sigma_1, [\eI{r X Y, f Y Z, !}]), (\sigma_2, [\eI{f X Y, f Y Z}])]$
 with $\sigma_1$ and $\sigma_1$ both equal to
-$\sigma_1 \coloneq \{\eI{X} \mapsto \eI{0}, \eI{Z} \mapsto \eI{R}\}$.
+$\{\eI{X} \mapsto \eI{0}, \eI{Z} \mapsto \eI{R}\}$.
 The two elements of the list are generated respectively from the rules $r_1$ and
 $r_2$.
 
@@ -225,7 +225,7 @@ premises.
 
 Backchaining \eI{f Y Z} in $\sigma_3$ gives no solution, therefore, by
 backtracking, we backchain \eI{f Y Z} in $\sigma_4$. This gives a solution,
-namely $\sigma_5 \coloneq \sigma_4 + \{\eI{R} \mapsto \eI{2}\}$.
+namely $\sigma_6 \coloneq \sigma_4 + \{\eI{R} \mapsto \eI{2}\}$.
 
 We now reach the cut operator and can see its double side behavior.
 In the current execution state, we have still two unexplored alternatives:
