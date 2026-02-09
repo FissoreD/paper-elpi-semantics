@@ -111,26 +111,27 @@ predicate does not leave any choice points.
 
 \section{Common code: the language}
 
-\begin{figure}
+\begin{figure}[ht]
   \input{tex_code/base_type.tex}
 
   \begin{minipage}{0.49\textwidth}
-  \input{tex_code/tm_type.tex}
+    \input{tex_code/tm_type.tex}
+    \caption{Tm types}
+    \label{fig:tm-type}
   \end{minipage}
-  \begin{minipage}{0.49\textwidth}
-  \input{tex_code/call_type.tex}
+  \begin{minipage}{0.45\textwidth}
+    \input{tex_code/unif_type.tex}
+    \caption{Unif type}
+    \label{fig:unif-type}
   \end{minipage}
-  \caption{Tm and Callable types}
-  \label{fig:tm-call}
 \end{figure}
 
 Before going to the two semantcis, we show the piece of data structure that \marginpar{put unif and program in variable: hides from types}
 are shared by the them. The smallest unit of code that we can use in the
 langauge is an atom. The atom inductive (see~\cref{type:atom}) is
 either a cut or a call. A call
-carries a callable term~(see \cref{fig:tm-call}). A term (Tm) is either a predicate,
-a datum, a variable or the binary application of a term to another. A Callable is 
-a term accepting predicates only predicates as functors.
+carries a term~(see \cref{fig:tm-type}). A term (Tm) is either a predicate,
+a datum, a variable or the binary application of two terms.
 
 \mvspace{}
 \deftypes[type:atom]{tex_code/atom_type.tex}
@@ -140,33 +141,49 @@ a term accepting predicates only predicates as functors.
 \deftypes[type:bc]{tex_code/bc_type.tex}
 \mvspace{}
 
-A rule (see~\cref{type:r}) is made a head of type term and a list of premises,\marginpar{!!!: controllare il tipo di bc nel testo}
-the premises are atoms. A program (see~\cref{type:prog}) is made by a list of
-rules and a mapping from predicates to their signatures. The type sigT is the
-classic type from the simply typed lambda calculus, i.e. it is either a base
-type or an arrow. We decorate arrows to know the mode of the lhs type.
+A rule (see~\cref{type:r}) has a head of type term and a list of premises, that
+are a list of atoms. A program (see~\cref{type:prog}) is made by its rules and
+the signatures of predicates, \texttt{sigT} is a mapping from predicates to
+their signatures, signatures represent the defintion of type from the simply
+typed lambda calculus, i.e. it is either a base type or an arrow for term
+application. We decorate arrows to know the mode (input or output) of the
+application argument.
 
 A substitution (see \cref{type:sigma}) is a mapping from variables to terms.
-It is the output of a successful query and is often called the output of
-a query.
+It is the output of a successful query.
 
-\input{tex_code/unif_type.tex}
+The backchain function (bc, see~\cref{type:bc}) takes: a unifcator $U$; a
+program $P$; a set $fv$ of free variables ($\mathcal{F}_{\!\!\nu}$); a query
+$q$; and the substitution $\sigma$. A backchain is performed when the current
+atom is a \texttt{call}. In this case, it start by recursively
+\emph{dereferencing} the variables in $\sigma$, i.e. replacing all the variables
+in the query by their term mapping in $\sigma$. Then it takes the head of the
+term, which should be rigid, i.e. a predicate $p$, and look for the signature
+$s$ of $p$ in the program. Then, for each rule $r$ in $P$, it unifies the head
+of $r$ with $q$. Unification is possible thanks to the unifcator $U$, whose type
+is shown in~\cref{fig:unif-type}. $U$ explains how to unify terms up to standard
+unifcation (for output terms) or matching (for input terms). The function
+\emph{unif} (resp. \emph{matching}) unifies (resp. matches) the two terms under
+$\sigma$, it return an extension of $\sigma$ if the two terms can be unified
+(resp. matched), and None otherwise. The result of a backchain is made by
+filtering the rules in $P$ that can be used on the given query. In particular,
+for each rule filtered rules $r$, it returnes a pair containing the extension of
+$\sigma$ making the head of $r$ and $q$ unify and the list of premises of $r$.
 
-The backchain function (bc, see~\cref{type:bc}) filters the rules in the program
-that can be used on a given query. It takes: a unifcator $U$ which explains how
-to unify terms up to standard unifcation (for output terms) or matching (for
-input terms); a program $P$ to explore and filter; a set $S$ of free variable
-(fvS) allowing to fresh the program $P$ by renaming the its variables; a query
-$q$; and the substitution $\sigma$ in which the query $q$ lives. The result of a
-backchain operation is couple made of an extension of $S$ containing the new
-variables that have been allocated during the unification phase and a list of
-filtered rules $r$ accompagnate by their a subistution. This substitution is the
-result of the unification of $q$ with the head of each rule in $r$.
+\subsection{The cut operator}
 
-In \cref{fig:prog}, we have an example of a simple \elpiP program which will be used in the
-following section of the paper as an example to show how backtracking and
-the cut operator works in the semantcis we propose. The translation
-of these rules in the \rocqP representation is straightforword.
+\elpiP is a dialect of \lprologP with the hard cut operator and, in the language
+we have shown before, \emph{cut} is an atom.
+\marginpar{se metti r1 = g A B :- f A B. allora g e f sono funzioni, e puoi
+spiegare anche l'idea del detcheck qui}
+The semantics of the cut operator adopted in the \textsc{\elpiP} language
+corresponds to the \emph{hard cut} operator of standard \textsc{SWI-Prolog}.
+This operator has two primary purposes. First, it eliminates all
+alternatives that are created either simultaneously with, or after, the
+introduction of the cut into the execution state.
+
+The \elpiP program we will use as an example in the following sections
+is shown in~\cref{fig:prog}.
 
 \begin{figure}[!h]
 \inputminted[fontsize=\small,autogobble,escapeinside=~~,mathescape=true,frame=leftline,framerule=0pt,framesep=1em]{elpi}{./prog.elpi}
@@ -174,17 +191,7 @@ of these rules in the \rocqP representation is straightforword.
 \label{fig:prog}
 \end{figure}
 
-\subsection{The cut operator}
-\marginpar{se metti r1 = g A B :- f A B. allora g e f sono funzioni, e puoi
-spiegare anche l'idea del detcheck qui}
-
-The semantics of the cut operator adopted in the \textsc{\elpiP} language
-corresponds to the \emph{hard cut} operator of standard \textsc{SWI-Prolog}.
-This operator has two primary purposes. First, it eliminates all
-alternatives that are created either simultaneously with, or after, the
-introduction of the cut into the execution state.
-
-To illustrate this high-level description, consider the program shown in
+To illustrate the high-level description of \emph{cut}, consider the program shown in
 \cref{fig:prog} and the query $q = \elpiIn{g 2 Z}$. All three rules for
 \eI{g} can be used on the query $q$. They are tried according to their
 order of appearance in the program: rule $r_1$ is tried first, followed by
@@ -214,7 +221,7 @@ the cut, and only the first assignment is preserved.
 We propose two operational semantics for a logic program with cut. The two
 semantics are based on different syntaxes, the first syntax (called tree)
 exploits a tree-like structure and is ideal both to have a graphical view of its
-evolution while the state is being intepreted and to prove lemmas over it. The
+evolution while the tree is being intepreted and to prove lemmas over it. The
 second syntax, called elpi, is the \elpiP's syntax and has the advantage of
 reducing the computational cost of cutting and backtracking alternatives by
 using shared pointers. We aim to prove the equivalence of the two semantics
@@ -305,7 +312,7 @@ contrats of these symbols where \cI{fvS} is a set of variable names.
   \label{fig:getend}
 \end{figure}
 
-The tree interpreter, as in prolog, explores the state in DFS strategy,
+The tree interpreter, as in prolog, explores the tree in DFS strategy,
 to discover the substitution and the leaf of the tree that should
 be interpreted.
 The \getend routine, shown in~\cref{fig:getend}, accomplishes to this task.
@@ -445,8 +452,8 @@ pointed by the arrows with \koC.
 It is evident that the \step alone is not sufficient to reproduce entirely the
 behavior of the full expected prolog interpreter. In particular, 
 we need to bracktrack on failures. Moreover, in case of success,
-we should return a state where the state in cleaned of the success itself,
-this is essential to, non deterministically, find all the
+we should return a tree cleaned of its success,
+this is essential to, non deterministically, find the next
 solution of a given query.
 By \cref{lemma:success,lemma:failed}, we know that \step returns the identity
 on successful and failed states. In order
@@ -498,12 +505,12 @@ complements \step.
 % The boolean taken by \na tells if it is needed to kill \okC nodes or not.
 
 For example, in \cref{tree-ex1-exp} the step procedure has created a failed
-state: its path-end ends in \koC. The expected behavior of \na is to take
+tree: its path-end ends in \koC. The expected behavior of \na is to take
 this \koC node and make it a .... This allows \step to continue the
-exploration of the tree. In particular, the path-end of this new state end
-in \okC. The step leaves the state unchanged producing the new substitution.\marginpar{subst taken form the or}
+exploration of the tree. In particular, the path-end of this new tree ends
+in \okC. The step leaves the tree unchanged producing the new substitution.\marginpar{subst taken form the or}
 This solution however is not unique, we should be able to backtrack on this
-successful state. To do so we can call \na and it will deadify the \okC node
+successful tree. To do so we can call \na and it will deadify the \okC node
 allowing \step to proceed on r X Z.
 
 \begin{figure}
@@ -608,7 +615,7 @@ The first alternative consists of a list of goals. Four cases must be taken
 into account; they are shown in \cref{fig:nur-rules}. In order to simplify goal
 retrieval, we split the head of the alternatives from the tail, so that it can
 be immediately matched in the inductive definition. Note that an empty list of
-alternatives represents, by definition, a failing state. If the goal list is
+alternatives represents, by definition, a failing elpi state. If the goal list is
 empty (\textsc{StopE}), then we have, by definition, a success, and the input
 solution together with the list of alternatives is returned. If the goal list
 starts with a cut (\textsc{CutE}), then the current alternatives are erased in
@@ -633,7 +640,7 @@ list of goals $gl$ to each of these new lists.
 
 The equivalence between the two semantics is possible under two conditions: we
 need to work with ``valid states'', i.e. all of those states that can be
-generated from a call. Secondly, we need to translate trees state into elpi
+generated from a call. Secondly, we need to translate trees into elpi
 states. In the next to subsection we propose the two functions \vast and \ttl.
 
 \subsection{Valid trees}
@@ -691,7 +698,7 @@ rhs of the \orC constructor. The \emph{bt} list represents the future
 alternatives list that have the same depth of the current tree root. 
 They are useful to know if they should be added to the current goal as cut alternatives.
 
-An \okC node represent a success in a tree, then the translation of this state
+An \okC node represent a success in a tree, then the translation of this tree
 returns a singleton list with the cuple $(s, [::])$: there is one alternative
 with $0$ goals, i.e. a success in elpi by \textsc{StopE}. The \koC node
 represent a failure, and, therefore $0$ alternatives. An atom is translated into
@@ -733,6 +740,8 @@ alternatives $al ++ bt$ since the alternatives in $al$ are to be\dots
 
 \subsection{Equivalence theorems}
 
+We have now all the ingredients that \dots
+
 \mvspace{}
 \deflemma[th:t1]{tex_code/tree_to_elpi.tex}
 
@@ -772,7 +781,7 @@ elpi state, we have no clear information about the scope of an atom inside the
 list and, therefore, no evident clue about where this atom should be place in
 the tree. 
 
-Our theorem states that, starting from a valid state $t$
+Our theorem states that, starting from a valid tree $t$
 which translates to a list of alternatives $(\sigma_1, g) :: a$.
 If we run in elpi the list of alternatives, then the execution of the tree $t$
 returns the same result as the execution in elpi. The proof is performed
