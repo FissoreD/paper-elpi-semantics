@@ -158,7 +158,11 @@ program $P$; a set $fv$ of free variables ($\mathcal{F}_{\!\!\nu}$); a query
 $q$; and the substitution $\sigma$. A backchain is performed when the current
 atom is a \texttt{call}. In this case, it start by recursively
 \emph{dereferencing} the variables in $\sigma$, i.e. replacing all the variables
-in the query by their term mapping in $\sigma$. Then it takes the head of the
+in the query by their term mapping in $\sigma$.
+
+TODO: free variables and program freshness
+
+Then it takes the head of the
 term, which should be rigid, i.e. a predicate $p$, and look for the signature
 $s$ of $p$ in the program. Then, for each rule $r$ in $P$, it unifies the head
 of $r$ with $q$. Unification is possible thanks to the unifcator $U$, whose type
@@ -249,6 +253,7 @@ together with some interesting lemmas of the cut behavior.
 
 \section{Tree semantics}
 
+\emph{The tree state}
 The tree inductive, shown in \cref{fig:tree-ty}.
 We distinguish 5 main cases: \koC, \okC, and are special
 meta-symbols representing, respectively, the basic failed and a successful
@@ -291,6 +296,7 @@ in the \orC list, while \okC is the neutral element of the \andC list.
 % \caption{backtracking operation}
 % \end{figure}
 
+\emph{The tree interpreter}
 The interpretation of a tree is performed by two main routines: \step and \na
 that traverse the tree depth-first, left-to-right. Then, then \run inductive
 makes the transitive closure of step \step and \na: it iterates the calls to its
@@ -314,45 +320,36 @@ contrats of these symbols where \fvT is a set of variable names.
 
 \begin{figure}
   \begin{subfigure}{0.45\textwidth}
-  \input{tex_code/get_end.tex}
+    \input{tex_code/get_end.tex}
+
+    \caption{Defintion of \getend}
+    \label{fig:getend}
   \end{subfigure}
   \begin{subfigure}{0.45\textwidth}
-\input{tex_code/get_subst.tex}
-\input{tex_code/path_end.tex}
-\input{tex_code/succ_path.tex}
-\input{tex_code/failed_path.tex}
-\input{tex_code/path_atom.tex}
-
+      \input{tex_code/get_subst.tex}
+      \input{tex_code/path_end.tex}
+      \input{tex_code/succ_path.tex}
+      \input{tex_code/failed_path.tex}
+      \input{tex_code/path_atom.tex}
+      \caption{Functions from \getend}
+      \label{fig:getend-aux}
   \end{subfigure}
-
-  \caption{Defintion of \getend}
-  \label{fig:getend}
+  \caption{\getend and derives functions}
 \end{figure}
 
-The tree interpreter, as in prolog, explores the tree in DFS strategy,
-to discover the substitution and the leaf of the tree that should
-be interpreted.
-The \getend routine, shown in~\cref{fig:getend}, accomplishes to this task.
-The \getend returns its inputs if the tree is a leaf.
-Otherwise, if the tree is a disjunction, the path continues on
-the left subtree, if it exists, otherwise it recursively 
-retrieves the wanted piece of information in the rhs 
-using the substitution stored in the \orC branch: the current
-substition when we cross the rhs of a \orC is the one store in the Or
-node itself.
-In the case of a conjunction,
-if the to-be-explored leaf in the lhs is \okC, then we look for 
-the \getend in the rhs, otherwise we return the result of the lhs.
+The tree interpreter, as in prolog, explores the tree in DFS strategy, to
+discover the substitution and the leaf of the tree that should be interpreted.
+These two pieces of information can be retrieved for a substitution $s$ and a
+tree $A$ thanks to the \getend routine, shown in~\cref{fig:getend} If the tree
+is already a leaf, \getend returns its inputs. Otherwise, if the tree is a
+disjunction, the path continues on the left subtree, if it exists, otherwise
+\getend contues on the ths using the substitution stored in the \orC node. In
+the case of a conjunction, if \getend of the lhs returns the tree \okC, then the
+\getend continues in the rhs, otherwise we return the result of the lhs. We
+derive some useful definition from \getend. They are listed in
+\cref{fig:getend-aux}.
 
-We derive the following two functions from \getend:
-
-\mvspace{}
-\defline[def:get_subst]{tex_code/get_subst.tex}
-\defline[def:path_end]{tex_code/path_end.tex}
-
-
-\mvspace{}
-In \cref{tree-ex1} the \pathend of the tree is \eI{g X Y}.
+The \pathend of the tree in~\cref{tree-ex1} is \eI{g X Y}.
 
 \begin{figure}
   \begin{subfigure}{0.25\textwidth}
@@ -373,23 +370,17 @@ In \cref{tree-ex1} the \pathend of the tree is \eI{g X Y}.
 \caption{Some tree representations} 
 \end{figure}
 
-
-Below we define three special kinds of trees depending on their \pathend.
-
-\defline[def:success]{tex_code/succ_path.tex}
-\defline[def:failed]{tex_code/failed_path.tex}
-\defline[def:pathatom]{tex_code/path_atom.tex}
-
-The latter definition identifies path ending in an atom.
-
 \subsection{The \step procedure}
 
-The \step procedure takes as input a program, a set of free variables (fv), a
-substitution, and a tree, and returns an updated set of free variables, a
+The \step procedure takes as input a program, a set of variables, a
+substitution, and a tree, and returns an updated set of variables, a
 \steptag, and an updated tree.  
 
-Free variables are those variables that appear in a tree; they are used and
-updated when a backchaining operation takes place.
+The set of variables \emph{fv} given in input to step are used and updated when
+a backchaining operation takes place. A call to \step produces a good result if
+\emph{fv} contains all the variables in the tree. This guarantees that any call
+to \emph{bc} returns a list of atoms whose variables variables are disjoint from
+the variables of the current working tree.
 
 The \steptag (see~\cref{type:steptag}) indicates the kind of an internal tree step:
 \cI{CutBrothers} denotes the interpretation of a superficial cut, i.e., a cut
@@ -407,7 +398,7 @@ otherwsise, it returnes the identity.
 \deflemma[lemma:failed]{tex_code/failed_step.tex}
 \mvspace{}
 
-\textit{Call step} The interpretation of a call $c$ stars by calling the
+\textit{The interpretation of a call} to a term $c$ stars by calling the
 \backchain function on $c$. The output list $l$ is taken to 
 represent build the new subtree.
 If $l$ is empty then \koC tree is returned, otherwise
@@ -425,7 +416,7 @@ the first node is the \koC node (by default), the second is \okC, since r1
 has no premises, the third and the fourth contains the premises of respectively
 $r_2$ and $r_3$. \marginpar{dire che le sostituzioni del backchain sono importanti e dove sono mess}
 
-\textit{Cut step} The cut case is delicate, since interpreting a cut in a tree
+\textit{The interpretation of a cut}
 has three main impacts: at first the cut is replaced by the \okC node, then
 some special subtrees, in the scope of the \cutC, are cut away: in particular
 we need to soft-kill the left-siblings of the \cutC and hard-kill the right-uncles
