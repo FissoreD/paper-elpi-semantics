@@ -100,7 +100,13 @@
 \newcommand{\nCall}[2]{ \nodebuild{atomNode}{#1}{#2} }
 \newcommand{\nAny}[1]{ node(#1)  {\iText{\dots}} }
 
+\newcommand{\curnodeNW}[1]{%
+\draw[->, thick, black] ($(#1.north west)+(-0.3,0.3)$) -- (#1.north west)
+}
 
+\newcommand{\curnodeNE}[1]{%
+  \draw[->, thick, black] ($(#1.north east)+(0.3,0.3)$) -- (#1.north east)
+}
 
 
 % \newcommand{\nOK}[1]{\node[text=green] at (#1.center) {\okN}}

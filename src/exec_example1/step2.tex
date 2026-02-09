@@ -13,7 +13,7 @@ for tree={
 [\orN,orNode
   [\deadN, deadNode,edge=dashed]
   [\andN, andNode,edge label={node[midway,right] {$\sigma_1$}}
-    [r X Y]
+    [r X Y,name=cur]
     [f Y Z]
     [!]
   ]
@@ -22,6 +22,7 @@ for tree={
     [f Y Z]
   ]
 ] 
+\curnodeNE{cur};
 \end{forest}
 
 \end{document}
