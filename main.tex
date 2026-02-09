@@ -186,36 +186,54 @@ introduction of the cut into the execution state.
 The \elpiP program we will use as an example in the following sections
 is shown in~\cref{fig:prog}.
 
-\begin{figure}[!h]
-\inputminted[fontsize=\small,autogobble,escapeinside=~~,mathescape=true,frame=leftline,framerule=0pt,framesep=1em]{elpi}{./prog.elpi}
-\caption{Small \elpiP program example}
-\label{fig:prog}
+\begin{figure}
+  \begin{minipage}{0.55\textwidth}
+    \inputminted[fontsize=\small,autogobble,escapeinside=~~,mathescape=true,frame=leftline,framerule=0pt,framesep=1em]{elpi}{./prog.elpi}
+    \caption{Small \elpiP program example}
+    \label{fig:prog}
+  \end{minipage}
+%
+  \begin{minipage}{0.4\textwidth}
+    \input{tex_code/tree_def.tex}
+    \caption{Tree inductive}
+    \label{fig:tree-ty}
+  \end{minipage}
 \end{figure}
 
-To illustrate the high-level description of \emph{cut}, consider the program shown in
-\cref{fig:prog} and the query $q = \elpiIn{g 2 Z}$. All three rules for
-\eI{g} can be used on the query $q$. They are tried according to their
-order of appearance in the program: rule $r_1$ is tried first, followed by
-$r_2$, and $r_3$.
+To illustrate the high-level description of \emph{cut}, consider the program $P$ shown in
+\cref{fig:prog} and the query $q = \elpiIn{g 0 R}$. Both rules for
+\eI{g} can be used on the query $q$. Backchaining $q$ in $P$ from the empty ($\epsilon$) 
+subsitution returns the list 
+$[(\sigma_1, [\eI{r X Y, f Y Z, !}]), (\sigma_2, [\eI{f X Y, f Y Z}])]$
+with $\sigma_1$ and $\sigma_1$ both equal to
+$\sigma_1 \coloneq \{\eI{X} \mapsto \eI{0}, \eI{Z} \mapsto \eI{R}\}$.
+The two elements of the list are generated respectively from the rules $r_1$ and
+$r_2$.
 
-The first rule has no premises and immediately returns the assignment
-\eI{Z = 2}. However, the computation does not terminate at this point, since
-two additional unexplored alternatives remain, corresponding to the premises
-of rules $r_2$ and $r_3$.
+The next step of the interpretation corresponds to the backchaining of \eI{r X
+Y} from $\sigma_1$. This returns $[(\sigma_3, []), (\sigma_4, []), (\sigma_5, [])]$
+with 
+$\sigma_3 \coloneq \sigma_1 + \{\eI{Y} \mapsto \eI{0}\}$,
+$\sigma_4 \coloneq \sigma_1 + \{\eI{Y} \mapsto \eI{1}\}$ and 
+$\sigma_5 \coloneq \sigma_1 + \{\eI{Y} \mapsto \eI{2}\}$. 
+The three lists of premises are empty since all rules for \eI{r} have no 
+premises.
 
-The premises of rule $r_2$ are \eI{r 2 Z, !}. At this stage, the role of the
-cut becomes apparent. If the premise \eI{r 2 Z} succeeds, the cut commits to
-this choice and removes the premises of rule $r_3$ from the alternative list,
-as they were generated at the same point as the cut. Moreover, if
-the call \eI{r 2 Z} itself produces multiple alternatives, only the first one
-is committed, while the remaining alternatives are discarded. This is because
-such alternatives have been created at a deeper depth in the search tree than the cut.
+Backchaining \eI{f Y Z} in $\sigma_3$ gives no solution, therefore, by
+backtracking, we backchain \eI{f Y Z} in $\sigma_4$. This gives a solution,
+namely $\sigma_5 \coloneq \sigma_4 + \{\eI{R} \mapsto \eI{2}\}$.
 
-Concretely, the call \eI{r 2 Z} yields two solutions, assigning \eI{Z} the
-values \eI{4} and \eI{8}, respectively. The second solution is eliminated by
-the cut, and only the first assignment is preserved.
-
-
+We now reach the cut operator and can see its double side behavior.
+In the current execution state, we have still two unexplored alternatives:
+we can backtrack on the third solution for \eI{r} that assign \eI{Y} to \eI{2}
+and on the rules $r_2$. We can note, however, the first alternative
+have been generated after the cut introduction, and the second alternative
+have been generated at the same moment of the cut. Therefore both are cut
+away leaving no choice point. The final complete solution is:
+$\{\eI{X} \mapsto \eI{0}, \eI{Z} \mapsto \eI{R}, \eI{Y} \mapsto \eI{1},
+\eI{R} \mapsto \eI{2}\}$,
+where \eI{X}, \eI{Y} and \eI{Z} can be ignored since they are the result
+internal unification.
 
 \section{Semantics intro}
 
@@ -230,9 +248,9 @@ together with some interesting lemmas of the cut behavior.
 
 
 \section{Tree semantics}
-\input{tex_code/tree_def.tex}
 
-In the tree we distinguish 5 main cases: \koC, \okC, and are special
+The tree inductive, shown in \cref{fig:tree-ty}.
+We distinguish 5 main cases: \koC, \okC, and are special
 meta-symbols representing, respectively, the basic failed and a successful
 trees. These symbols are considered meta because they are internal
 intermediate symbols used to give structure to the tree.
@@ -252,17 +270,13 @@ for the execution of \(B\).
 
 The \andC node \(A \land_{B_0} B\) represents a conjunction of two trees \(A\)
 and \(B\). We call \(B_0\) the reset point for \(B\); it is used to restore the state
-of \(B\) to its initial form if a backtracking operation occurs on \(A\). Intuitively,
-let \ttl be the function flattening a tree in a list of sequents disjnction, 
-in \prologP-like syntax the tree \(A \land_{B_0} B\)
-becomes $(A_1, \ttl\ B); (A_2, B_0); \dots; (A_n, B_0)$ where  $\ttl (A) = A_1,\dots, A_n$.
-\marginpar{t2l nope, metti un r3 = g X Z :- r .., f .., !, 
-e rifatti all'esempio della sezione prima (fai in modo che f funzioni solo con
-la seconda regola per r)}
+of \(B\) to its initial form if a backtracking operation occurs on \(A\).
+An example of this behavior is shown in \cref{sec:na}
 
 A graphical representation of a tree is shown in \cref{tree-ex1}. To make the
 graph more compact, the \andC and \orC nodes are n-ary rather than binary,
-and associate to the right. The \koC node acts as the neutral elements 
+and the children of these nodes associate to the right. 
+The \koC node acts as the neutral elements 
 in the \orC list, while \okC is the neutral element of the \andC list.
 
 
@@ -280,8 +294,10 @@ in the \orC list, while \okC is the neutral element of the \andC list.
 The interpretation of a tree is performed by two main routines: \step and \na
 that traverse the tree depth-first, left-to-right. Then, then \run inductive
 makes the transitive closure of step \step and \na: it iterates the calls to its
-auxiliary functions.\marginpar{as much as needed, indee prolog programs do not necessarily terminate} In \cref{type:stepT,type:naT,type:runT} we give the types
-contrats of these symbols where \cI{fvS} is a set of variable names.
+these auxiliary functions
+as much as needed.
+In \cref{type:stepT,type:naT,type:runT} we give the types
+contrats of these symbols where \fvT is a set of variable names.
 
 \mvspace{}
 \deftypes[type:steptag]{tex_code/step_tag.tex}
@@ -449,6 +465,7 @@ pointed by the arrows with \koC.
 
 
 \subsection{The \na procedure}
+\label{sec:na}
 
 It is evident that the \step alone is not sufficient to reproduce entirely the
 behavior of the full expected prolog interpreter. In particular, 
@@ -523,6 +540,16 @@ allowing \step to proceed on r X Z.
 
 
 \subsection{The \run inductive}
+
+TODO: start\\
+DIRE CHE RUN TERMINA\\
+In our implementation, 
+\run gives the garantee that the program interpretation
+terminates, since it always return a substitution, but we can easily
+make it also accept diverging program by making \run return an optional
+substitution\\
+TODO: end
+
 
 The inductive procedure \run is modeled as a function: it takes as input a
 program, a set of free variables, an initial substitution $\sigma_0$, and a tree
