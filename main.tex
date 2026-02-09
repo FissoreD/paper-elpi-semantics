@@ -352,20 +352,35 @@ derive some useful definition from \getend. They are listed in
 The \pathend of the tree in~\cref{tree-ex1} is \eI{g X Y}.
 
 \begin{figure}
-  \begin{subfigure}{0.25\textwidth}
-    \begin{center}\includestandalone[width=\textwidth]{./src/path2}\end{center}
-    \caption{Path end := g X Y}
+  \begin{subfigure}{0.4\textwidth}
+    \includestandalone[width=\textwidth]{./src/exec_example1/step2}
+    \caption{Tree after step on \eI{g 0 R}}
     \label{tree-ex1} 
   \end{subfigure}
-  \begin{subfigure}{0.4\textwidth}
-    \includestandalone[width=\textwidth]{./src/path_exp2}
-    \caption{Step on g X Y using \cref{fig:prog}}
-    \label{tree-ex1-exp} 
+  \begin{subfigure}{0.5\textwidth}
+    \includestandalone[width=\textwidth]{./src/exec_example1/step3}
+    \caption{Step on \cref{tree-ex1}}
+    \label{tree-ex2} 
   \end{subfigure}
-  \begin{subfigure}{0.3\textwidth}
-    \includestandalone[width=1\textwidth]{./src/tree_cut2}
-    \caption{Scope of the cut}
-    \label{cut-scope} 
+  \begin{subfigure}{0.5\textwidth}
+    \includestandalone[width=\textwidth]{./src/exec_example1/step4}
+    \caption{Step on \cref{tree-ex2}}
+    \label{tree-ex3} 
+  \end{subfigure}
+  \begin{subfigure}{0.5\textwidth}
+    \includestandalone[width=\textwidth]{./src/exec_example1/step5}
+    \caption{Step on \cref{tree-ex3}}
+    \label{tree-ex4} 
+  \end{subfigure}
+  \begin{subfigure}{0.5\textwidth}
+    \includestandalone[width=\textwidth]{./src/exec_example1/step6}
+    \caption{Step on \cref{tree-ex4}}
+    \label{tree-ex5} 
+  \end{subfigure}
+  \begin{subfigure}{0.5\textwidth}
+    \includestandalone[width=\textwidth]{./src/exec_example1/step7}
+    \caption{Step on \cref{tree-ex5}}
+    \label{tree-ex6} 
   \end{subfigure}
 \caption{Some tree representations} 
 \end{figure}

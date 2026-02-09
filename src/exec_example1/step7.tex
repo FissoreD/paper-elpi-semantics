@@ -18,7 +18,7 @@ for tree={
       [\deadN, deadNode,edge=dashed]
       [\deadN, deadNode,edge=dashed]
       [\okN,okNode,edge label={node[midway,right] {$\sigma_4$}}]
-      [\koN, koNode]
+      [\koN, koNode,edge label={node[midway,right] {$\sigma_5$}}]
     ]
     [\orN,orNode,name=s3
       [\deadN, deadNode,edge=dashed]
@@ -26,7 +26,7 @@ for tree={
     ]
     [\okN,okNode,name=cut]
   ]
-  [\koN, koNode,name=s2]
+  [\koN, koNode,name=s2,edge label={node[midway,right] {$\sigma_2$}}]
 ] 
 \path [thick, red, ->] (cut) edge[bend right=30] node[below]{\cutl} (s1);
 \path [thick, red, ->] (cut) edge[bend right=30] node[below]{\cutl} (s3);
