@@ -28,7 +28,9 @@ def clean_line_global(l,escape):
     l = l.replace("forall", esc("\\forall"))
     l = l.replace("exists", esc("\\exists"))
     for i in range(10):
-        l = l.replace(f"s{i}", esc1(f"$s_{i}$"))
+        pat = ["s","fv"]
+        for p in pat:
+            l = l.replace(f"{p}{i}", esc1(f"${p}_{i}$"))
     l = l.replace("step_tag", "tag") # FIXME
     return l
 

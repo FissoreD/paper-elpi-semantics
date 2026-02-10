@@ -176,6 +176,7 @@ for each rule filtered rules $r$, it returnes a pair containing the extension of
 $\sigma$ making the head of $r$ and $q$ unify and the list of premises of $r$.
 
 \subsection{The cut operator}
+\label{sec:cut-op}
 
 \elpiP is a dialect of \lprologP with the hard cut operator and, in the language
 we have shown before, \emph{cut} is an atom.
@@ -354,37 +355,43 @@ We have pointed by a black arraw the \pathend of all the trees in~\cref{tree-ex}
 \begin{figure}
   \begin{subfigure}{0.4\textwidth}
     \includestandalone[width=\textwidth]{./src/exec_example1/step2}
-    \caption{Tree after step on \eI{g 0 R}}
+    \caption{Tree after \step on \eI{g 0 R}}
     \label{tree-ex1} 
   \end{subfigure}
   \begin{subfigure}{0.5\textwidth}
     \includestandalone[width=\textwidth]{./src/exec_example1/step3}
-    \caption{Step on \cref{tree-ex1}}
+    \caption{\step on \cref{tree-ex1}}
     \label{tree-ex2} 
   \end{subfigure}
   \begin{subfigure}{0.5\textwidth}
     \includestandalone[width=\textwidth]{./src/exec_example1/step4}
-    \caption{Step on \cref{tree-ex2}}
+    \caption{\step on \cref{tree-ex2}}
     \label{tree-ex3} 
   \end{subfigure}
   \begin{subfigure}{0.5\textwidth}
     \includestandalone[width=\textwidth]{./src/exec_example1/step5}
-    \caption{Step on \cref{tree-ex3}}
+    \caption{\na on \cref{tree-ex3}}
     \label{tree-ex4} 
   \end{subfigure}
   \begin{subfigure}{0.55\textwidth}
     \includestandalone[width=\textwidth]{./src/exec_example1/step6}
-    \caption{Step on \cref{tree-ex4}}
+    \caption{\step on \cref{tree-ex4}}
     \label{tree-ex5} 
   \end{subfigure}
   \begin{subfigure}{0.45\textwidth}
     \includestandalone[width=\textwidth]{./src/exec_example1/step7}
-    \caption{Step on \cref{tree-ex5}}
+    \caption{\step on \cref{tree-ex5}}
     \label{tree-ex6} 
   \end{subfigure}
-\caption{Some tree representations} 
+\caption{Some tree representations\footnotemark} 
 \label{tree-ex}
 \end{figure}
+
+\footnotetext{
+  The substitution $\sigma_1\dots\sigma_6$ are from \cref{sec:cut-op},
+  $R_1,R_2$ and $R_3$ are the reset points and correspond respectively to
+  the list of atoms $[\eI{f Y Z, !}],[\eI{!}]$ and $[\eI{f Y Z}]$
+}
 
 \subsection{The \step procedure}
 
@@ -395,8 +402,8 @@ substitution, and a tree, and returns an updated set of variables, a
 The set of variables \emph{fv} given in input to step are used and updated when
 a backchaining operation takes place. A call to \step produces a good result if
 \emph{fv} contains all the variables in the tree. This guarantees that any call
-to \emph{bc} returns a list of atoms whose variables variables are disjoint from
-the variables of the current working tree.
+to \emph{bc} returns a list of atoms whose variables are disjoint from
+the variables of the current working tree.\marginpar{not true in figure:fix + also fix in \cref{sec:cut-op}}
 
 The \steptag (see~\cref{type:steptag}) indicates the kind of an internal tree step:
 \cI{CutBrothers} denotes the interpretation of a superficial cut, i.e., a cut
@@ -405,9 +412,9 @@ of non-superficial cuts or predicate calls. \cI{Failure} and \cI{Success} are
 returned for, respectively, \failed and \success trees.
 
 
-The step procedure is intended to interpretate atoms,
-that is, it transforms the tree iff its \pathend is an atom,
-otherwsise, it returnes the identity.
+The step procedure is intended to evaluate atoms,
+that is, it leaves unchanged the tree iff its \pathend is not an atom, i.e.
+if it is a success- or a failed-tree.
 
 \mvspace{}
 \deflemma[lemma:success]{tex_code/success_step.tex}
@@ -415,22 +422,25 @@ otherwsise, it returnes the identity.
 \mvspace{}
 
 \textit{The interpretation of a call} to a term $c$ stars by calling the
-\backchain function on $c$. The output list $l$ is taken to 
-represent build the new subtree.
-If $l$ is empty then \koC tree is returned, otherwise
-the subtree is a right-skewed tree made of $n$ inner \orC nodes,
-where $n$ is the length of $l$.
-The root has \koC as left child. The lhs of the other nodes is a
-right-skewed tree of \andC nodes. The \andC nodes are again a right-seked tree
-containing premises of the selected rule \marginpar{dire dei reset point}.
+\backchain function on $c$. The result of the backchain is a list $l$.
+If $l$ is empty then the current call is replaced by the \koC node,
+otherwise it is replaced by a right skewed tree made by \orC inner-nodes
+and each leave correspod to a list of atom $e$ in $l$.
+If $e$ is empty then it is mapped to the \okC tree, otherwise it is mapped
+to a right-skewed tree made by \andC inner-nodes. 
 
-A step in the tree of \cref{tree-ex1} makes a backchain operation over the query
-\eI{g X Y} and, in the program defined in \cref{fig:prog}, the new tree would be the one in
-\cref{tree-ex1-exp}. We have put a red border aroung the new generated subtree.
-It is a disjunction of four subtrees:
-the first node is the \koC node (by default), the second is \okC, since r1
-has no premises, the third and the fourth contains the premises of respectively
-$r_2$ and $r_3$. \marginpar{dire che le sostituzioni del backchain sono importanti e dove sono mess}
+In \cref{tree-ex1}, we provide a clear example of a call to \step on the query
+\eI{q 0 R} on the program $P$ in \cref{fig:prog}. Let $c_0$, $c_1$ and $c_2$ be
+the childreen of the root. $c_0$, by construction is the \emph{None} tree, while
+$c_1$ and $c_2$ correspod respectively to the premises of rules $r_1$ and $r_2$
+in $P$. We need the first \emph{None} subtree so that we can attach a
+substituion to $c_1$. In particular, we note that the $c_1$ (resp. $c_2$) are
+related to the substitution $\sigma_1$ (resp. $\sigma_2$). The value of
+$\sigma_1$ and $\sigma_2$ are the same as in \cref{sec:cut-op}. The reset points
+in the tree are marked with the $R$ symbol. $R_1 \coloneq [\eI{f Y Z, !}]$, $R_2
+\coloneq [\eI{!}]$ and $R_3 \coloneq \eI{f Y Z}$, they are essentially the list
+of atoms that allowed to generate the current subtree. Other example of call to
+the \step procedure triggering a backchain are \cref{tree-ex2,tree-ex3,tree-ex5}.
 
 \textit{The interpretation of a cut}
 has three main impacts: at first the cut is replaced by the \okC node, then
@@ -538,11 +548,11 @@ This solution however is not unique, we should be able to backtrack on this
 successful tree. To do so we can call \na and it will deadify the \okC node
 allowing \step to proceed on r X Z.
 
-\begin{figure}
-  \input{tex_code/next_alt_code.tex}
-  \caption{\na implementation}
-  \label{fig:na}
-\end{figure}
+% \begin{figure}
+%   \input{tex_code/next_alt_code.tex}
+%   \caption{\na implementation}
+%   \label{fig:na}
+% \end{figure}
 
 
 
