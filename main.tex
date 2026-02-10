@@ -154,7 +154,7 @@ It is the output of a successful query. The empty substitution is noted
 $\epsilon$.
 
 The backchain function (bc, see~\cref{type:bc}) takes: a
-program $P$; a set $fv$ of free variables ($\mathcal{F}_{\!\!\nu}$); a query
+program $P$; a set $fv$ of variables ($\mathcal{F}_{\!\!\nu}$); a query
 $q$; and the substitution $\sigma$. A backchain is performed when the current
 atom is a \texttt{call}. In this case, it start by recursively
 \emph{dereferencing} the variables in $\sigma$, i.e. replacing all the variables
@@ -399,9 +399,9 @@ The \step procedure takes as input a program, a set of variables, a
 substitution, and a tree, and returns an updated set of variables, a
 \steptag, and an updated tree.  
 
-The set of variables \emph{fv} given in input to step are used and updated when
+The set of variables \emph{v} given in input to step are used and updated when
 a backchaining operation takes place. A call to \step produces a good result if
-\emph{fv} contains all the variables in the tree. This guarantees that any call
+\emph{v} contains all the variables in the tree. This guarantees that any call
 to \emph{bc} returns a list of atoms whose variables are disjoint from
 the variables of the current working tree.\marginpar{not true in figure:fix + also fix in \cref{sec:cut-op}}
 
@@ -580,18 +580,8 @@ complements \step wrt failed, success and \pathatom trees.
 
 \subsection{The \run inductive}
 
-TODO: start\\
-DIRE CHE RUN TERMINA\\
-In our implementation, 
-\run gives the garantee that the program interpretation
-terminates, since it always return a substitution, but we can easily
-make it also accept diverging program by making \run return an optional
-substitution\\
-TODO: end
-
-
-The inductive procedure \run is modeled as a function: it takes as input a
-program, a set of free variables, an initial substitution $\sigma_0$, and a tree
+The inductive \run is modeled as a function: it takes as input a
+program, a set of variables, an initial substitution $\sigma_0$, and a tree
 $t_0$, and returns a substitution $\sigma_1$ together with an optional updated
 tree $t_1$. The substitution $\sigma_1$ represents the most-general unificator
 that makes the execution of the tree $t_0$ succeed starting from the initial
@@ -601,13 +591,23 @@ not yet been explored. If the tree contains no solution, then \texttt{None} is
 returned.
 
 The procedure \run is based on three main derivation rules, shown in
-\cref{fig:run-rules}. If the \pathend of the tree $t$ is a success, the input
-substitution is returned and the input tree is cleaned of its successful
+\cref{fig:run-rules}. If the \pathend of the tree $t$ is a success, 
+the substitution is retrived in $t$ from $\sigma_1$ and the input tree is cleaned of its successful
 path. If the \pathend of the tree is an atom, then \step is
 invoked to evaluate this atom, and \run is recursively called on the new
 tree. Finally, if the \pathend of the tree is a failure,
 \na is called to clear the failed path; if the resulting cleaned tree
 exists, \run is recursively called on it.
+
+TODO: start\\
+DIRE CHE RUN TERMINA\\
+In our implementation, 
+\run gives the garantee that the program interpretation
+terminates, since it always return a substitution, but we can easily
+make it also accept diverging program by making \run return an optional
+substitution\\
+TODO: end
+
 \begin{figure}[h]
 
   \input{tex_code/runbp.tex}
