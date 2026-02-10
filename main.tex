@@ -618,10 +618,10 @@ tree. Finally, if the \pathend of the tree is a failure,
 \na is called to clear the failed path; if the resulting cleaned tree
 exists, \run is recursively called on it.
 
-In our implementation, \run gives the garantee that the program interpretation
-terminates: it always return a substitution. A diverging program will never
-provide a solution. However, we can easily add a rule to treat this scenarion,
-but studying diverging programs in our settings is not particularly worthy.
+In our implementation, \run guarantees that the interpretation of a
+program terminates successfully: it always returns a substitution. A
+program that does not provide a solution can be easily handled by
+adding a rule for this particular case.
 
 \begin{figure}[h]
 
