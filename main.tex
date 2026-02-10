@@ -596,8 +596,6 @@ complements \step wrt failed, success and \pathatom trees.
 %   \label{fig:na}
 % \end{figure}
 
-
-
 \subsection{The \run inductive}
 
 The inductive \run is modeled as a function: it takes as input a
@@ -612,21 +610,18 @@ returned.
 
 The procedure \run is based on three main derivation rules, shown in
 \cref{fig:run-rules}. If the \pathend of the tree $t$ is a success, 
-the substitution is retrived in $t$ from $\sigma_1$ and the input tree is cleaned of its successful
+the substitution is retrived in $t$ from $\sigma_0$ and the input tree 
+is cleaned of its successful
 path. If the \pathend of the tree is an atom, then \step is
 invoked to evaluate this atom, and \run is recursively called on the new
 tree. Finally, if the \pathend of the tree is a failure,
 \na is called to clear the failed path; if the resulting cleaned tree
 exists, \run is recursively called on it.
 
-TODO: start\\
-DIRE CHE RUN TERMINA\\
-In our implementation, 
-\run gives the garantee that the program interpretation
-terminates, since it always return a substitution, but we can easily
-make it also accept diverging program by making \run return an optional
-substitution\\
-TODO: end
+In our implementation, \run gives the garantee that the program interpretation
+terminates: it always return a substitution. A diverging program will never
+provide a solution. However, we can easily add a rule to treat this scenarion,
+but studying diverging programs in our settings is not particularly worthy.
 
 \begin{figure}[h]
 
@@ -657,28 +652,35 @@ TODO: end
   \label{fig:run-rules}
 \end{figure}
 
+\subsubsection{Properities of \run}
+
+
+
 \section{\elpiP semantics}
 
-We now want to introduce the elpi semantics. The interpreter we show reflects
-the interpreter of the \elpiP language and is an operational semantics
-close to the one picked by Pusch in \cite{10.1007/BFb0105415}, in turn
-closely related to the one given by Debray and Mishra in
-\cite[Section 4.3]{10.1016/0743-1066(88)90007-6}. Pusch mechanized
-the semantics in Isabelle/HOL together with some optimizations that
-are present in the Warren Abstract Machine~\cite{warren1983abstract,10.7551/mitpress/7160.001.0001}.
+We now introduce the \elpiP semantics. The interpreter is close to that
+of the \elpiP language and provides an operational semantics that is
+similar to the one proposed by Pusch in
+\cite{10.1007/BFb0105415}, which is in turn closely related to the
+semantics given by Debray and Mishra in
+\cite[Section~4.3]{10.1016/0743-1066(88)90007-6}. Pusch mechanized this
+semantics in Isabelle/HOL, together with several optimizations that are
+also present in the Warren Abstract Machine
+\cite{warren1983abstract,10.7551/mitpress/7160.001.0001}.
 
-The inductive representing a state of the \elpiP language is shown below.
+We represent a state of the \elpiP language thanks to the two
+mutual inductives shown below.
 
 \input{tex_code/elpi_def.tex}
 
-An elpi state is an enhanced two-dimension list. The outermost list represents
-the list of alternatives in disjunction accompagnate with the substitution that
-should be used to for their interpretation. The innermost list is a list of
-atom, representing a list of goals in cunjunctions. These goals are decorated
-with a pointer to an elpi state, and are used to keep trace of the alternatives
-that should be kept when a cut is interpreted. We call these, special,
-alternatives the cut-to alternatives.
-
+An \elpiP state is an enhanced two-dimensional list. The outermost list
+represents a list of alternatives in disjunction, each accompanied by
+the substitution that should be used for their interpretation. The
+innermost list is a list of atoms, that is, the list of goals in
+conjunction. These goals are decorated with a pointer to an alternative
+list, which is used to keep track of where to jump when a cut is
+interpreted. We call these special alternatives the \emph{cut-to}
+alternatives.
 
 % We are completely loosing the tree structure. There are no clean reset
 % points. The backtracking operation is simpler: it is the tail function.
