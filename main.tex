@@ -429,7 +429,7 @@ and each leave correspod to a list of atom $e$ in $l$.
 If $e$ is empty then it is mapped to the \okC tree, otherwise it is mapped
 to a right-skewed tree made by \andC inner-nodes. 
 
-In \cref{tree-ex1}, we provide a clear example of a call to \step on the query
+In \cref{tree-ex1}, we provide a clear example of a call to \step on the query\marginpar{sottolineare le sostituzioni}
 \eI{q 0 R} on the program $P$ in \cref{fig:prog}. Let $c_0$, $c_1$ and $c_2$ be
 the childreen of the root. $c_0$, by construction is the \emph{None} tree, while
 $c_1$ and $c_2$ correspod respectively to the premises of rules $r_1$ and $r_2$
@@ -448,85 +448,112 @@ some special subtrees, in the scope of the \cutC, are cut away: in particular
 we need to soft-kill the left-siblings of the \cutC and hard-kill the right-uncles
 of the the \cutC.
 
-\begin{definition}[Left-siblings (resp. right-sibling)]
+\begin{definition}[Left-siblings (resp. right-sibling) and Right-uncles]
   Given a node $A$, the left-siblings (resp. right-sibling) of $A$
   are the list of subtrees sharing the same parent of $A$ and that appear
-  on its left (resp. right).
+  on its left (resp. right). The right-uncles of $A$ are the list 
+  of right-sibling of the father of $A$.
 \end{definition}
 
-\begin{definition}[Right-uncles]
-  Given a node $A$, the right-uncles of $A$ are the list of right-sibling of the
-  father of $A$.
-\end{definition}
-
-\begin{definition}[Hard-kill, \cutr]
-  Given a tree $t$, hard-kill replaces the given subtree with the \koC node
-\end{definition}
-
-\begin{definition}[Soft-kill, \cutl]
-  Given a successfull tree $t$, soft-kill replaces with \koC all subtrees
+\begin{definition}[Hard-kill, \cutr and Soft-kill, \cutl]
+  Given a tree $t$, hard-kill replaces the given subtree with the \koC node.
+  If $t$ is a success-tree, then soft-kill replaces with \koC all subtrees
   that are not part of the path in $t$ leading to the \okC node.
 \end{definition}
 
 
-An example of the impact of the cut is show in \cref{cut-scope},
-the dashed triangles represent generic trees. The step
-routine interprets the cut since it is the node in its path-end:
-we pass throgh a and and all trees on the left of the
-cut are successful. In the example
-we have $4$ arrow tagged with the \cutl or \cutr symbols. The \cutl arrows go
-left and soft-kill the pointed subtree, it
-keeps \okC nodes since they are part of the tree leading to the cut, and replaces
-the other subtrees with \koC. The \cutr procedure replaces the nodes
-pointed by the arrows with \koC.
+An example of the impact of the cut is show in \cref{tree-ex6}. In
+\cref{tree-ex5}, we see that the \pathend is a cut. The cut is replaced by the
+\okC node and it need to cut-away some alternatives in the tree. The red arrows
+indicate the scope of the cut, they are labeled with \cutr and \cutl to explain
+which kind of cut has been performed on each pointed subtree. We note that,
+after the evaluation of a cut, the path leading to the cut node is not affected
+by \cutl, the success under the substitution $\sigma_4$ is kept, while the
+success under the substitution $\sigma_5$ is replaced by the \koC node. If we
+refer to the paragraph in \cref{sec:cut-op}, we are discarding the third rule of
+the \eI{r} predicate.
 
 
 \subsection{The \na procedure}
 \label{sec:na}
 
-It is evident that the \step alone is not sufficient to reproduce entirely the
-behavior of the full expected prolog interpreter. In particular, 
-we need to bracktrack on failures. Moreover, in case of success,
-we should return a tree cleaned of its success,
-this is essential to, non deterministically, find the next
-solution of a given query.
-By \cref{lemma:success,lemma:failed}, we know that \step returns the identity
-on successful and failed trees. In order
-to continue the computation on these particular trees, we
-need the \na procedure aiming to expecially work with
-failed and successful trees:
-and its implementation in \cref{fig:na}.
+The \step procedure alone is not sufficient to reproduce entirely the behavior
+of the full expected prolog interpreter. As proved in \cref{lemma:success} and
+\cref{lemma:failed}, \step does not make any progression on the tree being
+interpreted. To solve this problem, we need a routine capable of backtracking in
+case of failures. This routine return the backtracked tree if it exists,
+\emph{None} otherwise.
 
-The \na procedure takes a boolean and a tree, clean it from failures
-or success and returns a new tree if this tree still contains
-a non explored path. The idea behind \na is to 
-clean recursively every subtree in DFS order if its \pathend is
-a failure. Moreover, if the boolean passed to \na is true, then it
-erases the first successful path in the tree.
+In \cref{tree-ex3}, we are facing a failure: the interpreter has evaluated the
+atom \eI{f X Y} under the substitution $\sigma_3$ which assigns \eI{Y} to
+\eI{0}, but, in \cref{fig:prog}, we have no rule satisfying this query. The role
+of \na, in this example, is to kill the path leading to this failure, while
+reseting the failure to its original shape. We see how the reset point plays a
+major role in this case. At first we are killing the \okC node under the
+subsitution $\sigma_3$, since this tree have been entirely explored and led to
+no solution, then we replace the \koC node with the information stored in $R_1$.
+That is, thanks to $R_1$, we are restoring the \eI{f Y Z} call, so that we are
+able to evaluate this node under the subsitutution $\sigma_4$. More concretely,
+we have uncessefully tried rule \eI{r 0 0}, therefore, we need to continue by
+trying rule \eI{r 0 1}.
 
-The base cases of \na are immidiate.
-The \orC case is rathere intuitive: if the lhs of the \orC does
-not exist we look for the \na in the rhs. Otherwise, we look for the \na
-in the lhs, if this \na does not exists, we look for the \na in the rhs.
+Furthermore, \na accomplishes to another important task. Its behavior changes
+depending to the value of the bolean it receives in entry: \emph{\na false A}
+aims to recursively cancel all the failures (if any) in \emph{A}, whereas,
+\emph{\na true A} aims to cancel the first success in \emph{A}. This second
+behavior is helpful since, we need to progress the tree in case of success. For
+example, consider the tree in \cref{tree-ex6}, it contains a success, mapping
+namely \eI{R} to \eI{2}. The interpreter should return this sucess, but, due to
+the ``non-deterministic'' behavior of the prolog system, we also need to return
+all the other solution that could be available by evaluating the rest of the
+tree. After the replacement of the \pathend in \cref{tree-ex6} with \koC, we
+remain with a tree having all failing path. The \na procedure keeps removing
+them until discovering that the tree have no worth-to explore paths, therefore
+it will return \emph{None}.
 
-We want to spend few words about the \andC case, since the reset point $B0$
-for $B$ plays an important role. 
-The \na in an \andC tree should consider two cases: if the lhs succeeds, then
-the \na should be retrived in the rhs. If this alternative does not exists
-it means that the rhs has entirely been explored. We need to erase the success
-in the lhs and try to find if a non-explored alternative exists. If so,
-we return a new tree with the new lhs and the rhs is built from the reset point.
-\cI{big_and} is a trivial function build a right-skewed tree of and nodes
-where the leaves are the atoms written in the reset point.
-We need to reuse the reset point since,
-the step procedure in \andC trees
-evaluates the rhs of a \andC tree if the lhs succeeds.
-This evaluation is dependent on the subsitution in the lhs tree.
-Therefore, if we need to backtrack in the lhs, we need to reset the
-rhs.
+
+% In particular, 
+% we need to bracktrack on failures. Moreover, in case of success,
+% we should return a tree cleaned of its success,
+% this is essential to, non deterministically, find the next
+% solution of a given query.
+% By \cref{lemma:success,lemma:failed}, we know that \step returns the identity
+% on successful and failed trees. In order
+% to continue the computation on these particular trees, we
+% need the \na procedure aiming to expecially work with
+% failed and successful trees:
+% and its implementation in \cref{fig:na}.
+
+% The \na procedure takes a boolean and a tree, clean it from failures
+% or success and returns a new tree if this tree still contains
+% a non explored path. The idea behind \na is to 
+% clean recursively every subtree in DFS order if its \pathend is
+% a failure. Moreover, if the boolean passed to \na is true, then it
+% erases the first successful path in the tree.
+
+% The base cases of \na are immidiate.
+% The \orC case is rathere intuitive: if the lhs of the \orC does
+% not exist we look for the \na in the rhs. Otherwise, we look for the \na
+% in the lhs, if this \na does not exists, we look for the \na in the rhs.
+
+% We want to spend few words about the \andC case, since the reset point $B0$
+% for $B$ plays an important role. 
+% The \na in an \andC tree should consider two cases: if the lhs succeeds, then
+% the \na should be retrived in the rhs. If this alternative does not exists
+% it means that the rhs has entirely been explored. We need to erase the success
+% in the lhs and try to find if a non-explored alternative exists. If so,
+% we return a new tree with the new lhs and the rhs is built from the reset point.
+% \cI{big_and} is a trivial function build a right-skewed tree of and nodes
+% where the leaves are the atoms written in the reset point.
+% We need to reuse the reset point since,
+% the step procedure in \andC trees
+% evaluates the rhs of a \andC tree if the lhs succeeds.
+% This evaluation is dependent on the subsitution in the lhs tree.
+% Therefore, if we need to backtrack in the lhs, we need to reset the
+% rhs.
 
 Some interesting property of \na are shown below and allow to see how \na
-complements \step.
+complements \step wrt failed, success and \pathatom trees.
 
 \mvspace{}
 \deflemma[lemma:pathna]{tex_code/path_atom_next_alt_id.tex}
@@ -534,19 +561,14 @@ complements \step.
 \mvspace{}
 
 
-
-% that is it is allowed to transform \okC or \koC leaves into \deadC, so
-% that the \step procedure is allowed to ignore the new ghosts states and move on.
-% The boolean taken by \na tells if it is needed to kill \okC nodes or not.
-
-For example, in \cref{tree-ex1-exp} the step procedure has created a failed
-tree: its path-end ends in \koC. The expected behavior of \na is to take
-this \koC node and make it a .... This allows \step to continue the
-exploration of the tree. In particular, the path-end of this new tree ends
-in \okC. The step leaves the tree unchanged producing the new substitution.\marginpar{subst taken form the or}
-This solution however is not unique, we should be able to backtrack on this
-successful tree. To do so we can call \na and it will deadify the \okC node
-allowing \step to proceed on r X Z.
+% For example, in \cref{tree-ex1-exp} the step procedure has created a failed
+% tree: its path-end ends in \koC. The expected behavior of \na is to take
+% this \koC node and make it a .... This allows \step to continue the
+% exploration of the tree. In particular, the path-end of this new tree ends
+% in \okC. The step leaves the tree unchanged producing the new substitution.\marginpar{subst taken form the or}
+% This solution however is not unique, we should be able to backtrack on this
+% successful tree. To do so we can call \na and it will deadify the \okC node
+% allowing \step to proceed on r X Z.
 
 % \begin{figure}
 %   \input{tex_code/next_alt_code.tex}
