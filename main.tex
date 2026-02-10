@@ -916,13 +916,44 @@ strature like the tree
 
 \section{Related work}
 
-prolog semantics, King lost
+The only mechanization of Prolog's semantics
+we could find is the one by Pusch in \isabelleP~\cite{10.1007/BFb0105415}
+that is based on the model of Debray and Mishra~\cite[Sec.~4.3]{10.1016/0743-1066(88)90007-6}.
+Their work start from that semantics and refines it by
+introducing some optimizations usually found in
+the Warren abstract machine~\cite{warren1983abstract,10.7551/mitpress/7160.001.0001}.
+They do not use the semantics to prove properties
+on the execution of programs as we do in our use case, hence they do not face the
+difficulty described in seciton XXX that pushed us to
+develop an more explicit semantic (with respect to cut).
+In some way our work is complementary, showing he stack
+based semantic equivalent to more optmized one, we could 
+consider implement in Elpi.
 
-yves for the proof technique
+Another relevant work are the ones by King cite,
+but we could not find their code. Their semantics
+is denotational and cannot easily cover all the
+features our paper XX does, but would have been sufficient
+for this first step.
 
+The proof technique we use to relate the two semantics
+is inspired by XXX and we thank Y.Bertot for insightful
+discussions on the topic. In XXX Bertot relates bla bla,
+witout never constructing a decompiler, exactly as we
+never build a list to tree function.
 
 \section{Conclusion}
 
+We do this.
+This is a first step for XXXX. We need to add
+substitutions. The missing part of the proof
+becomes related to abstract interpretation, since
+the det types for a lattice and one has to prove that
+the concrete runtime values variables take agree
+with the abstraction computed statically. This proof
+is ongoing and somehow orthogonal to the current one
+since the cut operator and the HO feature do not
+interfere with eachother in complex ways.
 
 \bibliography{bib}
 \end{document}
