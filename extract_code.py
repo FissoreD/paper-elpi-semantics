@@ -13,6 +13,7 @@ def clean_line_global(l,escape):
         return f"~${l}$~" if escape else l
     def esc1(l):
         return f"~{l}~" if escape else l
+    l = l.replace("%G", "")
     l = l.replace("successT", "success")
     l = l.replace("failedT", "failed")
     l = l.replace("Sigma", esc("\\Sigma"))
@@ -140,16 +141,30 @@ def flatten(xss):
 # it does not work for:
 # inductive with hypothesis containing arrows
 # mutual recursive inductives
+
+def stack_anchor(f1,f2):
+    return f"\stackanchor{{{f1}}}{{{f2}}}"
 class bussproof(C):
     def __init__(self):
         super(bussproof,self).__init__("(*","*)","tex_code","v","prooftree:","endprooftree",False)
 
+
+
     def print_bp(self,name,hyps,concl):
         lines = ["\\begin{prooftree}"]
+        # reset hyps if too many or too few
+        if len(hyps) == 4:
+            x = []
+            for i in range (len(hyps)//2):
+                x.append(stack_anchor(hyps[2*i], hyps[2*i+1]))
+            hyps = x
+            
+
         for s in hyps:
             lines.append(f"  \\AxiomC{{{(s)}}}")
 
-        n = len(hyps)
+        n = len(hyps)            
+
         if n == 0:
             n = 1
             lines.append(f"  \\AxiomC{{}}")
@@ -159,6 +174,7 @@ class bussproof(C):
         L = ["Unary","Binary","Trinary"]
 
         if n > len(L):
+            print(hyps)
             raise ValueError("Too many premises for bussproofs")
         else:
             tag = L[n-1]
@@ -180,6 +196,7 @@ class bussproof(C):
 
     def parse_inductive (self,l):
         l = l.split(":",1)
+        # print("LINES:= ", l)
         cname = self.clean_line(l[0].split(maxsplit=1)[0])
         hyps = flatten([self.split_hyps(i) for i in l[1:]])
         return self.print_bp(cname, hyps[:-1],hyps[-1])
@@ -190,7 +207,7 @@ class bussproof(C):
             lines[i] = self.clean_comment(e).replace("\n","").strip().strip(".")
             
         lines = "".join(lines)
-        lines = lines.split("|")
+        lines = re.split(r'(?<!\|)\|(?!\|)', lines)
         cnt = ""
         for i in lines[1:]:
             cnt += "\n"+self.parse_inductive(i)
@@ -198,5 +215,6 @@ class bussproof(C):
 
 if __name__ == "__main__":
     fname = sys.argv[1]
+    print(fname)
     bussproof().read_file(fname)
     snip("coqcode").read_file(fname)
