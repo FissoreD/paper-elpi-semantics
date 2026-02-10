@@ -67,18 +67,18 @@
 \maketitle
 
 %TODO mandatory: add short abstract of the document
-\begin{abstract}
-We machanize in the Rocq prover two operational semantics for
-\prologP with cut and we prove them equivalent. The first one is based
-on a stack of alternatives computations to exlpore and is well suited
-to study further optimizations used by standard \prologP
-abstract machines, moreover it closely models \elpiP's implementation.
-The second semantics is instead based on a and-or tree in which the branches
-pruned by the \emph{cut} operator are apparent.
+\begin{abstract} 
+We mechanize in the Rocq prover two operational semantics for \prologP with cut
+and prove them equivalent. The first semantics is based on a stack of
+alternative computations to explore and is well suited for studying
+optimizations employed by standard \prologP abstract machines; moreover, it
+closely models \elpiP's implementation. The second semantics is instead based
+on an and-or tree, in which the branches pruned by the \emph{cut} operator are
+made explicit.
 
 We use the tree-based semantics to reason about the determinacy analysis
-introduced in Elpi version 3.0 that statically identifies computations
-that produce, at run time, at most one result.
+introduced in Elpi version~3.0, which statically identifies computations that
+produce, at run time, at most one result.
 \end{abstract}
 
 \section{Introduction}
