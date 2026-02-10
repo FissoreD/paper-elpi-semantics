@@ -80,15 +80,15 @@
 \begin{abstract} 
 We mechanize in the Rocq prover two operational semantics for \prologP with cut
 and prove them equivalent. The first semantics is based on a stack of
-alternative computations to explore and is well suited for studying
-optimizations employed by standard \prologP abstract machines; moreover, it
+alternative computations and is well suited for studying
+optimizations employed by \prologP abstract machines; moreover, it
 closely models \elpiP's implementation. The second semantics is instead based
-on an and-or tree, in which the branches pruned by the \emph{cut} operator are
+on an and-or tree, in which the branches pruned by the cut operator are
 made explicit.
 
 We use the tree-based semantics to reason about the determinacy analysis
 introduced in Elpi version~3.0, which statically identifies computations that
-produce, at run time, at most one result.
+produce at most one result.
 \end{abstract}
 
 \section{Introduction}
@@ -122,14 +122,14 @@ similar to the semantics mechanized by Pusch in \isabelleP~\cite{10.1007/BFb0105
 and to the model of Debray and Mishra~\cite[Sec.~4.3]{10.1016/0743-1066(88)90007-6}.
 This stack-based semantics is a good starting point to study further
 optimizations used by standard \prologP abstract machines~\cite{warren1983abstract,10.7551/mitpress/7160.001.0001},
-but it makes reasoning about the scope of \emph{cut} difficult. To address
+but it makes reasoning about the scope of cut difficult. To address
 that limitation we introduce a tree-based semantics in which the branches
 pruned by \emph{cut} are explicit and we prove the two semantics equivalent.
 Using the tree-based semantics we then show that if every rule of a
-predicate passes the determinacy analysis, the call to a deterministic
-predicate does not leave any choice points.
+predicate passes the determinacy analysis, then the call to 
+the predicate does not leave any choice points.
 
-\section{Common code: the language}
+\section{Preliminaries: syntax and informal semantics}
 
 \begin{figure}
   \input{tex_code/base_type.tex}
@@ -260,9 +260,8 @@ $\{\eI{X} \mapsto \eI{0}, \eI{Z} \mapsto \eI{R}, \eI{Y} \mapsto \eI{1},
 where \eI{X}, \eI{Y} and \eI{Z} can be ignored since they are the result
 internal unification.
 
-\section{Semantics intro}
 
-We propose two operational semantics for a logic program with cut. The two
+We propose two formal, operational semantics for a logic program with cut. The two
 semantics are based on different syntaxes, the first syntax (called tree)
 exploits a tree-like structure and is ideal both to have a graphical view of its
 evolution while the tree is being intepreted and to prove lemmas over it. The
@@ -272,7 +271,7 @@ using shared pointers. We aim to prove the equivalence of the two semantics
 together with some interesting lemmas of the cut behavior.
 
 
-\section{Tree semantics}
+\section{And-Or Tree semantics}
 
 \emph{The tree state}
 The tree inductive, shown in \cref{fig:tree-ty}.
@@ -656,7 +655,7 @@ adding a rule for this particular case.
 
 
 
-\section{\elpiP semantics}
+\section{Stack semantics}
 
 We now introduce the \elpiP semantics. The interpreter is close to that
 of the \elpiP language and provides an operational semantics that is
@@ -725,7 +724,7 @@ routine is in cahrge of: taking the list of premises and add to each atom the
 the list of alternatives $a$ as their new cut-alternatives, then it append the
 list of goals $gl$ to each of these new lists.
 
-\section{Semantic equivalence}
+\section{Equivalence of the two semantics}
 
 The equivalence between the two semantics is possible under two conditions: we
 need to work with ``valid tree'', i.e. all of those trees that can be
