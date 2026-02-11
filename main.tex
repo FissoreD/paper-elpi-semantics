@@ -10,6 +10,7 @@
 \usepackage{stackengine}
 
 % \renewcommand{\square}{\boxed{\phantom{\texttt{A}}}}
+\renewcommand{\epsilon}{\varepsilon}
 
 %\pdfoutput=1 %uncomment to ensure pdflatex processing (mandatatory e.g. to submit to arXiv)
 %\hideLIPIcs  %uncomment to remove references to LIPIcs series (logo, DOI, ...), e.g. when preparing a pre-final version to be uploaded to arXiv or another public repository
@@ -275,9 +276,9 @@ together with some interesting lemmas of the cut behavior.
 
 \textit{Notations used in the paper}
 In the following section we note $\mathbb{B}$ for the bolean type, and $\top$
-and $\bot$ for \cI{true} and \cI{false}. The option type is noted $T +
-\mathbf{1}$ where $T$ is the type carried by the option instance, $\boxed{t}$
-corresponds to \emph{Some t} and $\square$ corresponds to \emph{None}.
+and $\bot$ for \cI{true} and \cI{false}. The option instances are noted
+$\boxed{t}$ for \emph{Some t} and $\square$ for \emph{None}. 
+% $\epsilon$ is the empty substitution.
 
 
 \section{And-Or Tree semantics}
@@ -680,18 +681,20 @@ different expectations on the output of \na.
 
 Working with \run allows to prove some interesting properties about the behavior
 of the cut operator wrt disjunction, i.e. the \orC node. We have proven several
-properties, we cite here some that are quite interesting. They are avalable
-\href{https://github.com/FissoreD/elpi-formalization/blob/ho-check-ffun/theories/tree_prop_hard.v}{\emph{here}}.
-\marginpar{howkward... use another style}
+properties that are avalable at
+\href{https://github.com/FissoreD/elpi-formalization/blob/ho-check-ffun/theories/tree_prop_hard.v}{\emph{this}}
+link. Below we show two of these lemmas.
+
+\begin{lemma}[\texttt{runSST\_or}] $\forall p\ v_0\ v_1\ s_0\ s_1\ t_0\ t_0'\ s_m\ t_1$,
+  $$\texttt{\run p}\ v_0\ s_0\ t_0\ \boxed{s_1, \boxed{t_0}}\ \top\ v_1 \to%
+    \texttt{\run p}\ v_0\ s_0\ (\texttt{Or}\ \boxed{t_0}\ s_m\ t_1)\ %
+    \boxed{s_1, \boxed{\texttt{Or }\boxed{t_0'}\ s_m\texttt{ KO}}}\ \bot\ v_1$$
+\end{lemma}
 
 \mvspace{}
 \deflemma[lemma:run6]{tex_code/runSST_or.tex}
 \deflemma[lemma:run6]{tex_code/run_orSST.tex}
 \mvspace{}
-
-\begin{lemma}[runSST\_or]
-  xx
-\end{lemma}
 
 % $$$$
 
