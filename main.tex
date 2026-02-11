@@ -708,27 +708,38 @@ link. Below we show two of these lemmas.
 
 \mvspace{}
 \deflemma[lemma:run6]{tex_code/runSST_or.tex}
-\deflemma[lemma:run6]{tex_code/run_orSST.tex}
+\mvspace{}
+\deflemma[lemma:run7]{tex_code/runNT_or.tex}
+\mvspace{}
+\deflemma[lemma:run8]{tex_code/run_orSST.tex}
 \mvspace{}
 
 % $$$$
 
-In the first lemma we claim that if we run a tree $t_0$, and the interpretation
-returns a success after executing a superficial cut (note the \cI{true}
-boolean), the interpretation of the tree $t_0 \/ t_1$ still return a success,
-with the same $\sigma_1$, the output tree still exists, but the rhs has been
-cut-away due to the execution of the superficial cut in $t_0$.
+In \cref{lemma:run6}, we evaluate the tree $t_0$. This evaluation
+produces a success with signature $\sigma_1$ and a new tree $t_0'$.
+During the evaluation, a superficial cut in $t_1$ is traversed. This
+implies that the evaluation of $\msome t_0 \lor_{s_m} t_1$ returns
+$\sigma_1$ as substitution, and the alternatives are
+$\msome t_0' \lor_{s_m} \texttt{KO}$. The right-hand side of the
+$\orC$ node is replaced with $\koC$ by \cutr.
 
-Conversely, if the term $t_0 \lor t_1$ evaluates to a subsitution $\sigma_0$ and
-know that $t_0$ leaves alternatives (namely $t_0'$), then we know that
-evaluating $t_0$ alone will produce the same substitution $\sigma_0$ and
-alternatives $t_0'$, but, depending on if the evaluation of $t_0$ has crossed
-a superficial cut, we know if the state $t_1$ will be cut-away or not
-in the evaluation of $t_0\lor t_1$.
+In \cref{lemma:run7}, we are in a similar scenario: $t_0$ evaluates a
+superficial cut but, this time, produces a failure. This implies that
+the evaluation of $\msome t_0 \lor_{s_m} t_1$ also fails.
 
-\marginpar{dire che se non ci sono cut superficiali allora si comporta come or della
-logica normale.}
+Finally, in \cref{lemma:run8}, we evaluate
+$\msome t_0 \lor_{s_m} t_1$. The evaluation succeeds, producing the
+result $\msome(s_1,\msome t_0' \lor_{s_m} t_1')$. This means that
+$t_0$ still has $t_0'$ as unexplored alternatives. We deduce that the
+evaluation of $t_0$ produces the substitution $\sigma_1$ with
+alternatives $t_0'$. However, we have no information about whether a
+superficial cut has been crossed in $t_0$. If this is the case, we
+know that $t_1'$ is cut away by \cutr; otherwise, $t_1'$ has not
+been explored and is equal to $t_1$.
 
+From these lemmas, it is clear how the order in which alternatives are
+evaluated changes the behavior of the program.
 
 \section{Stack semantics}
 
