@@ -83,10 +83,11 @@
 %TODO mandatory: add short abstract of the document
 \begin{abstract} 
 We mechanize two operational semantics for \prologP with cut
-and prove them equivalent, in the Rocq prover. The first semantics is based on a stack of
-choice points computations and is well suited for studying
-optimizations employed by \prologP abstract machines; moreover, it
-closely models \elpiP's implementation. The second semantics is instead based
+and prove them equivalent, in the Rocq prover. The first semantics
+closely models the \elpiP's implementation,
+it is based on a stack of choice points and is well suited for studying
+optimizations employed by \prologP abstract machines. 
+The second semantics is instead based
 on and-or trees, in which the branches pruned by the cut operator are
 made explicit.
 
@@ -695,6 +696,13 @@ link. Below we show two of these lemmas.
   $$\texttt{\run p}\ v_0\ s_0\ t_0\ \boxed{s_1, \boxed{t_0'}}\ \top\ v_1 \to%
     \texttt{\run p}\ v_0\ s_0\ (\texttt{Or}\ \boxed{t_0}\ s_m\ t_1)\ %
     \boxed{s_1, \boxed{\texttt{Or }\boxed{t_0'}\ s_m\texttt{ KO}}}\ \bot\ v_1$$
+\end{lemma}
+
+\begin{lemma}
+  $$
+  \run\ p\ v_0\ s_0\ (Or \boxed{t_0}\ s_m\ t_1) (Some\ (s_1, (Or\ \boxed{t_0'}\ s_m\ t_1')))\ \bot\ v_2\ \to
+    \exists b, \run\ p\ v_0\ s_0\ t_0\ (Some (s_1, \boxed{t_0'}))\ b\ v_2\ \land t_1' = \text{ if } b \text{ then \koC else } t_1.
+  $$
 \end{lemma}
 
 \mvspace{}
