@@ -61,9 +61,11 @@ def clean_line_global(l,escape):
     l = l.replace("false", esc(m("\\bot")))
     l = l.replace("\bsm\b", " " + esc(m("s_m")) + " ")
     for i in range(10):
-        pat = ["s","v","b","t","r"]
+        pat = ["v","b","t","r"]
         for p in pat:
             l = re.sub(f"{p}{i}(')?", esc(m(f"{p}_{i}\g<1>")), l)
+        l = re.sub(f"s{i}(')?", esc(m(f"\\\\sigma_{i}\g<1>")), l)
+        
     l = l.replace("step_tag", "tag") # FIXME
     return l
 
