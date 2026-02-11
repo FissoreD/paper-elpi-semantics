@@ -285,7 +285,7 @@ together with some interesting lemmas of the cut behavior.
 \textit{Notations used in the paper}
 In the following section we note $\mathbb{B}$ for the bolean type, and $\top$
 and $\bot$ for \cI{true} and \cI{false}. The option instances are noted
-$\msome{t}$ for \emph{Some t} and $\square$ for \emph{None}. 
+$\msome{t}$ for \emph{Some t} and $\square$ for \emph{None}. \marginpar{spiegare notation for list}
 % $\epsilon$ is the empty substitution.
 
 
@@ -774,17 +774,37 @@ alternatives.
 \begin{figure}
   \input{tex_code/stepE.tex}
 
-  \mvspace{}
-  \deftypes[type:nur]{tex_code/nur_type.tex}
-  \mvspace{}
-
   \input{tex_code/nurbp.tex}
 
   \caption{Rule system for \nur}
   \label{fig:nur-rules}
 \end{figure}
 
-In our implementation of 
+The \elpiP interpreter is called \nur and has the following type.
+
+\mvspace{}
+\deftypes[type:nur]{tex_code/nur_type.tex}
+\mvspace{}
+
+The inductive \nur represents a routine taking as input a set of variables and a
+list of alternatives and returning an optional substitution and a list of new
+alternatives in case of a successful interpretation. In case of failure it
+returns $\square$.
+
+The rule system for \nur is given in \cref{fig:nur-rules}. We treat $5$, and two
+are the main scenarion. If the list of alternatives is empty, (\textsc{FailE})
+we have a failure: we stop the computation and return $\square$.
+
+If the list of alternatives is non empty, we need to consider its 
+
+Otherwise, 
+different cases
+depending on the shape of the alternatives. (\textsc{StopE}) consider a non
+empty list of alternatives where the list of goals is empty. In this case, we
+have, by definition a success and return the input substitution and the tail of
+alternative. (\textsc{CutE}) treats the cut operator, the 
+
+
 
 The idea of the \textsc{Elpi} interpreter is to receive a list of alternatives.
 The first alternative consists of a list of goals. Four cases must be taken
@@ -812,7 +832,7 @@ routine is in cahrge of: taking the list of premises and add to each atom the
 the list of alternatives $a$ as their new cut-alternatives, then it append the
 list of goals $gl$ to each of these new lists.
 
-\subsection{XXX}
+\textit{Remark}
 It is not possible to prove the same lemma as in section xxx, because no
 structure, the scope of the cut ... spiegare bene il problema so
 that i can reuse this subsection has a hook when I will say that
