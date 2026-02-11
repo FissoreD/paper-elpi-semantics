@@ -38,8 +38,10 @@ def clean_line_global(l,escape):
     l = remove_some_par(l)
     l = l.replace("%G", "")
     l = re.sub(r'\b_\w+\b', '_', l)
-    l = re.sub(r'\+\+', '\\\\mappend', l)
-    l = re.sub(r'\[::\]', '\\\\mnil', l)
+    if not escape:
+        l = re.sub(r'_', '\\_', l)
+    l = re.sub(r'\+\+', esc('\\\\mappend'), l)
+    l = re.sub(r'\[::\]', esc('\\\\mnil'), l)
     l = l.replace("Sigma", esc(m("\\Sigma")))
     # l = l.replace("tree", esc("\\tau"))
     l = l.replace("empty", esc(m("\\epsilon")))
@@ -215,8 +217,8 @@ class bussproof(C):
         return "\n".join(lines)
 
     def clean_line(self, l):
-        l = l.replace("_","\_")
-        l = l.replace("&","\&")
+        # l = l.replace("_","\_")
+        # l = l.replace("&","\&")
         return super().clean_line(l)
     
     def split_hyps(self,hyps):
