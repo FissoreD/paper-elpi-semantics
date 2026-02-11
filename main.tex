@@ -82,17 +82,17 @@
 
 %TODO mandatory: add short abstract of the document
 \begin{abstract} 
-We mechanize in the Rocq prover two operational semantics for \prologP with cut
-and prove them equivalent. The first semantics is based on a stack of
-alternative computations and is well suited for studying
+We mechanize two operational semantics for \prologP with cut
+and prove them equivalent, in the Rocq prover. The first semantics is based on a stack of
+choice points computations and is well suited for studying
 optimizations employed by \prologP abstract machines; moreover, it
 closely models \elpiP's implementation. The second semantics is instead based
-on an and-or tree, in which the branches pruned by the cut operator are
+on and-or trees, in which the branches pruned by the cut operator are
 made explicit.
 
-We use the tree-based semantics to (1) prove properties about the effect of
-the cut operator in queries such as $q_1 \lor q_2$, since the
-rules from classic logic does not apply, and (2) reason about the determinacy
+We use the tree-based semantics (1) to prove properties about the effect of
+the cut operator in the evaluation of choice points, since the
+rules from classical logic do not apply, and (2) to reason about the determinacy
 analysis introduced in Elpi version~3.0, which statically identifies
 computations that produce at most one result.%
 \end{abstract}
@@ -108,10 +108,10 @@ Examples include the Hierarchy-Builder library-structuring tool~\cite{cohen_et_a
 and Derive~\cite{tassi2018,tassi2019,tassi2023}, a program-and-proof synthesis
 framework with industrial applications at SkyLabs AI.
 
-Starting with version 3, \elpiP gained a static analysis for
+Starting with version 3, \elpiP is equipped with a static analysis for
 determinacy~\cite{10.1007/978-3-032-15981-6_5} to help users tame
 backtracking. \rocqP users are familiar with functional programming but
-not necessarily with logic programming and uncontrolled backtracking
+not necessarily with logic programming, in particular uncontrolled backtracking
 is a common source of inefficiency and makes debugging harder. The
 determinacy checkers identifies predicates that behave like functions,
 i.e., predicates that commit to their first solution and leave no
@@ -120,7 +120,7 @@ i.e., predicates that commit to their first solution and leave no
 This paper reports our first steps towards a mechanization, in the \rocqP
 prover, of the determinacy analysis from~\cite{10.1007/978-3-032-15981-6_5}.
 We focus on the control operator \emph{cut}, which is useful to restrict
-backtracking but makes the semantic depart from a pure logical reading.
+backtracking but makes the semantics depart from a pure logical reading.
 
 We formalize two operational semantics for \prologP with cut. The first is a
 stack-based semantics that closely models \elpiP's implementation and is
@@ -129,7 +129,7 @@ and to the model of Debray and Mishra~\cite[Sec.~4.3]{10.1016/0743-1066(88)90007
 This stack-based semantics is a good starting point to study further
 optimizations used by standard \prologP abstract machines~\cite{warren1983abstract,10.7551/mitpress/7160.001.0001},
 but it makes reasoning about the scope of cut difficult. To address
-that limitation we introduce a tree-based semantics in which the branches
+this limitation we introduce a tree-based semantics in which the branches
 pruned by \emph{cut} are explicit and we prove the two semantics equivalent.
 Using the tree-based semantics, we then prove some properties about the
 impact of evaluating the \emph{cut} in query disjunctions. Unlike in
@@ -999,9 +999,9 @@ the Warren abstract machine~\cite{warren1983abstract,10.7551/mitpress/7160.001.0
 They do not use the semantics to prove properties
 on the execution of programs as we do in our use case, hence they do not face the
 difficulty described in seciton XXX that pushed us to
-develop an more explicit semantic (with respect to cut).
+develop an more explicit semantics (with respect to cut).
 In some way our work is complementary, showing he stack
-based semantic equivalent to more optmized one, we could 
+based semantics equivalent to more optmized one, we could 
 consider implement in Elpi.
 
 Another relevant work are the ones by King cite,
