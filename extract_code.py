@@ -8,6 +8,26 @@ import os, sys, re
 # OPEN_TAG = "SNIP:"
 # CLOSE_TAG = "ENDSNIP"
 
+def find_close_par(l, i):
+    cnt = 1
+    for i in range(i+1,len(l)):
+        c = l[i]
+        if c == ")": cnt -=1
+        elif c == "(": cnt += 1
+        if cnt == 0: return i
+    return -1
+
+def remove_some_par(l):
+    s = "(Some"
+    if s not in l: return l
+    p = l.index(s)
+    cl = find_close_par(l, p)
+    if cl > p:
+        l = l[:p] + l[p+1:cl] + l[cl+1:]
+        return remove_some_par(l)
+    else:
+        raise Exception("ERROR")
+
 def clean_line_global(l,escape):
     # if you want to replace with math notation, prefix the string with a call to m
     # if you need to escape minted mode, call esc 
@@ -15,6 +35,7 @@ def clean_line_global(l,escape):
         return f"~{l}~" if escape else l
     def m(l) : 
         return f"${l}$"
+    l = remove_some_par(l)
     l = l.replace("%G", "")
     l = l.replace("successT", "success")
     l = l.replace("failedT", "failed")
@@ -32,6 +53,7 @@ def clean_line_global(l,escape):
     l = l.replace("forall", esc(m("\\forall")))
     l = l.replace("exists", esc(m("\\exists")))
     l = l.replace("None", esc(m("\\square")))
+    l = re.sub("Some *", esc("\\\\msome"), l)
     l = l.replace("true", esc(m("\\top")))
     l = l.replace("false", esc(m("\\bot")))
     for i in range(10):

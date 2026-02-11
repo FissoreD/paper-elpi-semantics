@@ -11,6 +11,7 @@
 
 % \renewcommand{\square}{\boxed{\phantom{\texttt{A}}}}
 \renewcommand{\epsilon}{\varepsilon}
+\newcommand{\msome}{\ensuremath{\bullet}}
 
 %\pdfoutput=1 %uncomment to ensure pdflatex processing (mandatatory e.g. to submit to arXiv)
 %\hideLIPIcs  %uncomment to remove references to LIPIcs series (logo, DOI, ...), e.g. when preparing a pre-final version to be uploaded to arXiv or another public repository
@@ -284,7 +285,7 @@ together with some interesting lemmas of the cut behavior.
 \textit{Notations used in the paper}
 In the following section we note $\mathbb{B}$ for the bolean type, and $\top$
 and $\bot$ for \cI{true} and \cI{false}. The option instances are noted
-$\boxed{t}$ for \emph{Some t} and $\square$ for \emph{None}. 
+$\msome{t}$ for \emph{Some t} and $\square$ for \emph{None}. 
 % $\epsilon$ is the empty substitution.
 
 
@@ -620,7 +621,7 @@ $3$ outputs. The inputs are the
 program, a set of variables $v_0$, an initial substitution $\sigma_0$, and a tree
 $t_0$. The outputs are an optional object $r$ containing a substitution $\sigma_1$
 and an optional tree $t_1$, and a boolean $b$ and a set of updated variables $v_1$.
-The very interesting piece of information is the result $r$, if $None$,\marginpar{replace None with $\bot$}
+The very interesting piece of information is the result $r$, if $None$,
 it tells that the interpretation failed, otherwise, $\sigma_1$
 represents the most-general unificator
 that makes the execution of the tree $t_0$ under the initial
@@ -692,18 +693,18 @@ properties that are avalable at
 \href{https://github.com/FissoreD/elpi-formalization/blob/ho-check-ffun/theories/tree_prop_hard.v}{\emph{this}}
 link. Below we show two of these lemmas.
 
-\begin{lemma}[\texttt{runSST\_or}] $\forall p\ v_0\ v_1\ s_0\ s_1\ t_0\ t_0'\ s_m\ t_1$,
-  $$\texttt{\run p}\ v_0\ s_0\ t_0\ \boxed{s_1, \boxed{t_0'}}\ \top\ v_1 \to%
-    \texttt{\run p}\ v_0\ s_0\ (\texttt{Or}\ \boxed{t_0}\ s_m\ t_1)\ %
-    \boxed{s_1, \boxed{\texttt{Or }\boxed{t_0'}\ s_m\texttt{ KO}}}\ \bot\ v_1$$
-\end{lemma}
+% \begin{lemma}[\texttt{runSST\_or}] $\forall p\ v_0\ v_1\ s_0\ s_1\ t_0\ t_0'\ s_m\ t_1$,
+%   $$\texttt{\run p}\ v_0\ s_0\ t_0\ \boxed{s_1, \boxed{t_0'}}\ \top\ v_1 \to%
+%     \texttt{\run p}\ v_0\ s_0\ (\texttt{Or}\ \boxed{t_0}\ s_m\ t_1)\ %
+%     \boxed{s_1, \boxed{\texttt{Or }\boxed{t_0'}\ s_m\texttt{ KO}}}\ \bot\ v_1$$
+% \end{lemma}
 
-\begin{lemma}
-  $$
-  \run\ p\ v_0\ s_0\ (Or \boxed{t_0}\ s_m\ t_1) (Some\ (s_1, (Or\ \boxed{t_0'}\ s_m\ t_1')))\ \bot\ v_2\ \to
-    \exists b, \run\ p\ v_0\ s_0\ t_0\ (Some (s_1, \boxed{t_0'}))\ b\ v_2\ \land t_1' = \text{ if } b \text{ then \koC else } t_1.
-  $$
-\end{lemma}
+% \begin{lemma}
+%   $$
+%   \run\ p\ v_0\ s_0\ (Or \boxed{t_0}\ s_m\ t_1) (Some\ (s_1, (Or\ \boxed{t_0'}\ s_m\ t_1')))\ \bot\ v_2\ \to
+%     \exists b, \run\ p\ v_0\ s_0\ t_0\ (Some (s_1, \boxed{t_0'}))\ b\ v_2\ \land t_1' = \text{ if } b \text{ then \koC else } t_1.
+%   $$
+% \end{lemma}
 
 \mvspace{}
 \deflemma[lemma:run6]{tex_code/runSST_or.tex}
