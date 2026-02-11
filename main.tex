@@ -131,9 +131,13 @@ optimizations used by standard \prologP abstract machines~\cite{warren1983abstra
 but it makes reasoning about the scope of cut difficult. To address
 that limitation we introduce a tree-based semantics in which the branches
 pruned by \emph{cut} are explicit and we prove the two semantics equivalent.
-Using the tree-based semantics we then show that if every rule of a
-predicate passes the determinacy analysis, then the call to 
-the predicate does not leave any choice points.
+Using the tree-based semantics, we then prove some properties about the
+impact of evaluating the \emph{cut} in query disjunctions. Unlike in
+classical logic, $q_1 \lor q_2$ is not equivalent to $q_2 \lor q_1$,
+since $q_2$ may be cut-away by $q_1$.
+Moreover, we show that if every rule of a predicate passes the
+determinacy analysis, then a call to that predicate does not leave
+any choice points.
 
 \section{Preliminaries: syntax and informal semantics}
 
