@@ -9,9 +9,11 @@
 \usepackage{mathtools}
 \usepackage{stackengine}
 
-% \renewcommand{\square}{\boxed{\phantom{\texttt{A}}}}
 \renewcommand{\epsilon}{\varepsilon}
 \newcommand{\msome}{\ensuremath{\bullet}}
+\newcommand{\mnone}{\ensuremath{\square}}
+\newcommand{\mappend}{\ensuremath{\mathbin{+\!\!+}}\xspace}
+\newcommand{\mnil}{\ensuremath{\varnothing}\xspace}
 
 %\pdfoutput=1 %uncomment to ensure pdflatex processing (mandatatory e.g. to submit to arXiv)
 %\hideLIPIcs  %uncomment to remove references to LIPIcs series (logo, DOI, ...), e.g. when preparing a pre-final version to be uploaded to arXiv or another public repository
@@ -285,7 +287,7 @@ together with some interesting lemmas of the cut behavior.
 \textit{Notations used in the paper}
 In the following section we note $\mathbb{B}$ for the bolean type, and $\top$
 and $\bot$ for \cI{true} and \cI{false}. The option instances are noted
-$\msome{t}$ for \emph{Some t} and $\square$ for \emph{None}. \marginpar{spiegare notation for list}
+$\msome{t}$ for \emph{Some t} and $\mnone$ for \emph{None}. \marginpar{spiegare notation for list}
 % $\epsilon$ is the empty substitution.
 
 
@@ -787,13 +789,18 @@ The \elpiP interpreter is called \nur and has the following type.
 \mvspace{}
 
 The inductive \nur represents a routine taking as input a set of variables and a
-list of alternatives and returning an optional substitution and a list of new
-alternatives in case of a successful interpretation. In case of failure it
-returns $\square$.
+list of alternatives and returning an option. \mnone stands for interpretation
+with no solution, whereas $\msome(\sigma, a)$ represent a successful
+interpretation with $\sigma$ as solution and $a$ as the list of non-yet-explored
+choice points.
 
-The rule system for \nur is given in \cref{fig:nur-rules}. We treat $5$, and two
-are the main scenarion. If the list of alternatives is empty, (\textsc{FailE})
-we have a failure: we stop the computation and return $\square$.
+The rule system for \nur is given in \cref{fig:nur-rules}
+and is made by $4$ cases. We distinguish two main cases: if the list
+of alternatives is empty, we have a failing state and need to return 
+and two are the main scenarion. If the list of alternatives is empty,
+(\textsc{FailE}) we have a failure: we stop the computation and return
+$\mnone$. If the list of alternatives is the list $(gs, a)$, 
+we again distinguish two main cases. If $gs$ is \marginpar{TODO:backE does not exists anymore}
 
 If the list of alternatives is non empty, we need to consider its 
 
@@ -807,7 +814,7 @@ alternative. (\textsc{CutE}) treats the cut operator, the
 
 
 The idea of the \textsc{Elpi} interpreter is to receive a list of alternatives.
-The first alternative consists of a list of goals. Four cases must be taken
+The first alternative consists of a list of current goals. Four cases must be taken
 into account; they are shown in \cref{fig:nur-rules}. In order to simplify goal
 retrieval, we split the head of the alternatives from the tail, so that it can
 be immediately matched in the inductive definition. Note that an empty list of
