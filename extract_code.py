@@ -9,31 +9,35 @@ import os, sys, re
 # CLOSE_TAG = "ENDSNIP"
 
 def clean_line_global(l,escape):
+    # if you want to replace with math notation, prefix the string with a call to m
+    # if you need to escape minted mode, call esc 
     def esc(l):
-        return f"~${l}$~" if escape else l
-    def esc1(l):
         return f"~{l}~" if escape else l
+    def m(l) : 
+        return f"${l}$"
     l = l.replace("%G", "")
     l = l.replace("successT", "success")
     l = l.replace("failedT", "failed")
-    l = l.replace("Sigma", esc("\\Sigma"))
+    l = l.replace("Sigma", esc(m("\\Sigma")))
     # l = l.replace("tree", esc("\\tau"))
-    l = l.replace("empty", esc("\\epsilon"))
-    l = l.replace("fvS", esc("\\mathcal{F}_{\\!\\!\\nu}"))
-    l = l.replace("bool", esc("\\mathbb{B}"))
-    l = l.replace("program", esc("\\mathbb{P}"))
-    l = l.replace("<->", esc("\\leftrightarrow"))
-    l = l.replace("->", esc("\\to"))
-    l = l.replace("=>", esc("\\Rightarrow"))
-    l = l.replace("/\\", esc("\\land"))
-    l = l.replace(":=", esc("\\coloneq"))
-    l = l.replace("forall", esc("\\forall"))
-    l = l.replace("exists", esc("\\exists"))
-    # l = l.replace("None", esc("\\bot"))
+    l = l.replace("empty", esc(m("\\epsilon")))
+    l = l.replace("fvS", esc(m("\\mathcal{F}_{\\!\\!\\nu}")))
+    l = l.replace("bool", esc(m("\\mathbb{B}")))
+    l = l.replace("program", esc(m("\\mathbb{P}")))
+    l = l.replace("<->", esc(m("\\leftrightarrow")))
+    l = l.replace("->", esc(m("\\to")))
+    l = l.replace("=>", esc(m("\\Rightarrow")))
+    l = l.replace("/\\", esc(m("\\land")))
+    l = l.replace(":=", esc(m("\\coloneq")))
+    l = l.replace("forall", esc(m("\\forall")))
+    l = l.replace("exists", esc(m("\\exists")))
+    l = l.replace("None", esc(m("\\bot")))
+    l = l.replace("true", esc(m("\\top")))
+    l = l.replace("false", esc(m("\\bot")))
     for i in range(10):
         pat = ["s","v","b","t","r"]
         for p in pat:
-            l = l.replace(f"{p}{i}", esc1(f"${p}_{i}$"))
+            l = l.replace(f"{p}{i}", esc(m(f"{p}_{i}")))
     l = l.replace("step_tag", "tag") # FIXME
     return l
 
