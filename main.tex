@@ -9,6 +9,8 @@
 \usepackage{mathtools}
 \usepackage{stackengine}
 
+% \renewcommand{\square}{\boxed{\phantom{\texttt{A}}}}
+
 %\pdfoutput=1 %uncomment to ensure pdflatex processing (mandatatory e.g. to submit to arXiv)
 %\hideLIPIcs  %uncomment to remove references to LIPIcs series (logo, DOI, ...), e.g. when preparing a pre-final version to be uploaded to arXiv or another public repository
 
@@ -270,6 +272,12 @@ second syntax, called elpi, is the \elpiP's syntax and has the advantage of
 reducing the computational cost of cutting and backtracking alternatives by
 using shared pointers. We aim to prove the equivalence of the two semantics
 together with some interesting lemmas of the cut behavior.
+
+\textit{Notations used in the paper}
+In the following section we note $\mathbb{B}$ for the bolean type, and $\top$
+and $\bot$ for \cI{true} and \cI{false}. The option type is noted $T +
+\mathbf{1}$ where $T$ is the type carried by the option instance, $\boxed{t}$
+corresponds to \emph{Some t} and $\square$ corresponds to \emph{None}.
 
 
 \section{And-Or Tree semantics}
@@ -680,6 +688,12 @@ properties, we cite here some that are quite interesting. They are avalable
 \deflemma[lemma:run6]{tex_code/runSST_or.tex}
 \deflemma[lemma:run6]{tex_code/run_orSST.tex}
 \mvspace{}
+
+\begin{lemma}[runSST\_or]
+  xx
+\end{lemma}
+
+% $$$$
 
 In the first lemma we claim that if we run a tree $t_0$, and the interpretation
 returns a success after executing a superficial cut (note the \cI{true}

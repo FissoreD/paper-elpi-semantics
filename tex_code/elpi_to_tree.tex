@@ -1,0 +1,9 @@
+\begin{coqcode}
+Lemma elpi_to_tree ~$v_0$~ a r : 
+  runE u p ~$v_0$~ a r ~$\to$~ 
+  ~$\forall$~ ~$s_0$~ t, valid_tree t ~$\to$~ ~$t_2$~l t ~$s_0$~ [::] = a ~$\to$~  
+  ~$\exists$~ b ~$v_1$~,
+  if r is ~$\boxed{s_1, a'}$~ then 
+    ~$\exists$~ ~$t_1$~, runT u p ~$v_0$~ ~$s_0$~ t ~$\boxed{s_1, t_1}$~ b ~$v_1$~ ~$\land$~ ~$t_2$~l (odflt KO ~$t_1$~) ~$s_0$~ [::] = a'
+  else runT u p ~$v_0$~ ~$s_0$~ t ~$\square$~ b ~$v_1$~.
+\end{coqcode}

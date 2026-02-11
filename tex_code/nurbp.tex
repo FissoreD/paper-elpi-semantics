@@ -1,0 +1,28 @@
+
+\begin{prooftree}
+  \AxiomC{}
+  \RightLabel{\textsc{StopE}}
+  \UnaryInfC{ runE $v_0$ (($s_0$, [::]) :: a) $\boxed{s_0, a}$}
+\end{prooftree}
+\begin{prooftree}
+  \AxiomC{ runE $v_0$ (($s_0$, gl) :: ca) r }
+  \RightLabel{\textsc{CutE}}
+  \UnaryInfC{ runE $v_0$ (($s_0$, [:: (cut, ca) \& gl]) :: a) r}
+\end{prooftree}
+\begin{prooftree}
+  \AxiomC{stepE $v_0$ t $s_0$ al gl = ($v_1$, [:: b \& bs ]) }
+  \AxiomC{runE $v_1$ (b :: bs++al) r }
+  \RightLabel{\textsc{CallE}}
+  \BinaryInfC{runE $v_0$ (($s_0$, [:: (call t, ca) \& gl]) :: al) r}
+\end{prooftree}
+\begin{prooftree}
+  \AxiomC{stepE $v_0$ t $s_0$ al gl = ($v_1$, [::]) }
+  \AxiomC{runE $v_1$ al r }
+  \RightLabel{\textsc{BackE}}
+  \BinaryInfC{runE $v_0$ (($s_0$, [:: (call t, ca) \& gl]) :: al) r}
+\end{prooftree}
+\begin{prooftree}
+  \AxiomC{}
+  \RightLabel{\textsc{FailE}}
+  \UnaryInfC{ runE $v_0$ [::] $\square$}
+\end{prooftree}

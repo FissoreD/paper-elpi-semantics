@@ -1,0 +1,12 @@
+\begin{coqcode}
+  Fixpoint get_end s A : ~$\Sigma$~ * tree~$\coloneq$~
+    match A with
+    | TA _ | KO | OK ~$\Rightarrow$~ (s, A)
+    | Or ~$\square$~ ~$s_1$~ B ~$\Rightarrow$~ get_end ~$s_1$~ B
+    | Or ~$\boxed{\texttt{A}}$~ _ _ ~$\Rightarrow$~ get_end s A
+    | And A _ B ~$\Rightarrow$~ 
+      let (s', pA) ~$\coloneq$~ get_end s A in
+      if pA == OK then get_end s' B
+      else (s', pA)
+    end.
+\end{coqcode}

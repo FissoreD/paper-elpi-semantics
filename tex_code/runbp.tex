@@ -1,0 +1,26 @@
+
+\begin{prooftree}
+  \AxiomC{ success $t_0$ }
+  \AxiomC{ get\_subst $s_0$ $t_0$ = $s_1$ }
+  \AxiomC{ next\_alt $\top$ $t_0$ = $t_1$ }
+  \RightLabel{\textsc{StopT}}
+  \TrinaryInfC{ runT $v_0$ $s_0$ $t_0$ $\boxed{s_1, t_1}$ $\bot$ $v_0$}
+\end{prooftree}
+\begin{prooftree}
+  \AxiomC{\stackanchor{ path\_atom $t_0$ }{ step p $v_0$ $s_0$ $t_0$ = ($v_1$, tg, $t_1$) }}
+  \AxiomC{\stackanchor{ $b_2$ = is\_cb tg || $b_1$ }{ runT $v_1$ $s_0$ $t_1$ r $b_1$ $v_2$ }}
+  \RightLabel{\textsc{StepT}}
+  \BinaryInfC{ runT $v_0$ $s_0$ $t_0$ r $b_2$ $v_2$}
+\end{prooftree}
+\begin{prooftree}
+  \AxiomC{ failed $t_0$ }
+  \AxiomC{ next\_alt $\bot$ $t_0$ = $\boxed{t_1}$ }
+  \AxiomC{ runT $v_0$ $s_0$ $t_1$ r n $v_1$ }
+  \RightLabel{\textsc{BackT}}
+  \TrinaryInfC{ runT $v_0$ $s_0$ $t_0$ r n $v_1$}
+\end{prooftree}
+\begin{prooftree}
+  \AxiomC{ next\_alt $\bot$ $t_0$ = $\square$ }
+  \RightLabel{\textsc{FailT}}
+  \UnaryInfC{ runT $v_0$ $s_0$ $t_0$ $\square$ $\bot$ $v_0$}
+\end{prooftree}

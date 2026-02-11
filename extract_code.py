@@ -31,9 +31,9 @@ def clean_line_global(l,escape):
     l = l.replace(":=", esc(m("\\coloneq")))
     l = l.replace("forall", esc(m("\\forall")))
     l = l.replace("exists", esc(m("\\exists")))
-    l = l.replace("None", esc(m("\\bot")))
-    # l = l.replace("true", esc(m("\\top")))
-    # l = l.replace("false", esc(m("\\bot")))
+    l = l.replace("None", esc(m("\\square")))
+    l = l.replace("true", esc(m("\\top")))
+    l = l.replace("false", esc(m("\\bot")))
     for i in range(10):
         pat = ["s","v","b","t","r"]
         for p in pat:
