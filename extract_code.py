@@ -25,11 +25,13 @@ def clean_line_global(l,escape):
     l = l.replace("<->", esc("\\leftrightarrow"))
     l = l.replace("->", esc("\\to"))
     l = l.replace("=>", esc("\\Rightarrow"))
+    l = l.replace("/\\", esc("\\land"))
     l = l.replace(":=", esc("\\coloneq"))
     l = l.replace("forall", esc("\\forall"))
     l = l.replace("exists", esc("\\exists"))
+    # l = l.replace("None", esc("\\bot"))
     for i in range(10):
-        pat = ["s","v","b"]
+        pat = ["s","v","b","t","r"]
         for p in pat:
             l = l.replace(f"{p}{i}", esc1(f"${p}_{i}$"))
     l = l.replace("step_tag", "tag") # FIXME

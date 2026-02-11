@@ -578,6 +578,7 @@ complements \step wrt failed, success and \pathatom trees.
 \mvspace{}
 \deflemma[lemma:pathna]{tex_code/path_atom_next_alt_id.tex}
 \deflemma[lemma:nafailedf]{tex_code/na_failed.tex}
+\deflemma[lemma:naNfail]{tex_code/naNfail.tex}
 \mvspace{}
 
 
@@ -598,30 +599,45 @@ complements \step wrt failed, success and \pathatom trees.
 
 \subsection{The \run inductive}
 
-The inductive \run is modeled as a function: it takes as input a
-program, a set of variables, an initial substitution $\sigma_0$, and a tree
-$t_0$, and returns a substitution $\sigma_1$ together with an optional updated
-tree $t_1$. The substitution $\sigma_1$ represents the most-general unificator
-that makes the execution of the tree $t_0$ succeed starting from the initial
-substitution $\sigma_0$, $\sigma_1$ is an extension of $\sigma_0$.
+The inductive \run is modeled as a function taking $4$ inputs and returning
+$3$ outputs. The inputs are the
+program, a set of variables $v_0$, an initial substitution $\sigma_0$, and a tree
+$t_0$. The outputs are an optional object $r$ containing a substitution $\sigma_1$
+and an optional tree $t_1$, and a boolean $b$ and a set of updated variables $v_1$.
+The very interesting piece of information is the result $r$, if $None$,\marginpar{replace None with $\bot$}
+it tells that the interpretation failed, otherwise, $\sigma_1$
+represents the most-general unificator
+that makes the execution of the tree $t_0$ under the initial
+substitution $\sigma_0$ succeeds: $\sigma_1$ is an extension of $\sigma_0$.
 The tree $t_1$ is the updated tree containing the alternatives that have
-not yet been explored. If the tree contains no solution, then \texttt{None} is
-returned.
+not yet been explored, if these alternatives do not exists, $t_1$ is $None$.
+The output $b$ and $v_1$ are there to tell respectively if during the
+execution a superficial cut has been evaluated, and what is the updated
+set of variables after the interpretation.
 
-The procedure \run is based on three main derivation rules, shown in
-\cref{fig:run-rules}. If the \pathend of the tree $t$ is a success, 
-the substitution is retrived in $t$ from $\sigma_0$ and the input tree 
+The procedure \run is based on four main derivation rules, shown in
+\cref{fig:run-rules}. (\textsc{StopT}) If the \pathend of the tree $t_0$ is a success, 
+the substitution $\sigma_1$ is retrived in $t_0$ from $\sigma_0$ and the input tree 
 is cleaned of its successful
-path. If the \pathend of the tree is an atom, then \step is
-invoked to evaluate this atom, and \run is recursively called on the new
-tree. Finally, if the \pathend of the tree is a failure,
-\na is called to clear the failed path; if the resulting cleaned tree
-exists, \run is recursively called on it.
+path. (\textsc{StepT}) If the \pathend of $t_0$ is an atom, then \step is
+invoked to evaluate $t_0$, and \run is recursively called on the new
+tree. (\textsc{BackT}) If the \pathend of $t_0$ is a failure,
+\na is called to clear the failed path; if the resulting cleaned tree $t_1$ 
+exists, \run is recursively called on it. Finally, (\textsc{FailT}) takes into
+account tree with no solutions.
 
-In our implementation, \run guarantees that the interpretation of a
-program terminates successfully: it always returns a substitution. A
-program that does not provide a solution can be easily handled by
-adding a rule for this particular case. \marginpar{non + vero, dire che abbiamo bisogno del caso fail per le prove su runT}
+\mvspace{}
+\deflemma[lemma:naNfail]{tex_code/runT_det.tex}
+\mvspace{}
+
+The lemma above tells that \run behaves deterministically. The proof is by
+induction on the first \run execution and the proof is rather immediate, since
+all rules are in exclusive due to the hypothis on the \pathend: the hypotheses
+\emph{success $t_0$}, \emph{\pathatom $t_0$} and \emph{failed $t_0$} are
+exclusive. Moreover, by \cref{lemma:naNfail}, we have that the hypothesis of
+\textsc{FailT} implies \emph{failed $t_0$}, therefore it is exclusive wrt
+\textsc{StopT} and \textsc{StepT}, but also from \textsc{BackT} since the have
+different expectations on the output of \na.
 
 \begin{figure}[h]
 
@@ -652,21 +668,34 @@ adding a rule for this particular case. \marginpar{non + vero, dire che abbiamo 
   \label{fig:run-rules}
 \end{figure}
 
-\subsubsection{Properities of \run}
+\subsubsection{Properties of \run}
 
-TODO: to explaing this we should use the complete run type, i.e. we need
-the boolean telling for superficial cuts and the free variables
-
-NOTE: in comment I have the other properties of \orC
+Working with \run allows to prove some interesting properties about the behavior
+of the cut operator wrt disjunction, i.e. the \orC node. We have proven several
+properties, we cite here some that are quite interesting. They are avalable
+\href{https://github.com/FissoreD/elpi-formalization/blob/ho-check-ffun/theories/tree_prop_hard.v}{\emph{here}}.
+\marginpar{howkward... use another style}
 
 \mvspace{}
-\deflemma[lemma:run1]{tex_code/run_orNF.tex}
-% \deflemma[lemma:run2]{tex_code/run_orNT.tex}
-% \deflemma[lemma:run3]{tex_code/run_orSNF.tex}
-% \deflemma[lemma:run4]{tex_code/run_orSNT.tex}
-% \deflemma[lemma:run5]{tex_code/run_orSSF.tex}
-% \deflemma[lemma:run6]{tex_code/run_orSST.tex}
+\deflemma[lemma:run6]{tex_code/runSST_or.tex}
+\deflemma[lemma:run6]{tex_code/run_orSST.tex}
 \mvspace{}
+
+In the first lemma we claim that if we run a tree $t_0$, and the interpretation
+returns a success after executing a superficial cut (note the \cI{true}
+boolean), the interpretation of the tree $t_0 \/ t_1$ still return a success,
+with the same $\sigma_1$, the output tree still exists, but the rhs has been
+cut-away due to the execution of the superficial cut in $t_0$.
+
+Conversely, if the term $t_0 \lor t_1$ evaluates to a subsitution $\sigma_0$ and
+know that $t_0$ leaves alternatives (namely $t_0'$), then we know that
+evaluating $t_0$ alone will produce the same substitution $\sigma_0$ and
+alternatives $t_0'$, but, depending on if the evaluation of $t_0$ has crossed
+a superficial cut, we know if the state $t_1$ will be cut-away or not
+in the evaluation of $t_0\lor t_1$.
+
+\marginpar{dire che se non ci sono cut superficiali allora si comporta come or della
+logica normale.}
 
 
 \section{Stack semantics}
@@ -739,6 +768,12 @@ The case in which backchaining produces a non empty list, the \emph{save\_alts}
 routine is in cahrge of: taking the list of premises and add to each atom the
 the list of alternatives $a$ as their new cut-alternatives, then it append the
 list of goals $gl$ to each of these new lists.
+
+\subsection{XXX}
+It is not possible to prove the same lemma as in section xxx, because no
+structure, the scope of the cut ... spiegare bene il problema so
+that i can reuse this subsection has a hook when I will say that
+l2t is difficult + Yves
 
 \section{Equivalence of the two semantics}
 
