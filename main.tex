@@ -117,7 +117,7 @@ determinacy~\cite{10.1007/978-3-032-15981-6_5} to help users tame
 backtracking. \rocqP users are familiar with functional programming but
 not necessarily with logic programming, in particular uncontrolled backtracking
 is a common source of inefficiency and makes debugging harder. The
-determinacy checkers identifies predicates that behave like functions,
+determinacy checker identifies predicates that behave like functions,
 i.e., predicates that commit to their first solution and leave no
 \emph{choice points} (places where backtracking could resume).
 
@@ -134,9 +134,9 @@ This stack-based semantics is a good starting point to study further
 optimizations used by standard \prologP abstract machines~\cite{warren1983abstract,10.7551/mitpress/7160.001.0001},
 but it makes reasoning about the scope of cut difficult. To address
 this limitation we introduce a tree-based semantics in which the branches
-pruned by \emph{cut} are explicit and we prove the two semantics equivalent.
+pruned by cut are explicit and we prove the two semantics equivalent.
 Using the tree-based semantics, we then prove some properties about the
-impact of evaluating the \emph{cut} in query disjunctions. Unlike in
+impact of evaluating the cut in query disjunctions. Unlike in
 classical logic, $q_1 \lor q_2$ is not equivalent to $q_2 \lor q_1$,
 since $q_2$ may be cut-away by $q_1$.
 Moreover, we show that if every rule of a predicate passes the
