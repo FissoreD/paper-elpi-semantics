@@ -71,7 +71,7 @@ def clean_line_global(l,escape):
         l = change_vars(p, p, l)
         for i in range(10):
             l = change_vars(f"{p}{i}", f"{p}_{i}", l)
-            l = change_vars(f"s{i}", "\\\\sigma_{i}", l)
+            l = change_vars(f"s{i}", f"\\\\sigma_{i}", l)
         
     l = l.replace("step_tag", "tag") # FIXME
     return l
