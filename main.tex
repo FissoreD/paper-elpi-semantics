@@ -214,8 +214,6 @@ $\sigma$ making the head of $r$ and $q$ unify and the list of premises of $r$.
 
 \elpiP is a dialect of \lprologP with the hard cut operator and, in the language
 we have shown before, \emph{cut} is an atom.
-\marginpar{se metti r1 = g A B :- f A B. allora g e f sono funzioni, e puoi
-spiegare anche l'idea del detcheck qui}
 The semantics of the cut operator adopted in the \textsc{\elpiP} language
 corresponds to the \emph{hard cut} operator of standard \textsc{SWI-Prolog}.
 This operator has two primary purposes. First, it eliminates all
@@ -243,35 +241,37 @@ To illustrate the high-level description of \emph{cut}, consider the program $P$
 \cref{fig:prog} and the query $q = \elpiIn{g 0 R}$. Both rules for
 \eI{g} can be used on the query $q$. Backchaining $q$ in $P$ from the empty ($\epsilon$) 
 subsitution returns the list 
-$[(\sigma_1, [\eI{r X Y, f Y Z, !}]), (\sigma_2, [\eI{f X Y, f Y Z}])]$
-with $\sigma_1$ and $\sigma_1$ both equal to
-$\{\eI{X} \mapsto \eI{0}, \eI{Z} \mapsto \eI{R}\}$.
+$[(\sigma_1, [\eI{r A B, f B C, !}]), (\sigma_2, [\eI{f D E, f E F}])]$
+with $\sigma_1 \coloneq \{\eI{A} \mapsto \eI{0}, \eI{B} \mapsto \eI{C} \}$ and
+$\sigma_2 \coloneq \{\eI{D} \mapsto \eI{0}, \eI{F} \mapsto \eI{R}\}$.
 The two elements of the list are generated respectively from the rules $r_1$ and
-$r_2$.
+$r_2$. For simplicity, we have taken a program where the variable of each pair rule
+are disjoint and a query with variables disjoint from the program, this avoid
+the \emph{bc} function to fresh the program variable.
 
 The next step of the interpretation corresponds to the backchaining of \eI{r X
-Y} from $\sigma_1$. This returns $[(\sigma_3, []), (\sigma_4, []), (\sigma_5, [])]$
+Y} from $\sigma_1$. This returns $[(\sigma_3, []), (\sigma_4, []), (\sigma_5, [\eI{!}])]$
 with 
-$\sigma_3 \coloneq \sigma_1 + \{\eI{Y} \mapsto \eI{0}\}$,
-$\sigma_4 \coloneq \sigma_1 + \{\eI{Y} \mapsto \eI{1}\}$ and 
-$\sigma_5 \coloneq \sigma_1 + \{\eI{Y} \mapsto \eI{2}\}$. 
+$\sigma_3 \coloneq \sigma_1 + \{\eI{B} \mapsto \eI{0}\}$,
+$\sigma_4 \coloneq \sigma_1 + \{\eI{B} \mapsto \eI{1}\}$ and 
+$\sigma_5 \coloneq \sigma_1 + \{\eI{B} \mapsto \eI{2}\}$. 
 The three lists of premises are empty since all rules for \eI{r} have no 
 premises.
 
-Backchaining \eI{f Y Z} in $\sigma_3$ gives no solution, therefore, by
-backtracking, we backchain \eI{f Y Z} in $\sigma_4$. This gives a solution,
+Backchaining \eI{f B C} in $\sigma_3$ gives no solution, therefore, by
+backtracking, we backchain \eI{f B C} in $\sigma_4$. This gives a solution,
 namely $\sigma_6 \coloneq \sigma_4 + \{\eI{R} \mapsto \eI{2}\}$.
 
 We now reach the cut operator and can see its double side behavior.
 In the current execution state, we have still two unexplored alternatives:
-we can backtrack on the third solution for \eI{r} that assign \eI{Y} to \eI{2}
+we can backtrack on the third solution for \eI{r} that assign \eI{B} to \eI{2}
 and on the rules $r_2$. We can note, however, the first alternative
 have been generated after the cut introduction, and the second alternative
 have been generated at the same moment of the cut. Therefore both are cut
 away leaving no choice point. The final complete solution is:
-$\{\eI{X} \mapsto \eI{0}, \eI{Z} \mapsto \eI{R}, \eI{Y} \mapsto \eI{1},
+$\{\eI{A} \mapsto \eI{0}, \eI{B} \mapsto \eI{1}, \eI{C} \mapsto \eI{R},
 \eI{R} \mapsto \eI{2}\}$,
-where \eI{X}, \eI{Y} and \eI{Z} can be ignored since they are the result
+where \eI{A}, \eI{B} and \eI{C} can be ignored since they are the result
 internal unification.
 
 
@@ -386,7 +386,7 @@ disjunction, the path continues on the left subtree, if it exists, otherwise
 \getend contues on the ths using the substitution stored in the \orC node. In
 the case of a conjunction, if \getend of the lhs returns the tree \okC, then the
 \getend continues in the rhs, otherwise we return the result of the lhs. We
-derive some useful definition from \getend. They are listed in
+derive some useful definition from \getend. They are listed in\marginpar{fare fresh rules in \cref{tree-ex}}
 \cref{fig:getend-aux}.
 
 We have pointed by a black arraw the \pathend of all the trees in~\cref{tree-ex}.
@@ -463,7 +463,7 @@ if it is a success- or a failed-tree.
 \textit{The interpretation of a call} to a term $c$ stars by calling the
 \backchain function on $c$. The result of the backchain is a list $l$.
 If $l$ is empty then the current call is replaced by the \koC node,
-otherwise it is replaced by a right skewed tree made by \orC inner-nodes
+otherwise it is replaced by a right-skewed tree made by \orC inner-nodes
 and each leave correspod to a list of atom $e$ in $l$.
 If $e$ is empty then it is mapped to the \okC tree, otherwise it is mapped
 to a right-skewed tree made by \andC inner-nodes. 
@@ -688,6 +688,7 @@ different expectations on the output of \na.
 \end{figure}
 
 \subsection{Properties of \run}
+\label{sec:run-prop}
 
 Working with \run allows to prove some interesting properties about the behavior
 of the cut operator wrt disjunction, i.e. the \orC node. We have proven several
@@ -810,18 +811,33 @@ by \texttt{bc}, then each list of premises if mapped to a list of goals
 (\texttt{goals}) have $a$ as cut-alternative and the global list is translated
 to a list of alternative (\texttt{alts}).
 
-\textit{Example of execution} 
+\textit{Example of execution} \marginpar{add subst to ...}
+
+\includestandalone[width=0.35\textwidth]{./src/exec_example1E/elpi1}
+
+\includestandalone[width=0.6\textwidth]{./src/exec_example1E/elpi2}
+
+\includestandalone[width=0.5\textwidth]{./src/exec_example1E/elpi3}
+
+\includestandalone[width=0.5\textwidth]{./src/exec_example1E/elpi3}
+
 
 In the example only cuts have pointer. Call do not use them
 
 \textit{Remark}
-It is not possible to prove the same lemma as in section xxx, because no
-structure, the scope of the cut ... spiegare bene il problema so
-that i can reuse this subsection has a hook when I will say that
-l2t is difficult + Yves
+We want finally to point out how the lemma that we were able to prove in
+\cref{sec:run-prop} are not easy to be expressed in the \elpiP semantics. This
+is beacuse there is no sufficient structure in the \elpiP state to understand
+what is the scope of the cut operator. For example, in an \elpiP state made of
+these alternatives $a_0, a_1 \dots a_n$, we have no clear idea of what happens
+if the first alternative $a_0$ succeeds: there could be a cut in $a_0$ but, is
+this cut superficial? What is its impact wrt the alternatives $a_1 \dots a_n$?
+More then that, it is also possible that the state is hill-formed and the cut
+does not point to a suffix in the list of alternatives.
 
 \section{Equivalence of the two semantics}
 
+In the previous section we have introduces the two semantics, they are 
 The equivalence between the two semantics is possible under two conditions: we
 need to work with ``valid tree'', i.e. all of those trees that can be
 generated from a call. Secondly, we need to translate trees into elpi
@@ -839,8 +855,8 @@ While all base cases of tree are considered valid, we need to analyze
 carefully the cases for the \orC and \andC constructors.
 
 For the \orC constructor, we distinguish two cases depending on whether the
-left-hand side (lhs) exists. If it does not exist, then the right-hand side
-(rhs) must be a valid tree. Otherwise, the lhs must itself be a valid tree,
+lhs exists. If it does not exist, then the ths
+must be a valid tree. Otherwise, the lhs must itself be a valid tree,
 and the rhs is either the \koC tree, since it may have been removed by the
 evaluation of a superficial cut in the lhs, or it has not yet been explored.
 In the latter case, it is a \cI{base_or} tree, namely the right-skewed tree
@@ -875,48 +891,49 @@ therefore it must be a valid tree.
 
 \subsection{From trees to lists}
 
-The translation of a tree to a list is shown in \cref{fig:ttl}. It takes the
-tree to be translated, a substitution (called $s$), a list of alternatives, called
-\emph{bt}. The substitution $s$ tells what is the subsitution of the 
-alternative we are building and is updated when going to the
-rhs of the \orC constructor. The \emph{bt} list represents the future 
-alternatives list that have the same depth of the current tree root. 
-They are useful to know if they should be added to the current goal as cut alternatives.
+The translation of a tree to a en \elpiP state is done 
+% The translation of a tree to a list is performed by shown in \cref{fig:ttl}. It takes the
+% tree to be translated, a substitution (called $s$), a list of alternatives, called
+% \emph{bt}. The substitution $s$ tells what is the subsitution of the 
+% alternative we are building and is updated when going to the
+% rhs of the \orC constructor. The \emph{bt} list represents the future 
+% alternatives list that have the same depth of the current tree root. 
+% They are useful to know if they should be added to the current goal as cut alternatives.
 
-An \okC node represent a success in a tree, then the translation of this tree
-returns a singleton list with the cuple $(s, [::])$: there is one alternative
-with $0$ goals, i.e. a success in elpi by \textsc{StopE}. The \koC node
-represent a failure, and, therefore $0$ alternatives. An atom is translated into
-a singleton with the atom as first goal and the empty cut-alternative list: we
-are not adding $bt$ since they are the alternatives for the right-sibling, not
-the right-uncles, this means that if we have $a$ is a cut, then it erases the
-alternatives bt.
+% An \okC node represent a success in a tree, then the translation of this tree
+% returns a singleton list with the cuple $(s, \mnil)$: there is one alternative
+% with $0$ goals, i.e. a success in elpi by \textsc{StopE}. The \koC node
+% represent a failure, and, therefore $0$ alternatives. An atom is translated into
+% a singleton with the atom as first goal and the empty cut-alternative list: we
+% are not adding $bt$ since they are the alternatives for the right-sibling, not
+% the right-uncles, this means that if we have $a$ is a cut, then it erases the
+% alternatives bt.
 
-In a disjunction, we are scendendo di un livello the distance from our
-backtracking list. This means that $bt$ becomes the list of right-uncles of the
-two branches of the \orC constructor. The compilation of the rhs is done
-independently of if the lhs exists: we transform the rhs into an elpi state and
-passing the empty list of alternatives, since the rhs as no right-siblings.
-Then, thanks to \texttt{add\_ca\_deep}, we recursively add $bt$ to every
-cut-alternative appearing in the translated goals. If the lhs exists, we
-translate it and pass the translation of the rhs as the list of right-siblings.
-Then we prepend the translated lhs to the translated rhs and add $bt$ with
-\texttt{add\_ca\_deep}.
+% In a disjunction, we are scendendo di un livello the distance from our
+% backtracking list. This means that $bt$ becomes the list of right-uncles of the
+% two branches of the \orC constructor. The compilation of the rhs is done
+% independently of if the lhs exists: we transform the rhs into an elpi state and
+% passing the empty list of alternatives, since the rhs as no right-siblings.
+% Then, thanks to \texttt{add\_ca\_deep}, we recursively add $bt$ to every
+% cut-alternative appearing in the translated goals. If the lhs exists, we
+% translate it and pass the translation of the rhs as the list of right-siblings.
+% Then we prepend the translated lhs to the translated rhs and add $bt$ with
+% \texttt{add\_ca\_deep}.
 
-We compile the \andC case by translating its lhs to the list $lA$ and reset
-point to the list $lB0$. Then, thanks to \texttt{add\_deep}, we recrusively
-append $lB0$ to the alternatives born in $lA$, i.e. we leave unchanged the
-pointers to $bt$, if any, in $lA$. We finally need to treat cases whenever
-the list $lA$ is empty or not. In the former case the empty list is returned,
-otherwise, we hasve a list $[::(s_0,gs)\&al]$. By the semantics of
-the \andC in the \run interpreter, the rhs of the \andC represent the
-sequent of goals to be executed after the first alternative in the lhs,\marginpar{alternative in tree? rephrase}
-it corresponds to the list of goals $gs$.
-The reset point $B0$ is to be appended to the next alternatives in the lhs,
-that is the queue of $lA$, that is $al$.
+% We compile the \andC case by translating its lhs to the list $lA$ and reset
+% point to the list $lB0$. Then, thanks to \texttt{add\_deep}, we recrusively
+% append $lB0$ to the alternatives born in $lA$, i.e. we leave unchanged the
+% pointers to $bt$, if any, in $lA$. We finally need to treat cases whenever
+% the list $lA$ is empty or not. In the former case the empty list is returned,
+% otherwise, we hasve a list $[::(s_0,gs)\&al]$. By the semantics of
+% the \andC in the \run interpreter, the rhs of the \andC represent the
+% sequent of goals to be executed after the first alternative in the lhs,\marginpar{alternative in tree? rephrase}
+% it corresponds to the list of goals $gs$.
+% The reset point $B0$ is to be appended to the next alternatives in the lhs,
+% that is the queue of $lA$, that is $al$.
 
-We note therefore that the compilation of $lB$ is done by passing the
-alternatives $al ++ bt$ since the alternatives in $al$ are to be\dots
+% We note therefore that the compilation of $lB$ is done by passing the
+% alternatives $al ++ bt$ since the alternatives in $al$ are to be\dots
 
 
 

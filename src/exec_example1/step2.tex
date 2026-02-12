@@ -13,13 +13,13 @@ for tree={
 [\orN,orNode
   [\deadN, deadNode,edge=dashed]
   [\andN, andNode,edge label={node[midway,right] {$\sigma_1$}}
-    [r X Y,name=cur]
-    [f Y Z,edge label={node[midway,right] {$R_1$}}]
+    [r A B,name=cur]
+    [f B C,edge label={node[midway,right] {$R_1$}}]
     [cut,edge label={node[midway,right] {$R_2$}}]
   ]
   [\andN,andNode,edge label={node[midway,right] {$\sigma_2$}}
-    [f X Y]
-    [f Y Z, edge label={node[midway,right] {$R_3$}}]
+    [f D E]
+    [f E F, edge label={node[midway,right] {$R_3$}}]
   ]
 ] 
 \curnodeNE{cur};
