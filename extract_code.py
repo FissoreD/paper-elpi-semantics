@@ -56,14 +56,17 @@ def clean_line_global(l,escape):
     l = l.replace("forall", esc(m("\\forall")))
     l = l.replace("exists", esc(m("\\exists")))
     l = l.replace("None", esc(m("\\square")))
-    l = re.sub("Some *", esc("\\\\msome"), l)
+    if escape:
+        l = re.sub("Some ", esc("\\\\msome"), l)
+    else:
+        l = re.sub("Some", esc("\\\\msome"), l)
     l = l.replace("true", esc(m("\\top")))
     l = l.replace("false", esc(m("\\bot")))
     l = l.replace("\bsm\b", " " + esc(m("s_m")) + " ")
     for i in range(10):
         pat = ["v","b","t","r"]
         for p in pat:
-            l = re.sub(f"{p}{i}(')?", esc(m(f"{p}_{i}\g<1>")), l)
+            l = re.sub(f"\\b{p}{i}(')?\\b", esc(m(f"{p}_{i}\g<1>")), l)
         l = re.sub(f"s{i}(')?", esc(m(f"\\\\sigma_{i}\g<1>")), l)
         
     l = l.replace("step_tag", "tag") # FIXME
