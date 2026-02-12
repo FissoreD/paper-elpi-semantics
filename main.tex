@@ -126,7 +126,7 @@ prover, of the determinacy analysis from~\cite{10.1007/978-3-032-15981-6_5}.
 We focus on the control operator \emph{cut}, which is useful to restrict
 backtracking but makes the semantics depart from a pure logical reading.
 
-We formalize two operational semantics for \prologP with cut. The first is a
+We formalize two operational semantics for \prologP with cut. The first is a\marginpar{sottolineare che checking = user da le signature}
 stack-based semantics that closely models \elpiP's implementation and is
 similar to the semantics mechanized by Pusch in \isabelleP~\cite{10.1007/BFb0105415}
 and to the model of Debray and Mishra~\cite[Sec.~4.3]{10.1016/0743-1066(88)90007-6}.
@@ -1091,6 +1091,10 @@ that hypothesis that it exists a tree $t_1$ such that its translation to the
 \end{figure}
 
 \section{Case study: determinacy alanysis}
+
+An interesting application of the tree semantics is the determinacy checking
+verification the was added in version 3 of the \elpiP
+langauge~\cite{fissore2026}.
 
 we mechanize the first order part of xxx.
 
