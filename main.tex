@@ -908,11 +908,11 @@ therefore it must be a valid tree.
   \end{subfigure}
   \begin{subfigure}{.40\textwidth}
     \begin{coqcode}
-      Fixpoint t2l ~$t_0$~ ~$\sigma_0$~ (cp: alts) : alts ~$\coloneq$~
-        match ~$t_0$~ with
-        | OK     ~$\Rightarrow$~ [(~$\sigma_0$~, ~\mnil\unskip~)]
+      Fixpoint t2l ~$t$~ ~$\sigma$~ (cp: alts) : alts ~$\coloneq$~
+        match ~$t$~ with
+        | OK     ~$\Rightarrow$~ [(~$\sigma$~, ~\mnil\unskip~)]
         | KO     ~$\Rightarrow$~ ~\mnil~
-        | TA a   ~$\Rightarrow$~ [(~$\sigma_0$~, [(a, ~\mnil\unskip~)])]
+        | TA a   ~$\Rightarrow$~ [(~$\sigma$~, [(a, ~\mnil\unskip~)])]
         ...
     \end{coqcode}
     \caption{Tree to list}
