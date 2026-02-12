@@ -843,11 +843,11 @@ to a list of alternative (\texttt{alts}). \marginpar{Dire una parola su backtrac
   \label{ex-elpi}
 \end{figure}
 
-\textit{Example of execution} \marginpar{add subst to ...}
+\textit{Example of execution} \marginpar{add subst to each alternative in \cref{ex-elpi}}
 We propose an exemple of execution of an \elpiP state in \cref{ex-elpi}. The
 arrows in the images represent the cut-alternative pointer of the cut. We
 have not put arrow goiing our from atom-calls since the interpreter ignores
-the cut-alternatives in this case (cf. \textsc{CallE}).
+the cut-alternatives in this case (cf. \textsc{CallE}).\marginpar{detail more?}
 
 
 \textit{Remark}
@@ -1093,8 +1093,17 @@ that hypothesis that it exists a tree $t_1$ such that its translation to the
 \section{Case study: determinacy alanysis}
 
 An interesting application of the tree semantics is the determinacy checking
-verification the was added in version 3 of the \elpiP
-langauge~\cite{fissore2026}.
+that was added in version 3 of the \elpiP langauge~\cite{fissore2026}. The
+checker is meant to receive the signature of the predicates declared by the user
+and then verify that the rules of a deterministic predicate will return at most
+one solution, we define this particular kind of predicate as functions. Thanks
+to this static verification, the user can better control unexpected backtracking
+at compile time: if an incoherence is rilevata then a fatal error explain why
+the current program may break determinacy. A function behaves deterministically
+if two main conditions are respected: \emph{mutual exclusion} guarantees that at
+most one rule can be successfully used on a given query, whereas \emph{rule
+checking} ensure that each rule does not creates choice points, e.g. by calling
+non-deterministic predicates.
 
 we mechanize the first order part of xxx.
 
