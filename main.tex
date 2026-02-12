@@ -231,16 +231,19 @@ $\sigma$ making the head of $r$ and $q$ unify and the list of premises of $r$.
 \subsection{The cut operator}
 \label{sec:cut-op}
 
-\elpiP is a dialect of \lprologP with the hard cut operator and, in the language
-we have shown before, \emph{cut} is an atom.
+%\elpiP is a dialect of \lprologP with the hard cut operator and, in the language
+%we have shown before, \emph{cut} is an atom.
 The semantics of the cut operator adopted in the \textsc{\elpiP} language
-corresponds to the \emph{hard cut} operator of standard \textsc{SWI-Prolog}.
-This operator has two primary purposes. First, it eliminates all
+is commonly referred to as \emph{hard cut} (see for example
+the documentation of \textsc{SWI-Prolog} \cite{xxx}).
+An hard cut eliminates all
 alternatives that are created either simultaneously with, or after, the
 introduction of the cut into the execution state.
 
-The \elpiP program we will use as an example in the following sections
-is shown in~\cref{fig:prog}.
+In order to give the intuition of the
+effect of cut, consider the program $P$ shown in
+\cref{fig:prog} and the query % $q = 
+$\elpiIn{g 0 R}$. 
 
 \begin{figure}
   \begin{minipage}{0.55\textwidth}
@@ -256,9 +259,17 @@ is shown in~\cref{fig:prog}.
   \end{minipage}
 \end{figure}
 
-To illustrate the high-level description of \emph{cut}, consider the program $P$ shown in
-\cref{fig:prog} and the query $q = \elpiIn{g 0 R}$. Both rules for
-\eI{g} can be used on the query $q$. Backchaining $q$ in $P$ from the empty ($\epsilon$) 
+\begin{elpicode}
+g 0 R.
+r 0 B, f B R, !.   % choice point for r2
+f 0 R, !.   % choice point for xx, yy, r2
+f 1 R, !.   % choice point for yy, r2
+!. % choice point for yy, r2
+% R = 2, no choice point left
+\end{elpicode}
+
+Both rules for
+\eI{g} can be used on this query. Backchaining $q$ in $P$ from the empty ($\epsilon$) 
 subsitution returns the list 
 $[(\sigma_1, [\eI{r A B, f B C, !}]), (\sigma_2, [\eI{f D E, f E F}])]$
 with $\sigma_1 \coloneq \{\eI{A} \mapsto \eI{0}, \eI{B} \mapsto \eI{C} \}$ and
