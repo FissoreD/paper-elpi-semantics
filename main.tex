@@ -1101,6 +1101,16 @@ strature like the tree
 
 \section{Related work}
 
+The input mode of Elpi, inspired by the XXXX of BProlog,
+has only an impact in the determinacy analysis that does not
+required to be preceeded by a mode analysis. Well moded
+program propagate the groundness from input arguments to output
+arguments. As a result if the initial query is ground
+then unification degenerates to matching (for input arguments).
+Considering a semantics where input arguments are
+match has the following impact on det analysis:
+axiom XXX does not require q to be ground.
+
 The only mechanization of Prolog's semantics
 we could find is the one by Pusch in \isabelleP~\cite{10.1007/BFb0105415}
 that is based on the model of Debray and Mishra~\cite[Sec.~4.3]{10.1016/0743-1066(88)90007-6}.
