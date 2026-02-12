@@ -1,6 +1,3 @@
-\crefname{deftypes}{Type}{Types} % singular / plural
-
-
 \newcounter{defline}
 \newcommand{\defline}[2][]{
   \refstepcounter{defline}%
@@ -13,14 +10,26 @@
 }
 \crefname{defline}{Definition}{Definitions} % singular / plural
 
-\newcounter{deflemma}
+% \newcounter{deflemma}
 \newcommand{\deflemma}[2][]{
-  \refstepcounter{deflemma}%
+  \refstepcounter{defline}%
   \noindent
   \begin{minipage}{0.9\linewidth}\input{#2}\end{minipage}
-  \hfill(\thedeflemma)%
+  \hfill(\thedefline)%
   \ifx&#1&\else\label{#1}\fi
   \par
 
 }
 \crefname{deflemma}{Lemma}{Lemmas} % singular / plural
+
+% \newcounter{deftypes}
+\newcommand{\deftypes}[2][]{
+  \refstepcounter{defline}%
+  \noindent
+  \begin{minipage}{0.9\linewidth}\input{#2}\end{minipage}
+  \hfill(\thedefline)%
+  \ifx&#1&\else\label{#1}\fi
+  \par
+
+}
+\crefname{deftypes}{Type}{Types} % singular / plural

@@ -793,7 +793,7 @@ The inductive \nur represents a routine taking as input a set of variables and a
 list of alternatives and returning an option. \mnone stands for interpretation
 with no solution, whereas $\msome(\sigma, a)$ represent a successful
 interpretation with $\sigma$ as solution and $a$ as the list of non-yet-explored
-choice points.
+choice points.\marginpar{Dire che non abbiamo le due info ritornate da runT}
 
 The rule system for \nur is given in \cref{fig:nur-rules} and is made by $4$
 cases. We distinguish two main cases: if the list of alternatives is empty,
@@ -809,7 +809,7 @@ the alternatives to $ca$. Finally, in the case of a call (\textsc{CallE}), we
 backchain the call in the program. If $rs$ is the list of rule premises returned
 by \texttt{bc}, then each list of premises if mapped to a list of goals
 (\texttt{goals}) have $a$ as cut-alternative and the global list is translated
-to a list of alternative (\texttt{alts}).
+to a list of alternative (\texttt{alts}). \marginpar{Dire una parola su backtracking = tl if bc = nil}
 
 \begin{figure}
   \begin{subfigure}{0.4\textwidth}
@@ -869,7 +869,7 @@ need to work with ``valid tree'', i.e. all of those trees that can be
 generated from a call. Secondly, we need to translate trees into elpi
 states. In the next to subsection we propose the two functions \vast and \ttl.
 
-\subsection{Valid trees}
+\subsection{Valid trees (\vast)}
 
 The inductive tree allows one to generate a large number of
 trees, some of which are not valid, in the sense that they cannot be produced
@@ -922,13 +922,13 @@ therefore it must be a valid tree.
 % \caption{Valid tree}
 \end{figure}
 
-\subsection{From trees to lists}
+\subsection{From trees to lists (\ttl)}
 
 The translation of a tree to a en \elpiP state is done thanks to the
-\emph{t2l} function. In \cref{fig:ttl} we give junst the implementation of the
+\ttl function. In \cref{fig:ttl} we give junst the implementation of the
 base cases, the full implementation is available at \href{https://github.com/FissoreD/elpi-formalization/blob/ho-check-ffun/theories/t2l.v}{\emph{this}} link.
 
-The function \emph{t2l} takes the tree $t_0$ we want to translate, a subsitution
+The function \ttl takes the tree $t_0$ we want to translate, a subsitution
 $\sigma_0$ and a list of choice points $cp$. These choice points represent
 alternatives that appears at the same level of the current node, such as, for
 example, the right-siblings of a \orC node. The \okC node represent one succeful
@@ -936,12 +936,47 @@ alternative, thereofre it is translated into a singleton list with the empty
 list of goals. The \koC node represent a failure, i.e. it is mapped to the
 empty list of alternatives. Finally, atoms are mapped to one alternative
 containing a single goal with the empty cut-alternative list. They cannot point
-to $vp$ since they are not right uncle node.
+to $cp$ since they are not right-uncle subtrees.
 
 We have omitted the code for the translation of the \orC and \andC constructor
 since it is quite complex, but, we give the intuition behind this translation by
 means of examples.
 
+The translation of $A \lor B_\sigma$ creates two list of alternatives,
+one for the $A$ and the other for $B$. The alternatives of the rhs are valid
+choice points for the lhs and should be passed to the translation of $A$.
+The two list of alternatives can be concatenated and, each atom, should add
+$cp$ as new cut-to alternatives: $A$ and $B$ are one level lower wrt $cp$ and
+therefore the cut they have should point to $cp$.
+
+The translation of $A \land_{B_0} B$ implies the translation of $A$. If the
+translation of $A$ returns an empty list we return the empty list of
+alternatives without even touching $B$ nor $B_0$. Otherwise the translation
+returns a list $(\sigma_0, g) :: a$. By the semantics of \run the $B$ node
+represent the continuation of the first alternatives in $A$, i.e. $g$, whereas
+$B_0$\marginpar{dirlo meglio all'inizio} is the continuation of goals for each
+alternative in $a$. While performing these translation, we need to carefully
+update the cut-atlernatives.
+
+\textit{Example of \ttl} In \cref{tab:t2l} we point out the result of calling
+\ttl on the trees in \cref{tree-ex}. The first raw contains the image reference
+of then trees and the second raw contains the reference of the images from the
+\elpiP state in \cref{ex-elpi}. For the $3^{rd}$ column in the table, we see
+that $t2l$ is not injective. There are different trees that maps to the same
+\elpiP state. In fact, there are transitions in \run that are not visible in
+\nur.
+
+\begin{table}
+  \caption{Tree to list from \cref{tree-ex} and \cref{ex-elpi}}
+  \label{tab:t2l}
+  \centering
+  \begin{tabular}{c|c|c|c|c|c}
+    % \toprule
+    $t$ & \cref{tree-ex1} & \cref{tree-ex2} & \cref{tree-ex3,tree-ex4} & \cref{tree-ex5} & \cref{tree-ex6} \\
+    $t2l\ t\ \epsilon\ \mnil$ & \cref{ex-elpi1} & \cref{ex-elpi2} & \cref{ex-elpi3} & \cref{ex-elpi4} & \cref{ex-elpi5}
+    % \bottomrule
+  \end{tabular}
+\end{table}
 
 % The translation of a tree to a list is performed by shown in \cref{fig:ttl}. It takes the
 % tree to be translated, a substitution (called $s$), a list of alternatives, called
@@ -993,36 +1028,45 @@ means of examples.
 
 \subsection{Equivalence theorems}
 
-We have now all the ingredients that \dots
+Thanks to the two functions \vast and \ttl, we are able to finally state the
+equivalence theorems between the semantics. The proof we are giving are on a
+slightly different definition of \run, since in the equivalence, we ignore the
+verification for the boolean and the variable set returned by \run, these piece
+of data are paricularly meant for the proof in \cref{sec:run-prop}.
+
+The definition we use is the following:
+
+\deftypes[runT']{tex_code/runt1.tex}
+
+Before going to the equivalence proofs, we want to claim a key lemma allowing
+to ignore the silent transition in the \run inductive.
+
+\mvspace{}
+\deflemma[th:next_altF_t2l]{tex_code/next_altF_t2l.tex}
+\mvspace{}
+
+It is proved easly by induction on the tree $t_0$.\marginpar{dire di $v_0$}
 
 \mvspace{}
 \deflemma[th:t1]{tex_code/tree_to_elpi.tex}
+\mvspace{}
 
-% \begin{theorem}[\thte]
-% \begin{align*}
-%   \forall A\ \sigma_1\ B\ \sigma_2\ b\ \sigma_0,
-%   \vt\ A \to \\
-%   \run_u\ \sigma_1\ A\ (Some\ \sigma_2)\ B\ b \to \\
-%     \exists x\ xs, 
-%       \ttl\ A\ \sigma_1\ \nilC = x ::: xs \land
-%       \nur_u\ x.1\ x.2\ xs\ \sigma_2\ (\ttl\ B\ \sigma_0\ \nilC).
-% \end{align*}
-
-% \end{theorem}
+\textit{Proof sketch} We proceed by induction on the execution of \run'. There
+are $4$ cases to be treated. The first case comes from \textsc{StopT}, it deals
+with successful trees, a successful tree must to start with an empty list and
+therefore we conclude with \textsc{StopE}. The case for \textsc{StepT}, need to
+treat two cases: \step has evaluated either a cut or a call. Depending on this
+we should use \textsc{CutE} or \textsc{CallE} and then the induction hypothesis.
+The case for \textsc{BackT} is a silent case: it represents the non-injective
+behavior of \ttl, but, thanks to \cref{th:next_altF_t2l} and the induction
+hypotheses the conclusion ist proved. The last case comes from the derivation 
+\textsc{FailT}. It is easily proved using \textsc{FailE} and the fact that 
+if \na returns $\mnone$ when trying to earse failure in $t_0$, then \ttl of $t_0$
+returns the empty list.
 
 \mvspace{}
 \deflemma[th:t2]{tex_code/elpi_to_tree.tex}
-
 \mvspace{}
-% \begin{theorem}[\thet]
-%   \label{thet}
-% \begin{align*}
-%   \forall \sigma_1\ \sigma_2\ a\ na\ g, \\
-%   \nur_u\ \sigma_1\ g\ a\ \sigma_2\ na \to  \\
-%   \forall \sigma_0\ t, \vt\ t \to (\ttl\ t\ \sigma_0\ \nilC) = ((\sigma_1,g) ::: a) \to \\
-%   \exists t'\ n, \run_u\ \sigma_0\ t\ (Some\ \sigma_2)\ t'\ n \land \ttl\ t'\ \sigma_0\ \nilC = na.
-% \end{align*}
-% \end{theorem}
 
 The proof of \cref{th:t2} is based on the idea explained in~\cite[Section
 3.3]{yves-equiv}. An ideal statement for this lemma would be: given a function

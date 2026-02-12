@@ -20,16 +20,6 @@
 \newcommand{\isabelleP}{\languages{Isabelle/HOL}}
 
 % INLINE MINTED
-\newcounter{deftypes}
-\newcommand{\deftypes}[2][]{
-    \refstepcounter{deftypes}%
-    \noindent
-    \begin{minipage}{0.9\linewidth}\input{#2}\end{minipage}
-    \hfill(\thedeftypes)%
-    \ifx&#1&\else\label{#1}\fi
-    \par
-    
-}
 \newcommand{\mvspace}{\vspace{5pt}}
 
 \usepackage{bussproofs}
