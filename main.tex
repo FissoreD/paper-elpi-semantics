@@ -175,7 +175,7 @@ a datum, a variable or the binary application of two terms.
 \deftypes[type:bc]{tex_code/bc_type.tex}
 \mvspace{}
 
-A rule (see~\cref{type:r}) has a head of type term and a list of premises, that
+A rule (see~\cref{type:r}) has a head of type term and a list of premises, that\marginpar{se riesco extract lemma immediately with lemma environment}
 are a list of atoms. A program (see~\cref{type:prog}) is made by its rules and
 the signatures of predicates, \texttt{sigT} is a mapping from predicates to
 their signatures, signatures represent the defintion of type from the simply
@@ -1069,20 +1069,25 @@ returns the empty list.
 \mvspace{}
 
 The proof of \cref{th:t2} is based on the idea explained in~\cite[Section
-3.3]{yves-equiv}. An ideal statement for this lemma would be: given a function
-\texttt{l2t} transforming an elpi state to a tree, we would have have that the
-the execution of an elpi state $e$ is the same as executing \run' on the tree
-resulting from $\texttt{l2t}(e)$. However, it is difficult to retrive the
-strucutre of an elpi state and create a tree from it. Therefore, we use the
-function \ttl to relate 
-
-
+3.5.1]{yves-equiv}. An ideal statement for this lemma would be: given a function
+\ltt transforming an \elpiP state $a_0$ to a tree $t_0$, we then would be able
+to compare the result of \nur run with $a_0$ and \run' run with $t_0$. The
+function  it is difficult to implement since we have hard time finding the tree
+structure of $a_0$, and more than that, we should have a notation of \elpiP
+valid state, but again, this is a hard task. We thereofre need to reuse the \ttl
+function to relate a tree $t_0$ with $a_0$. \cref{fig:ind-sk} show the idea of
+the proof: we have a state $t_0$ whose translation is $a_0$, we proceed by
+induction on the execution of \nur. This gives us not only the output $a_1$ but
+that hypothesis that it exists a tree $t_1$ such that its translation to the
+\elpiP state is $a_1$. This proof strategy is indirectly providing a kind of
+\ltt function by combining the execution of the \nur and \ttl.
 
 \begin{figure}
   \begin{center}
     \includestandalone[width=.2\textwidth]{src/e2t_ind}
   \end{center}
 \caption{Induction scheme for \cref{th:t2}}  
+\label{fig:ind-sk}
 \end{figure}
 
 \section{Case study: determinacy alanysis}
