@@ -811,18 +811,44 @@ by \texttt{bc}, then each list of premises if mapped to a list of goals
 (\texttt{goals}) have $a$ as cut-alternative and the global list is translated
 to a list of alternative (\texttt{alts}).
 
+\begin{figure}
+  \begin{subfigure}{0.4\textwidth}
+    \includestandalone[width=0.9\textwidth]{./src/exec_example1E/elpi1}
+    \caption{\elpiP state after call to \eI{g 0 R}}
+    \label{ex-elpi1}
+  \end{subfigure}
+  \begin{subfigure}{0.55\textwidth}
+    \includestandalone[width=1\textwidth]{./src/exec_example1E/elpi2}
+    \caption{\elpiP state after evaluating \cref{ex-elpi1}}
+    \label{ex-elpi2}
+  \end{subfigure}
+  \begin{subfigure}{0.48\textwidth}
+    \includestandalone[width=1\textwidth]{./src/exec_example1E/elpi3}
+    \caption{\elpiP state after evaluating \cref{ex-elpi2}}
+    \label{ex-elpi3}
+  \end{subfigure}
+  \begin{subfigure}{0.48\textwidth}
+    \includestandalone[width=1\textwidth]{./src/exec_example1E/elpi4}
+    \caption{\elpiP state after evaluating \cref{ex-elpi3}}
+    \label{ex-elpi4}
+  \end{subfigure}
+  \begin{center}
+  \begin{subfigure}{0.45\textwidth}
+    \includestandalone[width=1\textwidth]{./src/exec_example1E/elpi5}
+    \caption{\elpiP state after evaluating \cref{ex-elpi4}}
+    \label{ex-elpi5}
+  \end{subfigure}
+  \end{center}
+  \caption{Example of \elpiP execution}
+  \label{ex-elpi}
+\end{figure}
+
 \textit{Example of execution} \marginpar{add subst to ...}
+We propose an exemple of execution of an \elpiP state in \cref{ex-elpi}. The
+arrows in the images represent the cut-alternative pointer of the cut. We
+have not put arrow goiing our from atom-calls since the interpreter ignores
+the cut-alternatives in this case (cf. \textsc{CallE}).
 
-\includestandalone[width=0.35\textwidth]{./src/exec_example1E/elpi1}
-
-\includestandalone[width=0.6\textwidth]{./src/exec_example1E/elpi2}
-
-\includestandalone[width=0.5\textwidth]{./src/exec_example1E/elpi3}
-
-\includestandalone[width=0.5\textwidth]{./src/exec_example1E/elpi3}
-
-
-In the example only cuts have pointer. Call do not use them
 
 \textit{Remark}
 We want finally to point out how the lemma that we were able to prove in
@@ -875,23 +901,48 @@ therefore it must be a valid tree.
 
 \begin{figure}  
 
-  % \begin{subfigure}{0.44\textwidth}
+  \begin{subfigure}{0.55\textwidth}
     \input{tex_code/valid_tree.tex}
-    % \caption{Valid tree}
-  % \end{subfigure}
-  % \begin{subfigure}{.55\textwidth}
-  %   \input{tex_code/t2l.tex}
-  %   \caption{Tree to list}
-  %   \label{fig:ttl}
-  % \end{subfigure}
-% \caption{Valid tree and Tree to list}
-\caption{Valid tree}
-\label{fig:vt}
+    \caption{Valid tree}
+    \label{fig:vt}
+  \end{subfigure}
+  \begin{subfigure}{.40\textwidth}
+    \begin{coqcode}
+      Fixpoint t2l ~$t_0$~ ~$\sigma_0$~ (cp: alts) : alts ~$\coloneq$~
+        match ~$t_0$~ with
+        | OK     ~$\Rightarrow$~ [(~$\sigma_0$~, ~\mnil\unskip~)]
+        | KO     ~$\Rightarrow$~ ~\mnil~
+        | TA a   ~$\Rightarrow$~ [(~$\sigma_0$~, [(a, ~\mnil\unskip~)])]
+        ...
+    \end{coqcode}
+    \caption{Tree to list}
+    \label{fig:ttl}
+  \end{subfigure}
+\caption{Valid tree and Tree to list}
+% \caption{Valid tree}
 \end{figure}
 
 \subsection{From trees to lists}
 
-The translation of a tree to a en \elpiP state is done 
+The translation of a tree to a en \elpiP state is done thanks to the
+\emph{t2l} function. In \cref{fig:ttl} we give junst the implementation of the
+base cases, the full implementation is available at \href{https://github.com/FissoreD/elpi-formalization/blob/ho-check-ffun/theories/t2l.v}{\emph{this}} link.
+
+The function \emph{t2l} takes the tree $t_0$ we want to translate, a subsitution
+$\sigma_0$ and a list of choice points $cp$. These choice points represent
+alternatives that appears at the same level of the current node, such as, for
+example, the right-siblings of a \orC node. The \okC node represent one succeful
+alternative, thereofre it is translated into a singleton list with the empty
+list of goals. The \koC node represent a failure, i.e. it is mapped to the
+empty list of alternatives. Finally, atoms are mapped to one alternative
+containing a single goal with the empty cut-alternative list. They cannot point
+to $vp$ since they are not right uncle node.
+
+We have omitted the code for the translation of the \orC and \andC constructor
+since it is quite complex, but, we give the intuition behind this translation by
+means of examples.
+
+
 % The translation of a tree to a list is performed by shown in \cref{fig:ttl}. It takes the
 % tree to be translated, a substitution (called $s$), a list of alternatives, called
 % \emph{bt}. The substitution $s$ tells what is the subsitution of the 
