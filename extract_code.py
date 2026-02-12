@@ -204,7 +204,7 @@ class bussproof(C):
 
         if n == 0:
             n = 1
-            lines.append(f"  \\AxiomC{{}}")
+            lines.append("  \\AxiomC{\phantom{A}}")
 
         lines.append(f"  \\RightLabel{{\\textsc{{{(name)}}}}}")
 

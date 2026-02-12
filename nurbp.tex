@@ -1,0 +1,30 @@
+\begin{minipage}{0.4\textwidth}
+  \begin{prooftree}
+    \AxiomC{}
+    \RightLabel{\textsc{StopE}}
+    \UnaryInfC{ runE $v_0$ (($\sigma_0$, \mnil) :: a) \msome ($\sigma_0$, a)}
+  \end{prooftree}
+\end{minipage}
+\begin{minipage}{0.5\textwidth}
+\begin{prooftree}
+  \AxiomC{ runE $v_0$ (($\sigma_0$, g) :: ca) r }
+  \RightLabel{\textsc{CutE}}
+  \UnaryInfC{ runE $v_0$ (($\sigma_0$, (cut, ca) :: g) :: \_) r}
+\end{prooftree}
+\end{minipage}
+\begin{minipage}{0.7\textwidth}
+\vspace{12pt}
+\begin{prooftree}
+  \AxiomC{stepE $v_0$ t $\sigma_0$ a g = ($v_1$, bs) }
+  \AxiomC{runE $v_1$ (bs \mappend a) r }
+  \RightLabel{\textsc{CallE}}
+  \BinaryInfC{runE $v_0$ (($\sigma_0$, (call t, \_) :: g) :: a) r}
+\end{prooftree}
+\end{minipage}
+\begin{minipage}{0.28\textwidth}
+\begin{prooftree}
+  \AxiomC{\phantom{A}}
+  \RightLabel{\textsc{FailE}}
+  \UnaryInfC{ runE \_ \mnil $\square$}
+\end{prooftree}
+\end{minipage}

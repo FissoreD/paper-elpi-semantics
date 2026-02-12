@@ -777,7 +777,7 @@ alternatives.
 \begin{figure}
   \input{tex_code/stepE.tex}
 
-  \input{tex_code/nurbp.tex}
+  \input{nurbp.tex}
 
   \caption{Rule system for \nur}
   \label{fig:nur-rules}
@@ -1071,34 +1071,10 @@ returns the empty list.
 The proof of \cref{th:t2} is based on the idea explained in~\cite[Section
 3.3]{yves-equiv}. An ideal statement for this lemma would be: given a function
 \texttt{l2t} transforming an elpi state to a tree, we would have have that the
-the execution of an elpi state $e$ is the same as executing \run on the tree
+the execution of an elpi state $e$ is the same as executing \run' on the tree
 resulting from $\texttt{l2t}(e)$. However, it is difficult to retrive the
-strucutre of an elpi state and create a tree from it. This is because, in an
-elpi state, we have no clear information about the scope of an atom inside the
-list and, therefore, no evident clue about where this atom should be place in
-the tree. 
-
-Our theorem states that, starting from a valid tree $t$
-which translates to a list of alternatives $(\sigma_1, g) :: a$.
-If we run in elpi the list of alternatives, then the execution of the tree $t$
-returns the same result as the execution in elpi. The proof is performed
-by induction on the derivations of the elpi execution. We have $4$
-derivations.
-
-We have $4$ case to analyse:
-
-% \begin{enumerate}
-%   \item StopE: We have an empty list of goals, and therefore a success.\\
-%         By the definition of \vt, we know that $\ttl t = 
-% \end{enumerate}
-
-
-
-% This means that multiple different (and non-equivalent) trees
-% can be produced from a given elpi state.
-% For example the elpi state $[[f X]; [g X]]$ could be represented by
-% the tree $((Dead \lor f X) \lor g X)$
-
+strucutre of an elpi state and create a tree from it. Therefore, we use the
+function \ttl to relate 
 
 
 
