@@ -11,7 +11,7 @@
 
 \renewcommand{\epsilon}{\varepsilon}
 \newcommand{\msome}{\ensuremath{\bullet}}
-\newcommand{\mnone}{\ensuremath{\square}}
+\newcommand{\mnone}{\ensuremath{\square}\xspace}
 \newcommand{\mappend}{\ensuremath{\mathbin{+\!\!+}}\xspace}
 \newcommand{\mnil}{\ensuremath{\varnothing}\xspace}
 
@@ -741,7 +741,7 @@ know that $t_1'$ is cut away by \cutr; otherwise, $t_1'$ has not
 been explored and is equal to $t_1$.
 
 From these lemmas, it is clear how the order in which alternatives are
-evaluated changes the behavior of the program.
+evaluated changes the behavior of the program.\marginpar{se riesco success (A or B) = success (B or A) if no sup cut in A and B }
 
 \section{Stack semantics}
 
@@ -794,52 +794,25 @@ with no solution, whereas $\msome(\sigma, a)$ represent a successful
 interpretation with $\sigma$ as solution and $a$ as the list of non-yet-explored
 choice points.
 
-The rule system for \nur is given in \cref{fig:nur-rules}
-and is made by $4$ cases. We distinguish two main cases: if the list
-of alternatives is empty, we have a failing state and need to return 
-and two are the main scenarion. If the list of alternatives is empty,
-(\textsc{FailE}) we have a failure: we stop the computation and return
-$\mnone$. If the list of alternatives is the list $(gs, a)$, 
-we again distinguish two main cases. If $gs$ is \marginpar{TODO:backE does not exists anymore}
-
-If the list of alternatives is non empty, we need to consider its 
-
-Otherwise, 
-different cases
-depending on the shape of the alternatives. (\textsc{StopE}) consider a non
-empty list of alternatives where the list of goals is empty. In this case, we
-have, by definition a success and return the input substitution and the tail of
-alternative. (\textsc{CutE}) treats the cut operator, the 
-
-
-
-The idea of the \textsc{Elpi} interpreter is to receive a list of alternatives.
-The first alternative consists of a list of current goals. Four cases must be taken
-into account; they are shown in \cref{fig:nur-rules}. In order to simplify goal
-retrieval, we split the head of the alternatives from the tail, so that it can
-be immediately matched in the inductive definition. Note that an empty list of
-alternatives represents, by definition, a failing elpi state. If the goal list is
-empty (\textsc{StopE}), then we have, by definition, a success, and the input
-solution together with the list of alternatives is returned. If the goal list
-starts with a cut (\textsc{CutE}), then the current alternatives are erased in
-favour of the cut alternatives, and a recursive call is made on the remaining
-goal list.
-
-Finally, we must consider the case in which the goal list starts with a call.
-The call can either fail (\textsc{FailE}) or succeed (\textsc{CallE}). We
-distinguish the two cases by looking if the backchaining operation returns
-zero or more rules. We have wrapped this task in the \emph{stepE}
-procedure, which also updates the goal and cut-alternative list. The fail case,
-is relatively easy: the first goal does not
-succeed, we need to take the head of the alternatives, and make it the new list
-of goals to be explored.
-
-The case in which backchaining produces a non empty list, the \emph{save\_alts}
-routine is in cahrge of: taking the list of premises and add to each atom the
-the list of alternatives $a$ as their new cut-alternatives, then it append the
-list of goals $gl$ to each of these new lists.
+The rule system for \nur is given in \cref{fig:nur-rules} and is made by $4$
+cases. We distinguish two main cases: if the list of alternatives is empty,
+(\textsc{FailE}) we have a failure: we stop the computation and return $\mnone$.
+If the list of alternatives is the list $(\sigma_0, h) :: a$, the interpreter
+evaluates the first choice point $h$ under the substitution $\sigma_0$. If $h$
+is empty, (\textsc{StopE}), then we have a success, i.e. we return the input
+$\sigma_0$ and leave $a$ as the future choice points. Otherwise, $h$ is the list
+$(t, ca) :: g$ where $t$ is the first atom to evaluate, $ca$ is its
+cut-alternative list and $g$ is the list of future conjuncts. If $t$ is a cut
+(\textsc{CutE}), we need to keep evaluating $g$ under $\sigma_0$ but we change
+the alternatives to $ca$. Finally, in the case of a call (\textsc{CallE}), we
+backchain the call in the program. If $rs$ is the list of rule premises returned
+by \texttt{bc}, then each list of premises if mapped to a list of goals
+(\texttt{goals}) have $a$ as cut-alternative and the global list is translated
+to a list of alternative (\texttt{alts}).
 
 \textit{Example of execution}
+
+In the example only cuts have pointer. Call do not use them
 
 \textit{Remark}
 It is not possible to prove the same lemma as in section xxx, because no
