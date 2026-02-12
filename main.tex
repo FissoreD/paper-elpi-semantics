@@ -620,28 +620,28 @@ complements \step wrt failed, success and \pathatom trees.
 
 The inductive \run is modeled as a function taking $4$ inputs and returning
 $3$ outputs. The inputs are the
-program, a set of variables $v_0$, an initial substitution $\sigma_0$, and a tree
-$t_0$. The outputs are an optional object $r$ containing a substitution $\sigma_1$
-and an optional tree $t_1$, and a boolean $b$ and a set of updated variables $v_1$.
+program, a set of variables $v$, an initial substitution $\sigma$, and a tree
+$t$. The outputs are an optional object $r$ containing a substitution $\sigma'$
+and an optional tree $t'$, and a boolean $b$ and a set of updated variables $v_1$.
 The very interesting piece of information is the result $r$, if $None$,
-it tells that the interpretation failed, otherwise, $\sigma_1$
+it tells that the interpretation failed, otherwise, $\sigma'$
 represents the most-general unificator
-that makes the execution of the tree $t_0$ under the initial
-substitution $\sigma_0$ succeeds: $\sigma_1$ is an extension of $\sigma_0$.
-The tree $t_1$ is the updated tree containing the alternatives that have
-not yet been explored, if these alternatives do not exists, $t_1$ is $None$.
+that makes the execution of the tree $t$ under the initial
+substitution $\sigma$ succeeds: $\sigma'$ is an extension of $\sigma$.
+The tree $t'$ is the updated tree containing the alternatives that have
+not yet been explored, if these alternatives do not exists, $t'$ is $None$.
 The output $b$ and $v_1$ are there to tell respectively if during the
 execution a superficial cut has been evaluated, and what is the updated
 set of variables after the interpretation.
 
-The procedure \run is based on four main derivation rules, shown in
-\cref{fig:run-rules}. (\textsc{StopT}) If the \pathend of the tree $t_0$ is a success, 
-the substitution $\sigma_1$ is retrived in $t_0$ from $\sigma_0$ and the input tree 
+The procedure \run is based on four main derivation rules, shown in\marginpar{dire is\_cb cos'è}
+\cref{fig:run-rules}. (\textsc{StopT}) If the \pathend of the tree $t$ is a success, 
+the substitution $\sigma'$ is retrived in $t$ from $\sigma$ and the input tree 
 is cleaned of its successful
-path. (\textsc{StepT}) If the \pathend of $t_0$ is an atom, then \step is
-invoked to evaluate $t_0$, and \run is recursively called on the new
-tree. (\textsc{BackT}) If the \pathend of $t_0$ is a failure,
-\na is called to clear the failed path; if the resulting cleaned tree $t_1$ 
+path. (\textsc{StepT}) If the \pathend of $t$ is an atom, then \step is
+invoked to evaluate $t$, and \run is recursively called on the new
+tree. (\textsc{BackT}) If the \pathend of $t$ is a failure,
+\na is called to clear the failed path; if the resulting cleaned tree $t'$ 
 exists, \run is recursively called on it. Finally, (\textsc{FailT}) takes into
 account tree with no solutions.
 
@@ -652,9 +652,9 @@ account tree with no solutions.
 The lemma above tells that \run behaves deterministically. The proof is by
 induction on the first \run execution and the proof is rather immediate, since
 all rules are in exclusive due to the hypothis on the \pathend: the hypotheses
-\emph{success $t_0$}, \emph{\pathatom $t_0$} and \emph{failed $t_0$} are
+\emph{success $t$}, \emph{\pathatom $t$} and \emph{failed $t$} are
 exclusive. Moreover, by \cref{lemma:naNfail}, we have that the hypothesis of
-\textsc{FailT} implies \emph{failed $t_0$}, therefore it is exclusive wrt
+\textsc{FailT} implies \emph{failed $t$}, therefore it is exclusive wrt
 \textsc{StopT} and \textsc{StepT}, but also from \textsc{BackT} since the have
 different expectations on the output of \na.
 
@@ -967,8 +967,6 @@ that $t2l$ is not injective. There are different trees that maps to the same
 \nur.
 
 \begin{table}
-  \caption{Tree to list from \cref{tree-ex} and \cref{ex-elpi}}
-  \label{tab:t2l}
   \centering
   \begin{tabular}{c|c|c|c|c|c}
     % \toprule
@@ -976,6 +974,8 @@ that $t2l$ is not injective. There are different trees that maps to the same
     $t2l\ t\ \epsilon\ \mnil$ & \cref{ex-elpi1} & \cref{ex-elpi2} & \cref{ex-elpi3} & \cref{ex-elpi4} & \cref{ex-elpi5}
     % \bottomrule
   \end{tabular}
+  \caption{Tree to list from \cref{tree-ex} and \cref{ex-elpi}}
+  \label{tab:t2l}
 \end{table}
 
 % The translation of a tree to a list is performed by shown in \cref{fig:ttl}. It takes the
