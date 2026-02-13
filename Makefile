@@ -35,10 +35,13 @@ tex_code:
 update_submodule:
 	git submodule update --remote
 
-all:
+all_aux:
 	$(MAKE) build_tree && \
 	$(MAKE) build_aux && \
-	$(MAKE) build_elpi && \
+	$(MAKE) build_elpi
+
+all:
+	$(MAKE) all_aux && \
 	$(MAKE) update_submodule && \
 	$(MAKE) tex_code && \
 	$(MAKE) main
