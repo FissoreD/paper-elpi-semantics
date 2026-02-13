@@ -163,13 +163,35 @@ either a cut or a call. A call
 carries a term~(see \cref{fig:tm-type}). A term (Tm) is either a predicate,
 a datum, a variable or the binary application of two terms.
 
-\mvspace{}
-\deftypes[type:atom]{tex_code/atom_type.tex}
-\deftypes[type:r]{tex_code/R_type.tex}
-\deftypes[type:prog]{tex_code/program_type.tex}
-\deftypes[type:sigma]{tex_code/sigma_type.tex}
-\deftypes[type:bc]{tex_code/bc_type.tex}
-\mvspace{}
+\begin{definition}[Atoms]
+  \input{tex_code/atom_type.tex}
+  \label{type:atom}
+\end{definition}
+\begin{definition}[Rule]
+  \input{tex_code/R_type.tex}
+  \label{type:r}
+\end{definition}
+\begin{definition}[Program]
+  \input{tex_code/program_type.tex}
+  \label{type:prog}
+\end{definition}
+\begin{definition}[Subsitution]
+  \input{tex_code/sigma_type.tex}
+  \label{type:sigma}
+\end{definition}
+\begin{definition}[Backchaining]
+  \leavevmode\\
+  \phantom{AAAA}\input{tex_code/bc_type.tex}
+  \label{type:bc}
+\end{definition}
+
+% \mvspace{}
+% \deftypes[type:atom]{tex_code/atom_type.tex}
+% \deftypes[type:r]{tex_code/R_type.tex}
+% \deftypes[type:prog]{tex_code/program_type.tex}
+% \deftypes[type:sigma]{tex_code/sigma_type.tex}
+% \deftypes[type:bc]{tex_code/bc_type.tex}
+% \mvspace{}
 
 A rule (see~\cref{type:r}) has a head of type term and a list of premises, that\marginpar{se riesco extract lemma immediately with lemma environment}
 are a list of atoms. A program (see~\cref{type:prog}) is made by its rules and
