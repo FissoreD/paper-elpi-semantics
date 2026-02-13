@@ -6,6 +6,7 @@
 \usepackage{custom_ref}
 \usepackage{mathtools}
 \usepackage{stackengine} % For bussproof multiline
+\usepackage{wrapfig}
 
 \renewcommand{\epsilon}{\varepsilon}
 \newcommand{\msome}{\ensuremath{\bullet}}
@@ -156,7 +157,7 @@ any choice points.
   \end{minipage}
 \end{figure}
 
-Before going to the two semantcis, we show the piece of data structure that \marginpar{put unif and program in variable: hides from types}
+Before going to the two semantcis, we show the piece of data structure that
 are shared by the them. The smallest unit of code that we can use in the
 langauge is an atom. The atom inductive (see~\cref{type:atom}) is
 either a cut or a call. A call
@@ -368,7 +369,6 @@ contrats of these symbols where \fvT is a set of variable names.
 \deftypes[type:stepT]{tex_code/step_sig.tex}
 \deftypes[type:naT]{tex_code/next_alt.tex}
 \deftypes[type:runT]{tex_code/run_sig.tex}
-
 \mvspace{}
 % A particular tree we want to identify is a \isdead tree (defined in \cref{fig:dead}). This tree has the
 % property to never produce a solution: it is eiher the \deadC tree
@@ -1086,6 +1086,13 @@ returns the empty list.
 \deflemma[th:t2]{tex_code/elpi_to_tree.tex}
 \mvspace{}
 
+\begin{wrapfigure}{r}{0.2\textwidth}
+  % \begin{figure}
+  \includegraphics[width=0.2\textwidth, keepaspectratio]{./src/e2t_ind.pdf}
+  \caption{\phantom{A}}  
+  \label{fig:ind-sk}
+  % \end{figure}
+\end{wrapfigure}
 The proof of \cref{th:t2} is based on the idea explained in~\cite[Section
 3.5.1]{yves-equiv}. An ideal statement for this lemma would be: given a function
 \ltt transforming an \elpiP state $a$ to a tree $t$, we then would be able
@@ -1100,13 +1107,6 @@ that hypothesis that it exists a tree $t'$ such that its translation to the
 \elpiP state is $a'$. This proof strategy is indirectly providing a kind of
 \ltt function by combining the execution of the \nur and \ttl.
 
-\begin{figure}
-  \begin{center}
-    \includegraphics[width=0.15\textwidth, keepaspectratio]{./src/e2t_ind.pdf}
-  \end{center}
-\caption{Induction scheme for \cref{th:t2}}  
-\label{fig:ind-sk}
-\end{figure}
 
 \section{Case study: determinacy alanysis}
 
@@ -1123,20 +1123,16 @@ most one rule can be successfully used on a given query, whereas \emph{rule
 checking} ensure that each rule does not creates choice points, e.g. by calling
 non-deterministic predicates.
 
-For example, in \cref{fig:prog}, we can declare the following signatures to the
+For example, in \cref{fig:prog}, we can declare the following signatures to the\marginpar{spiegare sintassi}
 predicates.
 $$\eI{f} : \eI{int} \to_i \eI{int} \to_o \eI{func} \qquad
 \eI{g} : \eI{int} \to_i \eI{int} \to_o \eI{func} \qquad
 \eI{r} : \eI{int} \to_i \eI{int} \to_o \eI{pred}
 $$
 
-These signatures are accepted for the predicates in
-
-
-
-We see that \texttt{f} is a function since its rules are mutual exclusive and
-have empty body and \texttt{g} is a function since \emph{r1} is cutting
-\emph{r2} if \emph{r1} succeeds due to the cut. Moreover, both rules 
+We see that \texttt{f} is a function since its rules are mutual exclusive and\marginpar{ref verso programma}
+have empty body and \texttt{g} is a function since \eI{r1} is cutting
+\eI{r2} if \eI{r1} succeeds due to the cut. Moreover, both rules 
 
 The signature of the program are stored in the its \texttt{sig} projection, and,
 as in \cite{fissore2026} we need to extends the type of predicates so that we
