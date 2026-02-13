@@ -1041,7 +1041,7 @@ to ignore the silent transition in the \run inductive.
 \deflemma[th:next_altF_t2l]{tex_code/next_altF_t2l.tex}
 \mvspace{}
 
-It is proved easly by induction on the tree $t_0$.\marginpar{dire di $v_0$}
+It is proved easly by induction on the tree $t$.\marginpar{dire di $v$}
 
 \mvspace{}
 \deflemma[th:t1]{tex_code/tree_to_elpi.tex}
@@ -1057,7 +1057,7 @@ The case for \textsc{BackT} is a silent case: it represents the non-injective
 behavior of \ttl, but, thanks to \cref{th:next_altF_t2l} and the induction
 hypotheses the conclusion ist proved. The last case comes from the derivation 
 \textsc{FailT}. It is easily proved using \textsc{FailE} and the fact that 
-if \na returns $\mnone$ when trying to earse failure in $t_0$, then \ttl of $t_0$
+if \na returns $\mnone$ when trying to earse failure in $t$, then \ttl of $t$
 returns the empty list.
 
 \mvspace{}
@@ -1066,16 +1066,16 @@ returns the empty list.
 
 The proof of \cref{th:t2} is based on the idea explained in~\cite[Section
 3.5.1]{yves-equiv}. An ideal statement for this lemma would be: given a function
-\ltt transforming an \elpiP state $a_0$ to a tree $t_0$, we then would be able
-to compare the result of \nur run with $a_0$ and \run' run with $t_0$. The
+\ltt transforming an \elpiP state $a$ to a tree $t$, we then would be able
+to compare the result of \nur run with $a$ and \run' run with $t$. The
 function  it is difficult to implement since we have hard time finding the tree
-structure of $a_0$, and more than that, we should have a notation of \elpiP
+structure of $a$, and more than that, we should have a notation of \elpiP
 valid state, but again, this is a hard task. We thereofre need to reuse the \ttl
-function to relate a tree $t_0$ with $a_0$. \cref{fig:ind-sk} show the idea of
-the proof: we have a state $t_0$ whose translation is $a_0$, we proceed by
-induction on the execution of \nur. This gives us not only the output $a_1$ but
-that hypothesis that it exists a tree $t_1$ such that its translation to the
-\elpiP state is $a_1$. This proof strategy is indirectly providing a kind of
+function to relate a tree $t$ with $a$. \cref{fig:ind-sk} show the idea of
+the proof: we have a state $t$ whose translation is $a$, we proceed by
+induction on the execution of \nur. This gives us not only the output $a'$ but
+that hypothesis that it exists a tree $t'$ such that its translation to the
+\elpiP state is $a'$. This proof strategy is indirectly providing a kind of
 \ltt function by combining the execution of the \nur and \ttl.
 
 \begin{figure}
@@ -1100,6 +1100,26 @@ if two main conditions are respected: \emph{mutual exclusion} guarantees that at
 most one rule can be successfully used on a given query, whereas \emph{rule
 checking} ensure that each rule does not creates choice points, e.g. by calling
 non-deterministic predicates.
+
+For example, in \cref{fig:prog}, we can declare the following signatures to the
+predicates.
+
+\begin{elpicode}
+  func f int -> int.        func g int -> int.        pred r int -> int.
+\end{elpicode}
+
+These signatures are accepted for the predicates in
+
+
+
+We see that \texttt{f} is a function since its rules are mutual exclusive and
+have empty body and \texttt{g} is a function since \emph{r1} is cutting
+\emph{r2} if \emph{r1} succeeds due to the cut. Moreover, both rules 
+
+The signature of the program are stored in the its \texttt{sig} projection, and,
+as in \cite{fissore2026} we need to extends the type of predicates so that we
+are able to distinguish between deterministic and non-deterministic
+propositions. For example, in \cref{fig:prog}, we have 
 
 we mechanize the first order part of xxx.
 
