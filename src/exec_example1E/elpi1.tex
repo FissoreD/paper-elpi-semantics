@@ -10,19 +10,19 @@
 \matrix (outer) [matrix of nodes,
                  nodes={draw, minimum width=0.5cm, minimum height=1cm, anchor=center},
                  column sep=0.3cm, row sep=0.3cm] {
-\phantom{AAAAAAAAAAAA} & \phantom{AAAAAAAAA} &  \node[draw=none] (A) {\phantom{xx}};\\
+\phantom{AAAAAAAAAAAAAA} & \phantom{AAAAAAAAAAA} &  \node[draw=none] (A) {\phantom{!}};\\
 };
 
 \matrix (inner) [matrix of nodes,
-                 nodes={draw, minimum size=0.6cm},
+                 nodes={minimum size=0.6cm},
                  column sep=0.1cm, row sep=0.1cm] at (outer-1-1.center) {
-r A B & f B C & cut \\
+r(A, B), & f(B, C), & ! \\
 };
 
 \matrix (inner1) [matrix of nodes,
-                 nodes={draw, minimum size=0.6cm},
+                 nodes={minimum size=0.6cm},
                  column sep=0.1cm, row sep=0.1cm] at (outer-1-2.center) {
-f D E & f E F \\
+f(D, E), & f(E, F) \\
 };
 
 

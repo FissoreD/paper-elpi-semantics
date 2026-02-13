@@ -1,13 +1,11 @@
 
 \documentclass[a4paper,UKenglish,cleveref, autoref, thm-restate, lineno]{lipics-v2021}
-\usepackage[mode=buildnew]{standalone}% requires -shell-escape
 
 \usepackage{minted}
 \usepackage{macro}
 \usepackage{custom_ref}
-\usepackage{tree}
 \usepackage{mathtools}
-\usepackage{stackengine}
+\usepackage{stackengine} % For bussproof multiline
 
 \renewcommand{\epsilon}{\varepsilon}
 \newcommand{\msome}{\ensuremath{\bullet}}
@@ -19,8 +17,6 @@
 %\hideLIPIcs  %uncomment to remove references to LIPIcs series (logo, DOI, ...), e.g. when preparing a pre-final version to be uploaded to arXiv or another public repository
 
 %\graphicspath{{./graphics/}}%helpful if your graphic files are in another directory
-
-\usetikzlibrary{positioning}
 
 \bibliographystyle{plainurl}% the mandatory bibstyle
 \title{Operational semantics for Prolog with Cut in \rocqP and its application to determinacy analysis} %TODO Please add
@@ -393,32 +389,32 @@ We have pointed by a black arraw the \pathend of all the trees in~\cref{tree-ex}
 
 \begin{figure}
   \begin{subfigure}{0.4\textwidth}
-    \includestandalone[width=\textwidth]{./src/exec_example1/step2}
+    \includegraphics[width=\textwidth, keepaspectratio]{./src/exec_example1/step2.pdf}
     \caption{Tree after \step on \eI{g 0 R}}
     \label{tree-ex1} 
   \end{subfigure}
   \begin{subfigure}{0.5\textwidth}
-    \includestandalone[width=\textwidth]{./src/exec_example1/step3}
+    \includegraphics[width=\textwidth, keepaspectratio]{./src/exec_example1/step3.pdf}
     \caption{\step on \cref{tree-ex1}}
     \label{tree-ex2} 
   \end{subfigure}
   \begin{subfigure}{0.5\textwidth}
-    \includestandalone[width=\textwidth]{./src/exec_example1/step4}
+    \includegraphics[width=\textwidth, keepaspectratio]{./src/exec_example1/step4.pdf}
     \caption{\step on \cref{tree-ex2}}
     \label{tree-ex3} 
   \end{subfigure}
   \begin{subfigure}{0.5\textwidth}
-    \includestandalone[width=\textwidth]{./src/exec_example1/step5}
+    \includegraphics[width=\textwidth, keepaspectratio]{./src/exec_example1/step5.pdf}
     \caption{\na on \cref{tree-ex3}}
     \label{tree-ex4} 
   \end{subfigure}
   \begin{subfigure}{0.55\textwidth}
-    \includestandalone[width=\textwidth]{./src/exec_example1/step6}
+    \includegraphics[width=\textwidth, keepaspectratio]{./src/exec_example1/step6.pdf}
     \caption{\step on \cref{tree-ex4}}
     \label{tree-ex5} 
   \end{subfigure}
   \begin{subfigure}{0.45\textwidth}
-    \includestandalone[width=\textwidth]{./src/exec_example1/step7}
+    \includegraphics[width=\textwidth, keepaspectratio]{./src/exec_example1/step7.pdf}
     \caption{\step on \cref{tree-ex5}}
     \label{tree-ex6} 
   \end{subfigure}
@@ -813,28 +809,28 @@ to a list of alternative (\texttt{alts}). \marginpar{Dire una parola su backtrac
 
 \begin{figure}
   \begin{subfigure}{0.4\textwidth}
-    \includestandalone[width=0.9\textwidth]{./src/exec_example1E/elpi1}
+    \includegraphics[width=\textwidth, keepaspectratio]{./src/exec_example1E/elpi1.pdf}
     \caption{\elpiP state after call to \eI{g 0 R}}
     \label{ex-elpi1}
   \end{subfigure}
   \begin{subfigure}{0.55\textwidth}
-    \includestandalone[width=1\textwidth]{./src/exec_example1E/elpi2}
+    \includegraphics[width=\textwidth, keepaspectratio]{./src/exec_example1E/elpi2.pdf}
     \caption{\elpiP state after evaluating \cref{ex-elpi1}}
     \label{ex-elpi2}
   \end{subfigure}
   \begin{subfigure}{0.48\textwidth}
-    \includestandalone[width=1\textwidth]{./src/exec_example1E/elpi3}
+    \includegraphics[width=\textwidth, keepaspectratio]{./src/exec_example1E/elpi3.pdf}
     \caption{\elpiP state after evaluating \cref{ex-elpi2}}
     \label{ex-elpi3}
   \end{subfigure}
   \begin{subfigure}{0.48\textwidth}
-    \includestandalone[width=1\textwidth]{./src/exec_example1E/elpi4}
+    \includegraphics[width=\textwidth, keepaspectratio]{./src/exec_example1E/elpi4.pdf}
     \caption{\elpiP state after evaluating \cref{ex-elpi3}}
     \label{ex-elpi4}
   \end{subfigure}
   \begin{center}
   \begin{subfigure}{0.45\textwidth}
-    \includestandalone[width=1\textwidth]{./src/exec_example1E/elpi5}
+    \includegraphics[width=\textwidth, keepaspectratio]{./src/exec_example1E/elpi5.pdf}
     \caption{\elpiP state after evaluating \cref{ex-elpi4}}
     \label{ex-elpi5}
   \end{subfigure}
@@ -1084,7 +1080,7 @@ that hypothesis that it exists a tree $t_1$ such that its translation to the
 
 \begin{figure}
   \begin{center}
-    \includestandalone[width=.2\textwidth]{src/e2t_ind}
+    \includegraphics[width=0.15\textwidth, keepaspectratio]{./src/e2t_ind.pdf}
   \end{center}
 \caption{Induction scheme for \cref{th:t2}}  
 \label{fig:ind-sk}

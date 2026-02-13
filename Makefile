@@ -10,6 +10,25 @@ main:
 
 gen = python3 extract_code.py $(1);
 
+build_tree:
+	cd ./src/exec_example1 && \
+	for f in $$(ls *.tex); do \
+		$(TEX_CMD) $$f; \
+	done
+
+build_elpi:
+	cd ./src/exec_example1E && \
+	for f in $$(ls *.tex); do \
+		$(TEX_CMD) $$f; \
+	done
+
+build_aux:
+	cd ./src && \
+	for f in $$(ls *.tex); do \
+		$(TEX_CMD) $$f; \
+	done
+
+
 tex_code:
 	$(foreach F, $(wildcard ./elpi-formalization/theories/*.v), $(call gen,$(F))) true
 
@@ -17,6 +36,9 @@ update_submodule:
 	git submodule update --remote
 
 all:
+	$(MAKE) build_tree && \
+	$(MAKE) build_aux && \
+	$(MAKE) build_elpi && \
 	$(MAKE) update_submodule && \
 	$(MAKE) tex_code && \
 	$(MAKE) main

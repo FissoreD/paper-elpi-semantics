@@ -1,4 +1,4 @@
-\documentclass[crop,tikz]{standalone}%
+\documentclass[tikz]{standalone}%
 
 \usepackage{../../tree}
 
@@ -17,17 +17,17 @@ for tree={
       [\deadN, deadNode,edge=dashed]
       [\deadN, deadNode,edge=dashed]
       [\okN,okNode,edge label={node[midway,right] {$\sigma_4$}}]
-      [cut,edge label={node[midway,right] {$\sigma_5$}}]
+      [{{!}},edge label={node[midway,right] {$\sigma_5$}}]
     ]
     [\orN,orNode,edge label={node[midway,right] {$R_1$}}
       [\deadN, deadNode,edge=dashed]
       [\okN,okNode,edge label={node[midway,right] {$\sigma_6$}}]
     ]
-    [cut,name=cut,edge label={node[midway,right] {$R_2$}}]
+    [{{!}},name=cut,edge label={node[midway,right] {$R_2$}}]
   ]
   [\andN,andNode,edge label={node[midway,right] {$\sigma_2$}}
-    [f D E]
-    [f E F,edge label={node[midway,right] {$R_3$}}]
+    [{{f(D, E)}}]
+    [{{f(E, F)}},edge label={node[midway,right] {$R_3$}}]
   ]
 ] 
 \curnodeNE{cut};
