@@ -162,19 +162,23 @@ class C:
             f.write(cnt)
 
 class snip(C):
-    def __init__(self,mintag):
+    def __init__(self,mintag,mintinl):
         super(snip,self).__init__("(*","*)","tex_code","v","SNIP:","ENDSNIP",True)
         self.MINT_TAG = mintag
+        self.MINT_INLINE = mintinl
 
     def print_tex(self,lines, fout, raw = False):
         if lines == []: return
         cnt = ""
-        if not raw:
-            cnt += (f"\\begin{{{self.MINT_TAG}}}\n")
-        for l in lines:
-            cnt += self.clean_line(self.clean_comment(l))
-        if not raw:
-            cnt += f"\\end{{{self.MINT_TAG}}}\n"
+        if len(lines) == 1:
+            cnt= f"\{self.MINT_INLINE}{{{self.clean_line(lines[0].strip())}}}"
+        else:
+            if not raw:
+                cnt += (f"\\begin{{{self.MINT_TAG}}}\n")
+            for l in lines:
+                cnt += self.clean_line(self.clean_comment(l))
+            if not raw:
+                cnt += f"\\end{{{self.MINT_TAG}}}\n"
         super().write(fout,cnt)
 
 def flatten(xss):
@@ -260,4 +264,4 @@ if __name__ == "__main__":
     fname = sys.argv[1]
     print(fname)
     bussproof().read_file(fname)
-    snip("coqcode").read_file(fname)
+    snip("coqcode","cI").read_file(fname)
