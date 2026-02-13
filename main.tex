@@ -466,9 +466,9 @@ to a right-skewed tree made by \andC inner-nodes.
 
 In \cref{tree-ex1}, we provide a clear example of a call to \step on the query\marginpar{sottolineare le sostituzioni}
 \eI{q 0 R} on the program $P$ in \cref{fig:prog}. Let $c_0$, $c_1$ and $c_2$ be
-the childreen of the root. $c_0$, by construction is the \emph{None} tree, while
+the childreen of the root. $c_0$, by construction is the \mnone tree, while
 $c_1$ and $c_2$ correspod respectively to the premises of rules $r_1$ and $r_2$
-in $P$. We need the first \emph{None} subtree so that we can attach a
+in $P$. We need the first \mnone subtree so that we can attach a
 substituion to $c_1$. In particular, we note that the $c_1$ (resp. $c_2$) are
 related to the substitution $\sigma_1$ (resp. $\sigma_2$). The value of
 $\sigma_1$ and $\sigma_2$ are the same as in \cref{sec:cut-op}. The reset points
@@ -517,7 +517,7 @@ of the full expected prolog interpreter. As proved in \cref{lemma:success} and
 \cref{lemma:failed}, \step does not make any progression on the tree being
 interpreted. To solve this problem, we need a routine capable of backtracking in
 case of failures. This routine return the backtracked tree if it exists,
-\emph{None} otherwise.
+\mnone otherwise.
 
 In \cref{tree-ex3}, we are facing a failure: the interpreter has evaluated the
 atom \eI{f X Y} under the substitution $\sigma_3$ which assigns \eI{Y} to
@@ -544,7 +544,7 @@ all the other solution that could be available by evaluating the rest of the
 tree. After the replacement of the \pathend in \cref{tree-ex6} with \koC, we
 remain with a tree having all failing path. The \na procedure keeps removing
 them until discovering that the tree have no worth-to explore paths, therefore
-it will return \emph{None}.
+it will return \mnone.
 
 
 % In particular, 
@@ -1103,10 +1103,10 @@ non-deterministic predicates.
 
 For example, in \cref{fig:prog}, we can declare the following signatures to the
 predicates.
-
-\begin{elpicode}
-  func f int -> int.        func g int -> int.        pred r int -> int.
-\end{elpicode}
+$$\eI{f} : \eI{int} \to_i \eI{int} \to_o \eI{func} \qquad
+\eI{g} : \eI{int} \to_i \eI{int} \to_o \eI{func} \qquad
+\eI{r} : \eI{int} \to_i \eI{int} \to_o \eI{pred}
+$$
 
 These signatures are accepted for the predicates in
 
@@ -1119,19 +1119,41 @@ have empty body and \texttt{g} is a function since \emph{r1} is cutting
 The signature of the program are stored in the its \texttt{sig} projection, and,
 as in \cite{fissore2026} we need to extends the type of predicates so that we
 are able to distinguish between deterministic and non-deterministic
-propositions. For example, in \cref{fig:prog}, we have 
+propositions. For example, in \cref{fig:prog}, we have ...
 
-we mechanize the first order part of xxx.
+A program execution behaves deterministically if given a program, a substitution
+and a tree to the \run inductive, then either the execution fails, or, if is
+succeeds, then the tree of alternatives is $\mnone$. Below we define
+\texttt{is\_det}.
 
-snippet det, main thm, invariant det tree (valid tree prev section?)
+\input{tex_code/is_det.tex}\marginpar{use coq syntax instead of elpi?}
 
-proof induciton on exec, step/next alt preserving invariant
-proved by induction on the tree.
+The theorem we want to prove is the following.
 
-with list semantics cut and next alt requires to express
-a link btween the ca or next alts and the current goal,
-which is non trivial without an intermediate data
-strature like the tree
+\input{tex_code/det_check_call.tex}
+
+With \cI{check_~$\mathbb{P}$~} being the function checking the program wrt
+mutual exclusion and rule checking and \cI{tm_is_det} being the function testing
+if the term head refers to a rigid constant with deterministically type.
+The proof of this lemma should be done on the derivation of the program
+execution. However, in this definition, the induction hypothesis is too weak,
+since in we would have to prove ... but we will not be able to show that the
+... is deterministic.
+
+To solve the problem, we need to work on ``deterministic trees''
+(\cI{det_tree}), show that if a tree respect this condition, and then prove
+the following theorem which is more generic then \cI{det_check_call}.
+
+\input{tex_code/det_check_tree.tex}
+
+Since \cI{det_check_call} is an instance of \cI{det_check_tree}, its proof
+is now trivial.
+
+As an important remark, proving the same lemma with the stack semantics, it is
+difficult to correctly define the predicate \cI{det_stack}, checking for the
+deterministc behavior of a generic stack, since, similar to \cref{sec:run-prop},
+the lack of structure make this goal hard. We need therefore an intermediate
+data structure, like the tree to encompass this problem.
 
 \section{Related work}
 
