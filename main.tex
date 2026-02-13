@@ -715,27 +715,27 @@ link. Below we show two of these lemmas.
 
 % $$$$
 
-In \cref{lemma:run6}, we evaluate the tree $t_0$. This evaluation
-produces a success with signature $\sigma_1$ and a new tree $t_0'$.
-During the evaluation, a superficial cut in $t_1$ is traversed. This
-implies that the evaluation of $\msome t_0 \lor_{s_m} t_1$ returns
-$\sigma_1$ as substitution, and the alternatives are
-$\msome t_0' \lor_{s_m} \texttt{KO}$. The right-hand side of the
+In \cref{lemma:run6}, we evaluate the tree $l$. This evaluation
+produces a success with signature $\sigma'$ and a new tree $l'$.
+During the evaluation, a superficial cut in $l$ is traversed. This
+implies that the evaluation of $\msome l \lor_{\sigma_1} r$ returns
+$\sigma'$ as substitution, and the alternatives are
+$\msome l' \lor_{\sigma_1} \texttt{KO}$. The right-hand side of the
 $\orC$ node is replaced with $\koC$ by \cutr.
 
-In \cref{lemma:run7}, we are in a similar scenario: $t_0$ evaluates a
+In \cref{lemma:run7}, we are in a similar scenario: $t$ evaluates a
 superficial cut but, this time, produces a failure. This implies that
-the evaluation of $\msome t_0 \lor_{s_m} t_1$ also fails.
+the evaluation of $\msome t \lor_{\sigma_1} t'$ also fails.
 
 Finally, in \cref{lemma:run8}, we evaluate
-$\msome t_0 \lor_{s_m} t_1$. The evaluation succeeds, producing the
-result $\msome(s_1,\msome t_0' \lor_{s_m} t_1')$. This means that
-$t_0$ still has $t_0'$ as unexplored alternatives. We deduce that the
-evaluation of $t_0$ produces the substitution $\sigma_1$ with
-alternatives $t_0'$. However, we have no information about whether a
-superficial cut has been crossed in $t_0$. If this is the case, we
-know that $t_1'$ is cut away by \cutr; otherwise, $t_1'$ has not
-been explored and is equal to $t_1$.
+$\msome l \lor_{\sigma_1} r$. The evaluation succeeds, producing the
+result $\msome(s_1,\msome l' \lor_{\sigma_1} r')$. This means that
+$l$ still has $l'$ as unexplored alternatives. We deduce that the
+evaluation of $l$ produces the substitution $\sigma_1$ with
+alternatives $l'$. However, we have no information about whether a
+superficial cut has been crossed in $l$. If this is the case, we
+know that $r'$ is cut away by \cutr; otherwise, $r'$ has not
+been explored and is equal to $r$.
 
 From these lemmas, it is clear how the order in which alternatives are
 evaluated changes the behavior of the program.\marginpar{se riesco success (A or B) = success (B or A) if no sup cut in A and B }
