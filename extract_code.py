@@ -63,7 +63,7 @@ def clean_line_global(l,escape):
     l = l.replace("true", esc(m("\\top")))
     l = l.replace("false", esc(m("\\bot")))
     l = l.replace("\bsm\b", " " + esc(m("s_m")) + " ")
-    pat = ["v","b","t","r","a", "g"]
+    pat = ["v","b","t","r","a", "g", "l"]
     def change_vars(vn, gl, l):
         return re.sub(f"\\b{vn}('+)|\\b{vn}\\b", esc(m(f"{gl}\g<1>")), l)
     def it_pat(pat,gl,l):
