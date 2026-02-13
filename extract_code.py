@@ -63,15 +63,17 @@ def clean_line_global(l,escape):
     l = l.replace("true", esc(m("\\top")))
     l = l.replace("false", esc(m("\\bot")))
     l = l.replace("\bsm\b", " " + esc(m("s_m")) + " ")
-    pat = ["v","b","t","r","a"]
+    pat = ["v","b","t","r","a", "g"]
     def change_vars(vn, gl, l):
         return re.sub(f"\\b{vn}('+)|\\b{vn}\\b", esc(m(f"{gl}\g<1>")), l)
-    l = change_vars("s", "\\\\sigma", l)
-    for p in pat:
-        l = change_vars(p, p, l)
+    def it_pat(pat,gl,l):
+        l = change_vars(pat, gl, l)
         for i in range(10):
-            l = change_vars(f"{p}{i}", f"{p}_{i}", l)
-            l = change_vars(f"s{i}", f"\\\\sigma_{i}", l)
+            l = change_vars(f"{pat}{i}", f"{gl}_{i}", l)
+        return l
+    l = it_pat("s", "\\\\sigma", l)
+    for p in pat:
+        l = it_pat(p, p, l)
         
     l = l.replace("step_tag", "tag") # FIXME
     return l

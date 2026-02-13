@@ -7,15 +7,15 @@
 \begin{document}
 
 \begin{tikzpicture}[]
-    \node (t1) at (0,0) {$t_0$};
-    \node (t2) [right=2cm of t1]  {$t_1$};
-    \node (e1) [below=2cm of t1]  {$a_0$};
-    \node (e2) [right=2cm of e1]  {$a_1$};
+    \node (t1) at (0,0) {$t$};
+    \node (t2) [right=2cm of t1]  {$t'$};
+    \node (e1) [below=2cm of t1]  {$a$};
+    \node (e2) [right=2cm of e1]  {$a'$};
     % letf to right arrows
-    % \draw [->] (t1) -- (t2)node[pos=1,xshift=1pt,yshift=2pt]{*} node[midway, above]{\run'\ $t_0$};
-    % \draw [->] (e1) -- (e2)node[pos=1,xshift=1pt,yshift=2pt]{*} node[midway, below]{\nur\ $a_0$};
-    \draw [->] (t1) -- (t2) node[midway, above]{\run'\ $t_0$};
-    \draw [->] (e1) -- (e2) node[midway, below]{\nur\ $a_0$};
+    % \draw [->] (t1) -- (t2)node[pos=1,xshift=1pt,yshift=2pt]{*} node[midway, above]{\run'\ $t$};
+    % \draw [->] (e1) -- (e2)node[pos=1,xshift=1pt,yshift=2pt]{*} node[midway, below]{\nur\ $a$};
+    \draw [->] (t1) -- (t2) node[midway, above]{\run'\ $t$};
+    \draw [->] (e1) -- (e2) node[midway, below]{\nur\ $a$};
 
     % up to down arrows
     \path [->] (t1) edge node[fill=white, anchor=center]{t2l} (e1);

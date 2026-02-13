@@ -2,23 +2,23 @@
   \begin{prooftree}
     \AxiomC{}
     \RightLabel{\textsc{StopE}}
-    \UnaryInfC{ runE $v_0$ (($\sigma_0$, \mnil) :: a) \msome ($\sigma_0$, a)}
+    \UnaryInfC{ runE $v$ (($\sigma$, \mnil) :: $a$) \msome ($\sigma$, $a$)}
   \end{prooftree}
 \end{minipage}
 \begin{minipage}{0.5\textwidth}
 \begin{prooftree}
-  \AxiomC{ runE $v_0$ (($\sigma_0$, g) :: ca) r }
+  \AxiomC{ runE $v$ (($\sigma$, $g$) :: $ca$) r }
   \RightLabel{\textsc{CutE}}
-  \UnaryInfC{ runE $v_0$ (($\sigma_0$, (cut, ca) :: g) :: \_) r}
+  \UnaryInfC{ runE $v$ (($\sigma$, (cut, $ca$) :: $g$) :: \_) r}
 \end{prooftree}
 \end{minipage}
 \begin{minipage}{0.7\textwidth}
 \vspace{12pt}
 \begin{prooftree}
-  \AxiomC{stepE $v_0$ t $\sigma_0$ a g = ($v_1$, bs) }
-  \AxiomC{runE $v_1$ (bs \mappend a) r }
+  \AxiomC{stepE $v$ $t$ $\sigma$ $a$ $g$ = ($v_1$, $a'$) }
+  \AxiomC{runE $v_1$ ($a'$ \mappend $a$) r }
   \RightLabel{\textsc{CallE}}
-  \BinaryInfC{runE $v_0$ (($\sigma_0$, (call t, \_) :: g) :: a) r}
+  \BinaryInfC{runE $v$ (($\sigma$, (call $t$, \_) :: $g$) :: $a$) r}
 \end{prooftree}
 \end{minipage}
 \begin{minipage}{0.28\textwidth}
