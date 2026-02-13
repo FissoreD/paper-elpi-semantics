@@ -10,24 +10,24 @@
 }
 \crefname{defline}{Definition}{Definitions} % singular / plural
 
-% \newcounter{deflemma}
+\newcounter{deflemma}
 \newcommand{\deflemma}[2][]{
-  \refstepcounter{defline}%
+  \refstepcounter{deflemma}%
   \noindent
   \begin{minipage}{0.9\linewidth}\input{#2}\end{minipage}
-  \hfill(\thedefline)%
+  \hfill(\thedeflemma)%
   \ifx&#1&\else\label{#1}\fi
   \par
 
 }
 \crefname{deflemma}{Lemma}{Lemmas} % singular / plural
 
-% \newcounter{deftypes}
+\newcounter{deftypes}
 \newcommand{\deftypes}[2][]{
-  \refstepcounter{defline}%
+  \refstepcounter{deftypes}%
   \noindent
   \begin{minipage}{0.9\linewidth}\input{#2}\end{minipage}
-  \hfill(\thedefline)%
+  \hfill(\thedeftypes)%
   \ifx&#1&\else\label{#1}\fi
   \par
 
