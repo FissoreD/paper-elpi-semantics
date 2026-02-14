@@ -157,7 +157,7 @@ any call to that predicate leaves no choice points.
   \end{figure}
 
 \section{Preliminaries: syntax and informal semantics of cut}
-
+\label{sec:preliminaries}
 \begin{figure}[b]
   \begin{minipage}{.45\textwidth} 
 \begin{coqcode}
@@ -414,42 +414,58 @@ $\msome{t}$ for \emph{Some t} and $\mnone$ for \emph{None}. \marginpar{spiegare 
 
 \section{And-Or Tree semantics}
 \begin{figure}
-    \input{tex_code/tree_def.tex}
-    \caption{Tree inductive}
+    % \input{tex_code/tree_def.tex}
+    \begin{coqcode}
+Inductive tree ~$\coloneq$~
+  | KO | OK                            (* failure and success *)
+  | Todo of Atom                       (* unexplored branch *)
+  | Or   of option tree & ~$\Sigma$~ & tree ~$\!$~    (* $A \lor B_\sigma$ *) 
+  | And  of tree & list Atom & tree.   (* $A \land_{B_0} B$ *)
+\end{coqcode}
+    \caption{State of the tree-based semantics: And-Or tree}
     \label{fig:tree-ty}
 \end{figure}
 
+An And-Or tree is a stratified variable-width tree. Two kind of
+layers exists and they have to occur in alternation: a disjunctive layer
+is followed by a conjunctive one and viceversa.
+To a root, a query, the tree associates a list of alternatives (an Or-layer)
+and to each alternative a list subqueries to solve (an And-layer).
+Intuitively, in order to solve a query, one needs to solve just one
+of the alternatives in the Or-layer, but all the sunqueries in the corresponding
+And-layer.
 
-\emph{The tree state}
-The tree inductive, shown in \cref{fig:tree-ty}.
-We distinguish 5 main cases: \koC, \okC, and are special
-meta-symbols representing, respectively, the basic failed and a successful
-trees. These symbols are considered meta because they are internal
-intermediate symbols used to give structure to the tree.
+The tree is built incrementally, hence it features a \coqIn{Todo} node
+representing an unexplored branch, an \coqIn{Atom}. When the atom
+is a \coqIn{call} the backchain procedure described in \cref{sec:preliminaries}
+is used to obtain the two layers to be attached to the tree:
+alternatives correspond to the Or-layer, and the premise of each rule to the
+And-layer. This tree expansion is performed by the \coqIn{step} procedure
+described in \cref{sec:step}.
 
-The \taC constructor (acronym for tree-atom) is the constructor of atoms in the
-tree. They are either the cut operator or a call, in these cases, the
-interpreter should evaluate the atom by either cutting the subtrees in the scope
-of the cut or backchaining the call in the program.
+The Rocq data type describing an And-Or tree is given in \cref{fig:tree-ty}.
+In addition to the \coqIn{Todo} it features to nodes, \koC and \okC,
+used to represent failed ot completed branches (intuitively and empty
+disjunction and and empty conjunction).
 
-The two recursive cases of a tree are the \orC and \andC nodes. 
-The \orC node \(A \lor B_\sigma\) denotes a disjunction between two trees \(A\) and
-\(B\). The first branch is optional, if absent it represents a dead tree,
-i.e. a tree that has been entirely explored.
-The second branch is annotated with a suspended substitution \(\sigma\) so
-that, upon backtracking to \(B\), \(\sigma\) is used as the initial substitution
-for the execution of \(B\).
+The \orC node, written \(A \lor B_\sigma\), represent one more alternative
+\(B_\sigma\) to an alternative $A$.
+The first sub-tree, \(A\), is optional and is absent when that tree
+has been entirely explored.
+The alternative is paired with a substitution \(\sigma\) that is
+used as the new current substitution when backtracking to \(B\).
 
-The \andC node \(A \land_{B_0} B\) represents a conjunction of two trees \(A\)
-and \(B\). We call \(B_0\) the reset point for \(B\); it is used to restore the state
-of \(B\) to its initial form if a backtracking operation occurs on \(A\).
-An example of this behavior is shown in \cref{sec:na}
+The \andC node, written  \(A \land_{B_0} B\), represent one more query
+\(B\) to solve after \(A\).  We call \(B_0\) the reset point for \(B\):
+it is used to restore the initial state of \(B\) upon
+backtracking operations occurring in \(A\).
+An example of this behavior is shown in \cref{sec:na}.
 
 A graphical representation of a tree is shown in \cref{tree-ex1}. To make the
 graph more compact, the \andC and \orC nodes are n-ary rather than binary,
 and the children of these nodes associate to the right. 
-The \koC node acts as the neutral elements 
-in the \orC list, while \okC is the neutral element of the \andC list.
+The \koC node acts as the ending elements 
+in the \orC list, while \okC is the ending element of the \andC list.
 
 
 % \begin{figure}
@@ -463,7 +479,8 @@ in the \orC list, while \okC is the neutral element of the \andC list.
 % \caption{backtracking operation}
 % \end{figure}
 
-\emph{The tree interpreter}
+\subsection{The tree-based semantics}
+
 The interpretation of a tree is performed by two main routines: \step and \na
 that traverse the tree depth-first, left-to-right. Then, then \run inductive
 makes the transitive closure of step \step and \na: it iterates the calls to its
@@ -558,7 +575,7 @@ We have pointed by a black arraw the \pathend of all the trees in~\cref{tree-ex}
   the list of atoms $[\eI{f Y Z, !}],[\eI{!}]$ and $[\eI{f Y Z}]$
 }
 
-\subsection{The \step procedure}
+\subsection{The \step procedure}\label{sec:step}
 
 The \step procedure takes as input a program, a set of variables, a
 substitution, and a tree, and returns an updated set of variables, a
@@ -639,7 +656,7 @@ refer to the paragraph in \cref{sec:cut-op}, we are discarding the third rule of
 the \eI{r} predicate.
 
 
-\subsection{The \na procedure}
+\subsection{The \na procedure}\label{sec:next_alt}
 \label{sec:na}
 
 The \step procedure alone is not sufficient to reproduce entirely the behavior
