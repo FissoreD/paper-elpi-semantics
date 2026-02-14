@@ -185,43 +185,46 @@ Definition sigT :=
 
 \end{figure}
 
-Both semantics share the syntax of programs $\mathbb{P}$. \Cref{fig:progx}
-constitutes our runnig example: a program is made of a list of rules
-\coqIn{R}
-and their signatures \coqIn{sigT}. In addition to the arity of a predicate, a signature
-designates some arguments are inputs and some as output and states if
-the predicate is deterministic. A rule is made of a head, a term \coqIn{Tm}
-and a list of premises. Each premise is a atom \coqIn{A}, either the
-cut operator or a call to a predicate.
-The syntax of terms \coqIn{Tm} features
-predicate names, data and variables (in the concrete syntax variables
-are capital letters and application of predicates is written following
-the $\lambda$-calculus, i.e. without parentheses). The set of variables
-\coqIn{V} is countable, allowing us to define the type of substitutions
-$\Sigma$ as a finitely supported map from variables to terms using the
-finmap library~\cite{finmap}.
-The empty substitution is written
-$\epsilon$.
+Both semantics share the same notion of program, written $\mathbb{P}$.
+\Cref{fig:progx} is our running example. A program consists of a list of
+rules \coqIn{R} together with a signature environment \coqIn{sigT}. Besides
+the arity of each predicate, a signature specifies which arguments are
+inputs and which are outputs, and whether the predicate is deterministic.
 
-The backchain operation applies all rules to a query and is at
-the core of both semantics.
+A rule consists of a head term \coqIn{Tm} and a list of premises. Each
+premise is an \coqIn{Atom}, i.e. either the cut operator or a predicate
+call. Terms \coqIn{Tm} include predicate symbols, data, and variables. In
+the concrete syntax, variables are written with capital letters, and
+predicate application follows the $\lambda$-calculus style (no
+parentheses).
+
+The set of variables \coqIn{V} is countable. We represent substitutions
+$\Sigma$ as finitely supported maps from variables to terms, using the
+finmap library~\cite{finmap}.
+The empty substitution is written $\epsilon$ while
+the composition of two substitutions $\sigma_1$ and $\sigma_2$ with
+disjoint supports as $\sigma_1 + \sigma_2$.
+
+The backchaining operation applies all rules to a query term; it is
+central to both semantics.
 
 \input{tex_code/bc_type.tex}
 
-Since each rule can be applied multiple times, befor applying its variables
-need to be freshened. The backchain function heance takes a
-program $P$ and the set $fv$ of variable names used so far
-(\FV); a query term
-and the current substitution $\sigma$. It returns an updated set of
-variable names together with the list of alternatives, i.e. reules that
-apply. More precisely for each rule that applies it returns its premises
-togeter with an updated substitution resulting from
-the unification of the rule head with the query term. In our mechanization
-we abstract the unifier and its properties, namely
+Since a rule may be applied multiple times, its variables must be
+freshened before each application. Accordingly, the backchain function
+takes a program, the set of variable names used so far (\FV), a
+query term, and the current substitution. It returns an updated
+set of variable names together with the list of alternatives, i.e. the
+rules that apply. More precisely, for each applicable rule it returns the
+rule premises together with an updated substitution obtained by unifying
+the rule head with the query term.
+
+In our mechanization we abstract the unifier and its properties, namely
 
 \input{tex_code/unif_type.tex}
-TODO: axioms and explain matching. Cite Dale unif. In this paper we assume the reader is
-familiar with FO unif.
+TODO: state axioms and explain matching; cite Dale's unification results.
+In this paper we assume the reader is familiar with first-order
+unification.
 
 % A backchain is performed when the current
 % atom is a \texttt{call}. In this case, it start by recursively
@@ -319,72 +322,77 @@ familiar with FO unif.
 \subsection{The cut operator}
 \label{sec:cut-op}
 
-%\elpiP is a dialect of \lprologP with the hard cut operator and, in the language
-%we have shown before, \emph{cut} is an atom.
-The semantics of the cut operator adopted in the \textsc{\elpiP} language
-is commonly referred to as \emph{hard cut} (see for example
-the documentation of \textsc{SWI-Prolog} \cite{xxx}).
-Whenever \coqIn{bc} returns a list of alternatives the first one
-is immediately explored while ther others are put on hold: a corresponding
-choice point is created. The premises of each alternative rule are
-processed in order and when a cut is encountered it discards all choice
-points created by \coqIn{bc} and all the choice pints created by
-executing the premises preceeding the cut.
+The cut operator in \textsc{\elpiP} implements the \emph{hard cut}
+(see, e.g., the documentation of \textsc{SWI-Prolog}~\cite{xxx}).
+Whenever the backchaining function \coqIn{bc} returns a list of alternatives,
+the first one is explored immediately, while the others are suspended as
+\emph{choice points}. Within a given alternative, premises are processed from
+left to right. When a cut is encountered, it discards (i) all choice points
+created by \coqIn{bc} for the current call and (ii) all choice points created
+while executing the premises preceding the cut.
 
-For example consider the program $P$ shown in
-\cref{fig:progx} and the query $\elpiIn{g 0 R}$. 
+For example, consider the program $P$ in \cref{fig:progx} and the query
+$\elpiIn{g 0 R}$.
+Both rules for \eI{g} apply to this query. Backchaining therefore returns the
+following two alternatives:\\
+\[
+  [(\sigma_1, [\eI{r A B, f B C, !}]),\; (\sigma_2, [\eI{f D E, f E F}])]
+\]
+with
+$
+  \sigma_1 \coloneq \{\eI{A} \mapsto \eI{0}, \eI{B} \mapsto \eI{C}\}
+$
+and
+$
+  \sigma_2 \coloneq \{\eI{D} \mapsto \eI{0}, \eI{F} \mapsto \eI{R}\}
+$.
+For simplicity, we choose an example where variable refreshing plays no role,
+so we do not discuss the set \FV{} any further.
 
-% \begin{figure}
-%   \begin{minipage}{0.55\textwidth}
-%     \inputminted[fontsize=\small,autogobble,escapeinside=~~,mathescape=true,frame=leftline,framerule=0pt,framesep=1em]{elpi}{./prog.elpi}
-%     \caption{Small \elpiP program example}
-%     \label{fig:prog}
-%   \end{minipage}
-%
-Both rules for
-\eI{g} can be used on this query hence backchain retuns
-the list of alternatives
-$[(\sigma_1, [\eI{r A B, f B C, !}]), (\sigma_2, [\eI{f D E, f E F}])]$
-with $\sigma_1 \coloneq \{\eI{A} \mapsto \eI{0}, \eI{B} \mapsto \eI{C} \}$ and
-$\sigma_2 \coloneq \{\eI{D} \mapsto \eI{0}, \eI{F} \mapsto \eI{R}\}$.
-For simplicity we have taken an example where refreshing variable names plays
-no role, so we will not discuss the set \FV{} any further.
+Execution continues with the first premise of the first alternative, namely
+\eI{r A B} under $\sigma_1$, i.e. \eI{r 0 C}. The remaining alternatives are
+stored as choice points.
+Backchaining \eI{r 0 C} returns
+$
+  [(\sigma_3, []), (\sigma_4, []), (\sigma_5, [\eI{!}])]
+$
+where
+$
+  \sigma_3 \coloneq \sigma_1 + \{\eI{B} \mapsto \eI{0}\}
+$
+;
+$
+  \sigma_4 \coloneq \sigma_1 + \{\eI{B} \mapsto \eI{1}\}
+$
+and
+$
+  \sigma_5 \coloneq \sigma_1 + \{\eI{B} \mapsto \eI{2}\}
+$.
 
-Then backchain operates on the first premise of the first alternative,
-namle \eI{r A B} under $\sigma_1$, that is \eI{r 0 C}. The other alternatives
-are left as choice points.
-
-Backchain returns the following list of alternatives:
-$[(\sigma_3, []), (\sigma_4, []), (\sigma_5, [\eI{!}])]$
-where 
-$\sigma_3 \coloneq \sigma_1 + \{\eI{B} \mapsto \eI{0}\}$,
-$\sigma_4 \coloneq \sigma_1 + \{\eI{B} \mapsto \eI{1}\}$ and 
-$\sigma_5 \coloneq \sigma_1 + \{\eI{B} \mapsto \eI{2}\}$. 
-Since all rules for \eI{r} have no 
-premises we take the substitution of the first sucess, we save the
-others as choice points,
-and we focus on \eI{f B C} in $\sigma_3$, that is \eI{f 0 C}.
-
-This time backchain gives no solution (no rule for \eI{f} applies to 0),
-therefore we backtracking to the most recently introduced
-choice point and we backchain in \eI{f B C} in $\sigma_4$, that is
-\eI{f 1 C}. This gives the solution,
+Since all rules for \eI{r} have empty premises, we chose the first success,
+save the others as choice points, and continue with \eI{f B C} under $\sigma_3$,
+that is, \eI{f 0 C}.
+This time, backchaining fails (no rule for \eI{f} matches input $0$). We
+therefore backtrack to the most recently introduced choice point and retry
+\eI{f B C} under $\sigma_4$, i.e. \eI{f 1 C}. This succeeds with
 $\sigma_6 \coloneq \sigma_4 + \{\eI{R} \mapsto \eI{2}\}$.
 
-We now reach the cut operator. We have still two unexplored alternatives,
-one stemming for the third rule for \eI{r} and one from the second
-rule for \eI{g} (respectively $\sigma_2$ and $\sigma_5$).
-Both alternatives are discarded since they were created at the same time, or
-after, then first rule for \eI{g} was applied. The cut would have not discarded
-choice points created earlier (in this simple example there are none).
+We now reach the cut. At this point there are still two unexplored
+alternatives: one from the third rule for \eI{r} and one from the second rule
+for \eI{g} (respectively, $\sigma_5$ and $\sigma_2$). Both are discarded,
+because they were created when, or after, the first rule for \eI{g} was
+selected. (In contrast, a cut does not discard choice points created earlier;
+in this example, there are none.)
 
 The final solution is:
-$\{\eI{A} \mapsto \eI{0}, \eI{B} \mapsto \eI{1}, \eI{C} \mapsto \eI{R},
-\eI{R} \mapsto \eI{2}\}$.
+$
+  \{\eI{A} \mapsto \eI{0}, \eI{B} \mapsto \eI{1}, \eI{C} \mapsto \eI{R},
+  \eI{R} \mapsto \eI{2}\}
+$.
 
-In sections XX and YY we provide fully mechanized, operational semantics
-for Prolog with cut. The differ in the way they represent the ongoing computation,
-and in particular how alternatives and stored and pruned by the cut operator.
+In Sections~XX and~YY we provide fully mechanized operational semantics for
+\prologP with cut. They differ in how they represent the ongoing computation,
+in particular how alternatives are stored and how they are pruned by cut.
 
 % We propose two formal, operational semantics for a logic program with cut. 
 % The two
@@ -396,7 +404,7 @@ and in particular how alternatives and stored and pruned by the cut operator.
 % using shared pointers. We aim to prove the equivalence of the two semantics
 % together with some interesting lemmas of the cut behavior.
 
-\subsection{Notational conventions}
+\paragraph{Notational conventions}
 
 In the following section we note $\mathbb{B}$ for the bolean type, and $\top$
 and $\bot$ for \cI{true} and \cI{false}. The option instances are noted
