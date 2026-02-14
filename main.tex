@@ -136,11 +136,20 @@ Using the tree-based semantics, we then prove some properties about the
 impact of evaluating the cut in disjunctive querys. For example, unlike in
 classical logic, $q_1 \lor q_2$ is not equivalent to $q_2 \lor q_1$,
 since $q_2$ may be cut-away by $q_1$.
-Moreover, we show that if every rule of a predicate passes the
-determinacy analysis, then a call to that predicate does not leave
+
+Finally we use the formal semantics to to prove the
+correctness of a static analysis for determinacy~\cite{10.1007/978-3-032-15981-6_5}.
+Intuitively, the non-determinacy of predicates stems from the possiblyty to
+complete a computation using two different rules. There are two ways to
+rule out this possibility. The first one is to check rules for overlapping
+heads: if the heads don't overlap then there is no single query that can
+unify with both. The second check is the presence of cut in the premises:
+the completion of a rule with a cut discards all remaining rules.
+We show that if every rule of a predicate passes the
+determinacy analysis sketched above, then a call to that predicate does not leave
 any choice points.
 
-\section{Preliminaries: syntax and informal semantics}
+\section{Preliminaries: syntax and informal semantics of cut}
 
 \begin{figure}
   \input{tex_code/base_type.tex}

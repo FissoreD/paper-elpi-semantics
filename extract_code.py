@@ -56,6 +56,8 @@ def clean_line_global(l,escape):
     l = l.replace("forall", esc(m("\\forall")))
     l = l.replace("exists", esc(m("\\exists")))
     l = l.replace("None", esc(m("\\square")))
+    l = l.replace("\bA\b", "Atom")
+    l = l.replace("\bseq\b", "list")
     if escape:
         l = re.sub("Some ", esc("\\\\msome"), l)
     else:
