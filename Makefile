@@ -2,6 +2,12 @@ FNAME=main
 
 TEX_CMD = pdflatex -synctex=1 -interaction=nonstopmode --shell-escape 
 
+all:
+	echo '{"security":{"enable_cwd_config": true}}' > ~/.latexminted_config && \
+	$(MAKE) all_aux && \
+	$(MAKE) tex_code && \
+	$(MAKE) main
+
 main:
 	${TEX_CMD} ${FNAME}.tex && \
 	bibtex ${FNAME}.aux && \
@@ -40,16 +46,9 @@ all_aux:
 	$(MAKE) build_aux && \
 	$(MAKE) build_elpi
 
-all:
-	$(MAKE) all_aux && \
-	$(MAKE) update_submodule && \
-	$(MAKE) tex_code && \
-	$(MAKE) main
-
 ci:
 	$(MAKE) update_submodule && \
-	$(MAKE) tex_code && \
-	docker create --name latex dfissore/latex2023:latest && \
+	docker create --name latex dfissore/latex2025:latest && \
 	docker cp ./ latex:/data/ && docker ps -a && \
 	docker start -i latex && docker cp latex:/data/main.pdf . && \
 	mkdir -p pdf && mv main.pdf pdf 
