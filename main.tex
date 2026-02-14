@@ -497,16 +497,15 @@ list.
 
 \subsection{The tree-based semantics}
 
-As we anticipated the tree is incrementally constructed by two recursive functions \step and
-\na.
-Both traverse the tree depth-first, left-to-right. Since all functions must
-terminate in Rocq, we define their transitive closure with the
-\run inductive relation. 
-Intuitively \run it iterates the calls to step as long
-as they succeed (the \coqIn{Success} tag); upon failure (\coqIn{Failed} tag)
-it looks for the next alternative, and
-continues on that one if it exists. We detail \step, \na and \run
-in \cref{sec:step,sec:next_alt,sec:runT}.
+As anticipated, the tree is constructed incrementally by two recursive
+functions, \step and \na. Both traverse the tree depth-first, left-to-right.
+Since all functions must terminate in Rocq, we define their transitive closure
+as the inductive relation \run.
+
+Intuitively, \run iterates calls to \step as long as they succeed (tag
+\coqIn{Success}). Upon failure (tag \coqIn{Failed}), it searches for the next
+alternative and continues from there, if one exists. We detail \step, \na, and
+\run in \cref{sec:step,sec:next_alt,sec:runT}.
 
 
 % In \cref{type:stepT,type:naT,type:runT} we give the types
@@ -565,10 +564,10 @@ Definition incomplete ~$t$~ ~$\coloneq$~
   \caption{\getend and derived functions}
 \end{figure}
 
-In order to build the tree incrementally, the semantics
-uses some helper functions based on \coqIn{get_end}: given a tree
-returns the branch to focus on, according to the depth-first, left-to-right,
-traverlas strategy (see~\cref{fig:getend}). 
+To support incremental construction, the semantics uses helper functions based
+on \getend{}. Given a tree, \getend{} returns the branch on which
+the execution should focus, following a depth-first, left-to-right traversal
+strategy (see~\cref{fig:getend}).
 % If the tree
 % is already a leaf, \getend returns its inputs. Otherwise, if the tree is a
 % disjunction, the path continues on the left subtree, if it exists, otherwise
@@ -580,8 +579,7 @@ traverlas strategy (see~\cref{fig:getend}).
 % \cref{fig:getend-aux}.
 
 % We have pointed by a black arraw the \pathend of 
-In all the trees in~\cref{tree-ex} we identify with a black arrow
-the result of \pathend.
+In all trees in~\cref{tree-ex}, a black arrow marks the result of \pathend.
 
 \begin{figure}
   \begin{subfigure}{0.4\textwidth}
@@ -619,9 +617,9 @@ the result of \pathend.
 \end{figure}
 
 \footnotetext{
-  The substitution $\sigma_1\dots\sigma_6$ are from \cref{sec:cut-op},
-  $R_1,R_2$ and $R_3$ are the reset points and correspond respectively to
-  the list of atoms $[\eI{f Y Z, !}],[\eI{!}]$ and $[\eI{f Y Z}]$
+  The substitutions $\sigma_1\dots\sigma_6$ are from \cref{sec:cut-op}.
+  $R_1,R_2$, and $R_3$ are reset points and correspond respectively to the
+  lists of atoms $[\eI{f Y Z, !}]$, $[\eI{!}]$, and $[\eI{f Y Z}]$.
 }
 
 \subsection{The \step procedure}\label{sec:step}
@@ -630,59 +628,56 @@ The \step procedure takes as input a program, a set of variables, a
 substitution, and a tree, and returns an updated set of variables, a
 \steptag, and an updated tree.  
 
-The set of variables is supposed to contain all the variables in the tree
-and is passed to backchain so that all rules are refreshed correctly.
+The set of variables is assumed to contain all variables occurring in the
+tree. It is passed to backchain so that rules can be refreshed correctly.
 % This guarantees that any call
 % to \emph{bc} returns a list of atoms whose variables are disjoint from
 % the variables of the current working tree.\marginpar{not true in figure:fix + also fix in \cref{sec:cut-op}}
 
-The \steptag (see~\cref{type:steptag}) indicates the kind of step that was performed:
-\cI{Expanded} indicates the expansion of a predicate call
-via backchain; \cI{Failure} and \cI{Success} are
-returned for, respectively, trees that pass the \failed and \success tests;
-finally 
-\cI{CutBrothers} indicates a superficial cut, i.e., \step was called on an
-Or-layer and the And-layer immediatley below it containes the cut.
+The \steptag (see~\cref{type:steptag}) indicates which kind of step was
+performed. \cI{Expanded} indicates the expansion of a predicate call via
+backchain. \cI{Failure} and \cI{Success} are returned for trees that satisfy,
+respectively, the \failed and \success tests. Finally, \cI{CutBrothers}
+indicates a superficial cut: \step was called on an Or-layer and the And-layer
+immediately below it contains a cut.
 
-The step procedure is intended to evaluate atoms,
-that is, it leaves unchanged the tree iff its \pathend is false.
+The \step procedure evaluates atoms. In particular, it leaves the tree
+unchanged when \pathend is false.
 
 \mvspace{}
 \deflemma[lemma:success]{tex_code/success_step.tex}
 \deflemma[lemma:failed]{tex_code/failed_step.tex}
 \mvspace{}
 
-\step expands \coqIn{Todo} nodes using backchain that returns a list $l$
-of alternatives $l$.
-If $l$ is empty then the current call is replaced by the \koC node,
-otherwise it is replaced by a right-skewed tree made by \orC inner-nodes
-and each leave correspod to a list of atom $e$ in $l$.
-If $e$ is empty then it is mapped to the \okC tree, otherwise it is mapped
-to a right-skewed tree made by \andC inner-nodes. 
+\step expands \coqIn{Todo} nodes by calling backchain, which returns a list
+$l$ of alternatives. If $l$ is empty, then the current call is replaced by
+\koC. Otherwise, it is replaced by a right-skewed tree of \orC nodes, where
+each leaf corresponds to a list of atoms $e \in l$. If $e$ is empty, the leaf
+is \okC; otherwise, it is a right-skewed tree of \andC nodes.
 
-\Cref{tree-ex1} depicts the tree corresponding to the running example (\cref{sec:cut-op})
-as it undergoes calls to \step.
+\Cref{tree-ex1} depicts the tree corresponding to the running example
+(\cref{sec:cut-op}) as it undergoes calls to \step.
 % , we provide a graphical representation a call to \step on the query
 \marginpar{sottolineare le sostituzioni}
-\eI{q 0 R} on the program $P$ in \cref{fig:prog}. Let $c_0$, $c_1$ and $c_2$ be
-the childreen of the root. $c_0$, by construction is the \mnone tree, while
-$c_1$ and $c_2$ correspod respectively to the premises of rules $r_1$ and $r_2$
-in $P$. We need the first \mnone subtree so that we can attach a
-substituion to $c_1$. In particular, we note that the $c_1$ (resp. $c_2$) are
-related to the substitution $\sigma_1$ (resp. $\sigma_2$). The value of
-$\sigma_1$ and $\sigma_2$ are the same as in \cref{sec:cut-op}. The reset points
-in the tree are marked with the $R$ symbol. $R_1 \coloneq [\eI{f Y Z, !}]$, $R_2
-\coloneq [\eI{!}]$ and $R_3 \coloneq \eI{f Y Z}$, they are essentially the list
-of atoms that allowed to generate the current subtree. Other example of call to
-the \step procedure triggering a backchain are \cref{tree-ex2,tree-ex3,tree-ex5}.
+We run query \eI{q 0 R} against the program $P$ in \cref{fig:prog}. Let $c_0$, $c_1$, and $c_2$
+be the children of the root. By construction, $c_0$ is the \mnone tree, while
+$c_1$ and $c_2$ correspond respectively to the premises of rules $r_1$ and
+$r_2$ in $P$. We need the initial \mnone subtree so that we can attach a
+substitution to $c_1$. In particular, $c_1$ (resp. $c_2$) is associated with
+substitution $\sigma_1$ (resp. $\sigma_2$), whose values are the same as in
+\cref{sec:cut-op}. Reset points are marked with the $R$ symbol:
+$R_1 \coloneq [\eI{f Y Z, !}]$, $R_2 \coloneq [\eI{!}]$, and
+$R_3 \coloneq \eI{f Y Z}$. Intuitively, they record the lists of atoms used to
+generate the corresponding subtree. Other examples of \step triggering
+backchaining appear in \cref{tree-ex2,tree-ex3,tree-ex5}.
 
 \subsubsection{The interpretation of a cut}
 
-The step corresponding to a cut performs two actions:
-(i) the cut node is replaced by the \okC node; (ii)
-the subtrees in the scope of the \cutC are pruned. In particular (ii)
-prunes the left-siblings of the \cutC node (in the same And-layer, also \cutl) and
-prunes the right-uncles of the the \cutC (in the one-level-up Or-layer, also \cutr).
+The step corresponding to a cut performs two actions: (i) the cut node is
+replaced by \okC; and (ii) the subtrees in the scope of \cutC are pruned. More
+precisely, (ii) prunes the left siblings of the \cutC node (in the same
+And-layer, denoted \cutl) and prunes the right uncles of \cutC (in the
+one-level-up Or-layer, denoted \cutr).
 
 % \begin{definition}[Left-siblings (resp. right-sibling) and Right-uncles]
 %   Given a node $A$, the left-siblings (resp. right-sibling) of $A$
@@ -698,17 +693,17 @@ prunes the right-uncles of the the \cutC (in the one-level-up Or-layer, also \cu
 % \end{definition}
 
 
-An example of the impact of the cut is show in \cref{tree-ex6}.
+An example of the impact of cut is shown in \cref{tree-ex6}.
 % In \cref{tree-ex5}, we see that the \pathend is a cut. 
 % The cut is replaced by the \okC node and it need to cut-away some alternatives in the tree. 
 The red arrows
-indicate the scope of the cut, they are labeled with \cutr and \cutl to explain
-which kind of cut has been performed on each pointed subtree. We note that
- the evaluation of a cut keeps the path leading to the cut node unaffected,
-in the sense that the substitution $\sigma_4$ is kept, while the
-path (another success actually) under the substitution $\sigma_5$ is replaced by
-the \koC node. This amounts to discarding the third rule of
-the \eI{r} predicate (see \cref{sec:cut-o}).
+indicate the scope of the cut and are labeled with \cutr and \cutl to indicate
+which pruning operation is applied to each pointed subtree. We note that
+the evaluation of a cut keeps the path leading to the cut node unchanged, in
+the sense that substitution $\sigma_4$ is preserved, while the path under
+substitution $\sigma_5$ (which also succeeds) is replaced by \koC. This
+amounts to discarding the third rule of predicate \eI{r}
+(see \cref{sec:cut-op}).
 
 \subsection{The \na procedure}\label{sec:next_alt}
 \label{sec:na}
