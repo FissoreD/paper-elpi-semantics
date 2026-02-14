@@ -426,46 +426,43 @@ Inductive tree ~$\coloneq$~
     \label{fig:tree-ty}
 \end{figure}
 
-An And-Or tree is a stratified variable-width tree. Two kind of
-layers exists and they have to occur in alternation: a disjunctive layer
-is followed by a conjunctive one and viceversa.
-To a root, a query, the tree associates a list of alternatives (an Or-layer)
-and to each alternative a list subqueries to solve (an And-layer).
-Intuitively, in order to solve a query, one needs to solve just one
-of the alternatives in the Or-layer, but all the sunqueries in the corresponding
-And-layer.
+An And-Or tree is a stratified, variable-width tree. It consists of two kinds
+of layers that alternate: a disjunctive layer is followed by a conjunctive
+layer and vice versa. At the root (a query), the tree records a list of
+alternatives (an Or-layer); for each alternative, it records a list of
+subqueries to be solved (an And-layer). Intuitively, solving a query requires
+solving one alternative in the Or-layer, but all subqueries in the
+corresponding And-layer.
 
-The tree is built incrementally, hence it features a \coqIn{Todo} node
-representing an unexplored branch, an \coqIn{Atom}. When the atom
-is a \coqIn{call} the backchain procedure described in \cref{sec:preliminaries}
-is used to obtain the two layers to be attached to the tree:
-alternatives correspond to the Or-layer, and the premise of each rule to the
-And-layer. This tree expansion is performed by the \coqIn{step} procedure
-described in \cref{sec:step}.
+The tree is built incrementally. It therefore contains a \coqIn{Todo} node,
+which represents an unexplored branch (an \coqIn{Atom}). When the atom is a
+\coqIn{call}, we use the backchaining procedure from
+\cref{sec:preliminaries} to compute the two layers to attach to the tree:
+alternatives form the Or-layer, and the premises of each applicable rule form
+the corresponding And-layer. This expansion step is performed by the
+\coqIn{step} procedure described in \cref{sec:step}.
 
-The Rocq data type describing an And-Or tree is given in \cref{fig:tree-ty}.
-In addition to the \coqIn{Todo} it features to nodes, \koC and \okC,
-used to represent failed ot completed branches (intuitively and empty
-disjunction and and empty conjunction).
+The Rocq data type for And-Or trees is given in \cref{fig:tree-ty}. In
+addition to \coqIn{Todo}, it provides two distinguished nodes, \koC and
+\okC, which represent failed and completed branches (intuitively, an empty
+disjunction and an empty conjunction, respectively).
 
-The \orC node, written \(A \lor B_\sigma\), represent one more alternative
-\(B_\sigma\) to an alternative $A$.
-The first sub-tree, \(A\), is optional and is absent when that tree
-has been entirely explored.
-The alternative is paired with a substitution \(\sigma\) that is
-used as the new current substitution when backtracking to \(B\).
+The \orC node, written \(A \lor B_\sigma\), represents the addition of an
+alternative \(B_\sigma\) to an existing disjunction $A$. The left subtree
+\(A\) is optional and is absent once that branch has been fully explored.
+The right alternative is paired with a substitution \(\sigma\), which becomes
+the current substitution when backtracking to \(B\).\marginpar{why option and not KO?}
 
-The \andC node, written  \(A \land_{B_0} B\), represent one more query
-\(B\) to solve after \(A\).  We call \(B_0\) the reset point for \(B\):
-it is used to restore the initial state of \(B\) upon
-backtracking operations occurring in \(A\).
-An example of this behavior is shown in \cref{sec:na}.
+The \andC node, written \(A \land_{B_0} B\), represents the addition of a
+subquery \(B\) to be solved after \(A\). We call \(B_0\) the \emph{reset
+point} for \(B\): it is used to restore the initial state of \(B\) when
+backtracking occurs within \(A\). An example is shown in \cref{sec:na}.
 
-A graphical representation of a tree is shown in \cref{tree-ex1}. To make the
-graph more compact, the \andC and \orC nodes are n-ary rather than binary,
-and the children of these nodes associate to the right. 
-The \koC node acts as the ending elements 
-in the \orC list, while \okC is the ending element of the \andC list.
+A graphical representation of a tree is shown in \cref{tree-ex1}. For
+compactness, we depict \andC and \orC nodes as $n$-ary (rather than binary),
+with children associating to the right. The \koC node acts as the terminating
+element of an \orC list, while \okC is the terminating element of an \andC
+list.
 
 
 % \begin{figure}
