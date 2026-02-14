@@ -478,20 +478,45 @@ list.
 
 \subsection{The tree-based semantics}
 
-The interpretation of a tree is performed by two main routines: \step and \na
-that traverse the tree depth-first, left-to-right. Then, then \run inductive
-makes the transitive closure of step \step and \na: it iterates the calls to its
-these auxiliary functions
-as much as needed.
-In \cref{type:stepT,type:naT,type:runT} we give the types
-contrats of these symbols where \fvT is a set of variable names.
+The  tree is incrementally constructed by two recursive functions \step and
+\na (see Figure~\ref{fig:signaturesT}).
+Both traverse the tree depth-first, left-to-right. Since all functions must
+terminate in Rocq, we define their transitive closure with the
+\run inductive relation. 
+Intuitively \run it iterates the calls to step as long
+as they succeed (the \coqIn{Success} tag); upon failure (\coqIn{Failed} tag)
+it looks for the next alternative, and
+continues on that one if it exists. We detail \step, \na and \run
+in \cref{sec:step,sec:next_alt,sec:runT}.
 
-\mvspace{}
-\deftypes[type:steptag]{tex_code/step_tag.tex}
-\deftypes[type:stepT]{tex_code/step_sig.tex}
-\deftypes[type:naT]{tex_code/next_alt.tex}
-\deftypes[type:runT]{tex_code/run_sig.tex}
-\mvspace{}
+\begin{figure}
+  
+\begin{coqcode}
+Inductive tag ~$\coloneq$~ Expanded | CutBrothers | Failed | Success.
+Definition step : ~$\mathbb{P}$~ ~$\to$~ ~$\FV$~ ~$\to$~ ~$\Sigma$~ ~$\to$~ tree ~$\to$~ (~$\FV$~ * tag * tree) ~$\coloneq$~
+Definition next_alt : ~$\mathbb{B}$~ ~$\to$~ tree ~$\to$~ option tree ~$\coloneq$~
+Inductive runT (p : ~$\mathbb{P}$~): ~$\FV$~ ~$\to$~ ~$\Sigma$~ ~$\to$~ tree 
+            ~$\to$~ option (~$\Sigma$~ * option tree) ~$\to$~ ~$\mathbb{B}$~ ~$\to$~ ~$\FV$~ ~$\to$~ Prop ~$\coloneq$~
+\end{coqcode}
+
+\label{type:steptag}
+\label{type:stepT}
+\label{type:naT}
+\label{type:runT}
+\label{fig:signaturesT}
+\caption{Signatures for the tree-based semantics}
+\end{figure}
+
+
+% In \cref{type:stepT,type:naT,type:runT} we give the types
+% contrats of these symbols where \fvT is a set of variable names.
+
+% \mvspace{}
+% \deftypes[type:steptag]{tex_code/step_tag.tex}
+% \deftypes[type:stepT]{tex_code/step_sig.tex}
+% \deftypes[type:naT]{tex_code/next_alt.tex}
+% \deftypes[type:runT]{tex_code/run_sig.tex}
+% \mvspace{}
 % A particular tree we want to identify is a \isdead tree (defined in \cref{fig:dead}). This tree has the
 % property to never produce a solution: it is eiher the \deadC tree
 % or both branches of \orC are dead, or the lhs of \andC is dead. In the 
@@ -517,6 +542,7 @@ contrats of these symbols where \fvT is a set of variable names.
   \caption{\getend and derives functions}
 \end{figure}
 
+In order to build the tree depth-first, left-to-right, the semantics 
 The tree interpreter, as in prolog, explores the tree in DFS strategy, to
 discover the substitution and the leaf of the tree that should be interpreted.
 These two pieces of information can be retrieved for a substitution $s$ and a
@@ -756,7 +782,7 @@ complements \step wrt failed, success and \pathatom trees.
 %   \label{fig:na}
 % \end{figure}
 
-\subsection{The \run inductive}
+\subsection{The \run inductive}\label{sec:runT}
 
 The inductive \run is modeled as a function taking $4$ inputs and returning
 $3$ outputs. The inputs are the
