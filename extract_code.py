@@ -45,7 +45,7 @@ def clean_line_global(l,escape):
     l = l.replace("Sigma", esc(m("\\Sigma")))
     # l = l.replace("tree", esc("\\tau"))
     l = l.replace("empty", esc(m("\\epsilon")))
-    l = l.replace("fvS", esc(m("\\mathcal{F}_{\\!\\!\\nu}")))
+    l = l.replace("fvS", esc(m("\\FV")))
     l = l.replace("bool", esc(m("\\mathbb{B}")))
     l = l.replace("program", esc(m("\\mathbb{P}")))
     l = l.replace("<->", esc(m("\\leftrightarrow")))
@@ -56,8 +56,9 @@ def clean_line_global(l,escape):
     l = l.replace("forall", esc(m("\\forall")))
     l = l.replace("exists", esc(m("\\exists")))
     l = l.replace("None", esc(m("\\square")))
-    l = l.replace("\bA\b", "Atom")
-    l = l.replace("\bseq\b", "list")
+    l = re.sub(r"\bmkR\b", "", l)
+    l = re.sub(r"\bA\b", "Atom", l)
+    l = re.sub(r"\bseq\b", "list", l)
     if escape:
         l = re.sub("Some ", esc("\\\\msome"), l)
     else:

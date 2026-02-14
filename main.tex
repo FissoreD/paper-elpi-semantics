@@ -141,57 +141,138 @@ Finally, we use the formal semantics to prove the correctness of a static
 determinacy analysis~\cite{10.1007/978-3-032-15981-6_5}. Intuitively,
 nondeterminism arises when a computation can be completed by applying two
 different rules. We exclude this situation in two ways. First, we check for
-overlapping rule heads: if two heads do not overlap, then no query can unify
-with both. Second, we account for the presence of cut in rule premises: once
-a rule whose body contains a cut succeeds, all remaining rules are discarded.
+overlapping rule heads: if two heads do not overlap in the inputs they
+accept, then no query can unify with both. Second, we account for the
+presence of cut in rule premises: once
+a rule whose premises contain a cut succeeds, all remaining rules are discarded
+and all choice points allocated by premises preceeding the cut are discarded.
 We show that if every rule defining a predicate passes this analysis, then
 any call to that predicate leaves no choice points.
 
+% questa deve stare vicino all'intro perchè aiuta a capire la det
+\begin{figure}[t]
+    \inputminted[fontsize=\small,autogobble,escapeinside=~~,mathescape=true,frame=leftline,framerule=0pt,framesep=1em]{elpi.py:ElpiLexer}{./progx.elpi}
+    \caption{Running example of a \elpiP program}
+    \label{fig:progx}
+  \end{figure}
+
 \section{Preliminaries: syntax and informal semantics of cut}
 
-\begin{figure}
-  \input{tex_code/base_type.tex}
+\begin{figure}[b]
+  \begin{minipage}{.45\textwidth} 
+\begin{coqcode}
+Inductive Tm := ...
+  | Pred of P | Var of V.
+Inductive sig := NonDet | Det.
+Definition sigT :=
+  P -> sig * nat * nat.
+\end{coqcode}
+\vspace{-1.4em}
+  \caption{Syntax of \elpiP programs}
+  \end{minipage}
+  \begin{minipage}{.45\textwidth}    
+  \input{tex_code/atom_type.tex}\\
+  \input{tex_code/R_type.tex}\\
+  \input{tex_code/program_type.tex}\\
+  \input{tex_code/sigma_type.tex}
+  \label{type:atom}
+  \label{type:r}
+  \label{type:prog}
+  \label{type:sigma}
+  \label{fig:basex}
+  \caption{Syntax of \elpiP programs}
+  \end{minipage}
 
-  \begin{minipage}{0.49\textwidth}
-    \input{tex_code/tm_type.tex}
-    \caption{Tm types}
-    \label{fig:tm-type}
-  \end{minipage}
-  \begin{minipage}{0.45\textwidth}
-    \input{tex_code/unif_type.tex}
-    \caption{Unif type}
-    \label{fig:unif-type}
-  \end{minipage}
 \end{figure}
 
-Before going to the two semantcis, we show the piece of data structure that
-are shared by the them. The smallest unit of code that we can use in the
-langauge is an atom. The atom inductive (see~\cref{type:atom}) is
-either a cut or a call. A call
-carries a term~(see \cref{fig:tm-type}). A term (Tm) is either a predicate,
-a datum, a variable or the binary application of two terms.
+Both semantics share the syntax of programs $\mathbb{P}$. \Cref{fig:progx}
+constitutes our runnig example: a program is made of a list of rules
+\coqIn{R}
+and their signatures \coqIn{sigT}. In addition to the arity of a predicate, a signature
+designates some arguments are inputs and some as output and states if
+the predicate is deterministic. A rule is made of a head, a term \coqIn{Tm}
+and a list of premises. Each premise is a atom \coqIn{A}, either the
+cut operator or a call to a predicate.
+The syntax of terms \coqIn{Tm} features
+predicate names, data and variables (in the concrete syntax variables
+are capital letters and application of predicates is written following
+the $\lambda$-calculus, i.e. without parentheses). The set of variables
+\coqIn{V} is countable, allowing us to define the type of substitutions
+$\Sigma$ as a finitely supported map from variables to terms using the
+finmap library~\cite{finmap}.
+The empty substitution is written
+$\epsilon$.
 
-\begin{definition}[Atoms]
-  \input{tex_code/atom_type.tex}
-  \label{type:atom}
-\end{definition}
-\begin{definition}[Rule]
-  \input{tex_code/R_type.tex}
-  \label{type:r}
-\end{definition}
-\begin{definition}[Program]
-  \input{tex_code/program_type.tex}
-  \label{type:prog}
-\end{definition}
-\begin{definition}[Subsitution]
-  \input{tex_code/sigma_type.tex}
-  \label{type:sigma}
-\end{definition}
-\begin{definition}[Backchaining]
-  \leavevmode\\
-  \phantom{AAAA}\input{tex_code/bc_type.tex}
-  \label{type:bc}
-\end{definition}
+The backchain operation applies all rules to a query and is at
+the core of both semantics.
+
+\input{tex_code/bc_type.tex}
+
+Since each rule can be applied multiple times, befor applying its variables
+need to be freshened. The backchain function heance takes a
+program $P$ and the set $fv$ of variable names used so far
+(\FV); a query term
+and the current substitution $\sigma$. It returns an updated set of
+variable names together with the list of alternatives, i.e. reules that
+apply. More precisely for each rule that applies it returns its premises
+togeter with an updated substitution resulting from
+the unification of the rule head with the query term. In our mechanization
+we abstract the unifier and its properties, namely
+
+\input{tex_code/unif_type.tex}
+TODO: axioms and explain matching. Cite Dale unif. In this paper we assume the reader is
+familiar with FO unif.
+
+% A backchain is performed when the current
+% atom is a \texttt{call}. In this case, it start by recursively
+% \emph{dereferencing} the variables in $\sigma$, i.e. replacing all the variables
+% in the query by their term mapping in $\sigma$.
+
+
+% \begin{figure}
+%   \input{tex_code/base_type.tex}
+
+%   \begin{minipage}{0.49\textwidth}
+%     \input{tex_code/tm_type.tex}
+%     \caption{Tm types}
+%     \label{fig:tm-type}
+%   \end{minipage}
+%   \begin{minipage}{0.45\textwidth}
+%     \input{tex_code/unif_type.tex}
+%     \caption{Unif type}
+%     \label{fig:unif-type}
+%   \end{minipage}
+% \end{figure}
+
+
+% Before going to the two semantcis, we show the piece of data structure that
+% are shared by the them. The smallest unit of code that we can use in the
+% langauge is an atom. The atom inductive (see~\cref{type:atom}) is
+% either a cut or a call. A call
+% carries a term~(see \cref{fig:tm-type}). A term (Tm) is either a predicate,
+% a datum, a variable or the binary application of two terms.
+
+% \begin{definition}[Atoms]
+%   \input{tex_code/atom_type.tex}
+%   \label{type:atom}
+% \end{definition}
+% \begin{definition}[Rule]
+%   \input{tex_code/R_type.tex}
+%   \label{type:r}
+% \end{definition}
+% \begin{definition}[Program]
+%   \input{tex_code/program_type.tex}
+%   \label{type:prog}
+% \end{definition}
+% \begin{definition}[Subsitution]
+%   \input{tex_code/sigma_type.tex}
+%   \label{type:sigma}
+% \end{definition}
+% \begin{definition}[Backchaining]
+%   \leavevmode\\
+%   \phantom{AAAA}\input{tex_code/bc_type.tex}
+%   \label{type:bc}
+% \end{definition}
 
 % \mvspace{}
 % \deftypes[type:atom]{tex_code/atom_type.tex}
@@ -201,39 +282,39 @@ a datum, a variable or the binary application of two terms.
 % \deftypes[type:bc]{tex_code/bc_type.tex}
 % \mvspace{}
 
-A rule (see~\cref{type:r}) has a head of type term and a list of premises, that\marginpar{se riesco extract lemma immediately with lemma environment}
-are a list of atoms. A program (see~\cref{type:prog}) is made by its rules and
-the signatures of predicates, \texttt{sigT} is a mapping from predicates to
-their signatures, signatures represent the defintion of type from the simply
-typed lambda calculus, i.e. it is either a base type or an arrow for term
-application. We decorate arrows to know the mode (input or output) of the
-application argument.
+% A rule (see~\cref{type:r}) has a head of type term and a list of premises, that\marginpar{se riesco extract lemma immediately with lemma environment}
+% are a list of atoms. A program (see~\cref{type:prog}) is made by its rules and
+% the signatures of predicates, \texttt{sigT} is a mapping from predicates to
+% their signatures, signatures represent the defintion of type from the simply
+% typed lambda calculus, i.e. it is either a base type or an arrow for term
+% application. We decorate arrows to know the mode (input or output) of the
+% application argument.
 
-A substitution (see \cref{type:sigma}) is a mapping from variables to terms.
-It is the output of a successful query. The empty substitution is noted
-$\epsilon$.
+% A substitution (see \cref{type:sigma}) is a mapping from variables to terms.
+% It is the output of a successful query. The empty substitution is noted
+% $\epsilon$.
 
-The backchain function (bc, see~\cref{type:bc}) takes: a
-program $P$; a set $fv$ of variables ($\mathcal{F}_{\!\!\nu}$); a query
-$q$; and the substitution $\sigma$. A backchain is performed when the current
-atom is a \texttt{call}. In this case, it start by recursively
-\emph{dereferencing} the variables in $\sigma$, i.e. replacing all the variables
-in the query by their term mapping in $\sigma$.
+% The backchain function (bc, see~\cref{type:bc}) takes: a
+% program $P$; a set $fv$ of variables ($\mathcal{F}_{\!\!\nu}$); a query
+% $q$; and the substitution $\sigma$. A backchain is performed when the current
+% atom is a \texttt{call}. In this case, it start by recursively
+% \emph{dereferencing} the variables in $\sigma$, i.e. replacing all the variables
+% in the query by their term mapping in $\sigma$.
 
-TODO: free variables and program freshness
+% TODO: free variables and program freshness
 
-Then it takes the head of the
-term, which should be rigid, i.e. a predicate $p$, and look for the signature
-$s$ of $p$ in the program. Then, for each rule $r$ in $P$, it unifies the head
-of $r$ with $q$. Unification is possible thanks to the unifcator $U$, whose type
-is shown in~\cref{fig:unif-type}. $U$ explains how to unify terms up to standard
-unifcation (for output terms) or matching (for input terms). The function
-\emph{unif} (resp. \emph{matching}) unifies (resp. matches) the two terms under
-$\sigma$, it return an extension of $\sigma$ if the two terms can be unified
-(resp. matched), and None otherwise. The result of a backchain is made by
-filtering the rules in $P$ that can be used on the given query. In particular,
-for each rule filtered rules $r$, it returnes a pair containing the extension of
-$\sigma$ making the head of $r$ and $q$ unify and the list of premises of $r$.
+% Then it takes the head of the
+% term, which should be rigid, i.e. a predicate $p$, and look for the signature
+% $s$ of $p$ in the program. Then, for each rule $r$ in $P$, it unifies the head
+% of $r$ with $q$. Unification is possible thanks to the unifcator $U$, whose type
+% is shown in~\cref{fig:unif-type}. $U$ explains how to unify terms up to standard
+% unifcation (for output terms) or matching (for input terms). The function
+% \emph{unif} (resp. \emph{matching}) unifies (resp. matches) the two terms under
+% $\sigma$, it return an extension of $\sigma$ if the two terms can be unified
+% (resp. matched), and None otherwise. The result of a backchain is made by
+% filtering the rules in $P$ that can be used on the given query. In particular,
+% for each rule filtered rules $r$, it returnes a pair containing the extension of
+% $\sigma$ making the head of $r$ and $q$ unify and the list of premises of $r$.
 
 \subsection{The cut operator}
 \label{sec:cut-op}
@@ -243,85 +324,80 @@ $\sigma$ making the head of $r$ and $q$ unify and the list of premises of $r$.
 The semantics of the cut operator adopted in the \textsc{\elpiP} language
 is commonly referred to as \emph{hard cut} (see for example
 the documentation of \textsc{SWI-Prolog} \cite{xxx}).
-An hard cut eliminates all
-alternatives that are created either simultaneously with, or after, the
-introduction of the cut into the execution state.
+Whenever \coqIn{bc} returns a list of alternatives the first one
+is immediately explored while ther others are put on hold: a corresponding
+choice point is created. The premises of each alternative rule are
+processed in order and when a cut is encountered it discards all choice
+points created by \coqIn{bc} and all the choice pints created by
+executing the premises preceeding the cut.
 
-In order to give the intuition of the
-effect of cut, consider the program $P$ shown in
-\cref{fig:prog} and the query % $q = 
-$\elpiIn{g 0 R}$. 
+For example consider the program $P$ shown in
+\cref{fig:progx} and the query $\elpiIn{g 0 R}$. 
 
-\begin{figure}
-  \begin{minipage}{0.55\textwidth}
-    \inputminted[fontsize=\small,autogobble,escapeinside=~~,mathescape=true,frame=leftline,framerule=0pt,framesep=1em]{elpi}{./prog.elpi}
-    \caption{Small \elpiP program example}
-    \label{fig:prog}
-  \end{minipage}
+% \begin{figure}
+%   \begin{minipage}{0.55\textwidth}
+%     \inputminted[fontsize=\small,autogobble,escapeinside=~~,mathescape=true,frame=leftline,framerule=0pt,framesep=1em]{elpi}{./prog.elpi}
+%     \caption{Small \elpiP program example}
+%     \label{fig:prog}
+%   \end{minipage}
 %
-  \begin{minipage}{0.4\textwidth}
-    \input{tex_code/tree_def.tex}
-    \caption{Tree inductive}
-    \label{fig:tree-ty}
-  \end{minipage}
-\end{figure}
-
-\begin{elpicode}
-g 0 R.
-r 0 B, f B R, !.   % choice point for r2
-f 0 R, !.   % choice point for xx, yy, r2
-f 1 R, !.   % choice point for yy, r2
-!. % choice point for yy, r2
-% R = 2, no choice point left
-\end{elpicode}
-
 Both rules for
-\eI{g} can be used on this query. Backchaining $q$ in $P$ from the empty ($\epsilon$) 
-subsitution returns the list 
+\eI{g} can be used on this query hence backchain retuns
+the list of alternatives
 $[(\sigma_1, [\eI{r A B, f B C, !}]), (\sigma_2, [\eI{f D E, f E F}])]$
 with $\sigma_1 \coloneq \{\eI{A} \mapsto \eI{0}, \eI{B} \mapsto \eI{C} \}$ and
 $\sigma_2 \coloneq \{\eI{D} \mapsto \eI{0}, \eI{F} \mapsto \eI{R}\}$.
-The two elements of the list are generated respectively from the rules $r_1$ and
-$r_2$. For simplicity, we have taken a program where the variable of each pair rule
-are disjoint and a query with variables disjoint from the program, this avoid
-the \emph{bc} function to fresh the program variable.
+For simplicity we have taken an example where refreshing variable names plays
+no role, so we will not discuss the set \FV{} any further.
 
-The next step of the interpretation corresponds to the backchaining of \eI{r X
-Y} from $\sigma_1$. This returns $[(\sigma_3, []), (\sigma_4, []), (\sigma_5, [\eI{!}])]$
-with 
+Then backchain operates on the first premise of the first alternative,
+namle \eI{r A B} under $\sigma_1$, that is \eI{r 0 C}. The other alternatives
+are left as choice points.
+
+Backchain returns the following list of alternatives:
+$[(\sigma_3, []), (\sigma_4, []), (\sigma_5, [\eI{!}])]$
+where 
 $\sigma_3 \coloneq \sigma_1 + \{\eI{B} \mapsto \eI{0}\}$,
 $\sigma_4 \coloneq \sigma_1 + \{\eI{B} \mapsto \eI{1}\}$ and 
 $\sigma_5 \coloneq \sigma_1 + \{\eI{B} \mapsto \eI{2}\}$. 
-The three lists of premises are empty since all rules for \eI{r} have no 
-premises.
+Since all rules for \eI{r} have no 
+premises we take the substitution of the first sucess, we save the
+others as choice points,
+and we focus on \eI{f B C} in $\sigma_3$, that is \eI{f 0 C}.
 
-Backchaining \eI{f B C} in $\sigma_3$ gives no solution, therefore, by
-backtracking, we backchain \eI{f B C} in $\sigma_4$. This gives a solution,
-namely $\sigma_6 \coloneq \sigma_4 + \{\eI{R} \mapsto \eI{2}\}$.
+This time backchain gives no solution (no rule for \eI{f} applies to 0),
+therefore we backtracking to the most recently introduced
+choice point and we backchain in \eI{f B C} in $\sigma_4$, that is
+\eI{f 1 C}. This gives the solution,
+$\sigma_6 \coloneq \sigma_4 + \{\eI{R} \mapsto \eI{2}\}$.
 
-We now reach the cut operator and can see its double side behavior.
-In the current execution state, we have still two unexplored alternatives:
-we can backtrack on the third solution for \eI{r} that assign \eI{B} to \eI{2}
-and on the rules $r_2$. We can note, however, the first alternative
-have been generated after the cut introduction, and the second alternative
-have been generated at the same moment of the cut. Therefore both are cut
-away leaving no choice point. The final complete solution is:
+We now reach the cut operator. We have still two unexplored alternatives,
+one stemming for the third rule for \eI{r} and one from the second
+rule for \eI{g} (respectively $\sigma_2$ and $\sigma_5$).
+Both alternatives are discarded since they were created at the same time, or
+after, then first rule for \eI{g} was applied. The cut would have not discarded
+choice points created earlier (in this simple example there are none).
+
+The final solution is:
 $\{\eI{A} \mapsto \eI{0}, \eI{B} \mapsto \eI{1}, \eI{C} \mapsto \eI{R},
-\eI{R} \mapsto \eI{2}\}$,
-where \eI{A}, \eI{B} and \eI{C} can be ignored since they are the result
-internal unification.
+\eI{R} \mapsto \eI{2}\}$.
 
+In sections XX and YY we provide fully mechanized, operational semantics
+for Prolog with cut. The differ in the way they represent the ongoing computation,
+and in particular how alternatives and stored and pruned by the cut operator.
 
-We propose two formal, operational semantics for a logic program with cut. The two
-semantics are based on different syntaxes, the first syntax (called tree)
-exploits a tree-like structure and is ideal both to have a graphical view of its
-evolution while the tree is being intepreted and to prove lemmas over it. The
-second syntax, called elpi, is the \elpiP's syntax and has the advantage of
-reducing the computational cost of cutting and backtracking alternatives by
-using shared pointers. We aim to prove the equivalence of the two semantics
-together with some interesting lemmas of the cut behavior.
+% We propose two formal, operational semantics for a logic program with cut. 
+% The two
+% semantics are based on different syntaxes, the first syntax (called tree)
+% exploits a tree-like structure and is ideal both to have a graphical view of its
+% evolution while the tree is being intepreted and to prove lemmas over it. The
+% second syntax, called elpi, is the \elpiP's syntax and has the advantage of
+% reducing the computational cost of cutting and backtracking alternatives by
+% using shared pointers. We aim to prove the equivalence of the two semantics
+% together with some interesting lemmas of the cut behavior.
 
-\textit{Notations used in the paper}
+\subsection{Notational conventions}
+
 In the following section we note $\mathbb{B}$ for the bolean type, and $\top$
 and $\bot$ for \cI{true} and \cI{false}. The option instances are noted
 $\msome{t}$ for \emph{Some t} and $\mnone$ for \emph{None}. \marginpar{spiegare notation for list}
@@ -329,6 +405,12 @@ $\msome{t}$ for \emph{Some t} and $\mnone$ for \emph{None}. \marginpar{spiegare 
 
 
 \section{And-Or Tree semantics}
+\begin{figure}
+    \input{tex_code/tree_def.tex}
+    \caption{Tree inductive}
+    \label{fig:tree-ty}
+\end{figure}
+
 
 \emph{The tree state}
 The tree inductive, shown in \cref{fig:tree-ty}.
