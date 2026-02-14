@@ -59,6 +59,11 @@ def clean_line_global(l,escape):
     l = re.sub(r"\bmkR\b", "", l)
     # l = re.sub(r"\bA\b", "Atom", l)
     l = re.sub(r"\bseq\b", "list", l)
+    l = re.sub(r"\bpath_atom\b", "incomplete", l)
+    l = re.sub(r"\bget_subst\b", "next_subst", l)
+    l = re.sub(r"\bpath_end\b", "next_tree", l)
+    l = re.sub(r"\bget_end\b", "next", l)
+    l = re.sub(r"\bTA\b", "Todo", l)
     if escape:
         l = re.sub("Some ", esc("\\\\msome"), l)
     else:
