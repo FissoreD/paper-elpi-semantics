@@ -708,9 +708,10 @@ amounts to discarding the third rule of predicate \eI{r}
 \subsection{The \na procedure}\label{sec:next_alt}
 \label{sec:na}
 
-When backchain returns an empty list the \step procedure produces
-a \coqIn{Failed} tag and a backtracking takes place. The \na procedure
-is in charge of producing a tree where the computation can continue.
+When backchain returns an empty list, \step produces the tag
+\coqIn{Failed} and the computation must backtrack. The \na procedure is
+responsible for producing a new tree from which the computation can
+continue.
 % The \step procedure alone is not sufficient to reproduce entirely the behavior
 % of the full expected prolog interpreter. As proved in \cref{lemma:success} and
 % \cref{lemma:failed}, \step does not make any progression on the tree being
@@ -718,22 +719,20 @@ is in charge of producing a tree where the computation can continue.
 % case of failures. This routine return the backtracked tree if it exists,
 % \mnone otherwise.
 
-In \cref{tree-ex3} we are facing a failure since no rule is applicable to the
-atom \eI{f X Y} under the substitution $\sigma_3$, which assigns \eI{Y} to
-\eI{0}. The \na procudes kills the path leading to this failure and
-resets the current sub-query to its original shape. More precisely it
-kills the \okC node under the
-subsitution $\sigma_3$, since this tree have been entirely explored and led to
-no solution, then it replace the \koC node with the information stored in
-the reset node $R_1$, i.e. restoring the \eI{f Y Z} call to be reconsidered
-under the subsitutution $\sigma_4$. % rule \eI{r 0 1}.
+In \cref{tree-ex3} we encounter a failure because no rule applies to the atom
+\eI{f X Y} under substitution $\sigma_3$, which maps \eI{Y} to \eI{0}. The
+\na procedure prunes the path leading to this failure and resets the current
+sub-query to its original shape. More precisely, it kills the \okC node under
+$\sigma_3$ (since that branch has been fully explored and produced no
+solution), and then replaces the \koC node with the information stored in the
+reset point $R_1$. This restores the call \eI{f Y Z}, which can then be
+reconsidered under substitution $\sigma_4$.
 
-Furthermore, \na accomplishes another important task. Its behavior changes
-depending to the value of the bolean it receives in entry: \emph{\na false A}
-recursively cancels all the failures (if any) in \emph{A}, whereas,
-\emph{\na true A} cancels the first success in \emph{A}. 
-For example, consider the tree in \cref{tree-ex6}, it contains a success, mapping
-namely \eI{R} to \eI{2}. 
+Furthermore, \na serves another important purpose. Its behavior depends on the
+boolean flag it receives as input: \emph{\na\ $\bot$\ $A$} recursively removes
+all failures (if any) from $A$, whereas \emph{\na\ $\top$\ $A$} removes the
+first success in $A$. For example, the tree in \cref{tree-ex6} contains a
+successful path that maps \eI{R} to \eI{2}.
 % The interpreter should return this sucess, but, due to
 % the ``non-deterministic'' behavior of the prolog system, we also need to return
 % all the other solution that could be available by evaluating the rest of the
@@ -783,8 +782,8 @@ namely \eI{R} to \eI{2}.
 % Therefore, if we need to backtrack in the lhs, we need to reset the
 % rhs.
 
-Some interesting property of \na are shown below and allow to see how \na
-complements \step wrt failed, success and \pathatom trees.
+Some interesting properties of \na are shown below; they illustrate how \na
+complements \step with respect to failed, success, and \pathatom trees.
 
 \mvspace{}
 \deflemma[lemma:pathna]{tex_code/path_atom_next_alt_id.tex}
@@ -810,44 +809,41 @@ complements \step wrt failed, success and \pathatom trees.
 
 \subsection{The \run inductive}\label{sec:runT}
 
-The \run inductives relates four inputs with three outputs. The inputs are the
-program, a set of variables, an initial substitution $\sigma$, and a tree
-$t$. The outputs are an optional success $r$ containing a substitution $\sigma'$,
-an optioanl tree $t'$, a boolean $b$ and an updated set of variable names.
-The very interesting piece of information is the result $r$, if $None$,
-it tells that the interpretation failed, otherwise, $\sigma'$
-represents the suolution.
-The tree $t'$ containings the alternative parths that have
-not yet been explored (possibly none).
-The output $b$ and $v_1$ are there to tell respectively if during the
-execution a superficial cut has been evaluated, and what is the updated
-set of variables after the interpretation.
+The inductive relation \run relates four inputs to three outputs. The inputs
+are a program, a set of variables, an initial substitution $\sigma$, and a
+tree $t$. The outputs are (i) an optional result $r$ of the form
+$\msome(\sigma', t')$, (ii) a boolean $b$, and (iii) an updated set of variable
+names.
 
-\run has four cases that we depict as inference rules in \cref{fig:run-rules}.
-(\textsc{StopT}) If the \pathend of the tree $t$ is a success, 
-the substitution $\sigma'$ is retrived in $t$ from $\sigma$ and the input tree 
-is cleaned of its successful
-path. (\textsc{StepT}) If the \pathend of $t$ is an atom, then \step is
-invoked to evaluate $t$, and \run is recursively called on the new
-tree. (\textsc{BackT}) If the \pathend of $t$ is a failure,
-\na is called to clear the failed path; if the resulting cleaned tree $t'$ 
-exists, \run is recursively called on it. Finally, (\textsc{FailT}) takes into
-account tree with no solutions.
+The main output is $r$: if $r = \mnone$, interpretation fails; otherwise
+$\sigma'$ is the computed solution substitution and $t'$ represents the
+remaining, not-yet-explored alternatives. The boolean $b$ records whether a
+superficial cut was evaluated during execution, and the updated variable set
+tracks freshly generated names.
 
-These rules are deterministic: 
+\run has four cases, depicted as inference rules in \cref{fig:run-rules}.
+(\textsc{StopT}) If \pathend\ $t$ is a success, then the substitution
+$\sigma'$ is extracted from $t$ (starting from $\sigma$) and the input tree is
+cleaned of its successful path. (\textsc{StepT}) If \pathend\ $t$ is an atom,
+then \step is invoked to evaluate $t$, and \run is called recursively on the
+updated tree. (\textsc{BackT}) If \pathend\ $t$ is a failure, then \na is
+called to clear the failed path; if the resulting cleaned tree exists, \run is
+called recursively on it. Finally, (\textsc{FailT}) accounts for trees with no
+solutions.
+
+These rules are deterministic:
 
 \mvspace{}
-\deflemma[lemma:naNfail]{tex_code/runT_det.tex}
+\deflemma[lemma:runTdet]{tex_code/runT_det.tex}
 \mvspace{}
 
-The proof is by
-induction on the first \run execution and the proof is rather immediate, since
-all rules are in exclusive due to the hypothis on the \pathend: the hypotheses
-\emph{success $t$}, \emph{\pathatom $t$} and \emph{failed $t$} are
-exclusive. Moreover, by \cref{lemma:naNfail}, we have that the hypothesis of
-\textsc{FailT} implies \emph{failed $t$}, therefore it is exclusive wrt
-\textsc{StopT} and \textsc{StepT}, but also from \textsc{BackT} since the have
-different expectations on the output of \na.
+The proof is by induction on the first \run derivation and is immediate,
+because the rules are selected based on \pathend\ $t$. In particular, the
+hypotheses \emph{success $t$}, \emph{\pathatom $t$}, and \emph{failed $t$} are
+mutually exclusive. Moreover, by \cref{lemma:runTdet}, the hypothesis of
+\textsc{FailT} implies \emph{failed $t$}; hence \textsc{FailT} is exclusive
+with \textsc{StopT} and \textsc{StepT}, and it is also exclusive with
+\textsc{BackT} since they impose different requirements on the output of \na.
 
 \begin{figure}[h]
 
