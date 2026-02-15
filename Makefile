@@ -1,12 +1,25 @@
 FNAME=main
 
 TEX_CMD = pdflatex -synctex=1 -interaction=nonstopmode --shell-escape 
+GENERATOR = python3 extract_code.py
 
-all:
+all: tex_code aux
 	echo '{"security":{"enable_cwd_config": true}}' > ~/.latexminted_config && \
-	$(MAKE) all_aux && \
-	$(MAKE) tex_code && \
 	$(MAKE) main
+
+TEXFILES := $(shell find src -type f -name '*.tex')
+PDFFILES := $(TEXFILES:.tex=.pdf)
+MINFILES := $(shell find elpi-formalization -type f -name '*.v')
+IGNFILES := $(MINFILES:.v=.ign)
+
+aux: $(PDFFILES)
+tex_code: $(IGNFILES)
+
+%.pdf: %.tex
+	cd $(dir $<) && $(TEX_CMD) $(notdir $<)
+
+%.ign: %.v
+	$(GENERATOR) $<
 
 main:
 	${TEX_CMD} ${FNAME}.tex && \
@@ -14,37 +27,8 @@ main:
 	${TEX_CMD} ${FNAME}.tex && \
 	${TEX_CMD} ${FNAME}.tex
 
-gen = python3 extract_code.py $(1);
-
-build_tree:
-	cd ./src/exec_example1 && \
-	for f in $$(ls *.tex); do \
-		$(TEX_CMD) $$f; \
-	done
-
-build_elpi:
-	cd ./src/exec_example1E && \
-	for f in $$(ls *.tex); do \
-		$(TEX_CMD) $$f; \
-	done
-
-build_aux:
-	cd ./src && \
-	for f in $$(ls *.tex); do \
-		$(TEX_CMD) $$f; \
-	done
-
-
-tex_code:
-	$(foreach F, $(wildcard ./elpi-formalization/theories/*.v), $(call gen,$(F))) true
-
 update_submodule:
 	git submodule update --remote
-
-all_aux:
-	$(MAKE) build_tree && \
-	$(MAKE) build_aux && \
-	$(MAKE) build_elpi
 
 ci:
 	$(MAKE) update_submodule && \
@@ -52,5 +36,3 @@ ci:
 	docker cp ./ latex:/data/ && docker ps -a && \
 	docker start -i latex && docker cp latex:/data/main.pdf . && \
 	mkdir -p pdf && mv main.pdf pdf 
-
-.PHONY: tex_code
