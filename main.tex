@@ -335,13 +335,13 @@ while executing the premises preceding the cut.
 For example, consider the program $P$ in \cref{fig:progx} and the query
 $\elpiIn{g 0 R}$.
 Both rules for \eI{g} apply to this query. Backchaining therefore returns the
-following two alternatives:\\
+following two alternatives:
 \[
   [(\sigma_1, [\eI{r A B, f B C, !}]),\; (\sigma_2, [\eI{f D E, f E F}])]
 \]
 with
 $
-  \sigma_1 \coloneq \{\eI{A} \mapsto \eI{0}, \eI{B} \mapsto \eI{C}\}
+  \sigma_1 \coloneq \{\eI{A} \mapsto \eI{0}, \eI{C} \mapsto \eI{R}\}
 $
 and
 $
@@ -351,9 +351,9 @@ For simplicity, we choose an example where variable refreshing plays no role,
 so we do not discuss the set \FV{} any further.
 
 Execution continues with the first premise of the first alternative, namely
-\eI{r A B} under $\sigma_1$, i.e. \eI{r 0 C}. The remaining alternatives are
+\eI{r A B} under $\sigma_1$, i.e. \eI{r 0 B}. The remaining alternatives are
 stored as choice points.
-Backchaining \eI{r 0 C} returns
+Backchaining \eI{r 0 B} returns
 $
   [(\sigma_3, []), (\sigma_4, []), (\sigma_5, [\eI{!}])]
 $
@@ -370,12 +370,12 @@ $
   \sigma_5 \coloneq \sigma_1 + \{\eI{B} \mapsto \eI{2}\}
 $.
 
-Since all rules for \eI{r} have empty premises, we chose the first success,
+Since all rules for \eI{r} have empty premises, we chose the first success,\marginpar{NO: la 3 ha un cut}
 save the others as choice points, and continue with \eI{f B C} under $\sigma_3$,
-that is, \eI{f 0 C}.
+that is, \eI{f 0 R}.
 This time, backchaining fails (no rule for \eI{f} matches input $0$). We
 therefore backtrack to the most recently introduced choice point and retry
-\eI{f B C} under $\sigma_4$, i.e. \eI{f 1 C}. This succeeds with
+\eI{f B C} under $\sigma_4$, i.e. \eI{f 1 R}. This succeeds with
 $\sigma_6 \coloneq \sigma_4 + \{\eI{R} \mapsto \eI{2}\}$.
 
 We now reach the cut. At this point there are still two unexplored
