@@ -186,7 +186,7 @@ Definition sigT :=
 
 \end{figure}
 
-Both semantics share the same notion of program, written $\mathbb{P}$.
+Both semantics share the same notion of program, written $\mathbb{P}$.\marginpar{dire meglio input/output arity}
 \Cref{fig:progx} is our running example. A program consists of a list of
 rules \coqIn{R} together with a signature environment \coqIn{sigT}. Besides
 the arity of each predicate, a signature specifies which arguments are
@@ -430,9 +430,10 @@ Inductive tree ~$\coloneq$~
 \begin{coqcode}
 Inductive tag ~$\coloneq$~ Expanded | CutBrothers | Failed | Success.
 Definition step : ~$\mathbb{P}$~ ~$\to$~ ~$\FV$~ ~$\to$~ ~$\Sigma$~ ~$\to$~ tree ~$\to$~ (~$\FV$~ * tag * tree) ~$\coloneq$~
-Definition next_alt : ~$\mathbb{B}$~ ~$\to$~ tree ~$\to$~ option tree ~$\coloneq$~
+Definition prune : ~$\mathbb{B}$~ ~$\to$~ tree ~$\to$~ option tree ~$\coloneq$~
 Inductive runT : ~$\mathbb{P}$~ ~$\to$~  ~$\FV$~ ~$\to$~ ~$\Sigma$~ ~$\to$~ tree ~$\to$~ option (~$\Sigma$~ * option tree) ~$\to$~ ~$\mathbb{B}$~ ~$\to$~ ~$\FV$~ ~$\to$~ Prop ~$\coloneq$~
 \end{coqcode}
+\caption{Signatures of the tree-based semantics}
 
 \label{type:steptag}
 \label{type:stepT}
@@ -440,7 +441,6 @@ Inductive runT : ~$\mathbb{P}$~ ~$\to$~  ~$\FV$~ ~$\to$~ ~$\Sigma$~ ~$\to$~ tree
 \label{type:runT}
 \label{fig:signaturesT}
 \label{fig:tree-ty}
-    \caption{Signatures of the tree-based semantics}
 \end{figure}
 \marginpar{TODO: nested option, output Fv also inside option}
 
@@ -454,7 +454,7 @@ subqueries to be solved (an And-layer). Intuitively, solving a query requires
 solving one alternative in the Or-layer, but all subqueries in the
 corresponding And-layer.
 
-The tree is built incrementally. It therefore contains a \coqIn{Todo} node,
+The tree is built incrementally. It therefore contains a \coqIn{Todo} node,\marginpar{None sempre? Se l'albero è OK non c'`e TODO?}
 which represents an unexplored branch (an \coqIn{Atom}). When the atom is a
 \coqIn{call}, we use the backchaining procedure from
 \cref{sec:preliminaries} to compute the two layers to attach to the tree:
@@ -482,7 +482,7 @@ A graphical representation of a tree is shown in \cref{tree-ex1}. For
 compactness, we depict \andC and \orC nodes as $n$-ary (rather than binary),
 with children associating to the right. The \koC node acts as the terminating
 element of an \orC list, while \okC is the terminating element of an \andC
-list.
+list.\marginpar{terminatig?}
 
 
 % \begin{figure}
@@ -498,13 +498,13 @@ list.
 
 \subsection{The tree-based semantics}
 
-As anticipated, the tree is constructed incrementally by two recursive
+The tree is constructed incrementally by two recursive
 functions, \step and \na. Both traverse the tree depth-first, left-to-right.
 Since all functions must terminate in Rocq, we define their transitive closure
 as the inductive relation \run.
 
-Intuitively, \run iterates calls to \step as long as they succeed (tag
-\coqIn{Success}). Upon failure (tag \coqIn{Failed}), it searches for the next
+Intuitively, \run iterates calls to \step as long as the node to explore
+is a \cI{Todo}. Upon failure (tag \coqIn{Failed}), it searches for the next
 alternative and continues from there, if one exists. We detail \step, \na, and
 \run in \cref{sec:step,sec:next_alt,sec:runT}.
 
@@ -526,19 +526,7 @@ alternative and continues from there, if one exists. We detail \step, \na, and
 
 \begin{figure}
   \begin{subfigure}{0.45\textwidth}
-    % \input{tex_code/get_end.tex}
-\begin{coqcode}
-Fixpoint next ~$\sigma$~ ~$t$~ : ~$\Sigma$~ * tree ~$\coloneq$~
-  match ~$t$~ with
-  | Todo _ | KO | OK ~$\Rightarrow$~ (~$\sigma$~, ~$t$~)
-  | Or ~$\square$~ ~$\sigma'$~ B ~$\Rightarrow$~ next ~$\sigma'$~ B
-  | Or ~\msome~A _ _ ~$\Rightarrow$~ next ~$\sigma$~ A
-  | And A _ B ~$\Rightarrow$~ 
-    let (~$\sigma'$~, pA) ~$\coloneq$~ next ~$\sigma$~ A in
-    if pA == OK then next ~$\sigma'$~ B
-    else (~$\sigma'$~, pA)
-  end.
-\end{coqcode}
+    \input{tex_code/next.tex}
     % \caption{Defintion of \getend}
     \label{fig:getend}
   \end{subfigure}
@@ -548,17 +536,8 @@ Fixpoint next ~$\sigma$~ ~$t$~ : ~$\Sigma$~ * tree ~$\coloneq$~
       % \input{tex_code/succ_path.tex}
       % \input{tex_code/failed_path.tex}
       % \input{tex_code/path_atom.tex}
-\begin{coqcode}
-Definition next_subst ~$\sigma$~ ~$t$~ ~$\coloneq$~ (next ~$\sigma$~ ~$t$~).1
-Definition next_tree ~$t$~ ~$\coloneq$~ (next ~$\epsilon$~ ~$t$~).2.
-
-Definition success ~$t$~ ~$\coloneq$~ next_tree ~$t$~ == OK.
-Definition failed ~$t$~ ~$\coloneq$~ next_tree ~$t$~ == KO.
-Definition incomplete ~$t$~ ~$\coloneq$~ 
-  if next_tree ~$t$~ is Todo _ then ~$\top$~ else ~$\bot$~.
-~~
-~~
-\end{coqcode}      
+    \input{tex_code/next_aux.tex}
+    \vspace{20pt}
       % \caption{Functions from \getend}
       \label{fig:getend-aux}
   \end{subfigure}
@@ -580,7 +559,7 @@ strategy (see~\cref{fig:getend}).
 % \cref{fig:getend-aux}.
 
 % We have pointed by a black arraw the \pathend of 
-In all trees in~\cref{tree-ex}, a black arrow marks the result of \pathend.
+In all trees in~\cref{tree-ex}, a black arrow marks the result of \pathend.\marginpar{what is next\_tree?}
 
 \begin{figure}
   \begin{subfigure}{0.4\textwidth}
@@ -636,14 +615,14 @@ tree. It is passed to backchain so that rules can be refreshed correctly.
 % the variables of the current working tree.\marginpar{not true in figure:fix + also fix in \cref{sec:cut-op}}
 
 The \steptag (see~\cref{type:steptag}) indicates which kind of step was
-performed. \cI{Expanded} indicates the expansion of a predicate call via
+performed. \cI{Expanded} indicates the expansion of a predicate call via\marginpar{Expanded is also for deep cuts}
 backchain. \cI{Failure} and \cI{Success} are returned for trees that satisfy,
 respectively, the \failed and \success tests. Finally, \cI{CutBrothers}
-indicates a superficial cut: \step was called on an Or-layer and the And-layer
+indicates a superficial cut: \step was called on an Or-layer and the And-layer\marginpar{Se c'è un CutBrothers, allora non Or-layer}
 immediately below it contains a cut.
 
 The \step procedure evaluates atoms. In particular, it leaves the tree
-unchanged when \pathend is false.
+unchanged when \pathend is false.\marginpar{TODO: it does not return false?}
 
 \mvspace{}
 \deflemma[lemma:success]{tex_code/success_step.tex}
@@ -660,7 +639,7 @@ is \okC; otherwise, it is a right-skewed tree of \andC nodes.
 (\cref{sec:cut-op}) as it undergoes calls to \step.
 % , we provide a graphical representation a call to \step on the query
 \marginpar{sottolineare le sostituzioni}
-We run query \eI{q 0 R} against the program $P$ in \cref{fig:prog}. Let $c_0$, $c_1$, and $c_2$
+We run query \eI{q 0 R} against the program $P$ in \cref{fig:progx}. Let $c_0$, $c_1$, and $c_2$
 be the children of the root. By construction, $c_0$ is the \mnone tree, while
 $c_1$ and $c_2$ correspond respectively to the premises of rules $r_1$ and
 $r_2$ in $P$. We need the initial \mnone subtree so that we can attach a
@@ -711,7 +690,7 @@ amounts to discarding the third rule of predicate \eI{r}
 
 When backchain returns an empty list, \step produces the tag
 \coqIn{Failed} and the computation must backtrack. The \na procedure is
-responsible for producing a new tree from which the computation can
+responsible for producing a new tree from which the computation can\marginpar{NO: it always return Expanded for bc}
 continue.
 % The \step procedure alone is not sufficient to reproduce entirely the behavior
 % of the full expected prolog interpreter. As proved in \cref{lemma:success} and
@@ -721,19 +700,19 @@ continue.
 % \mnone otherwise.
 
 In \cref{tree-ex3} we encounter a failure because no rule applies to the atom
-\eI{f X Y} under substitution $\sigma_3$, which maps \eI{Y} to \eI{0}. The
+\eI{f B C} under substitution $\sigma_3$, which maps \eI{B} to \eI{0}. The
 \na procedure prunes the path leading to this failure and resets the current
 sub-query to its original shape. More precisely, it kills the \okC node under
 $\sigma_3$ (since that branch has been fully explored and produced no
 solution), and then replaces the \koC node with the information stored in the
-reset point $R_1$. This restores the call \eI{f Y Z}, which can then be
+reset point $R_1$. This restores the call \eI{f B C}, which can then be
 reconsidered under substitution $\sigma_4$.
 
 Furthermore, \na serves another important purpose. Its behavior depends on the
 boolean flag it receives as input: \emph{\na\ $\bot$\ $A$} recursively removes
 all failures (if any) from $A$, whereas \emph{\na\ $\top$\ $A$} removes the
 first success in $A$. For example, the tree in \cref{tree-ex6} contains a
-successful path that maps \eI{R} to \eI{2}.
+successful path that maps \eI{R} to \eI{2}.\marginpar{and what?}
 % The interpreter should return this sucess, but, due to
 % the ``non-deterministic'' behavior of the prolog system, we also need to return
 % all the other solution that could be available by evaluating the rest of the
@@ -787,7 +766,7 @@ Some interesting properties of \na are shown below; they illustrate how \na
 complements \step with respect to failed, success, and \pathatom trees.
 
 \mvspace{}
-\deflemma[lemma:pathna]{tex_code/path_atom_next_alt_id.tex}
+\deflemma[lemma:pathna]{tex_code/incomplete_prune_id.tex}
 \deflemma[lemma:nafailedf]{tex_code/na_failed.tex}
 \deflemma[lemma:naNfail]{tex_code/naNfail.tex}
 \mvspace{}
@@ -818,7 +797,7 @@ names.
 
 The main output is $r$: if $r = \mnone$, interpretation fails; otherwise
 $\sigma'$ is the computed solution substitution and $t'$ represents the
-remaining, not-yet-explored alternatives. The boolean $b$ records whether a
+remaining, not-yet-explored alternatives. The boolean $b$ records whether a\marginpar{Imprecies: the tree can be KO, i.e. the tree as fully been explored}
 superficial cut was evaluated during execution, and the updated variable set
 tracks freshly generated names.
 
@@ -1230,7 +1209,7 @@ Before going to the equivalence proofs, we want to claim a key lemma allowing
 to ignore the silent transition in the \run inductive.
 
 \mvspace{}
-\deflemma[th:next_altF_t2l]{tex_code/next_altF_t2l.tex}
+\deflemma[th:next_altF_t2l]{tex_code/pruneF_t2l.tex}
 \mvspace{}
 
 It is proved easly by induction on the tree $t$.\marginpar{dire di $v$}
