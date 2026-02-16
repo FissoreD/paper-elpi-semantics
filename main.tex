@@ -940,7 +940,7 @@ evaluated changes the behavior of the program.\marginpar{se riesco success (A or
 \section{Stack semantics}
 \label{stack-sem}
 
-We now introduce the \elpiP semantics. The interpreter is close to that
+We now introduce the stack semantics. The interpreter is close to that
 of the \elpiP language and provides an operational semantics that is
 similar to the one proposed by Pusch in
 \cite{10.1007/BFb0105415}, which is in turn closely related to the
@@ -955,7 +955,8 @@ mutual inductives shown below.
 
 \input{tex_code/elpi_def.tex}
 
-An \elpiP state is an enhanced two-dimensional list. The outermost list
+An stack is an enhanced two-dimensional list, called \empth{alts} in the
+inductive. The outermost list
 represents a list of alternatives in disjunction, each accompanied by
 the substitution that should be used for their interpretation. The
 innermost list is a list of atoms, that is, the list of goals in
@@ -977,7 +978,7 @@ alternatives.
   \label{fig:nur-rules}
 \end{figure}
 
-The \elpiP interpreter is called \nur and has the following type.
+The stack interpreter is called \nur and has the following type.
 
 \mvspace{}
 \deftypes[type:nur]{tex_code/nur_type.tex}
@@ -1014,35 +1015,35 @@ to a list of alternative (\texttt{alts}). \marginpar{Dire una parola su backtrac
   \end{subfigure}
   \begin{subfigure}{0.4\textwidth}
     \includegraphics[width=\textwidth, keepaspectratio]{./src/exec_example1E/elpi1.pdf}
-    \caption{\elpiP state after call to \eI{g 0 R}}
+    \caption{Stack after call to \eI{g 0 R}}
     \label{ex-elpi1}
   \end{subfigure}
   \begin{subfigure}{0.5\textwidth}
     \includegraphics[width=\textwidth, keepaspectratio]{./src/exec_example1E/elpi2.pdf}
-    \caption{\elpiP state after evaluating \cref{ex-elpi1}}
+    \caption{Stack after evaluating \cref{ex-elpi1}}
     \label{ex-elpi2}
   \end{subfigure}
   \begin{subfigure}{0.48\textwidth}
     \includegraphics[width=\textwidth, keepaspectratio]{./src/exec_example1E/elpi3.pdf}
-    \caption{\elpiP state after evaluating \cref{ex-elpi2}}
+    \caption{Stack after evaluating \cref{ex-elpi2}}
     \label{ex-elpi3}
   \end{subfigure}
   \begin{subfigure}{0.48\textwidth}
     \includegraphics[width=\textwidth, keepaspectratio]{./src/exec_example1E/elpi4.pdf}
-    \caption{\elpiP state after evaluating \cref{ex-elpi3}}
+    \caption{Stack after evaluating \cref{ex-elpi3}}
     \label{ex-elpi4}
   \end{subfigure}
   \begin{subfigure}{0.45\textwidth}
     \includegraphics[width=\textwidth, keepaspectratio]{./src/exec_example1E/elpi5.pdf}
-    \caption{\elpiP state after evaluating \cref{ex-elpi4}}
+    \caption{Stack after evaluating \cref{ex-elpi4}}
     \label{ex-elpi5}
   \end{subfigure}
-  \caption{Example of \elpiP execution}
+  \caption{Example of \nur execution}
   \label{ex-elpi}
 \end{figure}
 
 \textit{Example of execution} \marginpar{add subst to each alternative in \cref{ex-elpi}}
-We propose an exemple of execution of an \elpiP state in \cref{ex-elpi}. The
+We propose an exemple of execution of \nur in \cref{ex-elpi}. The
 arrows in the images represent the cut-alternative pointer of the cut. We
 have not put arrow goiing our from atom-calls since the interpreter ignores
 the cut-alternatives in this case (cf. \textsc{CallE}).\marginpar{detail more?}
@@ -1050,9 +1051,9 @@ the cut-alternatives in this case (cf. \textsc{CallE}).\marginpar{detail more?}
 
 \textit{Remark}
 We want finally to point out how the lemma that we were able to prove in
-\cref{sec:run-prop} are not easy to be expressed in the \elpiP semantics. This
-is beacuse there is no sufficient structure in the \elpiP state to understand
-what is the scope of the cut operator. For example, in an \elpiP state made of
+\cref{sec:run-prop} are not easy to be expressed in the stack semantics. This
+is beacuse there is no sufficient structure in the stack to understand
+what is the scope of the cut operator. For example, in a stack made of
 these alternatives $a_0, a_1 \dots a_n$, we have no clear idea of what happens
 if the first alternative $a_0$ succeeds: there could be a cut in $a_0$ but, is
 this cut superficial? What is its impact wrt the alternatives $a_1 \dots a_n$?
@@ -1181,9 +1182,9 @@ alternative in $a$.
 In \cref{tab:t2l} we point out the result of calling
 \ttl on the trees in \cref{tree-ex}. The first raw contains the image reference
 of then trees and the second raw contains the reference of the images from the
-\elpiP state in \cref{ex-elpi}. For the $3^{rd}$ column in the table, we see
+stacks in \cref{ex-elpi}. For the $3^{rd}$ column in the table, we see
 that $t2l$ is not injective. There are different trees that maps to the same
-\elpiP state. In fact, there are transitions in \run that are not visible in
+stack. In fact, there are transitions in \run that are not visible in
 \nur.\marginpar{2) prendere un albero, un nodo interno, dire come t2l e chiamata in quel caso e mettere accanto lo stack corrispondente}
 
 \begin{table}
@@ -1316,7 +1317,7 @@ The proof of \cref{th:t2} is based on the idea explained in~\cite[Section
 we have a state $t$ whose translation is $a$, we proceed by
 induction on the execution of \nur. This gives us not only the output $a'$ but
 that hypothesis that it exists a tree $t'$ such that its translation to the
-\elpiP state is $a'$. This proof strategy is indirectly providing a kind of
+stack state is $a'$. This proof strategy is indirectly providing a kind of
 \ltt function by combining the execution of the \nur and \ttl.
 \end{proof}
 
