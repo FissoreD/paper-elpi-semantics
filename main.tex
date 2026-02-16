@@ -1363,21 +1363,19 @@ most one rule can be successfully used on a given query, whereas \emph{rule
 checking} ensure that each rule does not creates choice points, e.g. by calling
 non-deterministic predicates.
 
-For example, in \cref{fig:progx}, we can declare the following signatures to the\marginpar{spiegare sintassi}
-predicates.
-$$\eI{f} : \eI{int} \to_i \eI{int} \to_o \eI{func} \qquad
-\eI{g} : \eI{int} \to_i \eI{int} \to_o \eI{func} \qquad
-\eI{r} : \eI{int} \to_i \eI{int} \to_o \eI{pred}
-$$
+The syntax of the signatures in \cref{fig:progx} indicates that
+\texttt{f} and \texttt{g} are expected to be functions, as indicated by
+the \eI{~\PYG{k+kd}{func}~} keyword. The \eI{~\PYG{k+kMode}{\PYGZhy{}\PYGZgt{}}~}
+symbol separates inputs from outputs; therefore, all these predicates are
+expected to take an \texttt{int} as input and return an \texttt{int} as
+output.
 
-We see that \texttt{f} is a function since its rules are mutual exclusive and\marginpar{ref verso programma}
-have empty body and \texttt{g} is a function since \eI{r1} is cutting
-\eI{r2} if \eI{r1} succeeds due to the cut. Moreover, both rules 
-
-The signature of the program are stored in the its \texttt{sig} projection, and,
-as in \cite{fissore2026} we need to extends the type of predicates so that we
-are able to distinguish between deterministic and non-deterministic
-propositions. For example, in \cref{fig:prog}, we have ...
+The signatures of the program are stored in its \texttt{sig} projection of the
+program $P$ passed to the interpreter, and are encoded as described in
+\cite{fissore2026}, tahs is, similar to the code in \cref{fig:progx}, we have
+arrows decorated with an input mode for term application, base types (to encode,
+for example, \emph{int}), and two special symbols to distinguish deterministic
+from non-deterministic predicates.
 
 A program execution behaves deterministically if given a program, a substitution
 and a tree to the \run inductive, then either the execution fails, or, if is
