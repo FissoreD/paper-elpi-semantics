@@ -1291,18 +1291,19 @@ returned as a tree match the ones returned as a stack.
 
 \input{tex_code/tree_to_elpi.tex}
 \begin{proof}
-We proceed by induction on the execution of \run'. There
-are $4$ cases to be treated. The first case comes from \textsc{StopT}, it deals
-with successful trees, a successful tree must to start with an empty list and
-therefore we conclude with \textsc{StopE}. The case for \textsc{StepT}, need to
-treat two cases: \step has evaluated either a cut or a call. Depending on this
-we should use \textsc{CutE} or \textsc{CallE} and then the induction hypothesis.
-The case for \textsc{BackT} is a silent case: it represents the non-injective
-behavior of \ttl, but, thanks to \cref{th:pruneFt2l} and the induction
-hypotheses the conclusion ist proved. The last case comes from the derivation 
-\textsc{FailT}. It is easily proved using \textsc{FailE} and the fact that 
-if \na returns $\mnone$ when trying to earse failure in $t$, then \ttl of $t$
-returns the empty list.\marginpar{english!}
+We proceed by induction on the execution of \run'. There are four cases
+to consider. The first case arises from \textsc{StopT}; it deals with
+successful trees. A successful tree must start with an empty list, and
+therefore we conclude using \textsc{StopE}. The case for \textsc{StepT}
+requires treating two subcases: \step evaluates either a cut or a call.
+Accordingly, we apply \textsc{CutE} or \textsc{CallE}, followed by the
+induction hypothesis. The case for \textsc{BackT} is silent: it represents
+the non-injective behavior of \ttl; however, thanks to
+\cref{th:pruneFt2l} and the induction hypothesis, the conclusion is
+proved. The last case arises from the derivation \textsc{FailT}. It is
+easily proved using \textsc{FailE} and the fact that if \na returns
+$\mnone$ when trying to erase failure in $t$, then \ttl applied to $t$
+returns the empty list.
 \end{proof}
 
 The converse direction is stated following~\cite{yves-equiv}: instead of
@@ -1335,7 +1336,7 @@ Stating the converse direction in a symmetric way
 would have requires a function
 \ltt transforming an stack $a$ to a tree $t$.
 Writing this function is far from trivial, since the structure of
-the tree is lost by save alts\marginpar{METTERLA} and run that
+the tree is lost by \emph{save\_alts} and run that
 intuitively keep the state into a big disjunction of conjunctions by
 distributing conjunctions over disjunctions. Moreover one would
 need to define a notion of valid stack that is equally intricate.
@@ -1355,7 +1356,7 @@ most one rule can be successfully used on a given query, whereas \emph{rule
 checking} ensure that each rule does not creates choice points, e.g. by calling
 non-deterministic predicates.
 
-For example, in \cref{fig:prog}, we can declare the following signatures to the\marginpar{spiegare sintassi}
+For example, in \cref{fig:progx}, we can declare the following signatures to the\marginpar{spiegare sintassi}
 predicates.
 $$\eI{f} : \eI{int} \to_i \eI{int} \to_o \eI{func} \qquad
 \eI{g} : \eI{int} \to_i \eI{int} \to_o \eI{func} \qquad
