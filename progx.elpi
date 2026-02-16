@@ -1,5 +1,5 @@
 func f int -> int. % f is a deterministic predicate. The two rules
-f 1 2.            % have non-verlapping heads, i.e. 1 != 2
+f 1 2.             % have non-verlapping heads, i.e. 1 != 2
 f 2 3.               
 pred r int -> int. % r is a non-deterministic predicate. The heads
 r 0 0.             % overlap: the query for 0 has three applicable
