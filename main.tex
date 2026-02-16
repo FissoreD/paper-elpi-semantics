@@ -593,14 +593,17 @@ In \cref{tree-ex} we mark with a black arrow the result of \pathend.
   \end{subfigure}
   \begin{subfigure}{0.5\textwidth}
     \includegraphics[width=\textwidth, keepaspectratio]{./src/exec_example1/step4.pdf}
+    \renewcommand\thesubfigure{d.1}
     \caption{\step on \cref{tree-ex2}}
     \label{tree-ex3} 
   \end{subfigure}
   \begin{subfigure}{0.5\textwidth}
     \includegraphics[width=\textwidth, keepaspectratio]{./src/exec_example1/step5.pdf}
+    \renewcommand\thesubfigure{d.2}
     \caption{\na on \cref{tree-ex3}}
     \label{tree-ex4} 
   \end{subfigure}
+  \setcounter{subfigure}{4}
   \begin{subfigure}{0.55\textwidth}
     \includegraphics[width=\textwidth, keepaspectratio]{./src/exec_example1/step6.pdf}
     \caption{\step on \cref{tree-ex4}}
@@ -1185,10 +1188,10 @@ that $t2l$ is not injective. There are different trees that maps to the same
 
 \begin{table}
   \centering
-  \begin{tabular}{c|c|c|c|c|c}
+  \begin{tabular}{c|c|c|c|c|c|c}
     % \toprule
-    $t$ & \ref{tree-ex1} & \ref{tree-ex2} & \ref{tree-ex3} and \ref{tree-ex4} & \ref{tree-ex5} & \ref{tree-ex6} \\
-    $t2l\ t\ \epsilon\ \mnil$ & \ref{ex-elpi1} & \ref{ex-elpi2} & \ref{ex-elpi3} & \ref{ex-elpi4} & \ref{ex-elpi5}
+    $t$ & \ref{tree-ex0} & \ref{tree-ex1} & \ref{tree-ex2} & \ref{tree-ex3} and \ref{tree-ex4} & \ref{tree-ex5} & \ref{tree-ex6} \\
+    $t2l\ t\ \epsilon\ \mnil$ & \ref{ex-elpi0} & \ref{ex-elpi1} & \ref{ex-elpi2} & \ref{ex-elpi3} & \ref{ex-elpi4} & \ref{ex-elpi5}
     % \bottomrule
   \end{tabular}
   \caption{Tree to list from \cref{tree-ex} and \cref{ex-elpi}}
