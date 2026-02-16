@@ -75,7 +75,7 @@ def clean_line_global(l,escape):
 
     def clean_esc(l):
         m = l.group(1)
-        return  "\\ensuremath{\\phantom{!}_{\!\!\!\!" + m.replace("~", "").replace("$","") + "}}"
+        return  "\\ensuremath{\\phantom{!}_{\!\!" + m.replace("~", "").replace("$","") + "}}"
 
 
     def change_vars(vn, gl, l):
