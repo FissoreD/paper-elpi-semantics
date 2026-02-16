@@ -34,7 +34,7 @@ def clean_line_global(l,escape):
     def esc(l):
         return f"~{l}~" if escape else l
     def m(l) : 
-        return f"${l}$"
+        return f"\\\\ensuremath{{{l}}}"
     l = remove_some_par(l)
     l = l.replace("%G", "")
     l = re.sub(r'\b_\w+\b', '_', l)
@@ -42,20 +42,20 @@ def clean_line_global(l,escape):
         l = re.sub(r'_', '\\_', l)
     l = re.sub(r'\+\+', esc('\\\\mappend'), l)
     l = re.sub(r'\[::\]', esc('\\\\mnil'), l)
-    l = l.replace("Sigma", esc(m("\\Sigma")))
-    # l = l.replace("tree", esc("\\tau"))
-    l = l.replace("empty", esc(m("\\epsilon")))
-    l = l.replace("fvS", esc(m("\\FV")))
-    l = l.replace("bool", esc(m("\\mathbb{B}")))
-    l = l.replace("program", esc(m("\\mathbb{P}")))
-    l = l.replace("<->", esc(m("\\leftrightarrow")))
-    l = l.replace("->", esc(m("\\to")))
-    l = l.replace("=>", esc(m("\\Rightarrow")))
-    l = l.replace("/\\", esc(m("\\land")))
-    l = l.replace(":=", esc(m("\\coloneq")))
-    l = l.replace("forall", esc(m("\\forall")))
-    l = l.replace("exists", esc(m("\\exists")))
-    l = l.replace("None", esc(m("\\square")))
+    l = re.sub("Sigma", esc(m("\\\\Sigma")), l)
+    # l = re.sub("tree", esc("\\tau"), l)
+    l = re.sub("empty", esc(m("\\\\epsilon")), l)
+    l = re.sub("fvS", esc(m("\\\\FV")), l)
+    l = re.sub("bool", esc(m("\\\\mathbb{B}")), l)
+    l = re.sub("program", esc(m("\\\\mathbb{P}")), l)
+    l = re.sub("<->", esc(m("\\\\leftrightarrow")), l)
+    l = re.sub("->", esc(m("\\\\to")), l)
+    l = re.sub("=>", esc(m("\\\\Rightarrow")), l)
+    l = re.sub("/\\\\", esc(m("\\\\land")), l)
+    l = re.sub(":=", esc(m("\\\\coloneq")), l)
+    l = re.sub("forall", esc(m("\\\\forall")), l)
+    l = re.sub("exists", esc(m("\\\\exists")), l)
+    l = re.sub("None", esc(m("\\\\square")), l)
     l = re.sub(r"\bmkR\b", "", l)
     # l = re.sub(r"\bA\b", "Atom", l)
     l = re.sub(r"\bseq\b", "list", l)
@@ -68,10 +68,16 @@ def clean_line_global(l,escape):
         l = re.sub("Some ", esc("\\\\msome"), l)
     else:
         l = re.sub("Some", esc("\\\\msome"), l)
-    l = l.replace("true", esc(m("\\top")))
-    l = l.replace("false", esc(m("\\bot")))
+    l = re.sub("true", esc(m("\\\\top")), l)
+    l = re.sub("false", esc(m("\\\\bot")), l)
     l = l.replace("\bsm\b", " " + esc(m("s_m")) + " ")
     pat = ["v","b","t","r","a", "g", "l"]
+
+    def clean_esc(l):
+        m = l.group(1)
+        return  "\\ensuremath{\\phantom{!}_{\!\!\!\!" + m.replace("~", "").replace("$","") + "}}"
+
+
     def change_vars(vn, gl, l):
         return re.sub(f"\\b{vn}('+)|\\b{vn}\\b", esc(m(f"{gl}\g<1>")), l)
     def it_pat(pat,gl,l):
@@ -84,6 +90,9 @@ def clean_line_global(l,escape):
         l = it_pat(p, p, l)
         
     l = l.replace("step_tag", "tag") # FIXME
+    l = re.sub("\\\\/", esc(m("\\\\lor")), l)
+    # l = re.sub("-sub", esc(m("x\\_")), l)
+    l = re.sub(r' -sub\(([^)]*)\)', lambda x: esc(clean_esc(x)), l)
     return l
 
 # def latexify(expr):
