@@ -970,7 +970,19 @@ alternatives.
 % The cutr and cutl operations disappears: the alternatives are stored 
 % directly in the cutE terminal.
 \begin{figure}
+
+  \begin{minipage}{0.52\textwidth}
+  \begin{coqcode}
+  Definition save_gs ~$a$~ ~$g$~ ~$b$~ := 
+    [seq (x, ~$a$~) | x <- ~$b$~] ++ ~$g$~.
+
+  Definition save_alts ~$a$~ ~$g$~ ~$b$~ := 
+    [seq (x.1, save_gs ~$a$~ ~$g$~ x.2) | x <- ~$b$~].
+  \end{coqcode}
+  \end{minipage}
+  \begin{minipage}{0.38\textwidth}    
   \input{tex_code/stepE.tex}
+  \end{minipage}
 
   \input{nurbp.tex}
 
