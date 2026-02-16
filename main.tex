@@ -708,9 +708,9 @@ amounts to discarding the third rule of predicate \eI{r}
 \subsection{The \na procedure}\label{sec:next_alt}
 \label{sec:na}
 
-When backchain returns an empty list, \step produces the tag
-\coqIn{Failed} and the computation must backtrack. The \na procedure is
-responsible for producing a new tree from which the computation can\marginpar{NO: it always return Expanded for bc}
+When backchain returns an empty list, \step produces a \emph{failed}
+tree and the computation must backtrack. The \na procedure is
+responsible for producing the new tree from which the computation can
 continue.
 % The \step procedure alone is not sufficient to reproduce entirely the behavior
 % of the full expected prolog interpreter. As proved in \cref{lemma:success} and
@@ -732,7 +732,10 @@ Furthermore, \na serves another important purpose. Its behavior depends on the
 boolean flag it receives as input: \emph{\na\ $\bot$\ $A$} recursively removes
 all failures (if any) from $A$, whereas \emph{\na\ $\top$\ $A$} removes the
 first success in $A$. For example, the tree in \cref{tree-ex6} contains a
-successful path that maps \eI{R} to \eI{2}.\marginpar{and what?}
+successful path that maps \eI{R} to \eI{2}. Calling \na\ on this tree returns
+\mnone, since there are no alternatives in the tree after the success.
+
+
 % The interpreter should return this sucess, but, due to
 % the ``non-deterministic'' behavior of the prolog system, we also need to return
 % all the other solution that could be available by evaluating the rest of the
