@@ -1055,10 +1055,19 @@ to a list of alternative (\texttt{alts}). \marginpar{Dire una parola su backtrac
 \end{figure}
 
 \textit{Example of execution}
-We propose an exemple of execution of \nur in \cref{ex-elpi}. The
-arrows in the images represent the cut-alternative pointer of the cut. We
-have not put arrow goiing our from atom-calls since the interpreter ignores
-the cut-alternatives in this case (cf. \textsc{CallE}).\marginpar{detail more?}
+We propose an example of the execution of \nur in \cref{ex-elpi}. The
+arrows in the images represent the cut-alternative pointers of the cut. We
+have not drawn arrows coming out of atom-calls since the interpreter
+ignores the cut-alternatives in this case (cf. \textsc{CallE}). The evolution
+of the stack in \cref{ex-elpi} mirrors the example in \cref{sec:cut-op}:
+we evaluate the first goal of the first alternative. During backchaining,
+we add a pointer to the remaining alternatives to each new cut operator.
+If a cut is evaluated, we replace the remaining alternatives with the
+cut-to alternatives. For example, in \cref{ex-elpi5}, evaluating the cut
+discards the second and third elements in the stack. Backtracking is
+performed by simply removing the first alternative from the stack, as shown
+in \cref{ex-elpi3}.
+\marginpar{detail more?}
 
 
 \textit{Remark}
