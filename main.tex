@@ -733,7 +733,7 @@ boolean flag it receives as input: \emph{\na\ $\bot$\ $A$} recursively removes
 all failures (if any) from $A$, whereas \emph{\na\ $\top$\ $A$} removes the
 first success in $A$. For example, the tree in \cref{tree-ex6} contains a
 successful path that maps \eI{R} to \eI{2}. Calling \na\ on this tree returns
-\mnone, since there are no alternatives in the tree after the success.
+\mnone, since there are no alternatives in the tree after the success..
 
 
 % The interpreter should return this sucess, but, due to
@@ -1003,12 +1003,18 @@ by \texttt{bc}, then each list of premises if mapped to a list of goals
 to a list of alternative (\texttt{alts}). \marginpar{Dire una parola su backtracking = tl if bc = nil}
 
 \begin{figure}
+  \centering
+  \begin{subfigure}{0.2\textwidth}
+    \includegraphics[width=0.35\textwidth, keepaspectratio]{./src/exec_example1E/elpi0.pdf}
+    \caption{Initial query}
+    \label{ex-elpi0}
+  \end{subfigure}
   \begin{subfigure}{0.4\textwidth}
     \includegraphics[width=\textwidth, keepaspectratio]{./src/exec_example1E/elpi1.pdf}
     \caption{\elpiP state after call to \eI{g 0 R}}
     \label{ex-elpi1}
   \end{subfigure}
-  \begin{subfigure}{0.55\textwidth}
+  \begin{subfigure}{0.5\textwidth}
     \includegraphics[width=\textwidth, keepaspectratio]{./src/exec_example1E/elpi2.pdf}
     \caption{\elpiP state after evaluating \cref{ex-elpi1}}
     \label{ex-elpi2}
@@ -1023,13 +1029,11 @@ to a list of alternative (\texttt{alts}). \marginpar{Dire una parola su backtrac
     \caption{\elpiP state after evaluating \cref{ex-elpi3}}
     \label{ex-elpi4}
   \end{subfigure}
-  \begin{center}
   \begin{subfigure}{0.45\textwidth}
     \includegraphics[width=\textwidth, keepaspectratio]{./src/exec_example1E/elpi5.pdf}
     \caption{\elpiP state after evaluating \cref{ex-elpi4}}
     \label{ex-elpi5}
   \end{subfigure}
-  \end{center}
   \caption{Example of \elpiP execution}
   \label{ex-elpi}
 \end{figure}
