@@ -110,7 +110,7 @@ and Derive~\cite{tassi2018,tassi2019,tassi2023}, a program-and-proof synthesis
 framework with industrial applications at SkyLabs AI.
 
 Starting with version 3, \elpiP is equipped with a static analysis for
-determinacy~\cite{10.1007/978-3-032-15981-6_5} to help users control
+determinacy~\cite{fissore2026} to help users control
 backtracking. \rocqP{} users are familiar with functional programming, but
 not necessarily with logic programming; in particular, uncontrolled
 backtracking is a common source of inefficiency and makes debugging
@@ -123,14 +123,14 @@ In the following we use \emph{choice point} and \emph{alternative} as
 synonyms.
 
 This paper reports our first steps towards a mechanization, in the \rocqP
-prover, of the determinacy analysis from~\cite{10.1007/978-3-032-15981-6_5}.
+prover, of the determinacy analysis from~\cite{fissore2026}.
 We focus on the control operator \emph{cut}, which is useful to restrict
 backtracking but makes the semantics depart from a pure logical reading.
 
 We formalize two operational semantics for \prologP with cut. The first is a
 stack-based semantics that closely models \elpiP's implementation and is
 similar to the semantics mechanized by Pusch in \isabelleP~\cite{10.1007/BFb0105415}
-and to the model of Debray and Mishra~\cite[Sec.~4.3]{10.1016/0743-1066(88)90007-6}.
+and to the model of Debray and Mishra~\cite[Sec.~4.3]{Debray1988}.
 This stack-based semantics is a good starting point to study further
 optimizations used by standard \prologP abstract machines~\cite{warren1983abstract,10.7551/mitpress/7160.001.0001},
 but it makes reasoning about the scope of cut difficult. To address
@@ -142,7 +142,7 @@ classical logic, $q_1 \lor q_2$ is not equivalent to $q_2 \lor q_1$,
 since $q_2$ may be cut-away by $q_1$.
 
 Finally, we use the formal semantics to prove the correctness of a static
-determinacy analysis~\cite{10.1007/978-3-032-15981-6_5}. Intuitively,
+determinacy analysis~\cite{fissore2026}. Intuitively,
 nondeterminism arises when a computation can be completed by applying two
 different rules. We exclude this situation in two ways. Firstly, at
 most one rule should be used on a given query. This condition is
@@ -945,7 +945,7 @@ of the \elpiP language and provides an operational semantics that is
 similar to the one proposed by Pusch in
 \cite{10.1007/BFb0105415}, which is in turn closely related to the
 semantics given by Debray and Mishra in
-\cite[Section~4.3]{10.1016/0743-1066(88)90007-6}. Pusch mechanized this
+\cite[Section~4.3]{Debray1988}. Pusch mechanized this
 semantics in Isabelle/HOL, together with several optimizations that are
 also present in the Warren Abstract Machine
 \cite{warren1983abstract,10.7551/mitpress/7160.001.0001}.
