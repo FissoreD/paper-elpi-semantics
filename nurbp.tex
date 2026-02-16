@@ -15,7 +15,7 @@
 \begin{minipage}{0.7\textwidth}
 \vspace{12pt}
 \begin{prooftree}
-  \AxiomC{stepE $v$ $t$ $\sigma$ $a$ $g$ = ($v_1$, $a'$) }
+  \AxiomC{stepE p $v$ $t$ $\sigma$ $a$ $g$ = ($v_1$, $a'$) }
   \AxiomC{runS p $v_1$ ($a'$ \mappend $a$) r }
   \RightLabel{\textsc{CallS}}
   \BinaryInfC{runS p $v$ (($\sigma$, (call $t$, \_) :: $g$) :: $a$) r}
