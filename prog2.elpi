@@ -1,0 +1,18 @@
+pred f int -> int.
+pred g int -> int.
+
+f X :- g X.
+g 1.
+g 2.
+
+main :- f X.
+
+/*
+L'albero diventa:
+
+f X ===> None \/ g X
+    ===> None \/ (None \/_s1 OK \/_s2 OK)
+
+    s1 := X = 1       s2 := X = 2
+
+*/
