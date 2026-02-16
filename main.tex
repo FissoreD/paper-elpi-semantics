@@ -1329,7 +1329,7 @@ intuitively keep the state into a big disjunction of conjunctions by
 distributing conjunctions over disjunctions. Moreover one would
 need to define a notion of valid stack that is equally intricate.
 
-\section{Case study: determinacy alanysis}
+\section{Case study: determinacy alanysis}\label{sec:determinacy}
 
 An interesting application of the tree semantics is the determinacy checking
 that was added in version 3 of the \elpiP langauge~\cite{fissore2026}. The
@@ -1396,22 +1396,22 @@ data structure, like the tree to encompass this problem.
 
 \section{Related work}
 
-We studied a Prolog semantics where input arguments are matched, rather
-than unified, against the rule's head. This semantics agrees with the Elpi
-interpreter, that in turn is inspired by
-B-Prolog's ``matching-clauses'' in this respect~\cite{zhou2012}. The
-two semantics we presented and proved equivalent do apply to standard
-Prolog as well if one forces all predicate signatures to only feature
-output arguments.\\
-When it comes to determinacy analysis matching input arguments has only the
-following impact: axiom XXX does not require the query $q$ to be ground.
-Adapting our work to standard Prolog requires a minor change, namly adding
-the extra groundness hypothesis to XXX. In turn, in order to satisfy that
-premise, one typically has to perform an additional static analysis to
-check if the program is well moded. Well moded predicates generate ground outputs
-under the assumptions their inputs are ground; starting from a ground initial
-query well moded programs do behave exactly as if the input arguments
-were matched, hence our proofs do apply.
+We studied a \prologP semantics in which input arguments are \emph{matched},
+rather than unified, against rule heads. This choice agrees with the \elpiP
+interpreter, which is in turn inspired by B-Prolog's
+``matching-clauses''~\cite{zhou2012}. The two semantics we presented (and
+proved equivalent) also apply to standard \prologP if one forces all predicate
+signatures to have only output arguments.
+
+For determinacy analysis, matching input arguments affects the development
+only as follows: axiom XXX does not require the query $q$ to be ground.
+Adapting our results to standard \prologP therefore requires two changes.
+First, to add the corresponding groundness hypothesis to XXX. Second, to discharge
+this premise when XXX is used. Typically this requires an additional static analysis that
+checks whether the program is well-moded. Well-moded predicates produce
+ground outputs assuming ground inputs; hence, starting from a ground initial
+query, well-moded programs behave exactly as if input arguments were matched,
+and hence the proofs in \cref{sec:determinacy} still apply.
 
 The only mechanization of Prolog's semantics
 we could find is the one by Pusch in \isabelleP~\cite{10.1007/BFb0105415}
@@ -1421,23 +1421,22 @@ introducing some optimizations usually found in
 the Warren abstract machine~\cite{warren1983abstract,10.7551/mitpress/7160.001.0001}.
 They do not use the semantics to prove properties
 on the execution of programs as we do in our use case, hence they do not face the
-difficulty described in seciton XXX that pushed us to
+difficulty described in \cref{stack-sem} that pushed us to
 develop an more explicit semantics (with respect to cut).
-In some way our work is complementary, showing he stack
-based semantics equivalent to more optmized one, we could 
-consider implement in Elpi.
+In some way our work is complementary, showing the stack
+based semantics equivalent to a more optmized one.
 
-Another relevant work are the ones by King cite,
-but we could not find their code. Their semantics
+Another relevant work are the ones by King~\cite{2011king},
+but we could not find their Rocq source code. Their semantics
 is denotational and cannot easily cover all the
-features our paper XX does, but would have been sufficient
-for this first step.
+features our paper \cite{fissore:hal-05026472} does, but would have
+been sufficient for this first step.
 
 The proof technique we use to relate the two semantics
-is inspired by XXX and we thank Y.Bertot for insightful
-discussions on the topic. In XXX Bertot relates bla bla,
+is inspired by \cite{yves-equiv} and we thank Y.Bertot for insightful
+discussions on the topic. In \cite{yves-equiv} Bertot relates bla bla,
 witout never constructing a decompiler, exactly as we
-never build a list to tree function.
+never build a list to tree function.\marginpar{FINIRE}
 
 \section{Conclusion}
 
