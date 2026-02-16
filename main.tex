@@ -124,7 +124,7 @@ prover, of the determinacy analysis from~\cite{10.1007/978-3-032-15981-6_5}.
 We focus on the control operator \emph{cut}, which is useful to restrict
 backtracking but makes the semantics depart from a pure logical reading.
 
-We formalize two operational semantics for \prologP with cut. The first is a\marginpar{sottolineare che checking = user da le signature}
+We formalize two operational semantics for \prologP with cut. The first is a
 stack-based semantics that closely models \elpiP's implementation and is
 similar to the semantics mechanized by Pusch in \isabelleP~\cite{10.1007/BFb0105415}
 and to the model of Debray and Mishra~\cite[Sec.~4.3]{10.1016/0743-1066(88)90007-6}.
@@ -148,7 +148,7 @@ presence of cut in rule premises: once
 a rule whose premises contain a cut succeeds, all remaining rules are discarded
 and all choice points allocated by premises preceeding the cut are discarded.
 We show that if every rule defining a predicate passes this analysis, then
-any call to that predicate leaves no choice points.
+any call to that predicate leaves no choice points.\marginpar{impreciso: possiamo avere chiamate a relazioni nel body}
 
 % questa deve stare vicino all'intro perchè aiuta a capire la det
 \begin{figure}[t]
