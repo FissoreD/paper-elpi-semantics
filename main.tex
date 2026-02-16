@@ -105,7 +105,7 @@ computations that produce at most one result.%
 used as an extension language for the \rocqP prover (formerly the \coqP proof
 assistant). \elpiP has become an important infrastructure component: several
 projects and libraries depend on it~\cite{krebbers25,Trakt,Trocq,Maas2024,fissore2023,fissore2024}.
-Examples include the Hierarchy-Builder library-structuring tool~\cite{cohen_et_al:LIPIcs.FSCD.2020.34}
+Other remarkable libraries include the Hierarchy-Builder library-structuring tool~\cite{cohen_et_al:LIPIcs.FSCD.2020.34}
 and Derive~\cite{tassi2018,tassi2019,tassi2023}, a program-and-proof synthesis
 framework with industrial applications at SkyLabs AI.
 
@@ -117,7 +117,10 @@ backtracking is a common source of inefficiency and makes debugging
 harder. The determinacy checker allows the user to assert which predicates
 should be considered deterministic and then checks that these predicates
 behave like functions, i.e., they commit to their first solution and leave
-no \emph{choice points} (places where backtracking could resume).
+no \emph{choice points} (places where backtracking could resume). A choice
+point correspond to an suspended \emph{alternative} in the execution trace.
+In the following we use \emph{choice point} and \emph{alternative} as
+synonyms.
 
 This paper reports our first steps towards a mechanization, in the \rocqP
 prover, of the determinacy analysis from~\cite{10.1007/978-3-032-15981-6_5}.
@@ -141,12 +144,19 @@ since $q_2$ may be cut-away by $q_1$.
 Finally, we use the formal semantics to prove the correctness of a static
 determinacy analysis~\cite{10.1007/978-3-032-15981-6_5}. Intuitively,
 nondeterminism arises when a computation can be completed by applying two
-different rules. We exclude this situation in two ways. First, we check for
-overlapping rule heads: if two heads do not overlap in the inputs they
-accept, then no query can unify with both. Second, we account for the
+different rules. We exclude this situation in two ways. Firstly, at
+most one rule should be used on a given query. This condition is
+satisfied if (i) the rules have non-overlapping heads: 
+if two heads do not overlap in the inputs they
+accept, then no query can unify with both, or if (ii) we account for the
 presence of cut in rule premises: once
-a rule whose premises contain a cut succeeds, all remaining rules are discarded
-and all choice points allocated by premises preceeding the cut are discarded.
+a rule whose premises contain a cut succeeds, all remaining rules are discarded.
+Secondly, each rule of a deterministic predicate should (i) either call functions,
+this ensure that no choice point is left after the execution of the premises
+of the chosen rule, (ii) or
+call relations provided that they are followed by the cut operator, so that
+any allocated choice points preceeding the cut are discarded.
+
 We show that if every rule defining a predicate passes this analysis, then
 any call to that predicate leaves no choice points.\marginpar{impreciso: possiamo avere chiamate a relazioni nel body}
 
@@ -191,6 +201,7 @@ Both semantics share the same notion of program, written $\mathbb{P}$.\marginpar
 rules \coqIn{R} together with a signature environment \coqIn{sigT}. Besides
 the arity of each predicate, a signature specifies which arguments are
 inputs and which are outputs, and whether the predicate is deterministic.
+Inputs come before outputs.
 
 A rule consists of a head term \coqIn{Tm} and a list of premises. Each
 premise is an \coqIn{Atom}, i.e. either the cut operator or a predicate
@@ -370,9 +381,8 @@ $
   \sigma_5 \coloneq \sigma_1 + \{\eI{B} \mapsto \eI{2}\}
 $.
 
-Since all rules for \eI{r} have empty premises, we chose the first success,\marginpar{NO: la 3 ha un cut}
-save the others as choice points, and continue with \eI{f B C} under $\sigma_3$,
-that is, \eI{f 0 R}.
+The next step of interpretation continues with \eI{f B C} under $\sigma_3$,
+that is, \eI{f 0 R}, and leaves $[(\sigma_4, []), (\sigma_5, [\eI{!}])]$ as new choice points.
 This time, backchaining fails (no rule for \eI{f} matches input $0$). We
 therefore backtrack to the most recently introduced choice point and retry
 \eI{f B C} under $\sigma_4$, i.e. \eI{f 1 R}. This succeeds with
@@ -391,7 +401,7 @@ $
   \eI{R} \mapsto \eI{2}\}
 $.
 
-In Sections~XX and~YY we provide fully mechanized operational semantics for
+In \cref{tree-sem,stack-sem}, we provide fully mechanized operational semantics for
 \prologP with cut. They differ in how they represent the ongoing computation,
 in particular how alternatives are stored and how they are pruned by cut.
 
@@ -418,6 +428,7 @@ applied to the pair \coqIn{x}.
 
 
 \section{And-Or Tree semantics}
+\label{tree-sem}
 \begin{figure}
     % \input{tex_code/tree_def.tex}
     \begin{coqcode}
@@ -454,8 +465,8 @@ subqueries to be solved (an And-layer). Intuitively, solving a query requires
 solving one alternative in the Or-layer, but all subqueries in the
 corresponding And-layer.
 
-The tree is built incrementally. It therefore contains a \coqIn{Todo} node,\marginpar{None sempre? Se l'albero è OK non c'`e TODO?}
-which represents an unexplored branch (an \coqIn{Atom}). When the atom is a
+The tree is built incrementally. The \coqIn{Todo} node
+represents an unexplored branch (an \coqIn{Atom}). When the atom is a
 \coqIn{call}, we use the backchaining procedure from
 \cref{sec:preliminaries} to compute the two layers to attach to the tree:
 alternatives form the Or-layer, and the premises of each applicable rule form
@@ -464,8 +475,7 @@ the corresponding And-layer. This expansion step is performed by the
 
 The Rocq data type for And-Or trees is given in \cref{fig:tree-ty}. In
 addition to \coqIn{Todo}, it provides two distinguished nodes, \koC and
-\okC, which represent failed and completed branches (intuitively, an empty
-disjunction and an empty conjunction, respectively).
+\okC, which represent respectively the smallest failed and successful tree.
 
 The \orC node, written \(A \lor B_\sigma\), represents the addition of an
 alternative \(B_\sigma\) to an existing disjunction $A$. The left subtree
@@ -482,8 +492,7 @@ A graphical representation of a tree is shown in \cref{tree-ex1}. For
 compactness, we depict \andC and \orC nodes as $n$-ary (rather than binary),
 with children associating to the right. The \koC node acts as the terminating
 element of an \orC list, while \okC is the terminating element of an \andC
-list.\marginpar{terminatig?}
-
+list.
 
 % \begin{figure}
 %   \input{tex_code/step_tag.tex}
@@ -500,11 +509,16 @@ list.\marginpar{terminatig?}
 
 The tree is constructed incrementally by two recursive
 functions, \step and \na. Both traverse the tree depth-first, left-to-right.
+The node to be explored in a tree is retrieved thanks to the \pathend (in~\cref{fig:getend}).
+In the snippet we also identify special kinds of trees: depending on
+the \pathend, we distinguish between \emph{success}, \emph{failed} and
+\emph{incomplete} trees.
 Since all functions must terminate in Rocq, we define their transitive closure
 as the inductive relation \run.
 
-Intuitively, \run iterates calls to \step as long as the node to explore
-is a \cI{Todo}. Upon failure (tag \coqIn{Failed}), it searches for the next
+Intuitively, \run iterates calls to \step on incomplete trees to evaluate
+the \cI{Todo} node. Upon failed trees, it calls \na to find
+the next
 alternative and continues from there, if one exists. We detail \step, \na, and
 \run in \cref{sec:step,sec:next_alt,sec:runT}.
 
@@ -528,7 +542,7 @@ alternative and continues from there, if one exists. We detail \step, \na, and
   \begin{subfigure}{0.45\textwidth}
     \input{tex_code/next.tex}
     % \caption{Defintion of \getend}
-    \label{fig:getend}
+    % \label{fig:getend}
   \end{subfigure}
   \begin{subfigure}{0.45\textwidth}
       % \input{tex_code/get_subst.tex}
@@ -539,15 +553,16 @@ alternative and continues from there, if one exists. We detail \step, \na, and
     \input{tex_code/next_aux.tex}
     \vspace{20pt}
       % \caption{Functions from \getend}
-      \label{fig:getend-aux}
+      % \label{fig:geten/d-aux}
   \end{subfigure}
   \caption{\getend and derived functions}
+  \label{fig:getend}
 \end{figure}
 
-To support incremental construction, the semantics uses helper functions based
-on \getend{}. Given a tree, \getend{} returns the branch on which
-the execution should focus, following a depth-first, left-to-right traversal
-strategy (see~\cref{fig:getend}).
+% To support incremental construction, the semantics uses helper functions based
+% on \getend{}. Given a tree, \getend{} returns the branch on which
+% the execution should focus, following a depth-first, left-to-right traversal
+% strategy (see~\cref{fig:getend}).
 % If the tree
 % is already a leaf, \getend returns its inputs. Otherwise, if the tree is a
 % disjunction, the path continues on the left subtree, if it exists, otherwise
@@ -561,6 +576,11 @@ strategy (see~\cref{fig:getend}).
 In \cref{tree-ex} we mark with a black arrow the result of \pathend.
 
 \begin{figure}
+  \begin{subfigure}{0.15\textwidth}
+    \includegraphics[width=0.4\textwidth, keepaspectratio]{./src/exec_example1/step1.pdf}
+    \caption{Initial query}
+    \label{tree-ex0} 
+  \end{subfigure}
   \begin{subfigure}{0.4\textwidth}
     \includegraphics[width=\textwidth, keepaspectratio]{./src/exec_example1/step2.pdf}
     \caption{Tree after \step on \eI{g 0 R}}
@@ -614,14 +634,15 @@ tree. It is passed to backchain so that rules can be refreshed correctly.
 % the variables of the current working tree.\marginpar{not true in figure:fix + also fix in \cref{sec:cut-op}}
 
 The \steptag (see~\cref{type:steptag}) indicates which kind of step was
-performed. \cI{Expanded} indicates the expansion of a predicate call via\marginpar{Expanded is also for deep cuts}
-backchain. \cI{Failure} and \cI{Success} are returned for trees that satisfy,
-respectively, the \failed and \success tests. Finally, \cI{CutBrothers}
-indicates a superficial cut: \step was called on an Or-layer and the And-layer\marginpar{Se c'è un CutBrothers, allora non Or-layer}
-immediately below it contains a cut.
+performed.  \cI{Failure} and \cI{Success} are returned for trees that satisfy,
+respectively, the \failed and \success tests. 
+\cI{CutBrothers}
+indicates the interpretation of a superficial cut: \step was called on an 
+And-layer and its \pathend is the cut atom. Finally, \cI{Expanded}
+accounts for the interpretation of predicate calls and non-superficial cuts.
 
 The \step procedure evaluates atoms. In particular, it leaves the tree
-unchanged when \pathend is false.\marginpar{TODO: it does not return false?}
+unchanged when the tree is \emph{success} or \emph{failed}.
 
 \mvspace{}
 \deflemma[lemma:success]{tex_code/success_step.tex}
@@ -911,6 +932,7 @@ From these lemmas, it is clear how the order in which alternatives are
 evaluated changes the behavior of the program.\marginpar{se riesco success (A or B) = success (B or A) if no sup cut in A and B }
 
 \section{Stack semantics}
+\label{stack-sem}
 
 We now introduce the \elpiP semantics. The interpreter is close to that
 of the \elpiP language and provides an operational semantics that is
