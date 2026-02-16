@@ -1266,9 +1266,9 @@ information is irrelevant, hence define a version of \run that hides it.
 Before going to the equivalence proofs, we want to claim a key lemma allowing
 to ignore the silent transition in the \run inductive.\marginpar{DIRE COSA E una silent transition}
 
-\begin{lemma}[xxx]\label{th:next_altF_t2l}~
+% \begin{lemma}[xxx]\label{th:next_altF_t2l}~
 \input{tex_code/pruneF_t2l.tex}
-\end{lemma}
+% \end{lemma}
 \begin{proof}By induction on the tree $t$.\marginpar{dire di $v$}\end{proof}
 
 The first direction of the equivalence states that the execution of
@@ -1276,9 +1276,7 @@ a valid tree is matched by the execution of the stack obtain by
 translating the tree and moreover the unexplored alternatives
 returned as a tree match the ones returned as a stack.
 
-\begin{theorem}[xxx] \label{th:t1}~
 \input{tex_code/tree_to_elpi.tex}
-\end{theorem}
 \begin{proof}
 We proceed by induction on the execution of \run'. There
 are $4$ cases to be treated. The first case comes from \textsc{StopT}, it deals
@@ -1300,9 +1298,7 @@ tree that translates to the given stack has an equivalent execution,
 i.e. gives the same solution and returns a unexplored tree that
 translates to the unexplored stack.
 
-\begin{theorem}[xxx]\label{th:t2}~
 \input{tex_code/elpi_to_tree.tex}
-\end{theorem}
 \begin{proof}
 \begin{wrapfigure}{r}{0.2\textwidth}
   % \begin{figure}
