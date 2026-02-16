@@ -1396,15 +1396,22 @@ data structure, like the tree to encompass this problem.
 
 \section{Related work}
 
-The input mode of Elpi, inspired by the XXXX of BProlog,
-has only an impact in the determinacy analysis that does not
-required to be preceeded by a mode analysis. Well moded
-program propagate the groundness from input arguments to output
-arguments. As a result if the initial query is ground
-then unification degenerates to matching (for input arguments).
-Considering a semantics where input arguments are
-match has the following impact on det analysis:
-axiom XXX does not require q to be ground.
+We studied a Prolog semantics where input arguments are matched, rather
+than unified, against the rule's head. This semantics agrees with the Elpi
+interpreter, that in turn is inspired by
+B-Prolog's ``matching-clauses'' in this respect~\cite{zhou2012}. The
+two semantics we presented and proved equivalent do apply to standard
+Prolog as well if one forces all predicate signatures to only feature
+output arguments.\\
+When it comes to determinacy analysis matching input arguments has only the
+following impact: axiom XXX does not require the query $q$ to be ground.
+Adapting our work to standard Prolog requires a minor change, namly adding
+the extra groundness hypothesis to XXX. In turn, in order to satisfy that
+premise, one typically has to perform an additional static analysis to
+check if the program is well moded. Well moded predicates generate ground outputs
+under the assumptions their inputs are ground; starting from a ground initial
+query well moded programs do behave exactly as if the input arguments
+were matched, hence our proofs do apply.
 
 The only mechanization of Prolog's semantics
 we could find is the one by Pusch in \isabelleP~\cite{10.1007/BFb0105415}
