@@ -110,13 +110,14 @@ and Derive~\cite{tassi2018,tassi2019,tassi2023}, a program-and-proof synthesis
 framework with industrial applications at SkyLabs AI.
 
 Starting with version 3, \elpiP is equipped with a static analysis for
-determinacy~\cite{10.1007/978-3-032-15981-6_5} to help users tame
-backtracking. \rocqP users are familiar with functional programming but
-not necessarily with logic programming, in particular uncontrolled backtracking
-is a common source of inefficiency and makes debugging harder. The
-determinacy checker identifies predicates that behave like functions,
-i.e., predicates that commit to their first solution and leave no
-\emph{choice points} (places where backtracking could resume).
+determinacy~\cite{10.1007/978-3-032-15981-6_5} to help users control
+backtracking. \rocqP{} users are familiar with functional programming, but
+not necessarily with logic programming; in particular, uncontrolled
+backtracking is a common source of inefficiency and makes debugging
+harder. The determinacy checker allows the user to assert which predicates
+should be considered deterministic and then checks that these predicates
+behave like functions, i.e., they commit to their first solution and leave
+no \emph{choice points} (places where backtracking could resume).
 
 This paper reports our first steps towards a mechanization, in the \rocqP
 prover, of the determinacy analysis from~\cite{10.1007/978-3-032-15981-6_5}.
