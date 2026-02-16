@@ -557,9 +557,8 @@ strategy (see~\cref{fig:getend}).
 % derive some useful definition from \getend.
 % They are listed in\marginpar{fare fresh rules in \cref{tree-ex}}
 % \cref{fig:getend-aux}.
-
 % We have pointed by a black arraw the \pathend of 
-In all trees in~\cref{tree-ex}, a black arrow marks the result of \pathend.\marginpar{what is next\_tree?}
+In \cref{tree-ex} we mark with a black arrow the result of \pathend.
 
 \begin{figure}
   \begin{subfigure}{0.4\textwidth}
@@ -1030,40 +1029,58 @@ does not point to a suffix in the list of alternatives.
 
 \section{Equivalence of the two semantics}
 
-In the previous section we have introduces the two semantics, they are 
-The equivalence between the two semantics is possible under two conditions: we
-need to work with ``valid tree'', i.e. all of those trees that can be
-generated from a call. Secondly, we need to translate trees into elpi
-states. In the next to subsection we propose the two functions \vast and \ttl.
+In order to relate the two semantics we have to relate the computations states,
+i.e., the And-Or tree and the stack of alternatives. In particular
+we define a translation from trees to stacks, called \ttl.
+We do not explcitly provide the converse translation, an economy
+allowed by the proof technique we employ, inspired by~\cite{yves-equiv}.
 
-\subsection{Valid trees (\vast)}
+Before describing the translation of trees to stacks (in~\cref{sec:t2l})
+we need to define the notion of \emph{valid tree}. The \coqIn{tree}
+datatype indeed contains trees that cannot be generated
+by \coqIn{runT} via \coqIn{step} or \coqIn{prune}, for example
+all the trees that do not correspond to a depth-first left-to-right
+tree construction strategy. 
 
-The inductive tree allows one to generate a large number of
-trees, some of which are not valid, in the sense that they cannot be produced
-starting from a given query. The class of valid trees is characterized by the
+
+% In the previous section we have introduces the two semantics, they are 
+% The equivalence between the two semantics is possible under two conditions: we
+% need to work with ``valid tree'', i.e. all of those trees that can be
+% generated from a call. Secondly, we need to translate trees into elpi
+% states. In the next to subsection we propose the two functions \vast and \ttl.
+
+\subsection{Valid trees (\vast)}\label{sec:validtree}
+
+The class of valid trees is characterized by the
 function shown in \cref{fig:vt}.
-
 
 While all base cases of tree are considered valid, we need to analyze 
 carefully the cases for the \orC and \andC constructors.
 
 For the \orC constructor, we distinguish two cases depending on whether the
-lhs exists. If it does not exist, then the ths
-must be a valid tree. Otherwise, the lhs must itself be a valid tree,
-and the rhs is either the \koC tree, since it may have been removed by the
-evaluation of a superficial cut in the lhs, or it has not yet been explored.
-In the latter case, it is a \cI{base_or} tree, namely the right-skewed tree
+left hand side is present. If it is not present, then the
+right hand side must be a valid tree. Otherwise,
+the the left hand side must be a valid tree
+and the right hand side must either be the \koC tree
+or be unexplored. The first case occurs when the
+right hand side is cut out by the evaluation of a
+superficial cut present in the left hand side.
+In the latter case we use the \cI{base_or} predicate
+to check that \coqIn{B} is the right-skewed tree
 formed by a disjunction of conjunctions that is genereated after a
-succeful backchain to a call.
+succeful backchain to a \coqIn{call}.
 
-For the \andC constructor, the lhs is required to be a valid tree. The shape
-of the rhs depends on whether the lhs is a success. If the lhs is not
-successful, then the rhs has never been explored: the procedures \step and
-\na modify the rhs only when the lhs succeeds. In this case, the lhs must be
-the right-skewed tree containing conjunctions of premises atoms,
-the reset point $B_0$ ensure what shape the rhs should have. 
-If the lhs is a success tree, then the rhs can be modified by \step and \na,
-therefore it must be a valid tree.
+For the \andC constructor, the left hand side is required to be a valid tree.
+The shape of the right hand side depends on whether the left hand side is a
+success. If it is not successful, then the right hand side must not be
+explored, i.e. \coqIn{B} must be
+the right-skewed tree containing conjunctions of premises atoms.
+This is enforced using the \coqIn{big_and} produce that generates a
+tree out of the reset point $B_0$, the same procude used to
+transform each alternative output by \coqIn{bc} into the And-layer
+of the resulting tree.
+When the left hand side is successfule, then the right hand side
+may have been explored, and consequently must be a valid tree.
 
 
 \begin{figure}  
@@ -1089,49 +1106,53 @@ therefore it must be a valid tree.
 % \caption{Valid tree}
 \end{figure}
 
-\subsection{From trees to lists (\ttl)}
+\subsection{From trees to stacks (\ttl)}\label{sec:t2l}
 
-The translation of a tree to a en \elpiP state is done thanks to the
-\ttl function. In \cref{fig:ttl} we give junst the implementation of the
-base cases, the full implementation is available at \href{https://github.com/FissoreD/elpi-formalization/blob/ho-check-ffun/theories/t2l.v}{\emph{this}} link.
+The \ttl recursive function translates a tree to a stack.
+For space constraints\marginpar{DAVVERO?}
+\cref{fig:ttl} only gives the base cases, while we
+describe the recursive cases in the following text.
+% we give junst the implementation of the
+% base cases, the full implementation is available at \href{https://github.com/FissoreD/elpi-formalization/blob/ho-check-ffun/theories/t2l.v}{\emph{this}} link.
 
-The function \ttl takes the tree $t_0$ we want to translate, a subsitution
+The function \ttl takes the tree $t_0$, a subsitution
 $\sigma_0$ and a list of choice points $cp$. These choice points represent
-alternatives that appears at the same level of the current node, such as, for
-example, the right-siblings of a \orC node. The \okC node represent one succeful
+alternatives that appears at the same level of the current tree, such as, for
+example, the right-siblings of a \orC node. The substitution TODO\marginpar{TODO}.
+
+The \okC node represent one succeful
 alternative, thereofre it is translated into a singleton list with the empty
 list of goals. The \koC node represent a failure, i.e. it is mapped to the
 empty list of alternatives. Finally, atoms are mapped to one alternative
-containing a single goal with the empty cut-alternative list. They cannot point
-to $cp$ since they are not right-uncle subtrees.
-
-We have omitted the code for the translation of the \orC and \andC constructor
-since it is quite complex, but, we give the intuition behind this translation by
-means of examples.
+containing a single goal with the empty cut-to alternative list.
+They cannot point to $cp$ since they are not right-uncle subtrees, i.e. EXPLAIN\marginpar{TODO}.
 
 The translation of $A \lor B_\sigma$ creates two list of alternatives,
-one for the $A$ and the other for $B$. The alternatives of the rhs are valid
-choice points for the lhs and should be passed to the translation of $A$.
+one for the $A$ and the other for $B$. The alternatives of $B$ are valid
+choice points for $A$ and should be passed to the translation of $A$.
 The two list of alternatives can be concatenated and, each atom, should add
 $cp$ as new cut-to alternatives: $A$ and $B$ are one level lower wrt $cp$ and
-therefore the cut they have should point to $cp$.
+therefore the \marginpar{superficial?} cut they have should point to $cp$.
 
-The translation of $A \land_{B_0} B$ implies the translation of $A$. If the
-translation of $A$ returns an empty list we return the empty list of
-alternatives without even touching $B$ nor $B_0$. Otherwise the translation
-returns a list $(\sigma_0, g) :: a$. By the semantics of \run the $B$ node
-represent the continuation of the first alternatives in $A$, i.e. $g$, whereas
-$B_0$\marginpar{dirlo meglio all'inizio} is the continuation of goals for each
-alternative in $a$. While performing these translation, we need to carefully
-update the cut-atlernatives.
+The translation of $A \land_{B_0} B$ starts with the translation of $A$. If the
+translation of $A$ is an empty list we return the empty list of
+alternatives without even touching $B$ nor $B_0$, since an empty
+translation for $A$ indicates failure and this in turn implies the
+failure of the entire conjunction. When the translation of $A$ is
+a list $(\sigma_0, g) :: a$ the $B$ node
+represent the continuation of the first alternative $g$, whereas
+$B_0$\marginpar{dirlo meglio all'inizio} is the continuation of each
+alternative in $a$.
+% While performing these translation, we need to carefully update the cut-atlernatives.
 
-\textit{Example of \ttl} In \cref{tab:t2l} we point out the result of calling
+\subsubsection{Example of \ttl} 
+In \cref{tab:t2l} we point out the result of calling
 \ttl on the trees in \cref{tree-ex}. The first raw contains the image reference
 of then trees and the second raw contains the reference of the images from the
 \elpiP state in \cref{ex-elpi}. For the $3^{rd}$ column in the table, we see
 that $t2l$ is not injective. There are different trees that maps to the same
 \elpiP state. In fact, there are transitions in \run that are not visible in
-\nur.
+\nur.\marginpar{1) fare si che i numi matchino tra fig 6 e 9 2) prendere un albero, un nodo interno, dire come t2l e chiamata in quel caso e mettere accanto lo stack corrispondente}
 
 \begin{table}
   \centering
@@ -1193,32 +1214,40 @@ that $t2l$ is not injective. There are different trees that maps to the same
 % \newcommand{\thte}{\texttt{tree\_to\_elpi}} % theorem tree to elpi name
 % \newcommand{\thet}{\texttt{elpi\_to\_tree}} % theorem elpi to tree name
 
-\subsection{Equivalence theorems}
+\subsection{Equivalence proof}
 
-Thanks to the two functions \vast and \ttl, we are able to finally state the
-equivalence theorems between the semantics. The proof we are giving are on a
-slightly different definition of \run, since in the equivalence, we ignore the
-verification for the boolean and the variable set returned by \run, these piece
-of data are paricularly meant for the proof in \cref{sec:run-prop}.
+The tree-based semantics exposes more information so to be usable to
+express the lemmas in \cref{sec:run-prop}. For the equivalence this
+information is irrelevant, hence define a version of \run that hides it.
 
-The definition we use is the following:
+% Thanks to the two functions \vast and \ttl, we are able to finally state the
+% equivalence theorems between the semantics. The proof we are giving are on a
+% slightly different definition of \run, since in the equivalence, we ignore the
+% verification for the boolean and the variable set returned by \run, these piece
+% of data are paricularly meant for the proof in \cref{sec:run-prop}.
+
+% The definition we use is the following:
 
 \deftypes[runT']{tex_code/runt1.tex}
 
 Before going to the equivalence proofs, we want to claim a key lemma allowing
-to ignore the silent transition in the \run inductive.
+to ignore the silent transition in the \run inductive.\marginpar{DIRE COSA E una silent transition}
 
-\mvspace{}
-\deflemma[th:next_altF_t2l]{tex_code/pruneF_t2l.tex}
-\mvspace{}
+\begin{lemma}[xxx]\label{th:next_altF_t2l}~
+\input{tex_code/pruneF_t2l.tex}
+\end{lemma}
+\begin{proof}By induction on the tree $t$.\marginpar{dire di $v$}\end{proof}
 
-It is proved easly by induction on the tree $t$.\marginpar{dire di $v$}
+The first direction of the equivalence states that the execution of
+a valid tree is matched by the execution of the stack obtain by
+translating the tree and moreover the unexplored alternatives
+returned as a tree match the ones returned as a stack.
 
-\mvspace{}
-\deflemma[th:t1]{tex_code/tree_to_elpi.tex}
-\mvspace{}
-
-\textit{Proof sketch} We proceed by induction on the execution of \run'. There
+\begin{theorem}[xxx] \label{th:t1}~
+\input{tex_code/tree_to_elpi.tex}
+\end{theorem}
+\begin{proof}
+We proceed by induction on the execution of \run'. There
 are $4$ cases to be treated. The first case comes from \textsc{StopT}, it deals
 with successful trees, a successful tree must to start with an empty list and
 therefore we conclude with \textsc{StopE}. The case for \textsc{StepT}, need to
@@ -1229,12 +1258,19 @@ behavior of \ttl, but, thanks to \cref{th:next_altF_t2l} and the induction
 hypotheses the conclusion ist proved. The last case comes from the derivation 
 \textsc{FailT}. It is easily proved using \textsc{FailE} and the fact that 
 if \na returns $\mnone$ when trying to earse failure in $t$, then \ttl of $t$
-returns the empty list.
+returns the empty list.\marginpar{english!}
+\end{proof}
 
-\mvspace{}
-\deflemma[th:t2]{tex_code/elpi_to_tree.tex}
-\mvspace{}
+The converse direction is stated following~\cite{yves-equiv}: instead of
+using a function to translate a stack into a tree it states that any
+tree that translates to the given stack has an equivalent execution,
+i.e. gives the same solution and returns a unexplored tree that
+translates to the unexplored stack.
 
+\begin{theorem}[xxx]\label{th:t2}~
+\input{tex_code/elpi_to_tree.tex}
+\end{theorem}
+\begin{proof}
 \begin{wrapfigure}{r}{0.2\textwidth}
   % \begin{figure}
   \includegraphics[width=0.2\textwidth, keepaspectratio]{./src/e2t_ind.pdf}
@@ -1242,20 +1278,24 @@ returns the empty list.
   \label{fig:ind-sk}
   % \end{figure}
 \end{wrapfigure}
+
 The proof of \cref{th:t2} is based on the idea explained in~\cite[Section
-3.5.1]{yves-equiv}. An ideal statement for this lemma would be: given a function
-\ltt transforming an \elpiP state $a$ to a tree $t$, we then would be able
-to compare the result of \nur run with $a$ and \run' run with $t$. The
-function  it is difficult to implement since we have hard time finding the tree
-structure of $a$, and more than that, we should have a notation of \elpiP
-valid state, but again, this is a hard task. We thereofre need to reuse the \ttl
-function to relate a tree $t$ with $a$. \cref{fig:ind-sk} show the idea of
-the proof: we have a state $t$ whose translation is $a$, we proceed by
+3.5.1]{yves-equiv} and depicted in \cref{fig:ind-sk}:
+we have a state $t$ whose translation is $a$, we proceed by
 induction on the execution of \nur. This gives us not only the output $a'$ but
 that hypothesis that it exists a tree $t'$ such that its translation to the
 \elpiP state is $a'$. This proof strategy is indirectly providing a kind of
 \ltt function by combining the execution of the \nur and \ttl.
+\end{proof}
 
+Stating the converse direction in a symmetric way
+would have requires a function
+\ltt transforming an stack $a$ to a tree $t$.
+Writing this function is far from trivial, since the structure of
+the tree is lost by save alts\marginpar{METTERLA} and run that
+intuitively keep the state into a big disjunction of conjunctions by
+distributing conjunctions over disjunctions. Moreover one would
+need to define a notion of valid stack that is equally intricate.
 
 \section{Case study: determinacy alanysis}
 
