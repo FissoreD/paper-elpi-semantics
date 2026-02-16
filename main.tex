@@ -732,8 +732,8 @@ reset point $R_1$. This restores the call \eI{f B C}, which can then be
 reconsidered under substitution $\sigma_4$.
 
 Furthermore, \na serves another important purpose. Its behavior depends on the
-boolean flag it receives as input: \emph{\na\ $\bot$\ $A$} recursively removes
-all failures (if any) from $A$, whereas \emph{\na\ $\top$\ $A$} removes the
+boolean flag it receives as input: \na\emph{$\bot$\ $A$} recursively removes
+all failures (if any) from $A$, whereas \na\emph{$\top$\ $A$} removes the
 first success in $A$. For example, the tree in \cref{tree-ex6} contains a
 successful path that maps \eI{R} to \eI{2}. Calling \na\ on this tree returns
 \mnone, since there are no alternatives in the tree after the success..
