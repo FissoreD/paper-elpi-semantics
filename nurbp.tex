@@ -1,30 +1,30 @@
 \begin{minipage}{0.4\textwidth}
   \begin{prooftree}
     \AxiomC{}
-    \RightLabel{\textsc{StopE}}
-    \UnaryInfC{ runE $v$ (($\sigma$, \mnil) :: $a$) \msome ($\sigma$, $a$)}
+    \RightLabel{\textsc{StopS}}
+    \UnaryInfC{ runS p $v$ (($\sigma$, \mnil) :: $a$) \msome ($\sigma$, $a$)}
   \end{prooftree}
 \end{minipage}
 \begin{minipage}{0.5\textwidth}
 \begin{prooftree}
-  \AxiomC{ runE $v$ (($\sigma$, $g$) :: $ca$) r }
-  \RightLabel{\textsc{CutE}}
-  \UnaryInfC{ runE $v$ (($\sigma$, (cut, $ca$) :: $g$) :: \_) r}
+  \AxiomC{ runS p $v$ (($\sigma$, $g$) :: $ca$) r }
+  \RightLabel{\textsc{CutS}}
+  \UnaryInfC{ runS p $v$ (($\sigma$, (cut, $ca$) :: $g$) :: \_) r}
 \end{prooftree}
 \end{minipage}
 \begin{minipage}{0.7\textwidth}
 \vspace{12pt}
 \begin{prooftree}
   \AxiomC{stepE $v$ $t$ $\sigma$ $a$ $g$ = ($v_1$, $a'$) }
-  \AxiomC{runE $v_1$ ($a'$ \mappend $a$) r }
-  \RightLabel{\textsc{CallE}}
-  \BinaryInfC{runE $v$ (($\sigma$, (call $t$, \_) :: $g$) :: $a$) r}
+  \AxiomC{runS p $v_1$ ($a'$ \mappend $a$) r }
+  \RightLabel{\textsc{CallS}}
+  \BinaryInfC{runS p $v$ (($\sigma$, (call $t$, \_) :: $g$) :: $a$) r}
 \end{prooftree}
 \end{minipage}
 \begin{minipage}{0.28\textwidth}
 \begin{prooftree}
   \AxiomC{\phantom{A}}
-  \RightLabel{\textsc{FailE}}
-  \UnaryInfC{ runE \_ \mnil $\square$}
+  \RightLabel{\textsc{FailS}}
+  \UnaryInfC{ runS p \_ \mnil $\square$}
 \end{prooftree}
 \end{minipage}
