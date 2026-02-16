@@ -85,7 +85,7 @@ isbn="978-3-540-70641-0"
 }
 
 
-@article{10.1016/0743-1066(88)90007-6,
+@article{Debray1988,
 author = {Debray, Saumya K. and Mishra, Prateek},
 title = {Denotational and operational semantics for Prolog},
 year = {1988},
@@ -95,8 +95,8 @@ address = {USA},
 volume = {5},
 number = {1},
 issn = {0743-1066},
-url = {https://doi.org/10.1016/0743-1066(88)90007-6},
-doi = {10.1016/0743-1066(88)90007-6},
+url = {https://doi.org/Debray1988},
+doi = {Debray1988},
 journal = {J. Log. Program.},
 month = mar,
 pages = {61–91},
@@ -870,22 +870,8 @@ pages="127--152",
 abstract="The technique of Abstract Interpretation has allowed the development of very sophisticated global program analyses which are at the same time provably correct and practical. We present in a tutorial fashion a novel program development framework which uses abstract interpretation as a fundamental tool. The framework uses modular, incremental abstract interpretation to obtain information about the program. This information is used to validate programs, to detect bugs with respect to partial specifications written using assertions (in the program itself and/or in system libraries), to generate and simplify run-time tests, and to perform high-level program transformations such as multiple abstract specialization, parallelization, and resource usage control, all in a provably correct way. In the case of validation and debugging, the assertions can refer to a variety of program points such as procedure entry, procedure exit, points within procedures, or global computations. The system can reason with much richer information than, for example, traditional types. This includes data structure shape (including pointer sharing), bounds on data structure sizes, and other operational variable instantiation properties, as well as procedure-level properties such as determinacy, termination, non-failure, and bounds on resource consumption (time or space cost). CiaoPP, the preprocessor of the Ciao multi-paradigm programming system, which implements the described functionality, will be used to illustrate the fundamental ideas.",
 isbn="978-3-540-44898-3"
 }
-@inproceedings{10.1007/978-3-032-15981-6_5,
-author = {Fissore, Davide and Tassi, Enrico},
-title = {Determinacy Checking for Elpi: an Higher-Order Logic Programming Language with Cut},
-year = {2026},
-isbn = {978-3-032-15980-9},
-publisher = {Springer-Verlag},
-address = {Berlin, Heidelberg},
-url = {https://doi.org/10.1007/978-3-032-15981-6_5},
-doi = {10.1007/978-3-032-15981-6_5},
-abstract = {Elpi is a higher-order logic programming language derived from λProlog and widely used to extend the Rocq interactive theorem prover. Typical users are familiar with types and functional programming but often lack experience with backtracking.We introduce a language of signatures to declare that a predicate is operationally deterministic, meaning that calling the predicate does not leave any choice points. The signature language handles higher-order programs and dynamic programs.We present a static analyzer that verifies these signatures and report its application to the majority of public Elpi code in the Rocq ecosystem.},
-booktitle = {Practical Aspects of Declarative Languages: 28th International Symposium, PADL 2026, Rennes, France, January 12–13, 2026, Proceedings},
-pages = {77-95},
-numpages = {19},
-keywords = {Determinacy Analysis, Higher Order, Logic Programming, Cut},
-location = {Rennes, France}
-}@inproceedings{1990Vink,
+
+@inproceedings{1990Vink,
   author    = {de Bruin, A.
                and de Vink, E. P.},
   xeditor    = {Rovan, Branislav},
@@ -1036,18 +1022,6 @@ location = {Rennes, France}
   pages     = {132--147},
   abstract  = {In program development it is useful to know that a call to a Prolog program will not inadvertently leave a choice-point on the stack. Determinacy inference has been proposed for solving this problem yet the analysis was found to be wanting in that it could not infer determinacy conditions for programs that contained cuts or applied certain tests to select a clause. This paper shows how to remedy these serious deficiencies. It also addresses the problem of identifying those predicates which can be rewritten in a more deterministic fashion. To this end, a radically new form of determinacy inference is introduced, which is founded on ideas in ccp, that is capable of reasoning about the way bindings imposed by a rightmost goal can make a leftmost goal deterministic.},
   isbn      = {978-3-540-36636-2}
-}
-
-
-@inproceedings{2011king,
-  title     = {RedAlert: Determinacy inference for Prolog},
-  author    = {Kriener, Jael and King, Andy},
-  journal   = {Theory and Practice of Logic Programming},
-  volume    = {11},
-  number    = {4-5},
-  pages     = {537--553},
-  year      = {2011},
-  publisher = {Cambridge University Press}
 }
 
 @inproceedings{1996henderson,
@@ -1340,23 +1314,6 @@ isbn="978-3-540-71067-7"
   year         = "2025",
   xnote         = {{Note for the reviewer: the repository is not anonymized}},
   xannote       = ""
-}
-
-@inproceedings{fissore:hal-05026472,
-author = {Fissore, Davide and Tassi, Enrico},
-title = {Determinacy Checking for&nbsp;Elpi: an&nbsp;Higher-Order Logic Programming Language with&nbsp;Cut},
-year = {2026},
-isbn = {978-3-032-15980-9},
-publisher = {Springer-Verlag},
-address = {Berlin, Heidelberg},
-url = {https://doi.org/10.1007/978-3-032-15981-6_5},
-doi = {10.1007/978-3-032-15981-6_5},
-abstract = {Elpi is a higher-order logic programming language derived from λProlog and widely used to extend the Rocq interactive theorem prover. Typical users are familiar with types and functional programming but often lack experience with backtracking.We introduce a language of signatures to declare that a predicate is operationally deterministic, meaning that calling the predicate does not leave any choice points. The signature language handles higher-order programs and dynamic programs.We present a static analyzer that verifies these signatures and report its application to the majority of public Elpi code in the Rocq ecosystem.},
-booktitle = {Practical Aspects of Declarative Languages: 28th International Symposium, PADL 2026, Rennes, France, January 12–13, 2026, Proceedings},
-pages = {77–95},
-numpages = {19},
-keywords = {Determinacy Analysis, Higher Order, Logic Programming, Cut},
-location = {Rennes, France}
 }
 
 @inproceedings{lopez2004determinacy,
