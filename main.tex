@@ -1266,9 +1266,7 @@ information is irrelevant, hence define a version of \run that hides it.
 Before going to the equivalence proofs, we want to claim a key lemma allowing
 to ignore the silent transition in the \run inductive.\marginpar{DIRE COSA E una silent transition}
 
-% \begin{lemma}[xxx]\label{th:next_altF_t2l}~
 \input{tex_code/pruneF_t2l.tex}
-% \end{lemma}
 \begin{proof}By induction on the tree $t$.\marginpar{dire di $v$}\end{proof}
 
 The first direction of the equivalence states that the execution of
@@ -1285,7 +1283,7 @@ therefore we conclude with \textsc{StopE}. The case for \textsc{StepT}, need to
 treat two cases: \step has evaluated either a cut or a call. Depending on this
 we should use \textsc{CutE} or \textsc{CallE} and then the induction hypothesis.
 The case for \textsc{BackT} is a silent case: it represents the non-injective
-behavior of \ttl, but, thanks to \cref{th:next_altF_t2l} and the induction
+behavior of \ttl, but, thanks to \cref{th:pruneFt2l} and the induction
 hypotheses the conclusion ist proved. The last case comes from the derivation 
 \textsc{FailT}. It is easily proved using \textsc{FailE} and the fact that 
 if \na returns $\mnone$ when trying to earse failure in $t$, then \ttl of $t$
@@ -1299,23 +1297,24 @@ i.e. gives the same solution and returns a unexplored tree that
 translates to the unexplored stack.
 
 \input{tex_code/elpi_to_tree.tex}
-\begin{proof}
-\begin{wrapfigure}{r}{0.2\textwidth}
-  % \begin{figure}
-  \includegraphics[width=0.2\textwidth, keepaspectratio]{./src/e2t_ind.pdf}
-  \caption{\phantom{A}}  
-  \label{fig:ind-sk}
-  % \end{figure}
-\end{wrapfigure}
 
-The proof of \cref{th:t2} is based on the idea explained in~\cite[Section
-3.5.1]{yves-equiv} and depicted in \cref{fig:ind-sk}:
+\noindent
+\begin{minipage}{0.80\textwidth}
+\begin{proof}
+The proof is based on the idea explained in~\cite[Section
+3.5.1]{yves-equiv} and depicted in the figure on the right:
 we have a state $t$ whose translation is $a$, we proceed by
 induction on the execution of \nur. This gives us not only the output $a'$ but
 that hypothesis that it exists a tree $t'$ such that its translation to the
 stack state is $a'$. This proof strategy is indirectly providing a kind of
 \ltt function by combining the execution of the \nur and \ttl.
 \end{proof}
+\end{minipage}
+\begin{minipage}{0.20\textwidth}
+  \includegraphics[width=1\textwidth, keepaspectratio]{./src/e2t_ind.pdf}
+\end{minipage}
+
+\vspace{10pt}
 
 Stating the converse direction in a symmetric way
 would have requires a function
