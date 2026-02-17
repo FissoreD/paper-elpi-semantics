@@ -238,7 +238,9 @@ substitution $\sigma$, as input, and returns an optional substitution
 $\sigma'$ that extends $\sigma$. The expected behavior of \eI{unify} is
 higher-order unification restricted to the pattern fragment, as
 explained in~\cite{1991miller-pf}. Therefore, if $t_1$ and $t_2$ unify
-under $\sigma$, then $\sigma'~t_1 \equiv \sigma'~t_2$.
+under $\sigma$, then $\sigma'~t_1 \equiv \sigma'~t_2$, where
+$\sigma~t$ is the notation for subsitution application and $\equiv$ denotes the
+syntactic equality of its arguments.
 
 
 % \input{tex_code/unif_type.tex}
@@ -1370,29 +1372,65 @@ need to define a notion of valid stack that is equally intricate.
 
 \section{Case study: determinacy alanysis}\label{sec:determinacy}
 
-An interesting application of the tree semantics is the determinacy checking
-that was added in version 3 of the \elpiP langauge~\cite{fissore2026}. The
-checker is meant to receive the signature of the predicates declared by the user
-and then verify that the rules of a deterministic predicate will return at most
-one solution, we define this particular kind of predicate as functions. Thanks
-to this static verification, the user can better control unexpected backtracking
-at compile time: if an incoherence is rilevata then a fatal error explain why
-the current program may break determinacy. A function behaves deterministically
-if two main conditions are respected: \emph{mutual exclusion} guarantees that at
-most one rule can be successfully used on a given query, whereas \emph{rule
-checking} ensure that each rule does not creates choice points, e.g. by calling
-non-deterministic predicates.
+An interesting application of the tree semantics is determinacy checking,
+introduced in version~3 of the \elpiP{} language~\cite{fissore2026}. The
+checker takes as input the signatures of the predicates declared by the
+user and verifies that the rules of a deterministic predicate return at
+most one solution; we call this particular kind of predicate a function.
+Thanks to this static verification, the user can better control
+unexpected backtracking at compile time: if an inconsistency is detected,
+a fatal error explains why the current program may violate determinacy.
+
+A function behaves deterministically if two main conditions are
+satisfied: \emph{mutual exclusion} guarantees that at most one rule can
+be successfully applied to a given query, whereas \emph{rule checking}
+ensures that each rule does not create choice points, for example by
+calling non-deterministic predicates.
+
+Determinacy checking is strongly related to the modes of predicates: we
+differentiate between input and output arguments, where outputs are generated
+wrt the the received inputs. A deterministic call relates to its inputs only one
+output. In the literature, we find several works about determinacy checking,
+namely~\cite{1996Somogy,king2005,1989Warren}. These works needs a mode checker
+statically ensuring that in a query with ground inputs, each recursive
+call is performed with ground inputs.
+
+In our mechanization, and in particular in the \elpiP language, we adopt a
+special unification routine on input argument, called
+\eI{matching}~\cite{1991ait-wam}. Similarly to \eI{unify}, \eI{matching} takes
+the query-term $t_1$ and the pattern $t_2$ and returns an optional subsitution
+$\sigma'$. The query-term is the argument in input mode taken from a dynamic
+call and the pattern is the corresponding input argument in the chosen
+rule-head.
+
+The function \eI{matching} has the following property:
+
+\input{tex_code/matchdisj.tex}
+
+If the two terms are disjoint and the variables in the suppert $\sigma$ are
+disjoint from the variables in $t_1$, then if matching succeeds, then
+only the variables in $t_2$ are assigned, i.e. $t_1 \equiv \sigma'~t_2$ and
+the variables in $t_1$ are nots assigned in $\sigma'$.
+
+
+The \eI{bc} function uses \eI{matching} or \eI{unify} on the arguments $q$
+depending if the argument is in \emph{input} or \emph{output} mode.
+Below we axiomatize two important properties of our unificators.
+
+\input{tex_code/unif_trans.tex}
+\input{tex_code/matchunif.tex}
+
 
 The syntax of the signatures in \cref{fig:progx} indicates that
 \texttt{f} and \texttt{g} are expected to be functions, as indicated by
 the \eI{~\PYG{k+kd}{func}~} keyword. The \eI{~\PYG{k+kMode}{\PYGZhy{}\PYGZgt{}}~}
-symbol separates inputs from outputs; therefore, all these predicates are
+symbol separates inputs from outputs; therefore, all three predicates are
 expected to take an \texttt{int} as input and return an \texttt{int} as
 output.
 
 The signatures of the program are stored in its \texttt{sig} projection of the
 program $P$ passed to the interpreter, and are encoded as described in
-\cite{fissore2026}, tahs is, similar to the code in \cref{fig:progx}, we have
+\cite{fissore2026}, that is, similar to the code in \cref{fig:progx}, we have
 arrows decorated with an input mode for term application, base types (to encode,
 for example, \emph{int}), and two special symbols to distinguish deterministic
 from non-deterministic predicates.

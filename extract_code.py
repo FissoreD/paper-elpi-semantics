@@ -64,6 +64,7 @@ def clean_line_global(l,escape):
     l = re.sub(r"\bpath_end\b", "next_tree", l)
     l = re.sub(r"\bget_end\b", "next", l)
     l = re.sub(r"\bTA\b", "Todo", l)
+    l = re.sub(r"`<=`", esc(m("\\\\leq")), l)
     if escape:
         l = re.sub("Some ", esc("\\\\msome"), l)
     else:
@@ -214,20 +215,31 @@ class theorem(C):
         self.MINT_TAG = mintag
         self.MINT_INLINE = mintinl
 
-    def th_name(self, l):
+    def th_name(self, l : str):
+        l = l.strip()
+        if l.endswith(":"):
+            l = l[:-1]
+        elif l.endswith(":="):
+            l = l[:-2]
+        else:
+            assert(False)
         ls = l.split()
-        assert(ls[0] in ["Theorem", "Lemma", "Axiom"])
-        assert(len(ls) == 2)
-        assert(ls[1].endswith(":"))
-        return ls[0].lower(), ls[1][:-1]
+        assert(ls[0] in ["Theorem", "Lemma", "Axiom", "Definition"])
+        name = ls[1]
+        if len(l) > 2:
+            args = ls [2:]
+        else:
+            args = []
+        return ls[0].lower(), name, args
 
     def print_tex(self,lines, fout, raw = False):
         if lines == []: return
         cnt = ""
-        (env,name), tl = self.th_name(lines[0].strip()), lines[1:]
+        (env,name,args), tl = self.th_name(lines[0]), lines[1:]
         n1 = name.replace('_', '\_')
         n2 = name.replace('_', '')
-        cnt += f"\\begin{{{env}}}[{n1}]\label{{th:{n2}}}"
+        args = "" if len(args) == 0 else (f" (\\{self.MINT_INLINE}{{" + self.clean_line(" ".join(args)) + "})")
+        cnt += f"\\begin{{{env}}}[{n1}{args}]\label{{th:{n2}}}"
         if len(tl) == 1:
             txt = self.clean_line(tl[0].strip())
             cnt += f"\\{self.MINT_INLINE}{{{txt}}}"
