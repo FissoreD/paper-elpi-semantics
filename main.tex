@@ -344,8 +344,8 @@ syntactic equality of its arguments.
 \subsection{The cut operator}
 \label{sec:cut-op}
 
-The cut operator in \textsc{\elpiP} implements the \emph{hard cut}
-(see, e.g., the documentation of \textsc{SWI-Prolog}~\cite{swi-prolog-cut}).
+The cut operator in \elpiP implements the \emph{hard cut}
+(see, e.g., the documentation of \sprologP~\cite{swi-prolog-cut}).
 Whenever the backchaining function \coqIn{bc} returns a list of alternatives,
 the first one is explored immediately, while the others are suspended as
 \emph{choice points}. Within a given alternative, premises are processed from
@@ -836,13 +836,13 @@ superficial cut was evaluated during execution, and the updated variable set
 tracks freshly generated names.
 
 \run has four cases, depicted as inference rules in \cref{fig:run-rules}.
-(\textsc{StopT}) If \pathend\ $t$ is a success, then the substitution
+(\stopt) If \pathend\ $t$ is a success, then the substitution
 $\sigma'$ is extracted from $t$ (starting from $\sigma$) and the input tree is
-cleaned of its successful path. (\textsc{StepT}) If \pathend\ $t$ is an atom,
+cleaned of its successful path. (\stept) If \pathend\ $t$ is an atom,
 then \step is invoked to evaluate $t$, and \run is called recursively on the
-updated tree. (\textsc{BackT}) If \pathend\ $t$ is a failure, then \na is
+updated tree. (\backt) If \pathend\ $t$ is a failure, then \na is
 called to clear the failed path; if the resulting cleaned tree exists, \run is
-called recursively on it. Finally, (\textsc{FailT}) accounts for trees with no
+called recursively on it. Finally, (\failt) accounts for trees with no
 solutions.
 
 These rules are deterministic:
@@ -853,9 +853,9 @@ The proof is by induction on the first \run derivation and is immediate,
 because the rules are selected based on \pathend\ $t$. In particular, the
 hypotheses \emph{success $t$}, \emph{\pathatom $t$}, and \emph{failed $t$} are
 mutually exclusive. Moreover, by \cref{lemma:runTdet}, the hypothesis of
-\textsc{FailT} implies \emph{failed $t$}; hence \textsc{FailT} is exclusive
-with \textsc{StopT} and \textsc{StepT}, and it is also exclusive with
-\textsc{BackT} since they impose different requirements on the output of \na.
+\failt implies \emph{failed $t$}; hence \failt is exclusive
+with \stopt and \stept, and it is also exclusive with
+\backt since they impose different requirements on the output of \na.
 
 \begin{figure}[h]
 
@@ -1010,15 +1010,15 @@ choice points.\marginpar{Dire che non abbiamo le due info ritornate da runT}
 
 The rule system for \nur is given in \cref{fig:nur-rules} and is made by $4$
 cases. We distinguish two main cases: if the list of alternatives is empty,
-(\textsc{FailE}) we have a failure: we stop the computation and return $\mnone$.
+(\fails) we have a failure: we stop the computation and return $\mnone$.
 If the list of alternatives is the list $(\sigma_0, h) :: a$, the interpreter
 evaluates the first choice point $h$ under the substitution $\sigma_0$. If $h$
-is empty, (\textsc{StopE}), then we have a success, i.e. we return the input
+is empty, (\stops), then we have a success, i.e. we return the input
 $\sigma_0$ and leave $a$ as the future choice points. Otherwise, $h$ is the list
 $(t, ca) :: g$ where $t$ is the first atom to evaluate, $ca$ is its
 cut-alternative list and $g$ is the list of future conjuncts. If $t$ is a cut
-(\textsc{CutE}), we need to keep evaluating $g$ under $\sigma_0$ but we change
-the alternatives to $ca$. Finally, in the case of a call (\textsc{CallE}), we
+(\cuts), we need to keep evaluating $g$ under $\sigma_0$ but we change
+the alternatives to $ca$. Finally, in the case of a call (\calls), we
 backchain the call in the program. If $rs$ is the list of rule premises returned
 by \texttt{bc}, then each list of premises if mapped to a list of goals
 (\texttt{goals}) have $a$ as cut-alternative and the global list is translated
@@ -1064,7 +1064,7 @@ to a list of alternative (\texttt{alts}). \marginpar{Dire una parola su backtrac
 We propose an example of the execution of \nur in \cref{ex-elpi}. The
 arrows in the images represent the cut-alternative pointers of the cut. We
 have not drawn arrows coming out of atom-calls since the interpreter
-ignores the cut-alternatives in this case (cf. \textsc{CallE}). The evolution
+ignores the cut-alternatives in this case (cf. \calls). The evolution
 of the stack in \cref{ex-elpi} mirrors the example in \cref{sec:cut-op}:
 we evaluate the first goal of the first alternative. During backchaining,
 we add a pointer to the remaining alternatives to each new cut operator.
@@ -1226,7 +1226,7 @@ of the stack in~\ref{ex-elpi2}. Finally, the cut operator under
 $\sigma_5$ also has $R_1$ as continuation. It corresponds to the third
 alternative in~\cref{ex-elpi2}. We can see that the first cut points to
 the translation of the subtree under $\sigma_2$, since it is one
-\textsc{Or}-layer above its right uncles.
+\orC-layer above its right uncles.
 
 % \begin{table}
 %   \centering
@@ -1250,7 +1250,7 @@ the translation of the subtree under $\sigma_2$, since it is one
 
 % An \okC node represent a success in a tree, then the translation of this tree
 % returns a singleton list with the cuple $(s, \mnil)$: there is one alternative
-% with $0$ goals, i.e. a success in elpi by \textsc{StopE}. The \koC node
+% with $0$ goals, i.e. a success in elpi by \stops. The \koC node
 % represent a failure, and, therefore $0$ alternatives. An atom is translated into
 % a singleton with the atom as first goal and the empty cut-alternative list: we
 % are not adding $bt$ since they are the alternatives for the right-sibling, not
@@ -1321,16 +1321,16 @@ returned as a tree match the ones returned as a stack.
 \input{tex_code/tree_to_elpi.tex}
 \begin{proof}
 We proceed by induction on the execution of \run'. There are four cases
-to consider. The first case arises from \textsc{StopT}; it deals with
+to consider. The first case arises from \stopt; it deals with
 successful trees. A successful tree must start with an empty list, and
-therefore we conclude using \textsc{StopE}. The case for \textsc{StepT}
+therefore we conclude using \stops. The case for \stept
 requires treating two subcases: \step evaluates either a cut or a call.
-Accordingly, we apply \textsc{CutE} or \textsc{CallE}, followed by the
-induction hypothesis. The case for \textsc{BackT} is silent: it represents
+Accordingly, we apply \cuts or \calls, followed by the
+induction hypothesis. The case for \backt is silent: it represents
 the non-injective behavior of \ttl; however, thanks to
 \cref{th:pruneFt2l} and the induction hypothesis, the conclusion is
-proved. The last case arises from the derivation \textsc{FailT}. It is
-easily proved using \textsc{FailE} and the fact that if \na returns
+proved. The last case arises from the derivation \failt. It is
+easily proved using \fails and the fact that if \na returns
 $\mnone$ when trying to erase failure in $t$, then \ttl applied to $t$
 returns the empty list.
 \end{proof}

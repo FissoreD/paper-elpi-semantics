@@ -288,7 +288,7 @@ class bussproof(C):
             n = 1
             lines.append("  \\AxiomC{\phantom{A}}")
 
-        lines.append(f"  \\RightLabel{{\\textsc{{{(name)}}}}}")
+        lines.append(f"  \\RightLabel{{\\textit{{{(name)}}}}}")
 
         L = ["Unary","Binary","Trinary"]
 

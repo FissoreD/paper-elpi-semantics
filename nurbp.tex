@@ -1,14 +1,14 @@
 \begin{minipage}{0.4\textwidth}
   \begin{prooftree}
     \AxiomC{}
-    \RightLabel{\textsc{StopS}}
+    \RightLabel{\stops}
     \UnaryInfC{ \codenames{runS} p $v$ (($\sigma$, \mnil) :: $a$) \msome ($\sigma$, $a$)}
   \end{prooftree}
 \end{minipage}
 \begin{minipage}{0.5\textwidth}
 \begin{prooftree}
   \AxiomC{ \codenames{runS} p $v$ (($\sigma$, $g$) :: $ca$) r }
-  \RightLabel{\textsc{CutS}}
+  \RightLabel{\cuts}
   \UnaryInfC{ \codenames{runS} p $v$ (($\sigma$, (cut, $ca$) :: $g$) :: \_) r}
 \end{prooftree}
 \end{minipage}
@@ -17,14 +17,14 @@
 \begin{prooftree}
   \AxiomC{ \codenames{stepS} p $v$ $t$ $\sigma$ $a$ $g$ = ($v_1$, $a'$) }
   \AxiomC{ \codenames{runS} p $v_1$ ($a'$ \mappend $a$) r }
-  \RightLabel{\textsc{CallS}}
+  \RightLabel{\calls}
   \BinaryInfC{ \codenames{runS} p $v$ (($\sigma$, (call $t$, \_) :: $g$) :: $a$) r}
 \end{prooftree}
 \end{minipage}
 \begin{minipage}{0.28\textwidth}
 \begin{prooftree}
   \AxiomC{\phantom{A}}
-  \RightLabel{\textsc{FailS}}
+  \RightLabel{\fails}
   \UnaryInfC{ \codenames{runS} p \_ \mnil $\square$}
 \end{prooftree}
 \end{minipage}
