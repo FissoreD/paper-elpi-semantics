@@ -491,10 +491,12 @@ alternative \(B_\sigma\) to an existing disjunction $A$. The left subtree
 The right alternative is paired with a substitution \(\sigma\), which becomes
 the current substitution when backtracking to \(B\).\marginpar{why option and not KO?}
 
-The \andC node, written \(A \land_{B_0} B\), represents the addition of a
-subquery \(B\) to be solved after \(A\). We call \(B_0\) the \emph{reset
-point} for \(B\): it is used to restore the initial state of \(B\) when
-backtracking occurs within \(A\). An example is shown in \cref{sec:na}.
+The \andC{} node, written \(A \land_{B_0} B\), represents the addition
+of a subquery \(B\) to the first choice point in \(A\). We call
+\(B_0\) the \emph{reset point} for \(B\): it represents the
+continuation for all alternatives of \(A\) except the first. That is,
+when backtracking occurs within \(A\), the subtree \(B\) is replaced by
+the atoms in \(B_0\). An example is shown in~\cref{sec:na}.
 
 A graphical representation of a tree is shown in \cref{tree-ex1}. For
 compactness, we depict \andC and \orC nodes as $n$-ary (rather than binary),
@@ -1171,17 +1173,20 @@ describe the recursive cases in the following text.
 % we give junst the implementation of the
 % base cases, the full implementation is available at \href{https://github.com/FissoreD/elpi-formalization/blob/ho-check-ffun/theories/t2l.v}{\emph{this}} link.
 
-The function \ttl takes the tree $t_0$, a subsitution
-$\sigma_0$ and a list of choice points $cp$. These choice points represent
-alternatives that appears at the same level of the current tree, such as, for
-example, the right-siblings of a \orC node. The substitution TODO\marginpar{TODO}.
+The function \ttl takes as input the tree $t_0$, a substitution
+$\sigma_0$, and a list of choice points $cp$. These choice points
+represent alternatives that appear at the same level of the current
+tree, such as, for example, the right siblings of an \orC{} node. The
+substitution is used to determine under which substitution the
+subtree being compiled lives.
 
 The \okC node represent one succeful
 alternative, thereofre it is translated into a singleton list with the empty
 list of goals. The \koC node represent a failure, i.e. it is mapped to the
 empty list of alternatives. Finally, atoms are mapped to one alternative
 containing a single goal with the empty cut-to alternative list.
-They cannot point to $cp$ since they are not right-uncle subtrees, i.e. EXPLAIN\marginpar{TODO}.
+They cannot point to $cp$ since they are not right-uncle subtrees, i.e. 
+$cp$ are alternatives that will be actually discarded if the atom is a cut.
 
 The translation of $A \lor B_\sigma$ creates two list of alternatives,
 one for the $A$ and the other for $B$. The alternatives of $B$ are valid
