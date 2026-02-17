@@ -647,10 +647,8 @@ accounts for the interpretation of predicate calls and non-superficial cuts.
 The \step procedure evaluates atoms. In particular, it leaves the tree
 unchanged when the tree is \emph{success} or \emph{failed}.
 
-\mvspace{}
-\deflemma[lemma:success]{tex_code/success_step.tex}
-\deflemma[lemma:failed]{tex_code/failed_step.tex}
-\mvspace{}
+\input{tex_code/success_step.tex}
+\input{tex_code/failed_step.tex}
 
 \step expands \coqIn{Todo} nodes by calling backchain, which returns a list
 $l$ of alternatives. If $l$ is empty, then the current call is replaced by
@@ -791,11 +789,11 @@ successful path that maps \eI{R} to \eI{2}. Calling \na\ on this tree returns
 Some interesting properties of \na are shown below; they illustrate how \na
 complements \step with respect to failed, success, and \pathatom trees.
 
-\mvspace{}
-\deflemma[lemma:pathna]{tex_code/incomplete_prune_id.tex}
-\deflemma[lemma:nafailedf]{tex_code/na_failed.tex}
-\deflemma[lemma:naNfail]{tex_code/naNfail.tex}
-\mvspace{}
+% \mvspace{}
+\input{tex_code/incomplete_prune_id.tex}
+\input{tex_code/na_failed.tex}
+\input{tex_code/naNfail.tex}
+% \mvspace{}
 
 
 % For example, in \cref{tree-ex1-exp} the step procedure has created a failed
@@ -839,9 +837,7 @@ solutions.
 
 These rules are deterministic:
 
-\mvspace{}
-\deflemma[lemma:runTdet]{tex_code/runT_det.tex}
-\mvspace{}
+\input{tex_code/runT_det.tex}
 
 The proof is by induction on the first \run derivation and is immediate,
 because the rules are selected based on \pathend\ $t$. In particular, the

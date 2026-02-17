@@ -199,9 +199,10 @@ class snip(C):
         super().write(fout,cnt)
 
 class theorem(C):
-    def __init__(self,mintag):
+    def __init__(self,mintag,mintinl):
         super(theorem,self).__init__("(*","*)","tex_code","v","SNIPT:","ENDSNIPT",True)
         self.MINT_TAG = mintag
+        self.MINT_INLINE = mintinl
 
     def th_name(self, l):
         ls = l.split()
@@ -216,11 +217,15 @@ class theorem(C):
         (env,name), tl = self.th_name(lines[0].strip()), lines[1:]
         n1 = name.replace('_', '\_')
         n2 = name.replace('_', '')
-        cnt += f"\\begin{{{env}}}[{n1}]\label{{th:{n2}}}~\n"
-        cnt += f"\\begin{{{self.MINT_TAG}}}\n"
-        for l in tl:
-            cnt += self.clean_line(self.clean_comment(l))
-        cnt += f"\\end{{{self.MINT_TAG}}}\n"
+        cnt += f"\\begin{{{env}}}[{n1}]\label{{th:{n2}}}"
+        if len(tl) == 1:
+            txt = self.clean_line(tl[0].strip())
+            cnt += f"\\{self.MINT_INLINE}{{{txt}}}"
+        else:
+            cnt += f"~\n\\begin{{{self.MINT_TAG}}}\n"
+            for l in tl:
+                cnt += self.clean_line(self.clean_comment(l))
+            cnt += f"\\end{{{self.MINT_TAG}}}\n"
         cnt += f"\end{{{env}}}"
         
         super().write(fout,cnt)
@@ -310,4 +315,4 @@ if __name__ == "__main__":
     print(fname)
     bussproof().read_file(fname)
     snip("coqcode","cI").read_file(fname)
-    theorem("coqcode").read_file(fname)
+    theorem("coqcode","cI").read_file(fname)
