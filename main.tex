@@ -13,6 +13,7 @@
 \newcommand{\mnone}{\ensuremath{\square}\xspace}
 \newcommand{\mappend}{\ensuremath{\mathbin{+\!\!+}}\xspace}
 \newcommand{\mnil}{\ensuremath{\varnothing}\xspace}
+\newtheorem{axiom}{Axiom}
 
 %\pdfoutput=1 %uncomment to ensure pdflatex processing (mandatatory e.g. to submit to arXiv)
 %\hideLIPIcs  %uncomment to remove references to LIPIcs series (logo, DOI, ...), e.g. when preparing a pre-final version to be uploaded to arXiv or another public repository
@@ -231,16 +232,23 @@ rules that apply. More precisely, for each applicable rule it returns the
 rule premises together with an updated substitution obtained by unifying
 the rule head with the query term.
 
-In our mechanization we abstract the unifier and its properties, namely
+In our mechanization we abstract the unifier and its properties. The function
+\eI{unify} takes two terms $t_1$ and $t_2$ and a subsitution $\sigma$ as input
+and returns an optional extension subsitution $\sigma'$ which is and extension
+of $\sigma$. The expected behavior of \eI{unify} is the higher-order unification
+restrained into the pattern fragment as examplined in~\cite{1991miller-pf}.
+Therefore if $t_1$ and $t_2$ unify under $\sigma$, then $\sigma'~t_1 \equiv
+\sigma'~t_2$.
 
-\input{tex_code/unif_type.tex}
-TODO: state axioms and explain matching; cite Dale's unification results.
-In this paper we assume the reader is familiar with first-order
-unification.
+
+% \input{tex_code/unif_type.tex}
+% TODO: state axioms and explain matching; cite Dale's unification results.
+% In this paper we assume the reader is familiar with first-order
+% unification.
 
 % A backchain is performed when the current
 % atom is a \texttt{call}. In this case, it start by recursively
-% \emph{dereferencing} the variables in $\sigma$, i.e. replacing all the variables
+% \emph{dereferencing} the variables in`' $\sigma$, i.e. replacing all the variables
 % in the query by their term mapping in $\sigma$.
 
 
