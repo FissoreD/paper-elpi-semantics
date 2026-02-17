@@ -1194,25 +1194,41 @@ alternative in $a$.
 % While performing these translation, we need to carefully update the cut-atlernatives.
 
 \subsubsection{Example of \ttl} 
-In \cref{tab:t2l} we point out the result of calling
-\ttl on the trees in \cref{tree-ex}. The first raw contains the image reference
-of then trees and the second raw contains the reference of the images from the
-stacks in \cref{ex-elpi}. For the $3^{rd}$ column in the table, we see
-that $t2l$ is not injective. There are different trees that maps to the same
-stack. In fact, there are transitions in \run that are not visible in
-\nur.\marginpar{2) prendere un albero, un nodo interno, dire come t2l e chiamata in quel caso e mettere accanto lo stack corrispondente}
+The translation of the trees in \cref{tree-ex} is given in
+\cref{ex-elpi}. The letters in the figures relate the trees to the
+corresponding letters in the stack figures. For example, the tree
+\ref{tree-ex1} is translated into \ref{ex-elpi1}. We note that the two
+trees \ref{tree-ex3} and \ref{tree-ex4} are both translated into
+\ref{ex-elpi3}, showing that $t2l$ is not injective; that is, there are
+different trees that map to the same stack. This means that there are
+transitions in \run that are not visible in \nur.
 
-\begin{table}
-  \centering
-  \begin{tabular}{c|c|c|c|c|c|c}
-    % \toprule
-    $t$ & \ref{tree-ex0} & \ref{tree-ex1} & \ref{tree-ex2} & \ref{tree-ex3} and \ref{tree-ex4} & \ref{tree-ex5} & \ref{tree-ex6} \\
-    $t2l\ t\ \epsilon\ \mnil$ & \ref{ex-elpi0} & \ref{ex-elpi1} & \ref{ex-elpi2} & \ref{ex-elpi3} & \ref{ex-elpi4} & \ref{ex-elpi5}
-    % \bottomrule
-  \end{tabular}
-  \caption{Tree to list from \cref{tree-ex} and \cref{ex-elpi}}
-  \label{tab:t2l}
-\end{table}
+As a more precise example of the behavior of \ttl, we consider the tree
+\ref{tree-ex2}, and in particular its deepest \orC{} node. This subtree
+shows a disjunction with four children. The first is ignored, since it
+is \mnone. The success node below $\sigma_3$ has \eI{f B C} and the cut
+operator as continuation, corresponding to the first cell in the stack
+in~\ref{ex-elpi2}. We note that the cut operator points outside the
+stack, since the scope of this cut eliminates its right uncle. The
+success node below $\sigma_4$ has $R_1$ as continuation, where $R_1$ is
+the list of goals \eI{f B C, !}; this is translated into the second cell
+of the stack in~\ref{ex-elpi2}. Finally, the cut operator under
+$\sigma_5$ also has $R_1$ as continuation. It corresponds to the third
+alternative in~\cref{ex-elpi2}. We can see that the first cut points to
+the translation of the subtree under $\sigma_2$, since it is one
+\textsc{Or}-layer above its right uncles.
+
+% \begin{table}
+%   \centering
+%   \begin{tabular}{c|c|c|c|c|c|c}
+%     % \toprule
+%     $t$ & \ref{tree-ex0} & \ref{tree-ex1} & \ref{tree-ex2} & \ref{tree-ex3} and \ref{tree-ex4} & \ref{tree-ex5} & \ref{tree-ex6} \\
+%     $t2l\ t\ \epsilon\ \mnil$ & \ref{ex-elpi0} & \ref{ex-elpi1} & \ref{ex-elpi2} & \ref{ex-elpi3} & \ref{ex-elpi4} & \ref{ex-elpi5}
+%     % \bottomrule
+%   \end{tabular}
+%   \caption{Tree to list from \cref{tree-ex} and \cref{ex-elpi}}
+%   \label{tab:t2l}
+% \end{table}
 
 % The translation of a tree to a list is performed by shown in \cref{fig:ttl}. It takes the
 % tree to be translated, a substitution (called $s$), a list of alternatives, called
