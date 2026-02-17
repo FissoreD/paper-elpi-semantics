@@ -23,7 +23,7 @@ def remove_some_par(l):
     p = l.index(s)
     cl = find_close_par(l, p)
     if cl > p:
-        l = l[:p] + l[p+1:cl] + l[cl+1:]
+        l = l[:p] + "s" + l[p+2:cl] + l[cl+1:]
         return remove_some_par(l)
     else:
         raise Exception("ERROR")
@@ -66,9 +66,11 @@ def clean_line_global(l,escape):
     l = re.sub(r"\bTA\b", "Todo", l)
     l = re.sub(r"`<=`", esc(m("\\\\leq")), l)
     if escape:
-        l = re.sub("Some ", esc("\\\\msome"), l)
+        l = re.sub("some *", esc("\\\\msome"), l)
+        l = re.sub("Some *", esc("\\\\msome"), l)
     else:
         l = re.sub("Some", esc("\\\\msome"), l)
+        l = re.sub("some", esc("\\\\msome"), l)
     l = re.sub("true", esc(m("\\\\top")), l)
     l = re.sub("false", esc(m("\\\\bot")), l)
     l = l.replace("\bsm\b", " " + esc(m("s_m")) + " ")

@@ -9,7 +9,7 @@
 \usepackage{wrapfig}
 
 \renewcommand{\epsilon}{\varepsilon}
-\newcommand{\msome}{\ensuremath{\bullet}}
+\newcommand{\msome}{\ensuremath{\cdot}}
 \newcommand{\mnone}{\ensuremath{\square}\xspace}
 \newcommand{\mappend}{\ensuremath{\mathbin{+\!\!+}}\xspace}
 \newcommand{\mnil}{\ensuremath{\varnothing}\xspace}
@@ -797,7 +797,7 @@ successful path that maps \eI{R} to \eI{2}. Calling \na\ on this tree returns
 % rhs.
 
 Some interesting properties of \na are shown below; they illustrate how \na
-complements \step with respect to failed, success, and \pathatom trees.
+complements \step with respect to failed, success, and \incomplete trees.
 
 % \mvspace{}
 \input{tex_code/incomplete_prune_id.tex}
@@ -851,7 +851,7 @@ These rules are deterministic:
 
 The proof is by induction on the first \run derivation and is immediate,
 because the rules are selected based on \pathend\ $t$. In particular, the
-hypotheses \emph{success $t$}, \emph{\pathatom $t$}, and \emph{failed $t$} are
+hypotheses \emph{success $t$}, \emph{\incomplete $t$}, and \emph{failed $t$} are
 mutually exclusive. Moreover, by \cref{lemma:runTdet}, the hypothesis of
 \failt implies \emph{failed $t$}; hence \failt is exclusive
 with \stopt and \stept, and it is also exclusive with
@@ -867,7 +867,7 @@ with \stopt and \stept, and it is also exclusive with
   % \end{prooftree}
 
   % \begin{prooftree}
-  %   \AxiomC{$\pathatom\ A$}
+  %   \AxiomC{$\incomplete\ A$}
   %   \AxiomC{$\step\ u\ p\ fv_0\ s_1\ A\ = (fv_1,\ st,\ B)$}
   %   \AxiomC{$\run\ fv_1\ s_1\ B\ s_2\ r$}
   %   \RightLabel{$\run\_step$}
@@ -914,7 +914,7 @@ link. Below we show two of these lemmas.
 
 % $$$$
 
-In \cref{lemma:run6}, we evaluate the tree $l$. This evaluation
+In \cref{th:runSSTor}, we evaluate the tree $l$. This evaluation
 produces a success with signature $\sigma'$ and a new tree $l'$.
 During the evaluation, a superficial cut in $l$ is traversed. This
 implies that the evaluation of $\msome l \lor_{\sigma_1} r$ returns
@@ -922,11 +922,11 @@ $\sigma'$ as substitution, and the alternatives are
 $\msome l' \lor_{\sigma_1} \texttt{KO}$. The right-hand side of the
 $\orC$ node is replaced with $\koC$ by \cutr.
 
-In \cref{lemma:run7}, we are in a similar scenario: $t$ evaluates a
+In \cref{th:runNTor}, we are in a similar scenario: $t$ evaluates a
 superficial cut but, this time, produces a failure. This implies that
 the evaluation of $\msome t \lor_{\sigma_1} t'$ also fails.
 
-Finally, in \cref{lemma:run8}, we evaluate
+Finally, in \cref{th:runorSST}, we evaluate
 $\msome l \lor_{\sigma_1} r$. The evaluation succeeds, producing the
 result $\msome(s_1,\msome l' \lor_{\sigma_1} r')$. This means that
 $l$ still has $l'$ as unexplored alternatives. We deduce that the
@@ -1302,9 +1302,9 @@ information is irrelevant, hence define a version of \run that hides it.
 
 % The definition we use is the following:
 
-\deftypes[runT']{tex_code/runt1.tex}
+\input{tex_code/runt1.tex}
 
-From \cref{tab:t2l}, we observe that, upon backtracking, \run may perform
+From \cref{tree-ex,ex-elpi}, we observe that, upon backtracking, \run may perform
 more reduction steps than \nur before returning a solution or a failure.
 These transitions are called silent transitions and must be skipped
 when proving the equivalence between the two semantics. Therefore, we
