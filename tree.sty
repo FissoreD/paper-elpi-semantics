@@ -17,6 +17,8 @@
 \usetikzlibrary{arrows.meta}
 \usetikzlibrary{shapes.geometric, shapes.misc}
 
+\definecolor{darkgreen}{RGB}{0,100,0}
+\definecolor{darkorange}{RGB}{225,110,0}
 % \newcommand{\}{def}
 
 \tikzset{
@@ -48,25 +50,30 @@
   allRed/.style={
       draw=red,
       text=red,
+      font=\bfseries,
     },
   allBlue/.style={
     draw=blue,
     text=blue,
+    font=\bfseries,
   },
   allGreen/.style={
-    draw=green,
-    text=green,
+    draw=darkgreen,
+    text=darkgreen,
+    font=\bfseries,
   },
   allOrange/.style={
-    draw=orange,
-    text=orange,
+    draw=darkorange,
+    text=darkorange,
+    font=\bfseries,
   },
   allBlack/.style={
     % draw=blue,
     text=black,
+    font=\bfseries,
   },
-  andNode/.style={ allBlue, moct },
-  orNode/.style={ allOrange, moct },
+  andNode/.style={ allBlue, circle },
+  orNode/.style={ allOrange, circle },
   okNode/.style={ allGreen, circle, },
   koNode/.style={ allRed, circle, },
   deadNode/.style={ allRed, circle, dashed},
@@ -75,13 +82,13 @@
 }
 
 \newcommand{\iText}[1]{\adjustbox{max width=\SIZE}{\small{#1}}}
-
-\newcommand{\orN}{\ensuremath{\lor}}   % or node
-\newcommand{\andN}{\ensuremath{\land}} % and node
-\newcommand{\okN}{\ensuremath{\top}}
+\usepackage{bm}
+\newcommand{\orN}{\ensuremath{\bm{\lor}}}   % or node
+\newcommand{\andN}{\ensuremath{\bm{\land}}} % and node
+\newcommand{\okN}{\ensuremath{\bm{\top}}}
 \newcommand{\cutN}{\ensuremath{!}}
-\newcommand{\koN}{\ensuremath{\bot}}
-\newcommand{\deadN}{X}
+\newcommand{\koN}{\ensuremath{\bm{\bot}}}
+\newcommand{\deadN}{\ensuremath{{\mathsf{X}}}}
 
 % ARGUMEMTS: NODE TYPE, NODE TXT, NODE TAG
 \newcommand{\nodebuild}[3]{

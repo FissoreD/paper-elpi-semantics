@@ -576,8 +576,8 @@ alternative and continues from there, if one exists. We detail \step, \na, and
 In \cref{tree-ex} we mark with a black arrow the result of \pathend.
 
 \begin{figure}
-  \begin{subfigure}{0.15\textwidth}
-    \includegraphics[width=0.4\textwidth, keepaspectratio]{./src/exec_example1/step1.pdf}
+  \begin{subfigure}{0.99\textwidth}
+    \includegraphics[width=0.05\textwidth, keepaspectratio]{./src/exec_example1/step1.pdf}
     \caption{Initial query}
     \label{tree-ex0} 
   \end{subfigure}
@@ -976,12 +976,16 @@ alternatives.
   Definition save_gs ~$a$~ ~$g$~ ~$b$~ := 
     [seq (x, ~$a$~) | x <- ~$b$~] ++ ~$g$~.
 
-  Definition save_alts ~$a$~ ~$g$~ ~$b$~ := 
+  Definition save_as ~$a$~ ~$g$~ ~$b$~ := 
     [seq (x.1, save_gs ~$a$~ ~$g$~ x.2) | x <- ~$b$~].
   \end{coqcode}
   \end{minipage}
   \begin{minipage}{0.38\textwidth}    
-  \input{tex_code/stepE.tex}
+\begin{coqcode}
+Definition stepS p ~\ensuremath{v}~ ~\ensuremath{t}~ ~\ensuremath{\sigma}~ ~\ensuremath{a}~ ~\ensuremath{g}~ ~\ensuremath{\coloneq}~
+  let (~\ensuremath{v'}~, ~\ensuremath{r}~) ~\ensuremath{\coloneq}~ bc p ~\ensuremath{v}~ ~\ensuremath{t}~ ~\ensuremath{\sigma}~ in
+  (~\ensuremath{v'}~, save_as ~\ensuremath{a}~ ~\ensuremath{g}~ ~\ensuremath{r}~).
+\end{coqcode}
   \end{minipage}
 
   \input{nurbp.tex}
@@ -1322,7 +1326,7 @@ translates to the unexplored stack.
 \input{tex_code/elpi_to_tree.tex}
 
 \noindent
-\begin{minipage}{0.80\textwidth}
+\begin{minipage}{0.75\textwidth}
 \begin{proof}
 The proof is based on the idea explained in~\cite[Section
 3.5.1]{yves-equiv} and depicted in the figure on the right:
@@ -1333,8 +1337,8 @@ stack state is $a'$. This proof strategy is indirectly providing a kind of
 \ltt function by combining the execution of the \nur and \ttl.
 \end{proof}
 \end{minipage}
-\begin{minipage}{0.20\textwidth}
-  \includegraphics[width=1\textwidth, keepaspectratio]{./src/e2t_ind.pdf}
+\begin{minipage}{0.25\textwidth}
+  \includegraphics[width=0.8\textwidth, keepaspectratio]{./src/e2t_ind.pdf}
 \end{minipage}
 
 \vspace{10pt}
@@ -1395,6 +1399,7 @@ The proof of this lemma should be done on the derivation of the program
 execution. However, in this definition, the induction hypothesis is too weak,
 since in we would have to prove ... but we will not be able to show that the
 ... is deterministic.
+\marginpar{spiega notazioni}
 
 To solve the problem, we need to work on ``deterministic trees''
 (\cI{det_tree}), show that if a tree respect this condition, and then prove
