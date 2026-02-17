@@ -174,10 +174,8 @@ then any call to that predicate leaves no choice points.
   \begin{minipage}{.45\textwidth} 
 \begin{coqcode}
 Inductive Tm := ...
+  | App of Tm & Tm
   | Pred of P | Var of V.
-Inductive sig := NonDet | Det.
-Definition sigT :=
-  P -> sig * nat * nat.
 \end{coqcode}
 \vspace{-1.4em}
   \caption{Syntax of \elpiP programs}
