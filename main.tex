@@ -851,8 +851,8 @@ These rules are deterministic:
 
 The proof is by induction on the first \run derivation and is immediate,
 because the rules are selected based on \pathend\ $t$. In particular, the
-hypotheses \emph{success $t$}, \emph{\incomplete $t$}, and \emph{failed $t$} are
-mutually exclusive. Moreover, by \cref{lemma:runTdet}, the hypothesis of
+hypotheses \success $t$, \incomplete $t$, and \failed $t$ are
+mutually exclusive. Moreover, by \cref{th:pruneFNfail}, the hypothesis of
 \failt implies \emph{failed $t$}; hence \failt is exclusive
 with \stopt and \stept, and it is also exclusive with
 \backt since they impose different requirements on the output of \na.
