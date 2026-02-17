@@ -198,6 +198,16 @@ class snip(C):
                 cnt += f"\\end{{{self.MINT_TAG}}}\n"
         super().write(fout,cnt)
 
+"""
+It takes a text on several lines.
+The first MUST be of the for "<TAG> th_name:"
+    where <TAG> is a identifier like Theorem, Lemma or Axiom.
+    th_name is the name of symbol being created.
+    the semicolon should be attached to th_name
+All the variables in the definition should be quantified with a forall.
+It displaies a mintinline if the definition is of exactely one line,
+otherwise it displaies a minted multiline code-block
+"""
 class theorem(C):
     def __init__(self,mintag,mintinl):
         super(theorem,self).__init__("(*","*)","tex_code","v","SNIPT:","ENDSNIPT",True)
@@ -206,7 +216,7 @@ class theorem(C):
 
     def th_name(self, l):
         ls = l.split()
-        assert(ls[0] in ["Theorem", "Lemma"])
+        assert(ls[0] in ["Theorem", "Lemma", "Axiom"])
         assert(len(ls) == 2)
         assert(ls[1].endswith(":"))
         return ls[0].lower(), ls[1][:-1]
