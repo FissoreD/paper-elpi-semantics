@@ -1435,33 +1435,32 @@ it recovers the missing tree structure.
 An interesting application of the tree semantics is determinacy checking,
 introduced in version~3 of the \elpiP{} language~\cite{fissore2026}. The
 checker takes as input the signatures of the predicates declared by the
-user and verifies that the rules of a deterministic predicate return at
+user and verifies that the rules of a deterministic predicate generate at
 most one solution; we call this particular kind of predicate a function.
 Thanks to this static verification, the user can better control
-unexpected backtracking at compile time: if an inconsistency is detected,
-a fatal error explains why the current program may violate determinacy.
+unexpected backtracking statically.
 
-A function behaves deterministically if two main conditions are
+A predicate behaves deterministically if two conditions are
 satisfied: \emph{mutual exclusion} guarantees that at most one rule can
-be successfully applied to a given query, whereas \emph{rule checking}
+be successfully applied to any given query, whereas \emph{rule checking}
 ensures that each rule does not create choice points, for example by
 calling non-deterministic predicates.
 
 Determinacy checking is strongly related to the modes of predicates: we
-differentiate between input and output arguments, where outputs are generated
-wrt the the received inputs. A deterministic call relates to its inputs only one
+differentiate between input and output arguments. A deterministic call relates to its inputs only one
 output. In the literature, we find several works about determinacy checking,
 namely~\cite{1996Somogy,king2005,1989Warren}. These works needs a mode checker
 statically ensuring that in a query with ground inputs, each recursive
 call is performed with ground inputs.
 
 In our mechanization, and in particular in the \elpiP language, we adopt a
-special unification routine on input argument, called
+special unification routine for input argument, called
 \matching~\cite{1991ait-wam,zhou2012}. Similarly to \unify, \matching takes
 the query-term $t_1$ and the pattern $t_2$ and returns an optional subsitution
-$\sigma'$. The query-term is the argument in input mode taken from a dynamic
-call and the pattern is the corresponding input argument in the chosen
-rule-head.
+$\sigma'$ that does not assign any variable in the query. 
+% The query-term is the argument in input mode taken from a dynamic
+% call and the pattern is the corresponding input argument in the chosen
+% rule-head.
 
 The function \matching has the following property:
 
@@ -1473,9 +1472,9 @@ variables in $t_2$ are assigned; that is, $t_1 \equiv \sigma'~t_2$, and the
 variables in $t_1$ are not assigned in $\sigma'$.
 
 
-The \eI{bc} function uses \eI{matching} or \eI{unify} on the arguments $q$
+The \eI{backchain} function uses \eI{matching} or \eI{unify} on the arguments $q$
 depending if the argument is in \emph{input} or \emph{output} mode.
-Below we axiomatize two important properties of our unificators.
+We assume two important properties of our unification routines.
 
 \input{tex_code/unif_trans.tex}
 \input{tex_code/matchunif.tex}
@@ -1491,22 +1490,22 @@ indicated by the \eI{~\PYG{k+kd}{pred}~} keyword. The
 outputs; therefore, all three predicates are expected to take an
 \texttt{int} as input and return an \texttt{int} as output.
 
-The signatures of the program are stored in the \texttt{sig} projection of
-the program $P$ passed to the interpreter and are encoded as described in
+The signatures of the program are stored in the \texttt{sig} field of
+the program and are encoded as described in
 \cite{fissore2026}; that is, similarly to the code in
 \cref{fig:progx}, we use arrows for term application, data types to encode
-base types such as \emph{int}, and two special symbols to distinguish
+base types such as \emph{int}, and two dedicated symbols to distinguish
 deterministic from non-deterministic predicates.
 
 A program execution behaves deterministically if, given a program, a
 substitution, and a tree to the \run\ inductive, the execution either
-fails or, if it succeeds, the tree of alternatives is $\mnone$. Below, we
-define \texttt{is\_det}.
+fails or, if it succeeds, the tree of alternatives is $\mnone$. 
+% Below, we define \texttt{is\_det}.
 
 
 \input{tex_code/is_det.tex}
 
-The theorem we want to prove is the following.
+The theorem we want to prove is the following one:
 
 \input{tex_code/det_check_call.tex}
 
@@ -1515,27 +1514,25 @@ with respect to mutual exclusion and rule checking, and \cI{tm_is_det}
 denotes the function that tests whether the head of the term refers to a rigid
 constant with a deterministic type.
 
-The proof of this lemma should proceed by induction on the derivation of
-the program execution. However, with the current definition, the induction
-hypothesis is too weak: it would be formulated over a \taC tree, whereas
-the conclusion may concern an \orC tree, rendering the induction
-hypothesis unusable.
+The proof of this lemma proceeds by induction on
+the program execution. However, without further work,
+the induction
+hypothesis is too weak since it talks about \taC trees (i.e. atoms),
+whereas we need it on any tree.
 
 To address this issue, we introduce the notion of ``deterministic trees''
 (\cI{det_tree}), show that a tree satisfying this condition enjoys the
-desired properties, and then prove the following theorem, which is more
-general than \cI{det_check_call}.
+desired properties, and then prove the following more general theorem:
 
 \input{tex_code/det_check_tree.tex}
 
-Since \cI{det_check_call} is an instance of \cI{det_check_tree}, its proof
-is now trivial.
+Our target theorem \cI{det_check_call} is a corollary of \cI{det_check_tree}.
 
-As an important remark, proving the same lemma with the stack semantics, it is
-difficult to correctly define the predicate \cI{det_stack}, checking for the
-deterministc behavior of a generic stack, since, similar to \cref{sec:run-prop},
-the lack of structure make this goal hard. We need therefore an intermediate
-data structure, like the tree to encompass this problem.
+% As an important remark, proving the same lemma with the stack semantics, it is
+% difficult to correctly define the predicate \cI{det_stack}, checking for the
+% deterministc behavior of a generic stack, since, similar to \cref{sec:run-prop},
+% the lack of structure make this goal hard. We need therefore an intermediate
+% data structure, like the tree to encompass this problem.
 
 \section{Related work}
 
