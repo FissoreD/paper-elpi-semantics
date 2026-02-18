@@ -214,12 +214,14 @@ $\Sigma$ as finitely supported maps from variables to terms, using the
 finmap library~\cite{finmap}.
 The empty substitution is written $\epsilon$ while
 the composition of two substitutions $\sigma_1$ and $\sigma_2$ with
-disjoint supports as $\sigma_1 + \sigma_2$.
-
+disjoint supports as $\sigma_1 + \sigma_2$.\marginpar{usiamo + ?}
+ 
 The backchaining operation applies all rules to a query term; it is
 central to both semantics.
 
 \input{tex_code/bc_type.tex}
+% \cI{Definition backchain : ~\ensuremath{\mathbb{P}}~ ~\ensuremath{\to}~ ~\ensuremath{\FV}~ ~\ensuremath{\to}~ Tm ~\ensuremath{\to}~ ~\ensuremath{\Sigma}~ ~\ensuremath{\to}~ ~\ensuremath{\FV}~ * list (~\ensuremath{\Sigma}~ * list Atom) ~\ensuremath{\coloneq}~ ...}
+
 
 Since a rule may be applied multiple times, its variables must be
 freshened before each application. Accordingly, the backchain function
@@ -232,13 +234,14 @@ the rule head with the query term.
 
 In our mechanization, we abstract over the unifier and its properties.
 The function \eI{unify} takes two terms $t_1$ and $t_2$, together with a
-substitution $\sigma$, as input, and returns an optional substitution
+substitution $\sigma$, as input, and optionally returns a substitution
 $\sigma'$ that extends $\sigma$. The expected behavior of \eI{unify} is
-higher-order unification restricted to the pattern fragment, as
-explained in~\cite{1991miller-pf}. Therefore, if $t_1$ and $t_2$ unify
-under $\sigma$, then $\sigma'~t_1 \equiv \sigma'~t_2$, where
-$\sigma~t$ is the notation for subsitution application and $\equiv$ denotes the
-syntactic equality of its arguments.
+the standard one (see for example~\cite[2.5]{10.5555/778522.778525} or \cite{1991miller-pf}),
+limited to the first order.
+Therefore, if $t_1$ and $t_2$ unify
+under $\sigma$, then $\sigma'~t_1 = \sigma'~t_2$, where
+$\sigma~t$ is the notation for subsitution application and $=$ denotes the
+syntactic equality.
 
 
 % \input{tex_code/unif_type.tex}
@@ -294,7 +297,7 @@ syntactic equality of its arguments.
 % \begin{definition}[Backchaining]
 %   \leavevmode\\
 %   \phantom{AAAA}\input{tex_code/bc_type.tex}
-%   \label{type:bc}
+%   \label{type:backchain}
 % \end{definition}
 
 % \mvspace{}
@@ -302,7 +305,7 @@ syntactic equality of its arguments.
 % \deftypes[type:r]{tex_code/R_type.tex}
 % \deftypes[type:prog]{tex_code/program_type.tex}
 % \deftypes[type:sigma]{tex_code/sigma_type.tex}
-% \deftypes[type:bc]{tex_code/bc_type.tex}
+% \deftypes[type:backchain]{tex_code/bc_type.tex}
 % \mvspace{}
 
 % A rule (see~\cref{type:r}) has a head of type term and a list of premises, that\marginpar{se riesco extract lemma immediately with lemma environment}
@@ -317,7 +320,7 @@ syntactic equality of its arguments.
 % It is the output of a successful query. The empty substitution is noted
 % $\epsilon$.
 
-% The backchain function (bc, see~\cref{type:bc}) takes: a
+% The backchain function (backchain, see~\cref{type:backchain}) takes: a
 % program $P$; a set $fv$ of variables ($\mathcal{F}_{\!\!\nu}$); a query
 % $q$; and the substitution $\sigma$. A backchain is performed when the current
 % atom is a \texttt{call}. In this case, it start by recursively
@@ -344,11 +347,11 @@ syntactic equality of its arguments.
 
 The cut operator in \elpiP implements the \emph{hard cut}
 (see, e.g., the documentation of \sprologP~\cite{swi-prolog-cut}).
-Whenever the backchaining function \coqIn{bc} returns a list of alternatives,
+Whenever the backchaining function \coqIn{backchain} returns a list of alternatives,
 the first one is explored immediately, while the others are suspended as
 \emph{choice points}. Within a given alternative, premises are processed from
 left to right. When a cut is encountered, it discards (i) all choice points
-created by \coqIn{bc} for the current call and (ii) all choice points created
+created by \coqIn{backchain} for the current call and (ii) all choice points created
 while executing the premises preceding the cut.
 
 For example, consider the program $P$ in \cref{fig:progx} and the query
@@ -643,7 +646,7 @@ substitution, and a tree, and returns an updated set of variables, a
 The set of variables is assumed to contain all variables occurring in the
 tree. It is passed to backchain so that rules can be refreshed correctly.
 % This guarantees that any call
-% to \emph{bc} returns a list of atoms whose variables are disjoint from
+% to \emph{backchain} returns a list of atoms whose variables are disjoint from
 % the variables of the current working tree.\marginpar{not true in figure:fix + also fix in \cref{sec:cut-op}}
 
 The \steptag (see~\cref{type:steptag}) indicates which kind of step was
@@ -985,7 +988,7 @@ alternatives.
   \begin{minipage}{0.38\textwidth}    
 \begin{coqcode}
 Definition stepS p ~\ensuremath{v}~ ~\ensuremath{t}~ ~\ensuremath{\sigma}~ ~\ensuremath{a}~ ~\ensuremath{g}~ ~\ensuremath{\coloneq}~
-  let (~\ensuremath{v'}~, ~\ensuremath{r}~) ~\ensuremath{\coloneq}~ bc p ~\ensuremath{v}~ ~\ensuremath{t}~ ~\ensuremath{\sigma}~ in
+  let (~\ensuremath{v'}~, ~\ensuremath{r}~) ~\ensuremath{\coloneq}~ backchain p ~\ensuremath{v}~ ~\ensuremath{t}~ ~\ensuremath{\sigma}~ in
   (~\ensuremath{v'}~, save_as ~\ensuremath{a}~ ~\ensuremath{g}~ ~\ensuremath{r}~).
 \end{coqcode}
   \end{minipage}
@@ -1020,9 +1023,9 @@ cut-alternative list and $g$ is the list of future conjuncts. If $t$ is a cut
 (\cuts), we need to keep evaluating $g$ under $\sigma_0$ but we change
 the alternatives to $ca$. Finally, in the case of a call (\calls), we
 backchain the call in the program. If $rs$ is the list of rule premises returned
-by \texttt{bc}, then each list of premises if mapped to a list of goals
+by \texttt{backchain}, then each list of premises if mapped to a list of goals
 (\texttt{goals}) have $a$ as cut-alternative and the global list is translated
-to a list of alternative (\texttt{alts}). \marginpar{Dire una parola su backtracking = tl if bc = nil}
+to a list of alternative (\texttt{alts}). \marginpar{Dire una parola su backtracking = tl if backchain = nil}
 
 \begin{figure}
   \centering
@@ -1135,7 +1138,7 @@ explored, i.e. \coqIn{B} must be
 the right-skewed tree containing conjunctions of premises atoms.
 This is enforced using the \coqIn{big_and} produce that generates a
 tree out of the reset point $B_0$, the same procude used to
-transform each alternative output by \coqIn{bc} into the And-layer
+transform each alternative output by \coqIn{backchain} into the And-layer
 of the resulting tree.
 When the left hand side is successfule, then the right hand side
 may have been explored, and consequently must be a valid tree.
@@ -1416,7 +1419,7 @@ only the variables in $t_2$ are assigned, i.e. $t_1 \equiv \sigma'~t_2$ and
 the variables in $t_1$ are nots assigned in $\sigma'$.
 
 
-The \eI{bc} function uses \eI{matching} or \eI{unify} on the arguments $q$
+The \eI{backchain} function uses \eI{matching} or \eI{unify} on the arguments $q$
 depending if the argument is in \emph{input} or \emph{output} mode.
 Below we axiomatize two important properties of our unificators.
 
