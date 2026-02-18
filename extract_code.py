@@ -40,6 +40,7 @@ def clean_line_global(l,escape):
     l = re.sub(r'\b_\w+\b', '_', l)
     if not escape:
         l = re.sub(r'_', '\\_', l)
+    l = re.sub(r'#', esc(m('\\\\#')), l)
     l = re.sub(r'\+\+', esc('\\\\mappend'), l)
     l = re.sub(r'\[::\]', esc('\\\\mnil'), l)
     l = re.sub("Sigma", esc(m("\\\\Sigma")), l)
