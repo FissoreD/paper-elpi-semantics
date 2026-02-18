@@ -1501,9 +1501,10 @@ proved equivalent) also apply to standard \prologP if one forces all predicate
 signatures to have only output arguments.
 
 For determinacy analysis, matching input arguments affects the development
-only as follows: axiom XXX does not require the query $q$ to be ground.
+only as follows: \cref{th:matchingdisj} does not require the query $q$ to 
+be ground.
 Adapting our results to standard \prologP therefore requires two changes.
-First, to add the corresponding groundness hypothesis to XXX. Second, to discharge
+First, we need to add the corresponding groundness hypothesis to XXX. Second, to discharge
 this premise when XXX is used. Typically this requires an additional static analysis that
 checks whether the program is well-moded. Well-moded predicates produce
 ground outputs assuming ground inputs; hence, starting from a ground initial
@@ -1512,7 +1513,7 @@ and hence the proofs in \cref{sec:determinacy} still apply.
 
 The only mechanization of Prolog's semantics
 we could find is the one by Pusch in \isabelleP~\cite{10.1007/BFb0105415}
-that is based on the model of Debray and Mishra~\cite[Sec.~4.3]{10.1016/0743-1066(88)90007-6}.
+that is based on the model of Debray and Mishra~\cite[Sec.~4.3]{Debray1988}.
 Their work start from that semantics and refines it by
 introducing some optimizations usually found in
 the Warren abstract machine~\cite{warren1983abstract,1991ait-wam}.
