@@ -1273,18 +1273,21 @@ transitions in \run that are not visible in \nur.
 \includegraphics[width=0.8\textwidth, keepaspectratio]{src/t2lex.pdf}
 \end{center}
 %
-As an example we focus on the call to \ttl on the tree
-\ref{tree-ex2}, and in particular its deepest \orC{} node. This subtree
+As an example of a call to \ttl, we take the tree and the stack above,
+which are respectively taken from \cref{tree-ex2,ex-elpi2}. The red arrows
+points the head of an anlternative in the tree to the head of the corresponding
+cell in the stack.
+We focus on the deepest \orC{} node in the tree. This subtree
 is a disjunction with four children. The first is ignored, since it
 is \mnone. The success node below $\sigma_3$ has \eI{f B C} and the cut
-operator as continuation, corresponding to the first cell in the stack
-in~\ref{ex-elpi2}. We note that the cut operator points outside the
+operator as continuation, corresponding to the first cell in the stack. 
+We note that the cut operator points outside the
 stack, since the scope of this cut eliminates its right uncle. The
 success node below $\sigma_4$ has $R_1$ as continuation, where $R_1$ is
 the list of goals \eI{f B C, !}; this is translated into the second cell
-of the stack in~\ref{ex-elpi2}. Finally, the cut operator under
+of the stack. Finally, the cut operator under
 $\sigma_5$ also has $R_1$ as continuation. It corresponds to the third
-alternative in~\cref{ex-elpi2}. We can see that the first cut points to
+alternative. We can see that the first cut points to
 the translation of the subtree under $\sigma_2$, since it is one
 \orC-layer above its right uncles.
 
