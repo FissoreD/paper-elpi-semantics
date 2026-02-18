@@ -104,13 +104,13 @@ for tree={
 \end{tikzpicture}
 \end{minipage}
 
-
+\newcommand{\marr}[3]{\draw[->, red, dashed, line width=1pt] ($(#1)+(0,-0.5+#3)$) to[in=270, out=270] ($(#2)+(-0.4,-0.7)$)}
 
 \begin{tikzpicture}[overlay,remember picture]
-\draw[->] (ss1) to[in=270, out=270] (ss11);
-\draw[->] (ss2) to[in=270, out=270] (ss22);
-\draw[->] (ss3) to[in=270, out=270] (ss33);
-\draw[->] (ss4) to[in=270, out=270] (ss44);
+\marr{ss1}{ss11}{0};
+\marr{ss2}{ss22}{0};
+\marr{ss3}{ss33}{0};
+\marr{ss4}{ss44}{-0.9};
 \end{tikzpicture}
 
 \end{document}
