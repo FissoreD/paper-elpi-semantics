@@ -1583,16 +1583,30 @@ the same strategy in the proof of \cref{th:elpitotree}.
 
 \section{Conclusion}
 
-We do this.
-This is a first step for XXXX. We need to add
-substitutions. The missing part of the proof
-becomes related to abstract interpretation, since
-the det types for a lattice and one has to prove that
-the concrete runtime values variables take agree
-with the abstraction computed statically. This proof
-is ongoing and somehow orthogonal to the current one
-since the cut operator and the HO feature do not
-interfere with eachother in complex ways.
+This paper describes two operational semantics for Prolog with cut. The
+first semantics is based on an And--Or tree and is well suited to
+graphically illustrating the scope of the cut and to proving lemmas about
+the impact of its evaluation when reasoning about disjunctions. The
+second semantics is based on a stack of alternatives; it is
+computationally more efficient but loses the structural expressiveness
+of the first semantics. This stack-based semantics is equivalent to a
+sub-language of \elpiP; in our presentation, we leave aside the
+higher-order features of the language. Thanks to a dedicated function,
+we are able to translate trees into stacks and prove the equivalence of
+the two semantics.
+
+Based on the tree semantics, we mechanize the first-order part of the
+determinacy checker that has been available in \elpiP since version 3.0. We
+prove that a call to a deterministic predicate returns at most one solution.
+
+To complete our semantics and fully reflect the \elpiP language, we
+would need to add the possibility of asserting both nominal variables
+and local rules. This extension would require the determinacy proof to
+account for higher-order variables; we would therefore need a lattice of
+determinacy types to support a subtyping relation between them. This
+proof is ongoing and somehow orthogonal to the current development,
+since the cut operator and higher-order features do not interact in
+complex ways.
 
 \bibliography{bib}
 \end{document}
