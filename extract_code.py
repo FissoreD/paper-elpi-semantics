@@ -244,10 +244,19 @@ class theorem(C):
         n2 = name.replace('_', '')
         args = "" if len(args) == 0 else (f" (\\{self.MINT_INLINE}{{" + self.clean_line(" ".join(args)) + "})")
         cnt += f"\\begin{{{env}}}[{n1}{args}]\label{{th:{n2}}}"
-        if len(tl) == 1:
+        # if len(tl) == 1:
+        #     txt = self.clean_line(tl[0].strip())
+        #     cnt += f"\\{self.MINT_INLINE}{{{txt}}}"
+        # else:
+        #     cnt += f"~\n\\begin{{{self.MINT_TAG}}}\n"
+        #     for l in tl:
+        #         cnt += self.clean_line(self.clean_comment(l))
+        #     cnt += f"\\end{{{self.MINT_TAG}}}\n"
+        if len(tl) > 0:
             txt = self.clean_line(tl[0].strip())
             cnt += f"\\{self.MINT_INLINE}{{{txt}}}"
-        else:
+            tl = tl[1:]
+        if len(tl) != 0:
             cnt += f"~\n\\begin{{{self.MINT_TAG}}}\n"
             for l in tl:
                 cnt += self.clean_line(self.clean_comment(l))
