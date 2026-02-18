@@ -243,7 +243,7 @@ class theorem(C):
         (env,name,args), tl = self.th_name(lines[0]), lines[1:]
         n1 = name.replace('_', '\_')
         n2 = name.replace('_', '')
-        args = "" if len(args) == 0 else (f" (\\{self.MINT_INLINE}{{" + self.clean_line(" ".join(args)) + "})")
+        args = "" if len(args) == 0 else (f" \\{self.MINT_INLINE}{{" + self.clean_line(" ".join(args)) + "}")
         cnt += f"\\begin{{{env}}}[{n1}{args}]\label{{th:{n2}}}"
         # if len(tl) == 1:
         #     txt = self.clean_line(tl[0].strip())
