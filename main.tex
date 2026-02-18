@@ -1531,11 +1531,17 @@ is denotational and cannot easily cover all the
 features our paper \cite{fissore2026} does, but would have
 been sufficient for this first step.
 
-The proof technique we use to relate the two semantics
-is inspired by \cite{yves-equiv} and we thank Y.Bertot for insightful
-discussions on the topic. In \cite{yves-equiv} Bertot relates bla bla,
-witout never constructing a decompiler, exactly as we
-never build a list to tree function.\marginpar{FINIRE}
+The proof technique we use to relate the two semantics is inspired by
+\cite{yves-equiv}, and we thank Y.~Bertot for insightful discussions on
+the topic. In \cite{yves-equiv}, Bertot mechanizes the correctness of a
+compiler. He relates the semantics of an imperative language to that of
+its compiled assembly code and proves their equivalence. His approach
+uses the compiler as the translation function from one language to the
+other, but does not introduce a decompiler, just as we do not define a
+function from lists to trees.
+To show that the assembly code behaves like the imperative language, he
+proceeds by induction on the execution of the assembly program. We adopt
+the same strategy in the proof of \cref{th:elpitotree}.
 
 \section{Conclusion}
 
