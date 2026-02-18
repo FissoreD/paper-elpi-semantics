@@ -1466,17 +1466,21 @@ The theorem we want to prove is the following.
 
 \input{tex_code/det_check_call.tex}
 
-With \cI{check_~$\mathbb{P}$~} being the function checking the program wrt
-mutual exclusion and rule checking and \cI{tm_is_det} being the function testing
-if the term head refers to a rigid constant with deterministically type.
-The proof of this lemma should be done on the derivation of the program
-execution. However, in this definition, the induction hypothesis is too weak,
-since the induction hypothesis would be defined on a \taC tree while our
-conclusion could be on a \orC tree, making the induction hypothesis useless.
+Here, \cI{check_~$\mathbb{P}$~} denotes the function that checks the program
+with respect to mutual exclusion and rule checking, and \cI{tm_is_det}
+denotes the function that tests whether the head term refers to a rigid
+constant with a deterministic type.
 
-To solve the problem, we need to work on ``deterministic trees''
-(\cI{det_tree}), show that if a tree respect this condition, and then prove
-the following theorem which is more generic then \cI{det_check_call}.
+The proof of this lemma should proceed by induction on the derivation of
+the program execution. However, with the current definition, the induction
+hypothesis is too weak: it would be formulated over a \taC tree, whereas
+the conclusion may concern an \orC tree, rendering the induction
+hypothesis unusable.
+
+To address this issue, we introduce the notion of ``deterministic trees''
+(\cI{det_tree}), show that a tree satisfying this condition enjoys the
+desired properties, and then prove the following theorem, which is more
+general than \cI{det_check_call}.
 
 \input{tex_code/det_check_tree.tex}
 
