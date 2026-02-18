@@ -171,45 +171,53 @@ then any call to that predicate leaves no choice points.
 \section{Preliminaries: syntax and informal semantics of cut}
 \label{sec:preliminaries}
 \begin{figure}[b]
-  \begin{minipage}{.45\textwidth} 
 \begin{coqcode}
-Inductive Tm := ...
-  | App of Tm & Tm
-  | Pred of P | Var of V.
+Inductive Tm := Symb of S | Pred of P | Var of V | App of Tm & Tm.
+Inductive Atom := cut | call of Tm.
+Record R := mkR { head : Tm; premises : list Atom }.
+Record ~\ensuremath{\mathbb{P}}~ := { rules : seq R; sig : sigT }.
+Definition ~\ensuremath{\Sigma}~ := {fmap V -> Tm}.
 \end{coqcode}
 \vspace{-1.4em}
-  \caption{Syntax of \elpiP programs}
-  \end{minipage}
-  \begin{minipage}{.45\textwidth}    
-  \input{tex_code/atom_type.tex}\\
-  \input{tex_code/R_type.tex}\\
-  \input{tex_code/program_type.tex}\\
-  \input{tex_code/sigma_type.tex}
+  % \caption{Syntax of \elpiP programs}
+  % \end{minipage}
+  % \begin{minipage}{.45\textwidth}    
+  % \input{tex_code/atom_type.tex}\\
+  % \input{tex_code/R_type.tex}\\
+  % \input{tex_code/program_type.tex}\\
+  % \input{tex_code/sigma_type.tex}
   \label{type:atom}
   \label{type:r}
   \label{type:prog}
   \label{type:sigma}
   \label{fig:basex}
-  \caption{Syntax of \elpiP programs}
-  \end{minipage}
+% \end{minipage}
+\caption{Definition of term, rule, program and substitution}
 
 \end{figure}
 
-Both semantics share the same notion of program, written $\mathbb{P}$.
-\Cref{fig:progx} is our running example. A program consists of a list of
-rules \coqIn{R} together with a signature environment \coqIn{sigT}. Besides
-the arity of each predicate, a signature specifies which arguments are
-inputs and which are outputs, and whether the predicate is deterministic.
-Inputs come before outputs.
-
-A rule consists of a head term \coqIn{Tm} and a list of premises. Each
-premise is an \coqIn{Atom}, i.e. either the cut operator or a predicate
-call. Terms \coqIn{Tm} include predicate symbols, data, and variables. In
-the concrete syntax, variables are written with capital letters, and
+In the entire paper we use \Cref{fig:progx} as our running example, and
+we start by describing how we represent a program like that one.
+In the concrete syntax, variables are written with capital letters, and
 predicate application follows the $\lambda$-calculus style (no
 parentheses).
 
-The set of variables \coqIn{V} is countable. We represent substitutions
+The description of a program is given by the record $\mathbb{P}$ and
+is shared by both semantics. A program consists of a list of
+rules \coqIn{R} together with a signature environment \coqIn{sigT}.
+We delay the descussion of signatures to \cref{sec:determinacy} where we
+describe the static analysis that concerns them.
+
+A rule consists of a head term \coqIn{Tm} and a list of premises. Each
+premise is an \coqIn{Atom}, i.e. either the cut operator or a predicate
+call. Terms \coqIn{Tm} include predicate symbols, data symbols, and variables.
+The syntax tree allows variables to be applied and predicates to be mixed with data.
+These higher order features play no role in the current paper that focuses on
+first order logic programming, but allows future extensions to full $\lambda$Prolog
+to be based on the same mechanization.
+
+The set of variables \coqIn{V}, predicates \coqIn{P} and data symbols \coqIn{S}
+are countable. We represent substitutions
 $\Sigma$ as finitely supported maps from variables to terms, using the
 finmap library~\cite{finmap}.
 The empty substitution is written $\epsilon$ while
@@ -221,7 +229,6 @@ central to both semantics.
 
 \input{tex_code/bc_type.tex}
 % \cI{Definition backchain : ~\ensuremath{\mathbb{P}}~ ~\ensuremath{\to}~ ~\ensuremath{\FV}~ ~\ensuremath{\to}~ Tm ~\ensuremath{\to}~ ~\ensuremath{\Sigma}~ ~\ensuremath{\to}~ ~\ensuremath{\FV}~ * list (~\ensuremath{\Sigma}~ * list Atom) ~\ensuremath{\coloneq}~ ...}
-
 
 Since a rule may be applied multiple times, its variables must be
 freshened before each application. Accordingly, the backchain function
@@ -236,11 +243,11 @@ In our mechanization, we abstract over the unifier and its properties.
 The function \eI{unify} takes two terms $t_1$ and $t_2$, together with a
 substitution $\sigma$, as input, and optionally returns a substitution
 $\sigma'$ that extends $\sigma$. The expected behavior of \eI{unify} is
-the standard one (see for example~\cite[2.5]{10.5555/778522.778525} or \cite{1991miller-pf}),
+the standard one (see for example~\cite[section 2.5]{10.5555/778522.778525}), % or \cite{1991miller-pf}),
 limited to the first order.
 Therefore, if $t_1$ and $t_2$ unify
 under $\sigma$, then $\sigma'~t_1 = \sigma'~t_2$, where
-$\sigma~t$ is the notation for subsitution application and $=$ denotes the
+$\sigma~t$ denotes subsitution application and $=$ denotes 
 syntactic equality.
 
 
@@ -345,16 +352,18 @@ syntactic equality.
 \subsection{The cut operator}
 \label{sec:cut-op}
 
-The cut operator in \elpiP implements the \emph{hard cut}
+There are quite a few variants of the cut operator.
+The one we are interested in, i.e. the one used in \elpiP, is known as \emph{hard cut}
 (see, e.g., the documentation of \sprologP~\cite{swi-prolog-cut}).
-Whenever the backchaining function \coqIn{backchain} returns a list of alternatives,
+Whenever the \coqIn{backchain} function returns a non-empty list of alternatives,
 the first one is explored immediately, while the others are suspended as
 \emph{choice points}. Within a given alternative, premises are processed from
-left to right. When a cut is encountered, it discards (i) all choice points
-created by \coqIn{backchain} for the current call and (ii) all choice points created
-while executing the premises preceding the cut.
+left to right, executing each atom in turn. When a cut is encountered, it
+discards (i) all choice points created by \coqIn{backchain} for the current call
+and (ii) all choice points created while executing the premises to the left of
+the cut.
 
-For example, consider the program $P$ in \cref{fig:progx} and the query
+For example, consider the program in \cref{fig:progx} and the query
 $\elpiIn{g 0 R}$.
 Both rules for \eI{g} apply to this query. Backchaining therefore returns the
 following two alternatives:
@@ -1392,6 +1401,11 @@ satisfied: \emph{mutual exclusion} guarantees that at most one rule can
 be successfully applied to a given query, whereas \emph{rule checking}
 ensures that each rule does not create choice points, for example by
 calling non-deterministic predicates.
+
+TODO:
+Besides the arity of each predicate, a signature specifies which arguments are
+inputs and which are outputs, and whether the predicate is deterministic.
+Inputs come before outputs.
 
 Determinacy checking is strongly related to the modes of predicates: we
 differentiate between input and output arguments, where outputs are generated

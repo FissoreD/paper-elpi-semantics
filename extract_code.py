@@ -52,7 +52,7 @@ def clean_line_global(l,escape):
     l = re.sub("->", esc(m("\\\\to")), l)
     l = re.sub("=>", esc(m("\\\\Rightarrow")), l)
     l = re.sub("/\\\\", esc(m("\\\\land")), l)
-    l = re.sub(":=", esc(m("\\\\coloneq")), l)
+    # l = re.sub(":=", esc(m("\\\\coloneq")), l)
     l = re.sub("forall", esc(m("\\\\forall")), l)
     l = re.sub("exists", esc(m("\\\\exists")), l)
     l = re.sub("None", esc(m("\\\\square")), l)
