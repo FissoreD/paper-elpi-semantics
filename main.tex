@@ -1259,7 +1259,7 @@ first alternative $g$, whereas $B_0$ is the continuation for each alternative
 in $a$.
 % While performing these translation, we need to carefully update the cut-atlernatives.
 
-\subsubsection{Example of \ttl TODO DAVIDE} 
+\subsubsection{Example of \ttl} 
 The translation of the trees in \cref{tree-ex} is given in
 \cref{ex-elpi}. The letters in the figures relate the trees to the
 corresponding letters in the stack figures. For example, the tree
@@ -1269,9 +1269,9 @@ trees \ref{tree-ex3} and \ref{tree-ex4} are both translated into
 different trees that map to the same stack. This means that there are
 transitions in \run that are not visible in \nur.
 
-As a more precise example of the behavior of \ttl, we consider the tree
+As an example we focus on the call to \ttl on the tree
 \ref{tree-ex2}, and in particular its deepest \orC{} node. This subtree
-shows a disjunction with four children. The first is ignored, since it
+is a disjunction with four children. The first is ignored, since it
 is \mnone. The success node below $\sigma_3$ has \eI{f B C} and the cut
 operator as continuation, corresponding to the first cell in the stack
 in~\ref{ex-elpi2}. We note that the cut operator points outside the
@@ -1550,9 +1550,8 @@ For determinacy analysis, matching input arguments affects the development
 only as follows: \cref{th:matchingdisj} does not require the query $q$ to
 be ground. Adapting our results to standard \prologP therefore requires
 the insertion of two additional hypotheses in
-\cref{th:detcheckcall}. First, we require that $t$ has ground inputs.
-Second, we require that the program $p$ is statically well-moded.
-
+\cref{th:detcheckcall}. First, one has to require that $t$ has ground inputs.
+Second, that the program $p$ is well-moded.
 Well-moded predicates produce ground outputs when given ground inputs;
 hence, starting from an initial query with ground inputs, well-moded
 programs behave exactly as if input arguments were matched. Therefore,
@@ -1561,20 +1560,20 @@ the proofs in \cref{sec:determinacy} still apply.
 The only mechanization of Prolog's semantics
 we could find is the one by Pusch in \isabelleP~\cite{10.1007/BFb0105415}
 that is based on the model of Debray and Mishra~\cite[Sec.~4.3]{Debray1988}.
-Their work start from that semantics and refines it by
+Their work starts from that semantics and refines it by
 introducing some optimizations usually found in
 the Warren abstract machine~\cite{warren1983abstract,1991ait-wam}.
 They do not use the semantics to prove properties
 on the execution of programs as we do in our use case, hence they do not face the
 difficulty described in \cref{stack-sem} that pushed us to
-develop an more explicit semantics (with respect to cut).
-In some way our work is complementary, showing the stack
-based semantics equivalent to a more optmized one.
+develop a more explicit semantics (with respect to cut).
+In a sense, our work is complementary, showing the stack-based semantics
+equivalent to a more optimized one.
 
-Another relevant work are the ones by King~\cite{2011king},
+Another relevant work is by King~\cite{2011king},
 but we could not find their Rocq source code. Their semantics
 is denotational and cannot easily cover all the
-features our paper \cite{fissore2026} does, but would have
+features our paper covers, but it would have
 been sufficient for this first step.
 
 The proof technique we use to relate the two semantics is inspired by
@@ -1584,37 +1583,30 @@ compiler. He relates the semantics of an imperative language to that of
 its compiled assembly code and proves their equivalence. His approach
 uses the compiler as the translation function from one language to the
 other, but does not introduce a decompiler, just as we do not define a
-function from lists to trees.
+function from stacks to trees.
 To show that the assembly code behaves like the imperative language, he
 proceeds by induction on the execution of the assembly program. We adopt
 the same strategy in the proof of \cref{th:elpitotree}.
 
 \section{Conclusion}
 
-This paper describes two operational semantics for Prolog with cut. The
-first semantics is based on an And--Or tree and is well suited to
-graphically illustrating the scope of the cut and to proving lemmas about
-the impact of its evaluation when reasoning about disjunctions. The
-second semantics is based on a stack of alternatives; it is
-computationally more efficient but loses the structural expressiveness
-of the first semantics. This stack-based semantics is equivalent to a
-sub-language of \elpiP; in our presentation, we leave aside the
-higher-order features of the language. Thanks to a dedicated function,
-we are able to translate trees into stacks and prove the equivalence of
-the two semantics.
+This paper describes two operational semantics for Prolog with cut. The first
+semantics is based on And--Or trees: it is well suited to graphically
+illustrating the scope of cut, and to proving lemmas about the impact of its
+evaluation when reasoning about disjunctions. The second semantics is based on
+a stack of alternatives: it is computationally more efficient, but it loses the
+structural expressiveness of the tree-based semantics. Thanks to a dedicated
+function, we translate trees into stacks and prove the two semantics equivalent.
+This stack-based semantics corresponds to the first-order fragment of \elpiP.
 
-Based on the tree semantics, we mechanize the first-order part of the
-determinacy checker that has been available in \elpiP since version 3.0. We
+Using the tree-based semantics, we mechanize the first-order part of the
+determinacy checker that has been available in \elpiP since version~3.0, and we
 prove that a call to a deterministic predicate returns at most one solution.
 
-To complete our semantics and fully reflect the \elpiP language, we
-would need to add the possibility of asserting both nominal variables
-and local rules. This extension would require the determinacy proof to
-account for higher-order variables; we would therefore need a lattice of
-determinacy types to support a subtyping relation between them. This
-proof is ongoing and somehow orthogonal to the current development,
-since the cut operator and higher-order features do not interact in
-complex ways.
+To fully model the \elpiP language, we would need to account for higher-order
+variables, i.e. variables representing predicates. This extension is ongoing and
+largely orthogonal to the present paper, since cut and higher-order features do
+not interact in subtle ways.
 
 \bibliography{bib}
 \end{document}
