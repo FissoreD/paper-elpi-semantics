@@ -1441,23 +1441,24 @@ Below we axiomatize two important properties of our unificators.
 
 
 The syntax of the signatures in \cref{fig:progx} indicates that
-\texttt{f} and \texttt{g} are expected to be functions, as indicated by
-the \eI{~\PYG{k+kd}{func}~} keyword. The \eI{~\PYG{k+kMode}{\PYGZhy{}\PYGZgt{}}~}
-symbol separates inputs from outputs; therefore, all three predicates are
-expected to take an \texttt{int} as input and return an \texttt{int} as
-output.
+\texttt{f} and \texttt{g} are expected to be functions, as specified by
+the \eI{~\PYG{k+kd}{func}~} keyword. The
+\eI{~\PYG{k+kMode}{\PYGZhy{}\PYGZgt{}}~} symbol separates inputs from
+outputs; therefore, all three predicates are expected to take an
+\texttt{int} as input and return an \texttt{int} as output.
 
-The signatures of the program are stored in its \texttt{sig} projection of the
-program $P$ passed to the interpreter, and are encoded as described in
-\cite{fissore2026}, that is, similar to the code in \cref{fig:progx}, we have
-arrows for term application, data-types to encode base types such as
-\emph{int}, and two special symbols to distinguish deterministic
-from non-deterministic predicates.
+The signatures of the program are stored in the \texttt{sig} projection of
+the program $P$ passed to the interpreter and are encoded as described in
+\cite{fissore2026}; that is, similarly to the code in
+\cref{fig:progx}, we use arrows for term application, data types to encode
+base types such as \emph{int}, and two special symbols to distinguish
+deterministic from non-deterministic predicates.
 
-A program execution behaves deterministically if given a program, a substitution
-and a tree to the \run inductive, then either the execution fails, or, if is
-succeeds, then the tree of alternatives is $\mnone$. Below we define
-\texttt{is\_det}.
+A program execution behaves deterministically if, given a program, a
+substitution, and a tree to the \run\ inductive, the execution either
+fails or, if it succeeds, the tree of alternatives is $\mnone$. Below, we
+define \texttt{is\_det}.
+
 
 \input{tex_code/is_det.tex}
 
@@ -1470,9 +1471,8 @@ mutual exclusion and rule checking and \cI{tm_is_det} being the function testing
 if the term head refers to a rigid constant with deterministically type.
 The proof of this lemma should be done on the derivation of the program
 execution. However, in this definition, the induction hypothesis is too weak,
-since in we would have to prove ... but we will not be able to show that the
-... is deterministic.
-\marginpar{spiega notazioni}
+since the induction hypothesis would be defined on a \taC tree while our
+conclusion could be on a \orC tree, making the induction hypothesis useless.
 
 To solve the problem, we need to work on ``deterministic trees''
 (\cI{det_tree}), show that if a tree respect this condition, and then prove
