@@ -459,9 +459,9 @@ Inductive tree ~$\coloneq$~
 \end{coqcode}
 \begin{coqcode}
 Inductive tag ~$\coloneq$~ Expanded | CutBrothers | Failed | Success.
-Definition step : ~$\mathbb{P}$~ ~$\to$~ ~$\FV$~ ~$\to$~ ~$\Sigma$~ ~$\to$~ tree ~$\to$~ (~$\FV$~ * tag * tree) ~$\coloneq$~
-Definition prune : ~$\mathbb{B}$~ ~$\to$~ tree ~$\to$~ option tree ~$\coloneq$~
-Inductive runT : ~$\mathbb{P}$~ ~$\to$~  ~$\FV$~ ~$\to$~ ~$\Sigma$~ ~$\to$~ tree ~$\to$~ option (~$\Sigma$~ * option tree) ~$\to$~ ~$\mathbb{B}$~ ~$\to$~ ~$\FV$~ ~$\to$~ Prop ~$\coloneq$~
+Definition step : ~$\mathbb{P}$~ ~$\to$~ ~$\FV$~ ~$\to$~ ~$\Sigma$~ ~$\to$~ tree ~$\to$~ (~$\FV$~ * tag * tree)
+Definition prune : ~$\mathbb{B}$~ ~$\to$~ tree ~$\to$~ option tree
+Inductive runT : ~$\mathbb{P}$~ ~$\to$~  ~$\FV$~ ~$\to$~ ~$\Sigma$~ ~$\to$~ tree ~$\to$~ option (~$\Sigma$~ * option tree) ~$\to$~ ~$\mathbb{B}$~ ~$\to$~ ~$\FV$~ ~$\to$~ Prop
 \end{coqcode}
 \caption{Signatures of the tree-based semantics}
 
@@ -1450,8 +1450,8 @@ output.
 The signatures of the program are stored in its \texttt{sig} projection of the
 program $P$ passed to the interpreter, and are encoded as described in
 \cite{fissore2026}, that is, similar to the code in \cref{fig:progx}, we have
-arrows decorated with an input mode for term application, base types (to encode,
-for example, \emph{int}), and two special symbols to distinguish deterministic
+arrows for term application, data-types to encode base types such as
+\emph{int}, and two special symbols to distinguish deterministic
 from non-deterministic predicates.
 
 A program execution behaves deterministically if given a program, a substitution
@@ -1461,7 +1461,7 @@ succeeds, then the tree of alternatives is $\mnone$. Below we define
 
 \input{tex_code/is_det.tex}
 
-The theorem we want to prove is the following.\marginpar{use coq syntax instead of elpi?}
+The theorem we want to prove is the following.
 
 \input{tex_code/det_check_call.tex}
 

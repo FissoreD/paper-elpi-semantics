@@ -191,7 +191,9 @@ class snip(C):
         if lines == []: return
         cnt = ""
         if len(lines) == 1:
-            cnt= f"\{self.MINT_INLINE}{{{self.clean_line(lines[0].strip())}}}"
+            l = self.clean_line(lines[0].strip())
+            l = l[:-2] if l.endswith(":=") else l
+            cnt= f"\{self.MINT_INLINE}{{{l}}}"
         else:
             if not raw:
                 cnt += (f"\\begin{{{self.MINT_TAG}}}\n")
