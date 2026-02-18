@@ -65,6 +65,7 @@ def clean_line_global(l,escape):
     l = re.sub(r"\bget_end\b", "next", l)
     l = re.sub(r"\bTA\b", "Todo", l)
     l = re.sub(r"`<=`", esc(m("\\\\leq")), l)
+    l = re.sub(r"∨", esc(m("\\\\lor")), l)
     if escape:
         l = re.sub("some *", esc("\\\\msome"), l)
         l = re.sub("Some *", esc("\\\\msome"), l)
