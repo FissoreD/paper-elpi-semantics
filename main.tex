@@ -1401,11 +1401,6 @@ be successfully applied to a given query, whereas \emph{rule checking}
 ensures that each rule does not create choice points, for example by
 calling non-deterministic predicates.
 
-TODO:
-Besides the arity of each predicate, a signature specifies which arguments are
-inputs and which are outputs, and whether the predicate is deterministic.
-Inputs come before outputs.
-
 Determinacy checking is strongly related to the modes of predicates: we
 differentiate between input and output arguments, where outputs are generated
 wrt the the received inputs. A deterministic call relates to its inputs only one
@@ -1439,10 +1434,13 @@ Below we axiomatize two important properties of our unificators.
 \input{tex_code/unif_trans.tex}
 \input{tex_code/matchunif.tex}
 
-
-The syntax of the signatures in \cref{fig:progx} indicates that
-\texttt{f} and \texttt{g} are expected to be functions, as specified by
-the \eI{~\PYG{k+kd}{func}~} keyword. The
+In \cref{fig:progx}, the rules of the program are equipped with three
+signatures, one per predicate. Besides the arity of each predicate, a
+signature specifies which arguments are inputs and which are outputs,
+their types, and whether the predicate is deterministic. They indicate
+that \texttt{f} and \texttt{g} are expected to be functions, as specified
+by the \eI{~\PYG{k+kd}{func}~} keyword, whereas \eI{r} is a relation, as
+indicated by the \eI{~\PYG{k+kd}{pred}~} keyword. The
 \eI{~\PYG{k+kMode}{\PYGZhy{}\PYGZgt{}}~} symbol separates inputs from
 outputs; therefore, all three predicates are expected to take an
 \texttt{int} as input and return an \texttt{int} as output.
