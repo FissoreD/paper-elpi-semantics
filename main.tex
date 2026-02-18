@@ -133,7 +133,7 @@ stack-based semantics that closely models \elpiP's implementation and is
 similar to the semantics mechanized by Pusch in \isabelleP~\cite{10.1007/BFb0105415}
 and to the model of Debray and Mishra~\cite[Sec.~4.3]{Debray1988}.
 This stack-based semantics is a good starting point to study further
-optimizations used by standard \prologP abstract machines~\cite{warren1983abstract,10.7551/mitpress/7160.001.0001},
+optimizations used by standard \prologP abstract machines~\cite{warren1983abstract,1991ait-wam},
 but it makes reasoning about the scope of cut difficult. To address
 this limitation we introduce a tree-based semantics in which the branches
 pruned by cut are explicit and we prove the two semantics equivalent.
@@ -961,7 +961,7 @@ semantics given by Debray and Mishra in
 \cite[Section~4.3]{Debray1988}. Pusch mechanized this
 semantics in Isabelle/HOL, together with several optimizations that are
 also present in the Warren Abstract Machine
-\cite{warren1983abstract,10.7551/mitpress/7160.001.0001}.
+\cite{warren1983abstract,1991ait-wam}.
 
 We represent a state of the \elpiP language thanks to the two
 mutual inductives shown below.
@@ -1411,7 +1411,7 @@ call is performed with ground inputs.
 
 In our mechanization, and in particular in the \elpiP language, we adopt a
 special unification routine on input argument, called
-\matching~\cite{1991ait-wam}. Similarly to \unify, \matching takes
+\matching~\cite{1991ait-wam,zhou2012}. Similarly to \unify, \matching takes
 the query-term $t_1$ and the pattern $t_2$ and returns an optional subsitution
 $\sigma'$. The query-term is the argument in input mode taken from a dynamic
 call and the pattern is the corresponding input argument in the chosen
@@ -1496,7 +1496,7 @@ data structure, like the tree to encompass this problem.
 We studied a \prologP semantics in which input arguments are \emph{matched},
 rather than unified, against rule heads. This choice agrees with the \elpiP
 interpreter, which is in turn inspired by B-Prolog's
-``matching-clauses''~\cite{zhou2012}. The two semantics we presented (and
+``matching-clauses''~\cite{1991ait-wam,zhou2012}. The two semantics we presented (and
 proved equivalent) also apply to standard \prologP if one forces all predicate
 signatures to have only output arguments.
 
@@ -1515,7 +1515,7 @@ we could find is the one by Pusch in \isabelleP~\cite{10.1007/BFb0105415}
 that is based on the model of Debray and Mishra~\cite[Sec.~4.3]{10.1016/0743-1066(88)90007-6}.
 Their work start from that semantics and refines it by
 introducing some optimizations usually found in
-the Warren abstract machine~\cite{warren1983abstract,10.7551/mitpress/7160.001.0001}.
+the Warren abstract machine~\cite{warren1983abstract,1991ait-wam}.
 They do not use the semantics to prove properties
 on the execution of programs as we do in our use case, hence they do not face the
 difficulty described in \cref{stack-sem} that pushed us to
