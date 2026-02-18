@@ -437,8 +437,8 @@ in particular how alternatives are stored and how they are pruned by cut.
 \vspace{10pt}
 \textit{Notational conventions}
 In the following section we note $\mathbb{B}$ for the bolean type, and $\top$
-and $\bot$ for \cI{true} and \cI{false}. The option instances are noted
-$\msome{t}$ for \emph{Some t} and $\mnone$ for \emph{None}. 
+and $\bot$ for \cI{true} and \cI{false}. The constructors of the option type are written
+$\msome{t}$ for \coqIn{Some}$~t$ and $\mnone$ for \coqIn{None}. 
 Following the Mathematical Components library, on which we depend,
 we use \coqIn{x.1} and \coqIn{x.2} to denote the first and second projection
 applied to the pair \coqIn{x}.
@@ -457,24 +457,10 @@ Inductive tree ~$\coloneq$~
   | Or   of option tree & ~$\Sigma$~ & tree ~$\!$~    (* $A \lor B_\sigma$ *) 
   | And  of tree & list Atom & tree.   (* $A \land_{B_0} B$ *)
 \end{coqcode}
-\begin{coqcode}
-Inductive tag ~$\coloneq$~ Expanded | CutBrothers | Failed | Success.
-Definition step : ~$\mathbb{P}$~ ~$\to$~ ~$\FV$~ ~$\to$~ ~$\Sigma$~ ~$\to$~ tree ~$\to$~ (~$\FV$~ * tag * tree)
-Definition prune : ~$\mathbb{B}$~ ~$\to$~ tree ~$\to$~ option tree
-Inductive runT : ~$\mathbb{P}$~ ~$\to$~  ~$\FV$~ ~$\to$~ ~$\Sigma$~ ~$\to$~ tree ~$\to$~ option (~$\Sigma$~ * option tree) ~$\to$~ ~$\mathbb{B}$~ ~$\to$~ ~$\FV$~ ~$\to$~ Prop
-\end{coqcode}
-\caption{Signatures of the tree-based semantics}
-
-\label{type:steptag}
-\label{type:stepT}
-\label{type:naT}
-\label{type:runT}
-\label{fig:signaturesT}
 \label{fig:tree-ty}
+\caption{Definition of And-Or tree}
 \end{figure}
 \marginpar{TODO: nested option, output Fv also inside option}
-
-
 
 An And-Or tree is a stratified, variable-width tree. It consists of two kinds\marginpar{corner case: prog2.elpi}
 of layers that alternate: a disjunctive layer is followed by a conjunctive
@@ -526,21 +512,37 @@ list.
 % \caption{backtracking operation}
 % \end{figure}
 
+
+
 \subsection{The tree-based semantics}
+\begin{figure}
+    % \input{tex_code/tree_def.tex}
+\begin{coqcode}
+Inductive tag ~$\coloneq$~ Expanded | CutBrothers | Failed | Success.
+Definition step : ~$\mathbb{P}$~ ~$\to$~ ~$\FV$~ ~$\to$~ ~$\Sigma$~ ~$\to$~ tree ~$\to$~ (~$\FV$~ * tag * tree)
+Definition prune : ~$\mathbb{B}$~ ~$\to$~ tree ~$\to$~ option tree
+Inductive runT : ~$\mathbb{P}$~ ~$\to$~  ~$\FV$~ ~$\to$~ ~$\Sigma$~ ~$\to$~ tree ~$\to$~ option (~$\Sigma$~ * option tree) ~$\to$~ ~$\mathbb{B}$~ ~$\to$~ ~$\FV$~ ~$\to$~ Prop
+\end{coqcode}
+
+\label{type:steptag}
+\label{type:stepT}
+\label{type:naT}
+\label{type:runT}
+\label{fig:signaturesT}
+\caption{Signatures of the tree-based semantics}
+\end{figure}
 
 The tree is constructed incrementally by two recursive
 functions, \step and \na. Both traverse the tree depth-first, left-to-right.
 The node to be explored in a tree is retrieved thanks to the \pathend (in~\cref{fig:getend}).
-In the snippet we also identify special kinds of trees: depending on
-the \pathend, we distinguish between \emph{success}, \emph{failed} and
-\emph{incomplete} trees.
-Since all functions must terminate in Rocq, we define their transitive closure
-as the inductive relation \run.
+When this node is \okC we say the entire tree is a \emph{success}, when it
+is \koC we say the tree \emph{failed}, otherwise the tree is \emph{incomplete}.
 
-Intuitively, \run iterates calls to \step on incomplete trees to evaluate
-the \cI{Todo} node. Upon failed trees, it calls \na to find
-the next
-alternative and continues from there, if one exists. We detail \step, \na, and
+Since all functions must terminate in Rocq, we define their transitive closure
+of \step and \na as the inductive relation \run.
+More precisely \run iterates calls to \step on incomplete trees to expand
+\cI{Todo} nodes. When a tree fails it calls \na to find
+the next alternative and continues from there, if one exists. We detail \step, \na, and
 \run in \cref{sec:step,sec:next_alt,sec:runT}.
 
 
@@ -559,7 +561,7 @@ alternative and continues from there, if one exists. We detail \step, \na, and
 % latter case, we note that $B$ can be non-dead, but this is not a problem
 % since the interpreter can run $B$ only if $A$ is non-dead.
 
-\begin{figure}
+\begin{figure}[b]
   \begin{subfigure}{0.45\textwidth}
     \input{tex_code/next.tex}
     % \caption{Defintion of \getend}
@@ -671,27 +673,28 @@ unchanged when the tree is \emph{success} or \emph{failed}.
 \input{tex_code/success_step.tex}
 \input{tex_code/failed_step.tex}
 
-\step expands \coqIn{Todo} nodes by calling backchain, which returns a list
-$l$ of alternatives. If $l$ is empty, then the current call is replaced by
+The \step procedure expands \coqIn{Todo} nodes by calling \coqIn{backchain}, which returns a list
+$l$ of alternatives. If $l$ is empty, then the current call atom is replaced by
 \koC. Otherwise, it is replaced by a right-skewed tree of \orC nodes, where
 each leaf corresponds to a list of atoms $e \in l$. If $e$ is empty, the leaf
 is \okC; otherwise, it is a right-skewed tree of \andC nodes.
 
-\Cref{tree-ex1} depicts the tree corresponding to the running example
+\Cref{tree-ex} depicts the tree corresponding to the running example
 (\cref{sec:cut-op}) as it undergoes calls to \step.
 % , we provide a graphical representation a call to \step on the query
 \marginpar{sottolineare le sostituzioni}
 We run query \eI{q 0 R} against the program $P$ in \cref{fig:progx}. Let $c_0$, $c_1$, and $c_2$
 be the children of the root. By construction, $c_0$ is the \mnone tree, while
 $c_1$ and $c_2$ correspond respectively to the premises of rules $r_1$ and
-$r_2$ in $P$. We need the initial \mnone subtree so that we can attach a
-substitution to $c_1$. In particular, $c_1$ (resp. $c_2$) is associated with
+$r_2$ in $P$. 
+% We need the initial \mnone subtree so that we can attach a substitution to $c_1$. 
+Note that $c_1$ (resp. $c_2$) is associated with
 substitution $\sigma_1$ (resp. $\sigma_2$), whose values are the same as in
-\cref{sec:cut-op}. Reset points are marked with the $R$ symbol:
+\cref{sec:cut-op}. Reset points are defines as follows: %are marked with the $R$ symbol:
 $R_1 \coloneq [\eI{f Y Z, !}]$, $R_2 \coloneq [\eI{!}]$, and
 $R_3 \coloneq \eI{f Y Z}$. Intuitively, they record the lists of atoms used to
-generate the corresponding subtree. Other examples of \step triggering
-backchaining appear in \cref{tree-ex2,tree-ex3,tree-ex5}.
+generate the corresponding subtree. Other examples of \step performing a
+tree expansion via backchain appear in \cref{tree-ex2,tree-ex3,tree-ex5}.
 
 \subsubsection{The interpretation of a cut}
 
@@ -724,13 +727,13 @@ which pruning operation is applied to each pointed subtree. We note that
 the evaluation of a cut keeps the path leading to the cut node unchanged, in
 the sense that substitution $\sigma_4$ is preserved, while the path under
 substitution $\sigma_5$ (which also succeeds) is replaced by \koC. This
-amounts to discarding the third rule of predicate \eI{r}
-(see \cref{sec:cut-op}).
+amounts to discarding the third rule of predicate \eI{r}.
+% (see \cref{sec:cut-op}).
 
 \subsection{The \na procedure}\label{sec:next_alt}
 \label{sec:na}
 
-When backchain returns an empty list, \step produces a \emph{failed}
+When \coqIn{backchain} returns an empty list, \step produces a \emph{failed}
 tree and the computation must backtrack. The \na procedure is
 responsible for producing the new tree from which the computation can
 continue.
@@ -751,11 +754,11 @@ reset point $R_1$. This restores the call \eI{f B C}, which can then be
 reconsidered under substitution $\sigma_4$.
 
 Furthermore, \na serves another important purpose. Its behavior depends on the
-boolean flag it receives as input: \na\emph{$\bot$\ $A$} recursively removes
-all failures (if any) from $A$, whereas \na\emph{$\top$\ $A$} removes the
-first success in $A$. For example, the tree in \cref{tree-ex6} contains a
+boolean flag it receives as input: \na\emph{$\bot$\ $t$} recursively removes
+all failures (if any) from $t$, whereas \na\emph{$\top$\ $t$} removes the
+first success in $t$. For example, the tree in \cref{tree-ex6} contains a
 successful path that maps \eI{R} to \eI{2}. Calling \na\ on this tree returns
-\mnone, since there are no alternatives in the tree after the success..
+\mnone, since there are no alternatives in the tree after the success.
 
 
 % The interpreter should return this sucess, but, due to
@@ -808,7 +811,7 @@ successful path that maps \eI{R} to \eI{2}. Calling \na\ on this tree returns
 % rhs.
 
 Some interesting properties of \na are shown below; they illustrate how \na
-complements \step with respect to failed, success, and \incomplete trees.
+complements \step with respect to failed, successful, and incomplete trees.
 
 % \mvspace{}
 \input{tex_code/incomplete_prune_id.tex}
@@ -836,17 +839,17 @@ complements \step with respect to failed, success, and \incomplete trees.
 
 The inductive relation \run relates four inputs to three outputs. The inputs
 are a program, a set of variables, an initial substitution $\sigma$, and a
-tree $t$. The outputs are (i) an optional result $r$ of the form
-$\msome(\sigma', t')$, (ii) a boolean $b$, and (iii) an updated set of variable
+tree $t$. The outputs are (i) an optional result $r$, (ii) a boolean $b$, and (iii) an updated set of variable
 names.
 
-The main output is $r$: if $r = \mnone$, interpretation fails; otherwise
-$\sigma'$ is the computed solution substitution and $t'$ represents the
-remaining, not-yet-explored alternatives. The boolean $b$ records whether a
-superficial cut was evaluated during execution, and the updated variable set
-tracks freshly generated names.
+The main result $r$ is $\mnone$ when the execution fails; otherwise
+when $r = \msome(\sigma', t')$ the execution succeeded and produced the solution
+$\sigma'$; $t'$ represents the remaining, not-yet-explored alternatives. 
+The boolean $b$ records whether a
+superficial cut was evaluated during execution.
+% , and the updated variable set tracks freshly generated names.
 
-\run has four cases, depicted as inference rules in \cref{fig:run-rules}.
+The \run predicate has four cases, depicted as inference rules in \cref{fig:run-rules}.
 (\stopt) If \pathend\ $t$ is a success, then the substitution
 $\sigma'$ is extracted from $t$ (starting from $\sigma$) and the input tree is
 cleaned of its successful path. (\stept) If \pathend\ $t$ is an atom,
@@ -856,19 +859,8 @@ called to clear the failed path; if the resulting cleaned tree exists, \run is
 called recursively on it. Finally, (\failt) accounts for trees with no
 solutions.
 
-These rules are deterministic:
 
-\input{tex_code/runT_det.tex}
-
-The proof is by induction on the first \run derivation and is immediate,
-because the rules are selected based on \pathend\ $t$. In particular, the
-hypotheses \success $t$, \incomplete $t$, and \failed $t$ are
-mutually exclusive. Moreover, by \cref{th:pruneFNfail}, the hypothesis of
-\failt implies \emph{failed $t$}; hence \failt is exclusive
-with \stopt and \stept, and it is also exclusive with
-\backt since they impose different requirements on the output of \na.
-
-\begin{figure}[h]
+\begin{figure}
 
   \input{runbp.tex}
   % \begin{prooftree}
@@ -897,14 +889,29 @@ with \stopt and \stept, and it is also exclusive with
   \label{fig:run-rules}
 \end{figure}
 
-\subsection{Properties of \run}
+% \subsubsection{Properties of \run}
 \label{sec:run-prop}
 
-Working with \run allows to prove some interesting properties about the behavior
-of the cut operator wrt disjunction, i.e. the \orC node. We have proven several
-properties that are avalable at
-\href{https://github.com/FissoreD/elpi-formalization/blob/ho-check-ffun/theories/tree_prop_hard.v}{\emph{this}}
-link. Below we show two of these lemmas.
+The set of rules defining \run is deterministic.
+
+\input{tex_code/runT_det.tex}
+
+The proof is by induction on the first \run derivation and is immediate,
+because the rules are selected based on \pathend\ $t$. In particular, the
+hypotheses \success $t$, \incomplete $t$, and \failed $t$ are
+mutually exclusive. Moreover, by \cref{th:pruneFNfail}, the hypothesis of
+\failt implies \emph{failed $t$}; hence \failt is exclusive
+with \stopt and \stept, and it is also exclusive with
+\backt since they impose different requirements on the output of \na.
+
+
+
+The boolean output of \run allows state interesting properties about the \orC
+node in presence of cut. Here we only report a selection of the ones we proved:
+% We have proven several
+% properties that are avalable at
+% \href{https://github.com/FissoreD/elpi-formalization/blob/ho-check-ffun/theories/tree_prop_hard.v}{\emph{this}}
+% link. Below we show two of these lemmas.
 
 % \begin{lemma}[\texttt{runSST\_or}] $\forall p\ v_0\ v_1\ s_0\ s_1\ t_0\ t_0'\ s_m\ t_1$,
 %   $$\texttt{\run p}\ v_0\ s_0\ t_0\ \boxed{s_1, \boxed{t_0'}}\ \top\ v_1 \to%
@@ -925,30 +932,60 @@ link. Below we show two of these lemmas.
 
 % $$$$
 
-In \cref{th:runSSTor}, we evaluate the tree $l$. This evaluation
-produces a success with signature $\sigma'$ and a new tree $l'$.
-During the evaluation, a superficial cut in $l$ is traversed. This
-implies that the evaluation of $\msome l \lor_{\sigma_1} r$ returns
-$\sigma'$ as substitution, and the alternatives are
-$\msome l' \lor_{\sigma_1} \texttt{KO}$. The right-hand side of the
-$\orC$ node is replaced with $\koC$ by \cutr.
+\Cref{th:runSSTor,th:runNTor} correspond to the introduction rules
+for disjunction when the first disjunct performs a cut. If $A$
+executes a cut one \emph{cannot} obtain $A \lor B$ out of $B$ since the
+execution of $A$, be it in the end succesful or not, makes the
+success of $B$ irrelevant (the cut discards it). In the first lemma
+$B$ is forced to be \koC, while in the latter the failure of $A$ absorbs
+$B$. Depicted as rules:
 
-In \cref{th:runNTor}, we are in a similar scenario: $t$ evaluates a
-superficial cut but, this time, produces a failure. This implies that
-the evaluation of $\msome t \lor_{\sigma_1} t'$ also fails.
+$$
+\begin{bprooftree}
+  \AxiomC{$A \qquad (A ~\mathrm{cuts})$}
+  \UnaryInfC{$A \lor \top $}
+\end{bprooftree}
+\qquad
+\begin{bprooftree}
+  \AxiomC{$\lnot A \qquad (A ~\mathrm{cuts})$}
+  \UnaryInfC{$\lnot (\lnot A \lor B) $}
+\end{bprooftree}
+\qquad
+\begin{bprooftree}
+  \AxiomC{$B \qquad (A ~\mathrm{does~not~cut})$}
+  \UnaryInfC{$A \lor B$}
+\end{bprooftree}
+$$
 
-Finally, in \cref{th:runorSST}, we evaluate
-$\msome l \lor_{\sigma_1} r$. The evaluation succeeds, producing the
-result $\msome(s_1,\msome l' \lor_{\sigma_1} r')$. This means that
-$l$ still has $l'$ as unexplored alternatives. We deduce that the
-evaluation of $l$ produces the substitution $\sigma_1$ with
-alternatives $l'$. However, we have no information about whether a
-superficial cut has been crossed in $l$. If this is the case, we
-know that $r'$ is cut away by \cutr; otherwise, $r'$ has not
-been explored and is equal to $r$.
+Finally, \cref{th:runorSST} is an elimination
+rule for disjunction. From $A \lor B$, where $A$ is not inhert (i.e. already
+explored) we cannot deduce $A$ or $B$ independently. We deduce only $\top \lor B'$
+where $B'$ provides no information if $A$ performed a cut.
 
-From these lemmas, it is clear how the order in which alternatives are
-evaluated changes the behavior of the program.\marginpar{se riesco success (A or B) = success (B or A) if no sup cut in A and B }
+$$
+\begin{bprooftree}
+  \AxiomC{$A \lor B$}
+  \AxiomC{[A]}
+  \noLine
+  \UnaryInfC{$C$}
+  \AxiomC{$(A ~\mathrm{cuts})$}
+  \TrinaryInfC{$C$}
+\end{bprooftree}
+\qquad
+\begin{bprooftree}
+  \AxiomC{$A \lor B$}
+  \AxiomC{[A] }
+  \noLine
+  \UnaryInfC{$C$}
+  \AxiomC{$[B] \phantom{\qquad (A ~\mathrm{does~not~cut})}$}
+  \noLine
+  \UnaryInfC{$C \qquad (A ~\mathrm{does~not~cut})$} 
+  \TrinaryInfC{C}
+\end{bprooftree}
+$$
+
+As anticipated in the intructions, these lemmas disprove the commutativity of
+disjunction.
 
 \section{Stack semantics}
 \label{stack-sem}
