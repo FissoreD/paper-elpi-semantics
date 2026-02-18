@@ -982,7 +982,7 @@ $$
   \AxiomC{[A] }
   \noLine
   \UnaryInfC{$C$}
-  \AxiomC{$[B] \phantom{\qquad (A ~\mathrm{does~not~cut})}$}
+  \AxiomC{$[\lnot A, B] \phantom{\qquad (A ~\mathrm{does~not~cut})}$}
   \noLine
   \UnaryInfC{$C \qquad (A ~\mathrm{does~not~cut})$} 
   \TrinaryInfC{C}
@@ -1005,20 +1005,17 @@ semantics in Isabelle/HOL, together with several optimizations that are
 also present in the Warren Abstract Machine
 \cite{warren1983abstract,1991ait-wam}.
 
-We represent a state of the \elpiP language thanks to the two
-mutual inductives shown below.
+The execution state is a stack of alternarives.
+Each alternative is a list of goals. Intuitively it amounts to
+a disjunctive normal form: each stack item is a self contained
+computations, coupling a substitution with all the goals to be
+solved.
+
+Goals pair an atom with a list of the \emph{cut-to} alternatives, 
+making the two datatypes mutually recursive, but these alternatives have a very different role. They have to be understood
+as pointers to lower levels of the stack itself. This datum is used to implement the cut, i.e. to prune the stack of alternatives.
 
 \input{tex_code/elpi_def.tex}
-
-A stack is an enhanced two-dimensional list, called \emph{alts} in the
-inductive. The outermost list
-represents a list of alternatives in disjunction, each accompanied by
-the substitution that should be used for their interpretation. The
-innermost list is a list of atoms, that is, the list of goals in
-conjunction. These goals are decorated with a pointer to an alternative
-list, which is used to keep track of where to jump when a cut is
-interpreted. We call these special alternatives the \emph{cut-to}
-alternatives.
 
 % We are completely loosing the tree structure. There are no clean reset
 % points. The backtracking operation is simpler: it is the tail function.
@@ -1049,35 +1046,36 @@ Definition stepS p ~\ensuremath{v}~ ~\ensuremath{t}~ ~\ensuremath{\sigma}~ ~\ens
   \label{fig:nur-rules}
 \end{figure}
 
-The stack interpreter is called \nur and has the following type.
+The stack-based semantics is described by the \nur inductive
+predicates.
 
 \mvspace{}
 \deftypes[type:nur]{tex_code/nur_type.tex}
 \mvspace{}
 
-The inductive \nur represents a routine taking as input a set of variables and a
-list of alternatives and returning an option. \mnone stands for interpretation
-with no solution, whereas $\msome(\sigma, a)$ represent a successful
-interpretation with $\sigma$ as solution and $a$ as the list of non-yet-explored
-choice points.
+The \nur predicates relates a set of variables and a
+list of alternatives to optional result. \mnone stands for failure,
+i.e., no solution, whereas $\msome(\sigma, a)$ represent success with $\sigma$ begin the solution and $a$ as the list of non-yet-explored
+alternaitves.
 
 The rule system for \nur is given in \cref{fig:nur-rules} and is made by $4$
-cases. We distinguish two main cases: if the list of alternatives is empty,
-(\fails) we have a failure: we stop the computation and return $\mnone$.
-If the list of alternatives is the list $(\sigma_0, h) :: a$, the interpreter
-evaluates the first choice point $h$ under the substitution $\sigma_0$. If $h$
-is empty, (\stops), then we have a success, i.e. we return the input
-$\sigma_0$ and leave $a$ as the future choice points. Otherwise, $h$ is the list
-$(t, ca) :: g$ where $t$ is the first atom to evaluate, $ca$ is its
-cut-alternative list and $g$ is the list of future conjuncts. If $t$ is a cut
-(\cuts), we need to keep evaluating $g$ under $\sigma_0$ but we change
-the alternatives to $ca$. Finally, in the case of a call (\calls), we
-backchain the call in the program. If $rs$ is the list of rule premises returned
-by \texttt{backchain}, then each list of premises if mapped to a list of goals
-(\texttt{goals}) have $a$ as cut-alternative and the global list is translated
-to a list of alternative (\texttt{alts}). \marginpar{Dire una parola su backtracking = tl if bc = nil}
+cases. We distinguish two main cases. If we run out of alternatives
+we fail: (\fails) stops the execution and return $\mnone$.
+If the list of alternatives is $(\sigma_0, h) :: a$, then
+we look at the list of goals $h$ (under the substitution $\sigma_0$). If $h$ is empty, (\stops) stops the execution with a success $\sigma_0$
+leaving $a$ as the unexplored alternatives.
+If $h$ is not empty we look at its head goal $(t, ca)$ where $t$ is the atom and $ca$ is its
+cut-to alternatives. If $t$ is a cut rule
+(\cuts) continues to evaluate the tail of $h$ under with alternatives $ca$. Finally, when $t$ is a call, rule (\calls) backchains:
+for each rule it pairs each premise with the current stack of
+alternatives, and prepents the obtained goals to the tail of $h$.
+Note that if backain returns the empty list, (\calls) second
+premise amounts to exploring the next item in the current
+stack.
 
-\begin{figure}
+\subsection{Example of execution}
+
+\begin{figure}[b]
   \centering
   \begin{subfigure}{0.2\textwidth}
     \includegraphics[width=0.35\textwidth, keepaspectratio]{./src/exec_example1E/elpi0.pdf}
@@ -1109,34 +1107,37 @@ to a list of alternative (\texttt{alts}). \marginpar{Dire una parola su backtrac
     \caption{Stack after evaluating \cref{ex-elpi4}}
     \label{ex-elpi5}
   \end{subfigure}
-  \caption{Example of \nur execution}
+  \caption{Example of execution}
   \label{ex-elpi}
 \end{figure}
 
-\textit{Example of execution}
 We propose an example of the execution of \nur in \cref{ex-elpi}. The
-arrows in the images represent the cut-alternative pointers of the cut. We
-have not drawn arrows coming out of atom-calls since the interpreter
-ignores the cut-alternatives in this case (cf. \calls). The evolution
+arrows in the images represent the cut-to pointers. We
+have not drawn arrows coming out of call atoms since the interpreter
+ignores the cut-alternatives in this case. The evolution
 of the stack in \cref{ex-elpi} mirrors the example in \cref{sec:cut-op}:
 we evaluate the first goal of the first alternative. During backchaining,
 we add a pointer to the remaining alternatives to each new cut operator.
 If a cut is evaluated, we replace the remaining alternatives with the
 cut-to alternatives. For example, in \cref{ex-elpi5}, evaluating the cut
 discards the second and third elements in the stack. Backtracking is
-performed by simply removing the first alternative from the stack, as shown
+performed by simply consuming the first alternative from the stack, as shown
 in \cref{ex-elpi3}.
 
-\textit{Remark}
-We want finally to point out how the lemma that we were able to prove in
-\cref{sec:run-prop} are not easy to be expressed in the stack semantics. This
-is beacuse there is no sufficient structure in the stack to understand
-what is the scope of the cut operator. For example, in a stack made of
-these alternatives $a_0, a_1 \dots a_n$, we have no clear idea of what happens
-if the first alternative $a_0$ succeeds: there could be a cut in $a_0$ but, is
-this cut superficial? What is its impact wrt the alternatives $a_1 \dots a_n$?
-More then that, it is also possible that the state is hill-formed and the cut
-does not point to a suffix in the list of alternatives.
+\subsection{Inadequacy of the stack-based semantics for formal reasoning}
+
+The lemmas that we presented in
+\cref{sec:run-prop} are hard to express in the stack-based semantics, due to the
+lack of structure in the stack to delimit the scope of the cut operator. For
+example, consider a stack $a_0, a_1, \dots, a_n$. If $a_0$ succeeds but executes a
+cut, it is hard to relate the remaining alternatives $a_1, \dots, a_n$ to the
+alternatives $b_1, \dots, b_m$ that survive the cut, since the only simple
+invariant is that $b_1, \dots, b_m$ is a suffix of $a_1, \dots, a_n$. If
+$a_1, \dots, a_n$ were generated before the call whose execution reaches the cut
+in $a_0$, then they all stay; but if some were generated afterwards, they are
+discarded. Expressing this precisely would require attaching, at the very least,
+time-stamps (or depths) to goals, which amounts to a cumbersome encoding of a
+tree.
 
 \section{Equivalence of the two semantics}
 
