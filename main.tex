@@ -1006,7 +1006,7 @@ The inductive \nur represents a routine taking as input a set of variables and a
 list of alternatives and returning an option. \mnone stands for interpretation
 with no solution, whereas $\msome(\sigma, a)$ represent a successful
 interpretation with $\sigma$ as solution and $a$ as the list of non-yet-explored
-choice points.\marginpar{Dire che non abbiamo le due info ritornate da runT}
+choice points.
 
 The rule system for \nur is given in \cref{fig:nur-rules} and is made by $4$
 cases. We distinguish two main cases: if the list of alternatives is empty,
@@ -1202,7 +1202,7 @@ translation for $A$ indicates failure and this in turn implies the
 failure of the entire conjunction. When the translation of $A$ is
 a list $(\sigma_0, g) :: a$ the $B$ node
 represent the continuation of the first alternative $g$, whereas
-$B_0$\marginpar{dirlo meglio all'inizio} is the continuation of each
+$B_0$ is the continuation of each
 alternative in $a$.
 % While performing these translation, we need to carefully update the cut-atlernatives.
 
@@ -1316,10 +1316,10 @@ state the following lemma.
 \input{tex_code/pruneF_t2l.tex}
 \begin{proof}By induction on the tree $t$.\marginpar{dire di $v$}\end{proof}
 
-The first direction of the equivalence states that the execution of
-a valid tree is matched by the execution of the stack obtain by
-translating the tree and moreover the unexplored alternatives
-returned as a tree match the ones returned as a stack.
+The first direction of the equivalence states that the execution of a
+valid tree is matched by the execution of the stack obtained by
+translating the tree. Moreover, the unexplored alternatives returned as
+a tree correspond to those returned as a stack.
 
 \input{tex_code/tree_to_elpi.tex}
 \begin{proof}
