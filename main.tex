@@ -241,14 +241,13 @@ the rule head with the query term.
 
 In our mechanization, we abstract over the unifier and its properties.
 The function \eI{unify} takes two terms $t_1$ and $t_2$, together with a
-substitution $\sigma$, as input, and optionally returns a substitution
+substitution $\sigma$, as input, and returns an optional substitution
 $\sigma'$ that extends $\sigma$. The expected behavior of \eI{unify} is
-the standard one (see for example~\cite[section 2.5]{10.5555/778522.778525}), % or \cite{1991miller-pf}),
-limited to the first order.
-Therefore, if $t_1$ and $t_2$ unify
-under $\sigma$, then $\sigma'~t_1 = \sigma'~t_2$, where
-$\sigma~t$ denotes subsitution application and $=$ denotes 
-syntactic equality.
+higher-order unification restricted to the pattern fragment, as
+explained in~\cite{1991miller-pf}. Therefore, if $t_1$ and $t_2$ unify
+under $\sigma$, then $\sigma'~t_1 \equiv \sigma'~t_2$, where
+$\sigma~t$ is the notation for subsitution application and $\equiv$ denotes the
+syntactic equality of its arguments.
 
 
 % \input{tex_code/unif_type.tex}
@@ -1034,7 +1033,7 @@ the alternatives to $ca$. Finally, in the case of a call (\calls), we
 backchain the call in the program. If $rs$ is the list of rule premises returned
 by \texttt{backchain}, then each list of premises if mapped to a list of goals
 (\texttt{goals}) have $a$ as cut-alternative and the global list is translated
-to a list of alternative (\texttt{alts}). \marginpar{Dire una parola su backtracking = tl if backchain = nil}
+to a list of alternative (\texttt{alts}). \marginpar{Dire una parola su backtracking = tl if bc = nil}
 
 \begin{figure}
   \centering
@@ -1417,23 +1416,23 @@ call is performed with ground inputs.
 
 In our mechanization, and in particular in the \elpiP language, we adopt a
 special unification routine on input argument, called
-\eI{matching}~\cite{1991ait-wam}. Similarly to \eI{unify}, \eI{matching} takes
+\matching~\cite{1991ait-wam}. Similarly to \unify, \matching takes
 the query-term $t_1$ and the pattern $t_2$ and returns an optional subsitution
 $\sigma'$. The query-term is the argument in input mode taken from a dynamic
 call and the pattern is the corresponding input argument in the chosen
 rule-head.
 
-The function \eI{matching} has the following property:
+The function \matching has the following property:
 
 \input{tex_code/matchdisj.tex}
 
-If the two terms are disjoint and the variables in the suppert $\sigma$ are
-disjoint from the variables in $t_1$, then if matching succeeds, then
-only the variables in $t_2$ are assigned, i.e. $t_1 \equiv \sigma'~t_2$ and
-the variables in $t_1$ are nots assigned in $\sigma'$.
+If the two terms are disjoint and the variables in the support of $\sigma$ are
+disjoint from the variables in $t_1$, then, if matching succeeds, only the
+variables in $t_2$ are assigned; that is, $t_1 \equiv \sigma'~t_2$, and the
+variables in $t_1$ are not assigned in $\sigma'$.
 
 
-The \eI{backchain} function uses \eI{matching} or \eI{unify} on the arguments $q$
+The \eI{bc} function uses \eI{matching} or \eI{unify} on the arguments $q$
 depending if the argument is in \emph{input} or \emph{output} mode.
 Below we axiomatize two important properties of our unificators.
 
