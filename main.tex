@@ -1282,14 +1282,13 @@ in $a$.
 % While performing these translation, we need to carefully update the cut-atlernatives.
 
 \subsubsection{Example of \ttl} 
-The translation of the trees in \cref{tree-ex} is given in
-\cref{ex-elpi}. The letters in the figures relate the trees to the
-corresponding letters in the stack figures. For example, the tree
-\ref{tree-ex1} is translated into \ref{ex-elpi1}. We note that the two
-trees \ref{tree-ex3} and \ref{tree-ex4} are both translated into
-\ref{ex-elpi3}, showing that $t2l$ is not injective; that is, there are
-different trees that map to the same stack. This means that there are
-transitions in \run that are not visible in \nur.
+The translations of the trees in \cref{tree-ex} are shown in \cref{ex-elpi}.
+The letters in the figures relate each tree to the corresponding stack.
+For example, \ref{tree-ex1} is translated into \ref{ex-elpi1}. We also
+note that \ref{tree-ex3} and \ref{tree-ex4} are both translated into
+\ref{ex-elpi3}, showing that $t2l$ is not injective: different trees can map to
+the same stack. Consequently, there are transitions in \run that are not visible
+in \nur.
 %
 \begin{center}
 \includegraphics[width=0.8\textwidth, keepaspectratio]{src/t2lex.pdf}
@@ -1297,8 +1296,8 @@ transitions in \run that are not visible in \nur.
 %
 As an example of a call to \ttl, we take the tree and the stack above,
 which are respectively taken from \cref{tree-ex2,ex-elpi2}. The red arrows
-points the head of an anlternative in the tree to the head of the corresponding
-cell in the stack.
+point from the head of an alternative in the tree to the head of the
+corresponding cell in the stack.
 We focus on the deepest \orC{} node in the tree. This subtree
 is a disjunction with four children. The first is ignored, since it
 is \mnone. The success node below $\sigma_3$ has \eI{f B C} and the cut
@@ -1395,7 +1394,8 @@ when proving the equivalence between the two semantics. Therefore, we
 prove the following lemma.
 
 \input{tex_code/pruneF_t2l.tex}
-\begin{proof}By induction on the tree $t$.\marginpar{dire di $v$}\end{proof}
+\begin{proof}By induction on the tree $t$. %\marginpar{dire di $v$}
+\end{proof}
 
 The first direction of the equivalence states that the execution of a
 valid tree is matched by the execution of the stack obtained by
@@ -1432,11 +1432,10 @@ translates to the unexplored stack.
 \begin{proof}
 The proof is based on the idea explained in~\cite[Section
 3.5.1]{yves-equiv} and depicted in the figure on the right:
-we have a state $t$ whose translation is $a$, we proceed by
+we have a tree $t$ whose translation is $a$, we proceed by
 induction on the execution of \nur. This gives us not only the output $a'$ but
-that hypothesis that it exists a tree $t'$ such that its translation to the
-stack state is $a'$. This proof strategy is indirectly providing a kind of
-\ltt function by combining the execution of the \nur and \ttl.
+that hypothesis that it exists a tree $t'$ such that its translation to a
+stack is $a'$. %This proof strategy is indirectly providing a kind of \ltt function by combining the execution of the \nur and \ttl.
 \end{proof}
 \end{minipage}
 \begin{minipage}{0.25\textwidth}
