@@ -949,20 +949,21 @@ Depicted as rules:
 
 $$
 \begin{bprooftree}
-  \AxiomC{$A \qquad (A ~\mathrm{cuts})$}
+  \AxiomC{$A \quad (A ~\mathrm{cuts})$}
+  \RightLabel{$(\lor_{il})$}
   \UnaryInfC{$A \lor \top $}
 \end{bprooftree}
 \qquad
 \begin{bprooftree}
-  \AxiomC{$\lnot A \qquad (A ~\mathrm{cuts})$}
-  \RightLabel{$\lor_{ir1}$}
+  \AxiomC{$\lnot A \quad (A ~\mathrm{cuts})$}
+  \RightLabel{$(\lor_{ir1})$}
   \UnaryInfC{$\lnot (\lnot A \lor B) $}
 \end{bprooftree}
 \qquad
 \begin{bprooftree}
   \AxiomC{$\lnot A$}
-  \AxiomC{$B \qquad (A ~\mathrm{does~not~cut})$}
-  \RightLabel{$\lor_{ir2}$}
+  \AxiomC{$B \quad (A ~\mathrm{does~not~cut})$}
+  \RightLabel{$(\lor_{ir2})$}
   \BinaryInfC{$A \lor B$}
 \end{bprooftree}
 $$
@@ -990,6 +991,7 @@ $$
   \noLine
   \UnaryInfC{$C$}
   \AxiomC{$(A ~\mathrm{cuts})$}
+  \RightLabel{$(\lor_{e1})$}
   \TrinaryInfC{$C$}
 \end{bprooftree}
 \qquad
@@ -998,9 +1000,10 @@ $$
   \AxiomC{[A] }
   \noLine
   \UnaryInfC{$C$}
-  \AxiomC{$[\lnot A, B] \phantom{\qquad (A ~\mathrm{does~not~cut})}$}
+  \AxiomC{$[\lnot A, B] \phantom{\quad (A ~\mathrm{does~not~cut})}$}
   \noLine
-  \UnaryInfC{$C \qquad (A ~\mathrm{does~not~cut})$} 
+  \UnaryInfC{$C \quad (A ~\mathrm{does~not~cut})$} 
+  \RightLabel{$(\lor_{e2})$}
   \TrinaryInfC{C}
 \end{bprooftree}
 $$
@@ -1009,7 +1012,7 @@ It is worth recalling that the ``$A$ cuts'' side-condition in the rules above is
 precisely the boolean result returned by \run. Without this information, it is
 impossible to formulate these rules: it is not merely a matter of whether $A$
 contains a syntactic occurrence of cut, but whether that cut is actually
-executed during the (dis)proof of $A$ (in rules $\lor_{ir1}$ and $\lor_{ir2}$).
+executed during the (dis)proof of $A$ (in rules $(\lor_{ir1})$ and $(\lor_{ir2})$).
 Indeed, an atom preceding the cut may fail, so the cut is never reached.
 
 As anticipated in the introductionction these lemmas contradict the commutativity of
@@ -1038,7 +1041,13 @@ Goals pair an atom with a list of the \emph{cut-to} alternatives,
 making the two datatypes mutually recursive, but these alternatives have a very different role. They have to be understood
 as pointers to lower levels of the stack itself. This datum is used to implement the cut, i.e. to prune the stack of alternatives.
 
-\input{tex_code/elpi_def.tex}
+% \input{tex_code/elpi_def.tex}
+\begin{center}
+\begin{coqcode}
+~\ensuremath{\qquad\qquad}~ Inductive alts  := nilA | consA of (~\ensuremath{\Sigma}~ * goals) & alts
+~\ensuremath{\qquad\qquad}~ with      goals := nilG | consG of (Atom * alts)  & goals 
+\end{coqcode}
+\end{center}
 
 % We are completely loosing the tree structure. There are no clean reset
 % points. The backtracking operation is simpler: it is the tail function.
@@ -1069,13 +1078,18 @@ Definition stepS p ~\ensuremath{v}~ ~\ensuremath{t}~ ~\ensuremath{\sigma}~ ~\ens
   \label{fig:nur-rules}
 \end{figure}
 
+\noindent
 The stack-based semantics is described by the \nur inductive
 predicates.
 
-\mvspace{}
-\deftypes[type:nur]{tex_code/nur_type.tex}
-\mvspace{}
+% \mvspace{}
+% \deftypes[type:nur]{tex_code/nur_type.tex}
+% \mvspace{}
+\begin{center}
+\cI{Inductive runS (p: ~\ensuremath{\mathbb{P}}~) : ~\ensuremath{\FV}~ ~\ensuremath{\to}~ alts ~\ensuremath{\to}~ option (~\ensuremath{\Sigma}~ * alts) ~\ensuremath{\to}~ Prop }
+\end{center}
 
+\noindent
 The \nur predicates relates a set of variables and a
 list of alternatives to optional result. \mnone stands for failure,
 i.e., no solution, whereas $\msome(\sigma, a)$ represent success with $\sigma$ begin the solution and $a$ as the list of non-yet-explored
@@ -1437,7 +1451,7 @@ induction on the execution of \nur. This gives us not only the output $a'$ but
 that hypothesis that it exists a tree $t'$ such that its translation to a
 stack is $a'$. %This proof strategy is indirectly providing a kind of \ltt function by combining the execution of the \nur and \ttl.
 \end{proof}
-\end{minipage}
+\end{minipage}~~~~~~
 \begin{minipage}{0.25\textwidth}
   \includegraphics[width=0.8\textwidth, keepaspectratio]{./src/e2t_ind.pdf}
 \end{minipage}
@@ -1458,7 +1472,7 @@ provides an effective function translating stacks into trees. However, that
 function also uses an execution trace of the stack-based semantics, from which
 it recovers the missing tree structure.
 
-\section{Case study: determinacy alanysis}\label{sec:determinacy}
+\section{Case study: determinacy analysis}\label{sec:determinacy}
 
 An interesting application of the tree semantics is determinacy checking,
 introduced in version~3 of the \elpiP{} language~\cite{fissore2026}. The
@@ -1466,7 +1480,7 @@ checker takes as input the signatures of the predicates declared by the
 user and verifies that the rules of a deterministic predicate generate at
 most one solution; we call this particular kind of predicate a function.
 Thanks to this static verification, the user can better control
-unexpected backtracking statically.
+unexpected backtracking.
 
 A predicate behaves deterministically if two conditions are
 satisfied: \emph{mutual exclusion} guarantees that at most one rule can
@@ -1475,27 +1489,32 @@ ensures that each rule does not create choice points, for example by
 calling non-deterministic predicates.
 
 Determinacy checking is strongly related to the modes of predicates: we
-differentiate between input and output arguments. A deterministic call relates to its inputs only one
-output. In the literature, we find several works about determinacy checking,
-namely~\cite{1996Somogy,king2005,1989Warren}. These works needs a mode checker
-statically ensuring that in a query with ground inputs, each recursive
-call is performed with ground inputs.
+differentiate between input and output arguments. A deterministic call relates
+to its inputs only one output. In the literature, we find several works on
+determinacy checking, namely~\cite{1996Somogy,king2005,1989Warren}. These works
+need a mode checker that statically ensures that, in a query with ground inputs,
+each recursive call is performed with ground inputs.
 
 In our mechanization, and in particular in the \elpiP language, we adopt a
-special unification routine for input argument, called
-\matching~\cite{1991ait-wam,zhou2012}. Similarly to \unify, \matching takes
-the query-term $t_1$ and the pattern $t_2$ and returns an optional subsitution
-$\sigma'$ that does not assign any variable in the query. 
+special unification routine for input arguments, called
+\matching~\cite{1991ait-wam,zhou2012}. Similarly to \unify, \matching takes the
+query term $t_1$ and the pattern $t_2$ and returns an optional substitution
+$\sigma'$ that does not assign any variable in the query.
 % The query-term is the argument in input mode taken from a dynamic
 % call and the pattern is the corresponding input argument in the chosen
 % rule-head.
 
 The function \matching has the following property:
 
-\input{tex_code/matchdisj.tex}
+% \input{tex_code/matchdisj.tex}
+\begin{axiom}[matching\_disj]\label{th:matchingdisj}\cI{~\ensuremath{\forall}~ ~\ensuremath{\sigma}~ ~\ensuremath{\sigma'}~ ~\ensuremath{t_1}~ ~\ensuremath{t_2}~, vars ~\ensuremath{t_1}~ ~\ensuremath{\#}~ domf ~\ensuremath{\sigma}~ ~\ensuremath{\to}~ vars ~\ensuremath{t_1}~ ~\ensuremath{\#}~ vars ~\ensuremath{t_2}~ ~\ensuremath{\to}~}~
+\begin{coqcode}
+    matching ~\ensuremath{t_1}~ ~\ensuremath{t_2}~ ~\ensuremath{\sigma}~ = ~\msome~~\ensuremath{\sigma'}~ ~\ensuremath{\to}~ ~\ensuremath{\exists}~ e, domf ~\ensuremath{\sigma'}~ = domf ~\ensuremath{\sigma}~ ~\ensuremath{\cup}~ e ~\ensuremath{\;\land\;}~ e ~\ensuremath{\subseteq}~ vars ~\ensuremath{t_2}~.
+\end{coqcode}
+\end{axiom}
 
-If the two terms are disjoint and the variables in the support of $\sigma$ are
-disjoint from the variables in $t_1$, then, if matching succeeds, only the
+If the sets of variables occurring in the two terms are disjoint, and the variables in the support of $\sigma$ are
+disjoint from the variables in $t_1$, then when matching succeeds, only the
 variables in $t_2$ are assigned; that is, $t_1 = \sigma'~t_2$, and the
 variables in $t_1$ are not assigned in $\sigma'$.
 
@@ -1508,11 +1527,20 @@ We assume two important properties of our unification routines.
 \input{tex_code/matchunif.tex}
 
 We also assume that refreshing variables does not affect unification.
-In particular a refreshing renaming for a term t is a function from variables to variables that: (i)
-is defined on all the variables in t; (ii) is injective; (iii) has non overlapping domain an codomain. \marginpar{MANCA QUESTA PARTE, dire cosa sia SHARP e ren}. 
+In particular a \emph{refresh} for a term $t$ is a function from variables to variables that: (i)
+is defined on all the variables in $t$; (ii) is injective. % (iii) has non overlapping domain an codomain.
+%  \marginpar{MANCA QUESTA PARTE, dire cosa sia SHARP e ren}. 
 
 \input{tex_code/refresh_for.tex}
-\input{tex_code/unif_ren.tex}
+% \input{tex_code/unif_ren.tex}
+\begin{axiom}[unif\_ren]\label{th:unifren}\cI{~\ensuremath{\forall}~ x y z w ~\ensuremath{t_1}~ ~\ensuremath{t_2}~,}~
+\begin{coqcode}
+  refresh_for w ~\ensuremath{t_1}~ ~\ensuremath{\to}~ refresh_for y ~\ensuremath{t_2}~ ~\ensuremath{\to}~ refresh_for z ~\ensuremath{t_1}~ ~\ensuremath{\to}~ refresh_for x ~\ensuremath{t_2}~ ~\ensuremath{\to}~
+  codomf w ~\ensuremath{\#}~ vars ~\ensuremath{t_1}~ ~\ensuremath{\cup}~ vars (rename y ~\ensuremath{t_2}~) ~\ensuremath{\to}~
+  codomf z ~\ensuremath{\#}~ vars ~\ensuremath{t_1}~ ~\ensuremath{\cup}~ vars (rename x ~\ensuremath{t_2}~) ~\ensuremath{\to}~
+  unify (rename w ~\ensuremath{t_1}~) (rename y ~\ensuremath{t_2}~) ~\ensuremath{\epsilon}~ ~\ensuremath{\to}~ unify (rename z ~\ensuremath{t_1}~) (rename x ~\ensuremath{t_2}~) ~\ensuremath{\epsilon}~.
+\end{coqcode}
+\end{axiom}
 
 In \cref{fig:progx}, the rules of the program are equipped with three
 signatures, one per predicate. Besides the arity of each predicate, a
@@ -1533,8 +1561,8 @@ base types such as \emph{int}, and two dedicated symbols to distinguish
 deterministic from non-deterministic predicates.
 
 A program execution behaves deterministically if, given a program, a
-substitution, and a tree to the \run\ inductive, the execution either
-fails or, if it succeeds, the tree of alternatives is $\mnone$. 
+substitution, and an input tree for the \run\ inductive, the execution either
+fails or, if it succeeds, the resulting tree of alternatives is $\mnone$.
 % Below, we define \texttt{is\_det}.
 
 
@@ -1555,7 +1583,7 @@ the induction
 hypothesis is too weak since it talks about \taC trees (i.e. atoms),
 whereas we need it on any tree.
 
-To address this issue, we introduce the notion of ``deterministic trees''
+To address this issue, we introduce the notion of deterministic trees
 (\cI{det_tree}), show that a tree satisfying this condition enjoys the
 desired properties, and then prove the following more general theorem:
 
@@ -1578,8 +1606,8 @@ interpreter, which is in turn inspired by B-Prolog's
 proved equivalent) also apply to standard \prologP if one forces all predicate
 signatures to have only output arguments.
 
-For determinacy analysis, matching input arguments affects the development
-only as follows: \cref{th:matchingdisj} does not require the query $q$ to
+For determinacy analysis, matching input arguments affects the proofs
+only as follows: \cref{th:matchingdisj} does require the query $q$ to
 be ground. Adapting our results to standard \prologP therefore requires
 the insertion of two additional hypotheses in
 \cref{th:detcheckcall}. First, one has to require that $t$ has ground inputs.
@@ -1599,13 +1627,13 @@ They do not use the semantics to prove properties
 on the execution of programs as we do in our use case, hence they do not face the
 difficulty described in \cref{stack-sem} that pushed us to
 develop a more explicit semantics (with respect to cut).
-In a sense, our work is complementary, showing the stack-based semantics
-equivalent to a more optimized one.
+In a sense, our work is complementary. By combining both works one can show the tree-based semantics
+is equivalent to an optimized stack-based one.
 
 Another relevant work is by King~\cite{2011king},
 but we could not find their Rocq source code. Their semantics
 is denotational and cannot easily cover all the
-features our paper covers, but it would have
+features that~\cite{fissore2026} covers, but it would have
 been sufficient for this first step.
 
 The proof technique we use to relate the two semantics is inspired by
@@ -1641,7 +1669,7 @@ of the code is dedicated to the tree semantics (in particular, the proofs in
 The remaining 20\% is devoted to the determinacy checker. The development took
 approximately $8$ months.
 
-To fully model the \elpiP language, we would need to account for higher-order
+To fully model the \elpiP language an mechanize~\cite{fissore2026}, we would need to account for higher-order
 variables, i.e. variables representing predicates. This extension is ongoing and
 largely orthogonal to the present paper, since cut and higher-order features do
 not interact in subtle ways.
