@@ -84,19 +84,19 @@
 %TODO mandatory: add short abstract of the document
 \begin{abstract} 
 We mechanize two operational semantics for \prologP with cut
-and prove them equivalent, in the Rocq prover. The first semantics
-closely models the \elpiP's implementation,
-it is based on a stack of choice points and is well suited for studying
+and prove them equivalent in the Rocq prover. The first semantics
+closely models \elpiP's implementation:
+it is based on a stack of alternatives and is well suited for studying
 optimizations employed by \prologP abstract machines. 
 The second semantics is instead based
-on and-or trees, in which the branches pruned by the cut operator are
+on And-Or trees, in which the branches pruned by the cut operator are
 made explicit.
 
-We use the tree-based semantics (1) to prove properties about the effect of
-the cut operator in the evaluation of choice points, since the
-rules from classical logic do not apply, and (2) to reason about the determinacy
-analysis introduced in Elpi version~3.0, which statically identifies
-computations that produce at most one result.%
+We use the tree-based semantics to (i) describe introduction and elimination
+rules for disjunction in the presence of cut, which (as expected) depart from
+those of classical logic, and (ii) reason about the determinacy analysis
+introduced in \elpiP version~3.0, which statically identifies computations that
+produce at most one result.%
 \end{abstract}
 
 \section{Introduction}
@@ -220,16 +220,17 @@ The set of variables \coqIn{V}, predicates \coqIn{P} and data symbols \coqIn{S}
 are countable. We represent substitutions
 $\Sigma$ as finitely supported maps from variables to terms, using the
 finmap library~\cite{finmap}.
-The empty substitution is written $\epsilon$ while
-the composition of two substitutions $\sigma_1$ and $\sigma_2$ with
-disjoint supports as $\sigma_1 + \sigma_2$.\marginpar{usiamo + ?}
+The empty substitution is written $\epsilon$.
+% while the composition of two substitutions $\sigma_1$ and $\sigma_2$ with
+% disjoint supports as $\sigma_1 + \sigma_2$.\marginpar{usiamo + ?}
  
 The backchaining operation applies all rules to a query term; it is
 central to both semantics.
-
-\input{tex_code/bc_type.tex}
+%\input{tex_code/bc_type.tex}
+\begin{center}\cI{Definition backchain : ~\ensuremath{\mathbb{P}}~ ~\ensuremath{\to}~ ~\ensuremath{\FV}~ ~\ensuremath{\to}~ Tm ~\ensuremath{\to}~ ~\ensuremath{\Sigma}~ ~\ensuremath{\to}~ ~\ensuremath{\FV}~ * list (~\ensuremath{\Sigma}~ * list Atom) }
+\end{center}
 % \cI{Definition backchain : ~\ensuremath{\mathbb{P}}~ ~\ensuremath{\to}~ ~\ensuremath{\FV}~ ~\ensuremath{\to}~ Tm ~\ensuremath{\to}~ ~\ensuremath{\Sigma}~ ~\ensuremath{\to}~ ~\ensuremath{\FV}~ * list (~\ensuremath{\Sigma}~ * list Atom) ~\ensuremath{\coloneq}~ ...}
-
+%\noindent
 Since a rule may be applied multiple times, its variables must be
 freshened before each application. Accordingly, the backchain function
 takes a program, the set of variable names used so far (\FV), a
@@ -241,13 +242,14 @@ the rule head with the query term.
 
 In our mechanization, we abstract over the unifier and its properties.
 The function \eI{unify} takes two terms $t_1$ and $t_2$, together with a
-substitution $\sigma$, as input, and returns an optional substitution
+substitution $\sigma$, as input, and optionally returns a substitution
 $\sigma'$ that extends $\sigma$. The expected behavior of \eI{unify} is
-higher-order unification restricted to the pattern fragment, as
-explained in~\cite{1991miller-pf}. Therefore, if $t_1$ and $t_2$ unify
-under $\sigma$, then $\sigma'~t_1 \equiv \sigma'~t_2$, where
-$\sigma~t$ is the notation for subsitution application and $\equiv$ denotes the
-syntactic equality of its arguments.
+the standard one (see for example~\cite[section 2.5]{10.5555/778522.778525}), % or \cite{1991miller-pf}),
+limited to the first order.
+Therefore, if $t_1$ and $t_2$ unify
+under $\sigma$, then $\sigma'~t_1 = \sigma'~t_2$, where
+$\sigma~t$ denotes subsitution application and $=$ denotes 
+syntactic equality.
 
 
 % \input{tex_code/unif_type.tex}
@@ -356,7 +358,7 @@ The one we are interested in, i.e. the one used in \elpiP, is known as \emph{har
 (see, e.g., the documentation of \sprologP~\cite{swi-prolog-cut}).
 Whenever the \coqIn{backchain} function returns a non-empty list of alternatives,
 the first one is explored immediately, while the others are suspended as
-\emph{choice points}. Within a given alternative, premises are processed from
+choice points. Within a given alternative, premises are processed from
 left to right, executing each atom in turn. When a cut is encountered, it
 discards (i) all choice points created by \coqIn{backchain} for the current call
 and (ii) all choice points created while executing the premises to the left of
@@ -411,9 +413,8 @@ We now reach the cut. At this point there are still two unexplored
 alternatives: one from the third rule for \eI{r} and one from the second rule
 for \eI{g} (respectively, $\sigma_5$ and $\sigma_2$). Both are discarded,
 because they were created when, or after, the first rule for \eI{g} was
-selected. (In contrast, a cut does not discard choice points created earlier;
-in this example, there are none.)
-
+selected. In contrast, a cut does not discard choice points created earlier;
+in this example, there are none.
 The final solution is:
 $
   \{\eI{A} \mapsto \eI{0}, \eI{B} \mapsto \eI{1}, \eI{C} \mapsto \eI{R},
@@ -441,8 +442,10 @@ and $\bot$ for \cI{true} and \cI{false}. The constructors of the option type are
 $\msome{t}$ for \coqIn{Some}$~t$ and $\mnone$ for \coqIn{None}. 
 Following the Mathematical Components library, on which we depend,
 we use \coqIn{x.1} and \coqIn{x.2} to denote the first and second projection
-applied to the pair \coqIn{x}.
-\marginpar{spiegare notation for list}
+applied to the pair \coqIn{x}. List concatenation is the infix \coqIn{++},
+while list comprehension (i.e. maping a function on a list) is written
+\coqIn{[seq f x | x <- l]}.
+% \marginpar{spiegare notation for list}
 % $\epsilon$ is the empty substitution.
 
 
@@ -460,9 +463,10 @@ Inductive tree ~$\coloneq$~
 \label{fig:tree-ty}
 \caption{Definition of And-Or tree}
 \end{figure}
-\marginpar{TODO: nested option, output Fv also inside option}
 
-An And-Or tree is a stratified, variable-width tree. It consists of two kinds\marginpar{corner case: prog2.elpi}
+An And-Or tree is a stratified, variable-width tree, defined in
+Rocq as in \cref{fig:tree-ty}.
+It consists of two kinds %\marginpar{corner case: prog2.elpi}
 of layers that alternate: a disjunctive layer is followed by a conjunctive
 layer and vice versa. At the root (a query), the tree records a list of
 alternatives (an Or-layer); for each alternative, it records a list of
@@ -478,15 +482,15 @@ alternatives form the Or-layer, and the premises of each applicable rule form
 the corresponding And-layer. This expansion step is performed by the
 \coqIn{step} procedure described in \cref{sec:step}.
 
-The Rocq data type for And-Or trees is given in \cref{fig:tree-ty}. In
-addition to \coqIn{Todo}, it provides two distinguished nodes, \koC and
+In
+addition to the \coqIn{Todo} node we have two distinguished nodes, \koC and
 \okC, which represent respectively the smallest failed and successful tree.
 
 The \orC node, written \(A \lor B_\sigma\), represents the addition of an
 alternative \(B_\sigma\) to an existing disjunction $A$. The left subtree
 \(A\) is optional and is absent once that branch has been fully explored.
 The right alternative is paired with a substitution \(\sigma\), which becomes
-the current substitution when backtracking to \(B\).\marginpar{why option and not KO?}
+the current substitution when backtracking to \(B\). %\marginpar{why option and not KO?}
 
 The \andC{} node, written \(A \land_{B_0} B\), represents the addition
 of a subquery \(B\) to the first choice point in \(A\). We call
@@ -524,12 +528,13 @@ Definition prune : ~$\mathbb{B}$~ ~$\to$~ tree ~$\to$~ option tree
 Inductive runT : ~$\mathbb{P}$~ ~$\to$~  ~$\FV$~ ~$\to$~ ~$\Sigma$~ ~$\to$~ tree ~$\to$~ option (~$\Sigma$~ * option tree) ~$\to$~ ~$\mathbb{B}$~ ~$\to$~ ~$\FV$~ ~$\to$~ Prop
 \end{coqcode}
 
+\caption{Signatures of the tree-based semantics
 \label{type:steptag}
 \label{type:stepT}
 \label{type:naT}
 \label{type:runT}
 \label{fig:signaturesT}
-\caption{Signatures of the tree-based semantics}
+}
 \end{figure}
 
 The tree is constructed incrementally by two recursive
@@ -537,13 +542,14 @@ functions, \step and \na. Both traverse the tree depth-first, left-to-right.
 The node to be explored in a tree is retrieved thanks to the \pathend (in~\cref{fig:getend}).
 When this node is \okC we say the entire tree is a \emph{success}, when it
 is \koC we say the tree \emph{failed}, otherwise the tree is \emph{incomplete}.
+In \cref{tree-ex} we mark with a black arrow the result of \pathend.
 
 Since all functions must terminate in Rocq, we define their transitive closure
 of \step and \na as the inductive relation \run.
 More precisely \run iterates calls to \step on incomplete trees to expand
 \cI{Todo} nodes. When a tree fails it calls \na to find
-the next alternative and continues from there, if one exists. We detail \step, \na, and
-\run in \cref{sec:step,sec:next_alt,sec:runT}.
+the next alternative and continues from there, if one exists.
+% We detail \step, \na, and \run in \cref{sec:step,sec:next_alt,sec:runT}.
 
 
 % In \cref{type:stepT,type:naT,type:runT} we give the types
@@ -596,7 +602,6 @@ the next alternative and continues from there, if one exists. We detail \step, \
 % They are listed in\marginpar{fare fresh rules in \cref{tree-ex}}
 % \cref{fig:getend-aux}.
 % We have pointed by a black arraw the \pathend of 
-In \cref{tree-ex} we mark with a black arrow the result of \pathend.
 
 \begin{figure}
   \begin{subfigure}{0.99\textwidth}
@@ -659,7 +664,7 @@ tree. It is passed to backchain so that rules can be refreshed correctly.
 % to \emph{backchain} returns a list of atoms whose variables are disjoint from
 % the variables of the current working tree.\marginpar{not true in figure:fix + also fix in \cref{sec:cut-op}}
 
-The \steptag (see~\cref{type:steptag}) indicates which kind of step was
+The \steptag (see~\cref{fig:signaturesT}) indicates which kind of step was
 performed.  \cI{Failure} and \cI{Success} are returned for trees that satisfy,
 respectively, the \failed and \success tests. 
 \cI{CutBrothers}
@@ -682,7 +687,7 @@ is \okC; otherwise, it is a right-skewed tree of \andC nodes.
 \Cref{tree-ex} depicts the tree corresponding to the running example
 (\cref{sec:cut-op}) as it undergoes calls to \step.
 % , we provide a graphical representation a call to \step on the query
-\marginpar{sottolineare le sostituzioni}
+%\marginpar{sottolineare le sostituzioni}
 We run query \eI{q 0 R} against the program $P$ in \cref{fig:progx}. Let $c_0$, $c_1$, and $c_2$
 be the children of the root. By construction, $c_0$ is the \mnone tree, while
 $c_1$ and $c_2$ correspond respectively to the premises of rules $r_1$ and
@@ -723,7 +728,7 @@ An example of the impact of cut is shown in \cref{tree-ex6}.
 % The cut is replaced by the \okC node and it need to cut-away some alternatives in the tree. 
 The red arrows
 indicate the scope of the cut and are labeled with \cutr and \cutl to indicate
-which pruning operation is applied to each pointed subtree. We note that
+which pruning operation is applied to each pointed subtree. Note that
 the evaluation of a cut keeps the path leading to the cut node unchanged, in
 the sense that substitution $\sigma_4$ is preserved, while the path under
 substitution $\sigma_5$ (which also succeeds) is replaced by \koC. This
@@ -733,8 +738,8 @@ amounts to discarding the third rule of predicate \eI{r}.
 \subsection{The \na procedure}\label{sec:next_alt}
 \label{sec:na}
 
-When \coqIn{backchain} returns an empty list, \step produces a \emph{failed}
-tree and the computation must backtrack. The \na procedure is
+When \coqIn{backchain} returns an empty list, \step produces a tree that \emph{failed}
+and the computation must backtrack. The \na procedure is
 responsible for producing the new tree from which the computation can
 continue.
 % The \step procedure alone is not sufficient to reproduce entirely the behavior
@@ -839,7 +844,7 @@ complements \step with respect to failed, successful, and incomplete trees.
 
 The inductive relation \run relates four inputs to three outputs. The inputs
 are a program, a set of variables, an initial substitution $\sigma$, and a
-tree $t$. The outputs are (i) an optional result $r$, (ii) a boolean $b$, and (iii) an updated set of variable
+tree $t$. The outputs are an optional result $r$, a boolean $b$, and an updated set of variable
 names.
 
 The main result $r$ is $\mnone$ when the execution fails; otherwise
@@ -899,15 +904,16 @@ The set of rules defining \run is deterministic.
 The proof is by induction on the first \run derivation and is immediate,
 because the rules are selected based on \pathend\ $t$. In particular, the
 hypotheses \success $t$, \incomplete $t$, and \failed $t$ are
-mutually exclusive. Moreover, by \cref{th:pruneFNfail}, the hypothesis of
-\failt implies \emph{failed $t$}; hence \failt is exclusive
+mutually exclusive. Moreover, by \cref{th:pruneNone}, the hypothesis of
+\failt implies that $t$ \emph{failed}; hence \failt is exclusive
 with \stopt and \stept, and it is also exclusive with
 \backt since they impose different requirements on the output of \na.
 
 
 
-The boolean output of \run allows state interesting properties about the \orC
-node in presence of cut. Here we only report a selection of the ones we proved.
+The boolean output of \run allows us to state interesting properties about the
+\orC node in the presence of cut. Here we report only a selection of those we
+proved.
 % We have proven several
 % properties that are avalable at
 % \href{https://github.com/FissoreD/elpi-formalization/blob/ho-check-ffun/theories/tree_prop_hard.v}{\emph{this}}
@@ -932,12 +938,14 @@ node in presence of cut. Here we only report a selection of the ones we proved.
 % $$$$
 
 \Cref{th:runSSTor,th:runNTor,th:runNFor} correspond to the introduction rules
-for disjunction when the first disjunct performs a cut. If $A$
-executes a cut one \emph{cannot} obtain $A \lor B$ out of $B$ since the
-execution of $A$, be it in the end succesful or not, makes the
-success of $B$ irrelevant (the cut discards it). In the first lemma
-$B$ is forced to be \koC, while in the latter the failure of $A$ absorbs
-$B$. Depicted as rules:
+for disjunction. If $A$ executes a cut, one \emph{cannot} obtain $A \lor B$ from
+$B$: the execution of $A$, whether it ultimately succeeds or fails, makes the
+success of $B$ irrelevant (the cut discards it). In the first lemma, $B$ is
+forced to be \koC; in the second one, the failure of $A$ absorbs $B$. The last
+lemma is connected to the depth-first exploration of the tree: proving a
+disjunction from its right-hand side can only occur after the left-hand side
+has been disproved.
+Depicted as rules:
 
 $$
 \begin{bprooftree}
@@ -957,16 +965,21 @@ $$
 \end{bprooftree}
 $$
 
-Finally, \cref{th:runorSST} is an elimination
-rule for disjunction. 
+\Cref{th:runorSST,th:runorSNT} are elimination
+rules for disjunction. 
 
 \input{tex_code/run_orSST.tex}
 \input{tex_code/run_orSNT.tex}
 
 
-From $A \lor B$, where $A$ is not inhert (i.e. already
-explored) we cannot deduce $A$ or $B$ independently. We deduce only $\top \lor B'$
-where $B'$ provides no information if $A$ performed a cut.
+From $A \lor B$, when $A$ is not inert (i.e. not already explored), we cannot
+deduce $A$ or $B$ independently. Instead, we can only derive a weakened
+conclusion of the form $\top \lor B'$, where $B'$ provides no information in the
+case where the exploration of $A$ performs a cut. This yields an elimination
+rule that is stronger than the usual one (depicted on the left).
+If $A$ does not cut, the elimination rule has the usual two premises, together
+with the additional constraint that whenever $B$ holds, $A$ must have failed.
+This again reflects the depth-first traversal of the proof tree.
 
 $$
 \begin{bprooftree}
@@ -990,7 +1003,7 @@ $$
 \end{bprooftree}
 $$
 
-As anticipated in the intructions, these lemmas disprove the commutativity of
+As anticipated in the introductionction these lemmas contradict the commutativity of
 disjunction.
 
 \section{Stack-based semantics}
@@ -1009,7 +1022,7 @@ also present in the Warren Abstract Machine
 The execution state is a stack of alternarives.
 Each alternative is a list of goals. Intuitively it amounts to
 a disjunctive normal form: each stack item is a self contained
-computations, coupling a substitution with all the goals to be
+computation, coupling a substitution with all the goals to be
 solved.
 
 Goals pair an atom with a list of the \emph{cut-to} alternatives, 
@@ -1488,7 +1501,7 @@ We assume two important properties of our unification routines.
 
 We also assume that refreshing variables does not affect unification.
 In particular a refreshing renaming for a term t is a function from variables to variables that: (i)
-is defined on all the variables in t; (ii) is injective; (iii) has non overlapping domain an codomain. \marginpar{MANCA QUESTA PARTE}. 
+is defined on all the variables in t; (ii) is injective; (iii) has non overlapping domain an codomain. \marginpar{MANCA QUESTA PARTE, dire cosa sia SHARP e ren}. 
 
 \input{tex_code/good_ren.tex}
 \input{tex_code/unif_ren.tex}

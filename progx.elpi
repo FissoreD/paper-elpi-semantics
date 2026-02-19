@@ -1,10 +1,10 @@
-func f int -> int. % f is a deterministic predicate. The two rules
-f 1 2.             % have non-verlapping heads, i.e. 1 != 2
+func f int -> int.         % f is a deterministic predicate. The two rules
+f 1 2.                     % have non-verlapping heads, i.e. 1 != 2
 f 2 3.               
-pred r int -> int. % r is a non-deterministic predicate. The heads
-r 0 0.             % overlap: the query for 0 has three applicable
-r 0 1.             % rules.
+pred r int -> int.         % r is a non-deterministic predicate. The heads
+r 0 0.                     % overlap: the query for 0 has three applicable
+r 0 1.                     % rules.
 r 0 2 :- !.
-func g int -> int. % g is deterministic: if the first rule succeeds, the
+func g int -> int.         % g is deterministic: if the first rule succeeds, the
 g A C :- r A B, f B C, !.  % second one is cut away, as well as the choice
 g D F :- f D E, f E F.     % points left by the call to r.
