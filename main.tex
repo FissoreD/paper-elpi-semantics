@@ -451,7 +451,7 @@ while list comprehension (i.e. maping a function on a list) is written
 
 \section{And-Or Tree semantics}
 \label{tree-sem}
-\begin{figure}
+\begin{figure}[b]
     % \input{tex_code/tree_def.tex}
     \begin{coqcode}
 Inductive tree ~$\coloneq$~
@@ -518,7 +518,7 @@ list.
 
 
 
-\subsection{The tree-based semantics}
+\subsection{The semantics}
 \begin{figure}
     % \input{tex_code/tree_def.tex}
 \begin{coqcode}
@@ -844,7 +844,7 @@ complements \step with respect to failed, successful, and incomplete trees.
 %   \label{fig:na}
 % \end{figure}
 
-\subsection{The \run inductive}\label{sec:runT}
+\subsection{The \run relation and its properties}\label{sec:runT}
 
 The inductive relation \run relates four inputs to three outputs. The inputs
 are a program, a set of variables, an initial substitution $\sigma$, and a
@@ -912,8 +912,6 @@ mutually exclusive. Moreover, by \cref{th:pruneNone}, the hypothesis of
 \failt implies that $t$ \emph{failed}; hence \failt is exclusive
 with \stopt and \stept, and it is also exclusive with
 \backt since they impose different requirements on the output of \na.
-
-
 
 The boolean output of \run allows us to state interesting properties about the
 \orC node in the presence of cut. Here we report only a selection of those we
@@ -1250,7 +1248,7 @@ may have been explored, and consequently must be a valid tree.
     \end{coqcode}
     % \caption{Tree to list}
   \end{minipage}
-  \caption{Valid tree and Tree to list
+  \caption{Valid tree and Tree to stack
   \label{fig:ttl}
   \label{fig:vt}
 }
@@ -1310,7 +1308,7 @@ note that \ref{tree-ex3} and \ref{tree-ex4} are both translated into
 the same stack. Consequently, there are transitions in \run that are not visible
 in \nur.
 %
-\begin{figure}
+\begin{figure}[b]
   \begin{center}
     
     \includegraphics[width=0.8\textwidth, keepaspectratio]{src/t2lex.pdf}
