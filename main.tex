@@ -1523,8 +1523,8 @@ The function \matching has the following property:
 \end{coqcode}
 \end{axiom}
 
-If the sets of variables occurring in the two terms are disjoint, and the variables in the support of $\sigma$ are
-disjoint from the variables in $t_1$, then when matching succeeds, only the
+If the variables (\cI{vars}) of two terms are disjoint ($\#$) and the variables in the support of $\sigma$ are
+disjoint from the variables in $t_1$, then, if matching succeeds, only the
 variables in $t_2$ are assigned; that is, $t_1 = \sigma'~t_2$, and the
 variables in $t_1$ are not assigned in $\sigma'$.
 
@@ -1536,10 +1536,19 @@ We assume two important properties of our unification routines.
 \input{tex_code/unif_trans.tex}
 \input{tex_code/matchunif.tex}
 
-We also assume that refreshing variables does not affect unification.
-In particular a \emph{refresh} for a term $t$ is a function from variables to variables that: (i)
-is defined on all the variables in $t$; (ii) is injective. % (iii) has non overlapping domain an codomain.
-%  \marginpar{MANCA QUESTA PARTE, dire cosa sia SHARP e ren}. 
+We also assume that refreshing variables does not affect unification. In
+particular, a refreshing renaming for a term $t$ is a function from variables
+to variables that: (i) is defined on all the variables in $t$; (ii) is
+injective; and (iii) has non-overlapping domain and codomain. Below, we define
+\cI{refresh_for} to test the validity of a refreshing renaming.
+\Cref{th:unifren} states the property of term unifiability with respect to term
+renaming. That is, if the renamings of terms $t_1$ and $t_2$ are unifiable
+under two respective valid refreshing renamings, and they have disjoint
+variables, then for any pair of renamings $z$ and $x$ that are valid renamings
+for $t_1$ and $t_2$, respectively, and are disjoint from each other,
+unification also succeeds. In other words, this theorem accounts for
+$\alpha$-equivalence of terms and the unification of terms with disjoint
+variables.
 
 \input{tex_code/refresh_for.tex}
 % \input{tex_code/unif_ren.tex}
