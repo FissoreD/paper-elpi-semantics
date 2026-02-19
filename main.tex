@@ -955,14 +955,14 @@ $$
 \qquad
 \begin{bprooftree}
   \AxiomC{$\lnot A \qquad (A ~\mathrm{cuts})$}
-  \RightLabel{$\lor_{il1}$}
+  \RightLabel{$\lor_{ir1}$}
   \UnaryInfC{$\lnot (\lnot A \lor B) $}
 \end{bprooftree}
 \qquad
 \begin{bprooftree}
   \AxiomC{$\lnot A$}
   \AxiomC{$B \qquad (A ~\mathrm{does~not~cut})$}
-  \RightLabel{$\lor_{il2}$}
+  \RightLabel{$\lor_{ir2}$}
   \BinaryInfC{$A \lor B$}
 \end{bprooftree}
 $$
@@ -1005,10 +1005,12 @@ $$
 \end{bprooftree}
 $$
 
-It is worth recalling out that the ``A cuts'' in the rules above amounts to the
-boolean argument returned by \run. Without that information it is impossible to
-formulate the rules since it not jsut a metter of having a syntactic occurrence
-of cut in $A$, but wether the cut was executed or not.
+It is worth recalling that the “$A$ cuts” side-condition in the rules above is
+precisely the boolean result returned by \run. Without that information, it is
+impossible to formulate these rules: it is not merely a matter of whether $A$
+contains a syntactic occurrence of cut, but whether that cut is actually
+executed during the (dis)proof of $A$ (in rules $\lor_{ir1}$ and $\lor_{ir2}$).
+Indeed, an atom preceding the cut may fail, so the cut is never reached.
 
 As anticipated in the introductionction these lemmas contradict the commutativity of
 disjunction.
@@ -1629,17 +1631,16 @@ a stack of alternatives: it is computationally more efficient, but it loses the
 structural expressiveness of the tree-based semantics. Thanks to a dedicated
 function, we translate trees into stacks and prove the two semantics equivalent.
 This stack-based semantics corresponds to the first-order fragment of \elpiP.
-
 Using the tree-based semantics, we mechanize the first-order part of the
 determinacy checker that has been available in \elpiP since version~3.0, and we
 prove that a call to a deterministic predicate returns at most one solution.
 
-The code development consists of approximately 2,500 lines for the
-specifications and about 5,000 lines of \textit{ssreflect} proofs. About 30\% of
-the code is dedicated to the tree semantics, such as the proofs in
-\cref{sec:runT}. About 15\% of the code is devoted to the stack semantics, and
-35\% to the equivalence proof. The remaining 20\% of the code is for the
-determinacy checker. The development took approximately $8$ months.
+The formal development consists of approximately 2,500 lines of
+specifications and about 5,000 lines of \textit{ssreflect} proofs. Roughly 30\%
+of the code is dedicated to the tree semantics (in particular, the proofs in
+\cref{sec:runT}), 15\% to the stack semantics, and 35\% to the equivalence proof.
+The remaining 20\% is devoted to the determinacy checker. The development took
+approximately $8$ months.
 
 To fully model the \elpiP language, we would need to account for higher-order
 variables, i.e. variables representing predicates. This extension is ongoing and
