@@ -500,7 +500,7 @@ when backtracking occurs within \(A\), the subtree \(B\) is replaced by
 the atoms in \(B_0\). An example is shown in~\cref{sec:na}.
 
 A graphical representation of a tree is shown in \cref{tree-ex1}. For
-compactness, we depict \andC and \orC nodes as $n$-ary (rather than binary),
+compactness, we depict \andC and \orC nodes as $n$-ary,
 with children associating to the right. The \koC node acts as the terminating
 element of an \orC list, while \okC is the terminating element of an \andC
 list.
@@ -609,16 +609,18 @@ the next alternative and continues from there, if one exists.
     \caption{Initial query}
     \label{tree-ex0} 
   \end{subfigure}
+  ~\\~\\
   \begin{subfigure}{0.4\textwidth}
     \includegraphics[width=\textwidth, keepaspectratio]{./src/exec_example1/step2.pdf}
     \caption{Tree after \step on \eI{g 0 R}}
     \label{tree-ex1} 
-  \end{subfigure}
+  \end{subfigure}~~
   \begin{subfigure}{0.5\textwidth}
     \includegraphics[width=\textwidth, keepaspectratio]{./src/exec_example1/step3.pdf}
     \caption{\step on \cref{tree-ex1}}
     \label{tree-ex2} 
   \end{subfigure}
+  ~\\~\\
   \begin{subfigure}{0.5\textwidth}
     \includegraphics[width=\textwidth, keepaspectratio]{./src/exec_example1/step4.pdf}
     \renewcommand\thesubfigure{d.1}
@@ -631,26 +633,28 @@ the next alternative and continues from there, if one exists.
     \caption{\na on \cref{tree-ex3}}
     \label{tree-ex4} 
   \end{subfigure}
+  ~\\~\\
   \setcounter{subfigure}{4}
   \begin{subfigure}{0.55\textwidth}
     \includegraphics[width=\textwidth, keepaspectratio]{./src/exec_example1/step6.pdf}
     \caption{\step on \cref{tree-ex4}}
     \label{tree-ex5} 
-  \end{subfigure}
+  \end{subfigure}~~
   \begin{subfigure}{0.45\textwidth}
     \includegraphics[width=\textwidth, keepaspectratio]{./src/exec_example1/step7.pdf}
     \caption{\step on \cref{tree-ex5}}
     \label{tree-ex6} 
   \end{subfigure}
-\caption{Some tree representations\footnotemark} 
-\label{tree-ex}
-\end{figure}
-
-\footnotetext{
+  ~\\
+\caption{Execution in the tree semantics.
+%\footnotemark}
+% \footnotetext{
   The substitutions $\sigma_1\dots\sigma_6$ are from \cref{sec:cut-op}.
   $R_1,R_2$, and $R_3$ are reset points and correspond respectively to the
   lists of atoms $[\eI{f Y Z, !}]$, $[\eI{!}]$, and $[\eI{f Y Z}]$.
-}
+  }
+  \label{tree-ex}
+  \end{figure}
 
 \subsection{The \step procedure}\label{sec:step}
 
