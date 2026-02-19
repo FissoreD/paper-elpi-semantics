@@ -16,7 +16,7 @@ aux: $(PDFFILES)
 tex_code: $(IGNFILES)
 
 %.pdf: %.tex
-	cd $(dir $<) && $(TEX_CMD) $(notdir $<)
+	cd $(dir $<) && $(TEX_CMD) $(notdir $<) && $(TEX_CMD) $(notdir $<)
 
 %.ign: %.v
 	$(GENERATOR) $<
