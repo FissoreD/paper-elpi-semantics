@@ -1552,7 +1552,16 @@ $\alpha$-equivalence of terms and the unification of terms with disjoint
 variables.
 
 \input{tex_code/refresh_for.tex}
-\input{tex_code/unif_ren.tex}\marginpar{new def to check, normally equivalent to precednt}
+% \input{tex_code/unif_ren.tex}
+\begin{axiom}[unif\_ren]\label{th:unifren}\cI{~\ensuremath{\forall}~ x y z w ~\ensuremath{t_1}~ ~\ensuremath{t_2}~,}~
+\begin{coqcode}
+  refresh_for w ~\ensuremath{t_1}~ ~\ensuremath{\to}~ refresh_for y ~\ensuremath{t_2}~ ~\ensuremath{\to}~ refresh_for z ~\ensuremath{t_1}~ ~\ensuremath{\to}~ refresh_for x ~\ensuremath{t_2}~ ~\ensuremath{\to}~
+  codomf w ~\ensuremath{\#}~ vars ~\ensuremath{t_1}~ ~\ensuremath{\cup}~ vars (rename y ~\ensuremath{t_2}~) ~\ensuremath{\to}~
+  codomf z ~\ensuremath{\#}~ vars ~\ensuremath{t_1}~ ~\ensuremath{\cup}~ vars (rename x ~\ensuremath{t_2}~) ~\ensuremath{\to}~
+  unify (rename w ~\ensuremath{t_1}~) (rename y ~\ensuremath{t_2}~) ~\ensuremath{\epsilon}~ ~\ensuremath{\to}~ unify (rename z ~\ensuremath{t_1}~) (rename x ~\ensuremath{t_2}~) ~\ensuremath{\epsilon}~.
+\end{coqcode}
+\end{axiom}
+\marginpar{new def to check, normally equivalent to precednt}
 % \begin{axiom}[unif\_ren]\label{th:unifren}\cI{~\ensuremath{\forall}~ x y z w ~\ensuremath{t_1}~ ~\ensuremath{t_2}~,}~
 % \begin{coqcode}
 %   refresh_for w ~\ensuremath{t_1}~ ~\ensuremath{\to}~ refresh_for y ~\ensuremath{t_2}~ ~\ensuremath{\to}~ refresh_for z ~\ensuremath{t_1}~ ~\ensuremath{\to}~ refresh_for x ~\ensuremath{t_2}~ ~\ensuremath{\to}~
