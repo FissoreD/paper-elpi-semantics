@@ -1,5 +1,5 @@
 
-\documentclass[a4paper,UKenglish,cleveref, autoref, thm-restate, lineno]{lipics-v2021}
+\documentclass[a4paper,UKenglish,cleveref, autoref, thm-restate, lineno, anonymous]{lipics-v2021}
 
 \usepackage{minted}
 \usepackage{macro}
@@ -1297,7 +1297,7 @@ first alternative $g$, whereas $B_0$ is the continuation for each alternative
 in $a$.
 % While performing these translation, we need to carefully update the cut-atlernatives.
 
-\subsubsection{Example of \ttl} 
+\subsubsection{Example of \ttl execution} 
 The translations of the trees in \cref{tree-ex} are shown in \cref{ex-elpi}.
 The letters in the figures relate each tree to the corresponding stack.
 For example, \ref{tree-ex1} is translated into \ref{ex-elpi1}. We also
@@ -1306,11 +1306,15 @@ note that \ref{tree-ex3} and \ref{tree-ex4} are both translated into
 the same stack. Consequently, there are transitions in \run that are not visible
 in \nur.
 %
-\begin{center}
-\includegraphics[width=0.8\textwidth, keepaspectratio]{src/t2lex.pdf}
-\end{center}
+\begin{figure}
+  \begin{center}
+    
+    \includegraphics[width=0.8\textwidth, keepaspectratio]{src/t2lex.pdf}
+  \end{center}
+\caption{Example of \ttl execution\label{fig:cc}}
+\end{figure}
 %
-As an example of a call to \ttl, we take the tree and the stack above,
+As an example of a call to \ttl, we take the tree and the stack in~\cref{fig:cc},
 which are respectively taken from \cref{tree-ex2,ex-elpi2}. The red arrows
 point from the head of an alternative in the tree to the head of the
 corresponding cell in the stack.
@@ -1668,8 +1672,7 @@ The formal development consists of approximately 2,500 lines of
 specifications and about 5,000 lines of \textit{ssreflect} proofs. Roughly 30\%
 of the code is dedicated to the tree semantics (in particular, the proofs in
 \cref{sec:runT}), 15\% to the stack semantics, and 35\% to the equivalence proof.
-The remaining 20\% is devoted to the determinacy checker. The development took
-approximately $8$ months.
+The remaining 20\% is devoted to the determinacy checker. The mechanization took us approximately $8$ months.
 
 To fully model the \elpiP language and mechanize~\cite{fissore2026}, we would need to account for higher-order
 variables, i.e. variables representing predicates. This extension is ongoing and
