@@ -1580,10 +1580,8 @@ outputs; therefore, all three predicates are expected to take an
 
 The signatures of the program are stored in the \texttt{sig} field of
 the program and are encoded as described in
-\cite{fissore2026}; that is, similarly to the code in
-\cref{fig:progx}, we use arrows for term application, data types to encode
-base types such as \emph{int}, and two dedicated symbols to distinguish
-deterministic from non-deterministic predicates.
+\cite{fissore2026}: we distinguish data from predicates, and predicates are classified
+into deterministic a non-deterministic.
 
 A program execution behaves deterministically if, given a program, a
 substitution, and an input tree for the \run\ inductive, the execution either
@@ -1693,7 +1691,8 @@ of the code is dedicated to the tree semantics (in particular, the proofs in
 \cref{sec:runT}), 15\% to the stack semantics, and 35\% to the equivalence proof.
 The remaining 20\% is devoted to the determinacy checker. The mechanization took us approximately $8$ months.
 
-To fully model the \elpiP language and mechanize~\cite{fissore2026}, we would need to account for higher-order
+To fully model the \elpiP language and mechanize~\cite{fissore2026} entirely,
+we would need to account for higher-order
 variables, i.e. variables representing predicates. This extension is ongoing and
 largely orthogonal to the present paper, since cut and higher-order features do
 not interact in subtle ways.
