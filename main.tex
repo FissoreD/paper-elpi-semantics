@@ -444,7 +444,9 @@ Following the Mathematical Components library, on which we depend,
 we use \coqIn{x.1} and \coqIn{x.2} to denote the first and second projection
 applied to the pair \coqIn{x}. List concatenation is the infix \coqIn{++},
 while list comprehension (i.e. mapping a function on a list) is written
-\coqIn{[seq f x | x <- l]}.
+\coqIn{[seq f x | x <- l]}. The function \coqIn{odflt d o}
+extracts the value from the option \coqIn{o} and returns the default \coqIn{d}
+if \coqIn{o} is $\mnone$.
 % \marginpar{spiegare notation for list}
 % $\epsilon$ is the empty substitution.
 
