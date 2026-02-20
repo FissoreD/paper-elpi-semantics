@@ -138,7 +138,7 @@ but it makes reasoning about the scope of cut difficult. To address
 this limitation we introduce a tree-based semantics in which the branches
 pruned by cut are explicit and we prove the two semantics equivalent.
 Using the tree-based semantics, we then prove some properties about the
-impact of evaluating the cut in disjunctive querys. For example, unlike in
+impact of evaluating the cut in disjunctive queries. For example, unlike in
 classical logic, $q_1 \lor q_2$ is not equivalent to $q_2 \lor q_1$,
 since $q_2$ may be cut-away by $q_1$.
 
@@ -156,7 +156,7 @@ Secondly, each rule of a deterministic predicate should (i) either call function
 this ensure that no choice point is left after the execution of the premises
 of the chosen rule, (ii) or
 call relations provided that they are followed by the cut operator, so that
-any allocated choice points preceeding the cut are discarded.
+any allocated choice points preceding the cut are discarded.
 
 We show that if every rule defining a deterministic predicate passes this analysis, 
 then any call to that predicate leaves no choice points.
@@ -205,7 +205,7 @@ parentheses).
 The description of a program is given by the record $\mathbb{P}$ (in \cref{type:atom}) and
 is shared by both semantics. A program consists of a list of
 rules \coqIn{R} together with a signature environment \coqIn{sig}.
-We delay the descussion of signatures to \cref{sec:determinacy} where we
+We delay the discussion of signatures to \cref{sec:determinacy} where we
 describe the static analysis that concerns them.
 
 A rule consists of a head term \coqIn{Tm} and a list of premises. Each
@@ -248,7 +248,7 @@ the standard one (see for example~\cite[section 2.5]{10.5555/778522.778525}), % 
 limited to the first order.
 Therefore, if $t_1$ and $t_2$ unify
 under $\sigma$, then $\sigma'~t_1 = \sigma'~t_2$, where
-$\sigma~t$ denotes subsitution application and $=$ denotes 
+$\sigma~t$ denotes substitution application and $=$ denotes 
 syntactic equality.
 
 
@@ -298,7 +298,7 @@ syntactic equality.
 %   \input{tex_code/program_type.tex}
 %   \label{type:prog}
 % \end{definition}
-% \begin{definition}[Subsitution]
+% \begin{definition}[Substitution]
 %   \input{tex_code/sigma_type.tex}
 %   \label{type:sigma}
 % \end{definition}
@@ -429,7 +429,7 @@ in particular how alternatives are stored and how they are pruned by cut.
 % The two
 % semantics are based on different syntaxes, the first syntax (called tree)
 % exploits a tree-like structure and is ideal both to have a graphical view of its
-% evolution while the tree is being intepreted and to prove lemmas over it. The
+% evolution while the tree is being interpreted and to prove lemmas over it. The
 % second syntax, called elpi, is the \elpiP's syntax and has the advantage of
 % reducing the computational cost of cutting and backtracking alternatives by
 % using shared pointers. We aim to prove the equivalence of the two semantics
@@ -437,7 +437,7 @@ in particular how alternatives are stored and how they are pruned by cut.
 
 \vspace{10pt}
 \textit{Notational conventions}
-In the following section we note $\mathbb{B}$ for the bolean type, and $\top$
+In the following section we note $\mathbb{B}$ for the boolean type, and $\top$
 and $\bot$ for \cI{true} and \cI{false}. The constructors of the option type are written
 $\msome{t}$ for \coqIn{Some}$~t$ and $\mnone$ for \coqIn{None}. 
 Following the Mathematical Components library, on which we depend,
@@ -824,7 +824,7 @@ successful path that maps \eI{R} to \eI{2}. Calling \na\ on this tree returns
 % We need to reuse the reset point since,
 % the step procedure in \andC trees
 % evaluates the rhs of a \andC tree if the lhs succeeds.
-% This evaluation is dependent on the subsitution in the lhs tree.
+% This evaluation is dependent on the substitution in the lhs tree.
 % Therefore, if we need to backtrack in the lhs, we need to reset the
 % rhs.
 
@@ -1027,7 +1027,7 @@ contains a syntactic occurrence of cut, but whether that cut is actually
 executed during the (dis)proof of $A$ (in rules $(\lor_{ir1})$ and $(\lor_{ir2})$).
 Indeed, an atom preceding the cut may fail, so the cut is never reached.
 
-As anticipated in the introductionction these lemmas contradict the commutativity of
+As anticipated in the introduction, these lemmas contradict the commutativity of
 disjunction.
 
 \section{Stack-based semantics}
@@ -1043,7 +1043,7 @@ semantics in Isabelle/HOL, together with several optimizations that are
 also present in the Warren Abstract Machine
 \cite{warren1983abstract,1991ait-wam}.
 
-The execution state is a stack of alternarives.
+The execution state is a stack of alternatives.
 Each alternative is a list of goals. Intuitively it amounts to
 a disjunctive normal form: each stack item is a self contained
 computation, coupling a substitution with all the goals to be
@@ -1105,7 +1105,7 @@ predicates.
 The \nur predicates relates a set of variables and a
 list of alternatives to optional result. \mnone stands for failure,
 i.e., no solution, whereas $\msome(\sigma, a)$ represent success with $\sigma$ begin the solution and $a$ as the list of non-yet-explored
-alternaitves.
+alternatives.
 
 The rule system for \nur is given in \cref{fig:nur-rules} and is made by $4$
 cases. We distinguish two main cases. If we run out of alternatives
@@ -1117,8 +1117,8 @@ If $h$ is not empty we look at its head goal $(t, ca)$ where $t$ is the atom and
 cut-to alternatives. If $t$ is a cut rule
 (\cuts) continues to evaluate the tail of $h$ under with alternatives $ca$. Finally, when $t$ is a call, rule (\calls) backchains:
 for each rule it pairs each premise with the current stack of
-alternatives, and prepents the obtained goals to the tail of $h$.
-Note that if backain returns the empty list, (\calls) second
+alternatives, and prepends the obtained goals to the tail of $h$.
+Note that if backchain returns the empty list, (\calls) second
 premise amounts to exploring the next item in the current
 stack.
 
@@ -1198,7 +1198,7 @@ tree.
 
 In order to relate the two semantics we have to relate the computations states,
 i.e., the And-Or tree and the stack of alternatives. We define a translation from trees to stacks, called \ttl, but
-we do not explcitly provide the converse translation, an economy
+we do not explicitly provide the converse translation, an economy
 allowed by the proof technique we employ, inspired by~\cite{yves-equiv}.
 
 Before describing the translation of trees to stacks (in~\cref{sec:t2l})
@@ -1362,7 +1362,7 @@ the translation of the subtree under $\sigma_2$, since it is one
 
 % The translation of a tree to a list is performed by shown in \cref{fig:ttl}. It takes the
 % tree to be translated, a substitution (called $s$), a list of alternatives, called
-% \emph{bt}. The substitution $s$ tells what is the subsitution of the 
+% \emph{bt}. The substitution $s$ tells what is the substitution of the 
 % alternative we are building and is updated when going to the
 % rhs of the \orC constructor. The \emph{bt} list represents the future 
 % alternatives list that have the same depth of the current tree root. 
@@ -1631,7 +1631,7 @@ Our target theorem \cI{det_check_call} is a corollary of \cI{det_check_tree}.
 
 % As an important remark, proving the same lemma with the stack semantics, it is
 % difficult to correctly define the predicate \cI{det_stack}, checking for the
-% deterministc behavior of a generic stack, since, similar to \cref{sec:run-prop},
+% deterministic behavior of a generic stack, since, similar to \cref{sec:run-prop},
 % the lack of structure make this goal hard. We need therefore an intermediate
 % data structure, like the tree to encompass this problem.
 
