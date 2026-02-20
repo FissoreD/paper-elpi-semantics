@@ -519,23 +519,23 @@ list.
 
 
 \subsection{The semantics}
-\begin{figure}
-    % \input{tex_code/tree_def.tex}
-\begin{coqcode}
-Inductive tag ~$\coloneq$~ Expanded | CutBrothers | Failed | Success.
-Definition step : ~$\mathbb{P}$~ ~$\to$~ ~$\FV$~ ~$\to$~ ~$\Sigma$~ ~$\to$~ tree ~$\to$~ (~$\FV$~ * tag * tree)
-Definition prune : ~$\mathbb{B}$~ ~$\to$~ tree ~$\to$~ option tree
-Inductive runT : ~$\mathbb{P}$~ ~$\to$~  ~$\FV$~ ~$\to$~ ~$\Sigma$~ ~$\to$~ tree ~$\to$~ option (~$\Sigma$~ * option tree) ~$\to$~ ~$\mathbb{B}$~ ~$\to$~ ~$\FV$~ ~$\to$~ Prop
-\end{coqcode}
+% \begin{figure}
+%     % \input{tex_code/tree_def.tex}
+% \begin{coqcode}
+% Inductive tag ~$\coloneq$~ Expanded | CutBrothers | Failed | Success.
+% Definition step : ~$\mathbb{P}$~ ~$\to$~ ~$\FV$~ ~$\to$~ ~$\Sigma$~ ~$\to$~ tree ~$\to$~ (~$\FV$~ * tag * tree)
+% Definition prune : ~$\mathbb{B}$~ ~$\to$~ tree ~$\to$~ option tree
+% Inductive runT : ~$\mathbb{P}$~ ~$\to$~  ~$\FV$~ ~$\to$~ ~$\Sigma$~ ~$\to$~ tree ~$\to$~ option (~$\Sigma$~ * option tree) ~$\to$~ ~$\mathbb{B}$~ ~$\to$~ ~$\FV$~ ~$\to$~ Prop
+% \end{coqcode}
 
-\caption{Signatures of the tree-based semantics
-\label{type:steptag}
-\label{type:stepT}
-\label{type:naT}
-\label{type:runT}
-\label{fig:signaturesT}
-}
-\end{figure}
+% \caption{Signatures of the tree-based semantics
+% \label{type:steptag}
+% \label{type:stepT}
+% \label{type:naT}
+% \label{type:runT}
+% \label{fig:signaturesT}
+% }
+% \end{figure}
 
 The tree is constructed incrementally by two recursive
 functions, \step and \na. Both traverse the tree depth-first, left-to-right.
@@ -543,6 +543,13 @@ The node to be explored in a tree is retrieved thanks to the \pathend (in~\cref{
 When this node is \okC we say the entire tree is a \emph{success}, when it
 is \koC we say the tree \emph{failed}, otherwise the tree is \emph{incomplete}.
 In \cref{tree-ex} we mark with a black arrow the result of \pathend.
+
+\begin{coqcode}
+Inductive tag ~$\coloneq$~ Expanded | CutBrothers | Failed | Success.
+Definition step : ~$\mathbb{P}$~ ~$\to$~ ~$\FV$~ ~$\to$~ ~$\Sigma$~ ~$\to$~ tree ~$\to$~ (~$\FV$~ * tag * tree)
+Definition prune : ~$\mathbb{B}$~ ~$\to$~ tree ~$\to$~ option tree
+Inductive runT : ~$\mathbb{P}$~ ~$\to$~  ~$\FV$~ ~$\to$~ ~$\Sigma$~ ~$\to$~ tree ~$\to$~ option (~$\Sigma$~ * option tree) ~$\to$~ ~$\mathbb{B}$~ ~$\to$~ ~$\FV$~ ~$\to$~ Prop
+\end{coqcode}
 
 Since all functions must terminate in Rocq, we define their transitive closure
 of \step and \na as the inductive relation \run.
@@ -668,7 +675,7 @@ tree. It is passed to backchain so that rules can be refreshed correctly.
 % to \emph{backchain} returns a list of atoms whose variables are disjoint from
 % the variables of the current working tree.\marginpar{not true in figure:fix + also fix in \cref{sec:cut-op}}
 
-The \steptag (see~\cref{fig:signaturesT}) indicates which kind of step was
+The \steptag indicates which kind of step was
 performed.  \cI{Failure} and \cI{Success} are returned for trees that satisfy,
 respectively, the \failed and \success tests. 
 \cI{CutBrothers}
@@ -1116,6 +1123,14 @@ stack.
 
 We propose an example of the execution of \nur in \cref{ex-elpi}. The
 arrows in the images represent the cut-to pointers. 
+We
+have not drawn arrows coming out of call atoms since the interpreter
+ignores the cut-alternatives in this case. 
+The evolution
+of the stack in \cref{ex-elpi} mirrors the example in \cref{sec:cut-op}:
+we evaluate the first goal of the first alternative. 
+During backchaining,
+we add a pointer to the remaining alternatives to each new cut operator.
 
 \begin{figure}[!hb]
   \centering
@@ -1155,13 +1170,6 @@ arrows in the images represent the cut-to pointers.
   \label{ex-elpi}
 \end{figure}
 
-We
-have not drawn arrows coming out of call atoms since the interpreter
-ignores the cut-alternatives in this case. 
-The evolution
-of the stack in \cref{ex-elpi} mirrors the example in \cref{sec:cut-op}:
-we evaluate the first goal of the first alternative. During backchaining,
-we add a pointer to the remaining alternatives to each new cut operator.
 If a cut is evaluated, we replace the remaining alternatives with the
 cut-to alternatives. For example, in \cref{ex-elpi5}, evaluating the cut
 discards the second and third elements in the stack. Backtracking is
@@ -1561,7 +1569,7 @@ variables.
   unify (rename w ~\ensuremath{t_1}~) (rename y ~\ensuremath{t_2}~) ~\ensuremath{\epsilon}~ ~\ensuremath{\to}~ unify (rename z ~\ensuremath{t_1}~) (rename x ~\ensuremath{t_2}~) ~\ensuremath{\epsilon}~.
 \end{coqcode}
 \end{axiom}
-\marginpar{new def to check, normally equivalent to precednt}
+% \marginpar{new def to check, normally equivalent to precednt}
 % \begin{axiom}[unif\_ren]\label{th:unifren}\cI{~\ensuremath{\forall}~ x y z w ~\ensuremath{t_1}~ ~\ensuremath{t_2}~,}~
 % \begin{coqcode}
 %   refresh_for w ~\ensuremath{t_1}~ ~\ensuremath{\to}~ refresh_for y ~\ensuremath{t_2}~ ~\ensuremath{\to}~ refresh_for z ~\ensuremath{t_1}~ ~\ensuremath{\to}~ refresh_for x ~\ensuremath{t_2}~ ~\ensuremath{\to}~
