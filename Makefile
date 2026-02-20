@@ -35,4 +35,6 @@ ci:
 	docker create --name latex dfissore/latex2025:latest && \
 	docker cp ./ latex:/data/ && docker ps -a && \
 	docker start -i latex && docker cp latex:/data/main.pdf . && \
-	mkdir -p pdf && mv main.pdf pdf 
+	mkdir -p pdf && mv main.pdf pdf
+	cd elpi-formalization && git archive --format=zip --prefix=code/ -o ../artefact.zip
+	mv artefact.zip pdf
