@@ -186,13 +186,13 @@ Definition ~\ensuremath{\Sigma}~ := {fmap V -> Tm}.
   % \input{tex_code/R_type.tex}\\
   % \input{tex_code/program_type.tex}\\
   % \input{tex_code/sigma_type.tex}
+\caption{Definition of term, rule, program and substitution}
   \label{type:atom}
   \label{type:r}
   \label{type:prog}
   \label{type:sigma}
   \label{fig:basex}
 % \end{minipage}
-\caption{Definition of term, rule, program and substitution}
 
 \end{figure}
 
@@ -202,9 +202,9 @@ In the concrete syntax, variables are written with capital letters, and
 predicate application follows the $\lambda$-calculus style (no
 parentheses).
 
-The description of a program is given by the record $\mathbb{P}$ and
+The description of a program is given by the record $\mathbb{P}$ (in \cref{type:atom}) and
 is shared by both semantics. A program consists of a list of
-rules \coqIn{R} together with a signature environment \coqIn{sigT}.
+rules \coqIn{R} together with a signature environment \coqIn{sig}.
 We delay the descussion of signatures to \cref{sec:determinacy} where we
 describe the static analysis that concerns them.
 
