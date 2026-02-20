@@ -698,7 +698,7 @@ each leaf corresponds to a list of atoms $e \in l$. If $e$ is empty, the leaf
 is \okC; otherwise, it is a right-skewed tree of \andC nodes.
 
 \Cref{tree-ex} depicts the tree corresponding to the running example
-(\cref{sec:cut-op}) as it undergoes calls to \step.
+(\cref{sec:cut-op}) as it undergoes calls to \step and \na.
 % , we provide a graphical representation a call to \step on the query
 %\marginpar{sottolineare le sostituzioni}
 We run query \eI{q 0 R} against the program $P$ in \cref{fig:progx}. Let $c_0$, $c_1$, and $c_2$
@@ -962,7 +962,7 @@ $$
 \begin{bprooftree}
   \AxiomC{$A \quad (A ~\mathrm{cuts})$}
   \RightLabel{$(\lor_{il})$}
-  \UnaryInfC{$A \lor \top $}
+  \UnaryInfC{$A \lor B $}
 \end{bprooftree}
 \qquad
 \begin{bprooftree}
@@ -1126,14 +1126,6 @@ stack.
 
 We propose an example of the execution of \nur in \cref{ex-elpi}. The
 arrows in the images represent the cut-to pointers. 
-We
-have not drawn arrows coming out of call atoms since the interpreter
-ignores the cut-alternatives in this case. 
-The evolution
-of the stack in \cref{ex-elpi} mirrors the example in \cref{sec:cut-op}:
-we evaluate the first goal of the first alternative. 
-During backchaining,
-we add a pointer to the remaining alternatives to each new cut operator.
 
 \begin{figure}[!hb]
   \centering
@@ -1172,6 +1164,14 @@ we add a pointer to the remaining alternatives to each new cut operator.
   \caption{Example of execution}
   \label{ex-elpi}
 \end{figure}
+
+We have not drawn arrows coming out of call atoms since the interpreter
+ignores the cut-alternatives in this case. 
+The evolution
+of the stack in \cref{ex-elpi} mirrors the example in \cref{sec:cut-op}:
+we evaluate the first goal of the first alternative. 
+During backchaining,
+we add a pointer to the remaining alternatives to each new cut operator.
 
 If a cut is evaluated, we replace the remaining alternatives with the
 cut-to alternatives. For example, in \cref{ex-elpi5}, evaluating the cut
@@ -1438,7 +1438,18 @@ valid tree is matched by the execution of the stack obtained by
 translating the tree. Moreover, the unexplored alternatives returned as
 a tree correspond to those returned as a stack.
 
-\input{tex_code/tree_to_elpi.tex}
+% \input{tex_code/tree_to_elpi.tex}
+\begin{theorem}[tree\_to\_elpi]\label{th:treetoelpi}\cI{~\ensuremath{\forall}~ p ~\ensuremath{t}~ ~\ensuremath{\sigma}~ ~\ensuremath{r}~, let ~\ensuremath{v}~ := vars_tree ~\ensuremath{t}~ ~\ensuremath{\cup}~ vars_sigma ~\ensuremath{\sigma}~ in}~
+\begin{coqcode}
+    valid_tree ~\ensuremath{t}~ ~\ensuremath{\to}~
+      runT' p ~\ensuremath{v}~ ~\ensuremath{\sigma}~ ~\ensuremath{t}~ ~\ensuremath{r}~ ~\ensuremath{\to}~ 
+        let ~\ensuremath{a}~ := t2l ~\ensuremath{t}~ ~\ensuremath{\sigma}~ ~\mnil~ in
+        let ~\ensuremath{r'}~ :=  if ~\ensuremath{r}~ is ~\msome~(~\ensuremath{\sigma'}~, ~\ensuremath{t}~) then  ~\msome~(~\ensuremath{\sigma'}~, t2l (odflt KO ~\ensuremath{t}~) ~\ensuremath{\sigma}~ ~\mnil~)
+                  else ~\ensuremath{\square}~ in
+        runS p ~\ensuremath{v}~ ~\ensuremath{a}~ ~\ensuremath{r'}~.
+\end{coqcode}
+\end{theorem}
+
 \begin{proof}
 We proceed by induction on the execution of \run'. There are four cases
 to consider. The first case arises from \stopt; it deals with
