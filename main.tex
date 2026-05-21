@@ -164,9 +164,9 @@ different rules. The static analysis in~\cite{fissore2026}
 excludes this situation in two steps.
 The first one, called mutual exclusion, checks that at most one rule can apply
 to a given query.
-This condition is satisfied if either (i) the rules have non-overlapping heads,
+This condition is satisfied if either (i) no two rules have overlapping heads,
 so that no query can unify with both, or (ii) it account for the presence of
-cut in rule premises: once a rule whose premises contain a cut succeeds, all
+cut in rule premises: once the cut is executed all
 remaining rules are discarded.
 The second step, called rule checking, verifies that each rule either
 (i) calls only functions, ensuring that no choice point remains after the
@@ -182,17 +182,18 @@ the soudness of the static analysis. In particular we focus on the control opera
 the semantics to depart from a purely logical reading.
 
 We mechanize two operational semantics for \prologP with cut. The first is a
-stack-based semantics that closely models \elpiP's implementation and isessentially
+stack-based semantics that closely models \elpiP's implementation and is
+essentially
 the semantics given by Debray and Mishra~\cite[Sec.~4.3]{Debray1988} that
 is used by standard \prologP abstract machines~\cite{warren1983abstract,1991ait-wam,10.1007/BFb0105415}.
-However, this semantics makes
+This semantics admits efficient implementaions, but makes
 reasoning about the scope of cut difficult: 
 alternatives are stored in a stack, in chronological order, and the cut operator
 is represented as a pointer to a shorter stack. The relation between the rules
 beging cut and the stack frames is not immediately visible.
 
 To address this limitation, we introduce semantics based on And-Or trees where
-the history of the computation is kept in a structured way: Given a goal
+the history of the computation is kept in a structured way: given a goal
 each applicable rule generates an Or branch that in turn is followed by
 an And branch per premise.
 This enables an explicit characterization of the cut operator as a function
@@ -1274,6 +1275,7 @@ The class of valid trees is captured by the \vast
 function shown in Figure~\ref{fig:vt}.
 While all base cases of \coqIn{tree} are valid, we need to analyze the \orC and
 \andC constructors more carefully.
+\marginpar{TODO: explain better valid tree as requested by reviewr, maybe make a few examples}
 
 For the \orC constructor, we distinguish two cases depending on whether the
 left-hand side is present. If it is not, then the right-hand side must be a
@@ -1323,6 +1325,8 @@ may have been explored, and consequently must be a valid tree.
 \end{figure}
 
 \subsection{From trees to stacks}\label{sec:t2l}
+
+\marginpar{t2l should be t2s or tree\_to\_stack}
 
 The \ttl recursive function translates a tree to a stack.
 For space constraints %\marginpar{DAVVERO?}
@@ -1490,7 +1494,7 @@ The first direction of the equivalence states that the execution of a
 valid tree is matched by the execution of the stack obtained by
 translating the tree. Moreover, the unexplored alternatives returned as
 a tree correspond to those returned as a stack.
-
+\marginpar{rename runT to runS}
 
 % \input{tex_code/tree_to_elpi.tex}
 \begin{theorem}[tree\_to\_elpi]\label{th:treetoelpi}\cI{~\ensuremath{\forall}~ p ~\ensuremath{t}~ ~\ensuremath{\sigma}~ ~\ensuremath{r}~, let ~\ensuremath{v}~ := vars_tree ~\ensuremath{t}~ ~\ensuremath{\cup}~ vars_sigma ~\ensuremath{\sigma}~ in}~
@@ -1526,7 +1530,7 @@ using a function to translate a stack into a tree it states that any
 tree that translates to the given stack has an equivalent execution,
 i.e. gives the same solution and returns an unexplored tree that
 translates to the unexplored stack.
-
+\marginpar{rename runS to runT}
 \input{tex_code/elpi_to_tree.tex}
 
 \noindent
