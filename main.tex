@@ -605,7 +605,8 @@ In \cref{tree-ex} we mark with a black arrow the result of \pathend.
 Inductive tag ~$\coloneq$~ Expanded | CutBrothers | Failed | Success.
 Definition step : ~$\mathbb{P}$~ ~$\to$~ ~$\FV$~ ~$\to$~ ~$\Sigma$~ ~$\to$~ tree ~$\to$~ (~$\FV$~ * tag * tree)
 Definition prune : ~$\mathbb{B}$~ ~$\to$~ tree ~$\to$~ option tree
-Inductive runT : ~$\mathbb{P}$~ ~$\to$~  ~$\FV$~ ~$\to$~ ~$\Sigma$~ ~$\to$~ tree ~$\to$~ option (~$\Sigma$~ * option tree) ~$\to$~ ~$\mathbb{B}$~ ~$\to$~ ~$\FV$~ ~$\to$~ Prop
+Inductive runT : ~$\mathbb{P}$~ ~$\to$~  ~$\FV$~ ~$\to$~ ~$\Sigma$~ ~$\to$~ tree ~$\to$~ 
+                    option (~$\Sigma$~ * option tree) ~$\to$~ ~$\mathbb{B}$~ ~$\to$~ ~$\FV$~ ~$\to$~ Prop
 \end{coqcode}
 
 Since all functions must terminate in Rocq, we define the transitive closure
@@ -1022,13 +1023,13 @@ $$
   \RightLabel{$(\lor_{il})$}
   \UnaryInfC{$A \lor B $}
 \end{bprooftree}
-\qquad
+\quad
 \begin{bprooftree}
   \AxiomC{$\lnot A \quad (A ~\mathrm{cuts})$}
   \RightLabel{$(\lor_{ir1})$}
   \UnaryInfC{$\lnot (A \lor B) $}
 \end{bprooftree}
-\qquad
+\quad
 \begin{bprooftree}
   \AxiomC{$\lnot A$}
   \AxiomC{$B \quad (A ~\mathrm{does~not~cut})$}
@@ -1064,7 +1065,7 @@ $$
   \RightLabel{$(\lor_{e1})$}
   \TrinaryInfC{$C$}
 \end{bprooftree}
-\qquad
+\quad
 \begin{bprooftree}
   \AxiomC{$A \lor B$}
   \AxiomC{[A] }
