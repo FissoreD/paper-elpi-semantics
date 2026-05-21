@@ -920,8 +920,11 @@ complements \step with respect to failed, successful, and incomplete trees.
 
 \subsection{The \run relation and its properties}\label{sec:runT}
 
-The inductive relation \run relates four inputs to three outputs. The inputs
-are a program, a set of variables, an initial substitution $\sigma$, and a
+The inductive relation \runT has the following type:
+%
+$$\runT : \mathbb{P} \times \vec{\FV} \times \Sigma \times \mathbb{T} \to ((\Sigma, \mathbb{T} + \mnone) + \mnone, \mathbb{B}, \vec{\FV})$$
+
+It takes a program, a set of variables, an initial substitution $\sigma$, and a
 tree $t$. The outputs are an optional result $r$, a boolean $b$, and an updated set of variable
 names.
 
@@ -1156,13 +1159,11 @@ as pointers to lower levels of the stack itself. This datum is used to implement
 \noindent
 The stack-based semantics is described by the \nur inductive
 predicates.
-
+%
 % \mvspace{}
 % \deftypes[type:nur]{tex_code/nur_type.tex}
 % \mvspace{}
-\begin{center}
-\cI{Inductive runS (p: ~\ensuremath{\mathbb{P}}~) : ~\ensuremath{\FV}~ ~\ensuremath{\to}~ alts ~\ensuremath{\to}~ option (~\ensuremath{\Sigma}~ * alts) ~\ensuremath{\to}~ Prop }
-\end{center}
+$$\runS : \vec{\FV} \times \cI{alts} \to (\Sigma \times \cI{alts}) + \mnone$$
 
 \noindent
 The \nur predicates relates a set of variables and a
