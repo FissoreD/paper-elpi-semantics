@@ -301,18 +301,19 @@ Our mechanization implements the algorithm by
 Martelli and Montanari~\cite{10.1145/357162.357169} that we prove
 terminating, correct and complete.
 
-\begin{lemma}[Correct] 
-  $\forall t_1\ t_2\ \sigma, \mathrm{unify}\ t_1\ t_2 = \sigma \to \sigma\ t_1 = \sigma\ t_2$
+\begin{lemma}[Correctness]
+  $$\forall t_1\ t_2\ \sigma\ \sigma',\ \mathrm{acyclic}\ \sigma \to \mathrm{unify}\ t_1\ t_2\ \sigma = \sigma' \to \sigma'\ t_1 = \sigma'\ t_2$$
 \end{lemma}
 
-\begin{lemma}[Complete] 
-  $\forall t_1\ t_2, (\exists \sigma, \mathrm{acyclic}\ \sigma\ \land\ \sigma\ t_1 = \sigma\ t_2) \to \exists \sigma', \mathrm{unify}\ t_1\ t_2 =~\sigma'$
+\begin{lemma}[Completeness] \label{mont-completeness}
+  $$\forall t_1\ t_2\ \sigma, \mathrm{acyclic}\ \sigma \to (\exists \sigma', \mathrm{acyclic}\ \sigma'\ \land\ \sigma'\ (\sigma\ t_1) = \sigma'\ (\sigma\ t_2)) \to \exists \sigma'', \mathrm{unify}\ t_1\ t_2\ \sigma =~\sigma''$$
 \end{lemma}
 
 Therefore, if $t_1$ and $t_2$ unify
 under $\sigma$, then $\sigma'~t_1 = \sigma'~t_2$, where
 $\sigma~t$ denotes substitution application and $=$ denotes 
-syntactic equality.
+syntactic equality. Moreover, if it exists a substitution making two terms 
+equal under $\sigma$, then the invocation of unify of these two terms succeeds.
 
 
 
