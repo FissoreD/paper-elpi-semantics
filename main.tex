@@ -1585,7 +1585,8 @@ each recursive call is performed with ground inputs.
 
 Our mechanization implements the unification algorithm by
 Martelli and Montanari~\cite{10.1145/357162.357169} that we prove
-terminating, correct and complete.
+terminating (using the standard lexicographic ordering),
+correct and complete.
 
 \begin{lemma}[Correctness]\label{mont-correct}
   $$\forall t_1\ t_2\ \sigma\ \sigma',\ \mathrm{acyclic}\ \sigma \to \mathrm{unify}\ t_1\ t_2\ \sigma = \sigma' \to \sigma'\ t_1 = \sigma'\ t_2$$
