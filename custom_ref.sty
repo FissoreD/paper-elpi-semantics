@@ -1,35 +1,35 @@
-\newcounter{defline}
-\newcommand{\defline}[2][]{
-  \refstepcounter{defline}%
-  \noindent
-  \begin{minipage}{0.9\linewidth}\input{#2}\end{minipage}
-  \hfill(\thedefline)%
-  \ifx&#1&\else\label{#1}\fi
-  \par
+% \newcounter{defline}
+% \newcommand{\defline}[2][]{
+%   \refstepcounter{defline}%
+%   \noindent
+%   \begin{minipage}{0.9\linewidth}\input{#2}\end{minipage}
+%   \hfill(\thedefline)%
+%   \ifx&#1&\else\label{#1}\fi
+%   \par
 
-}
-\crefname{defline}{Definition}{Definitions} % singular / plural
+% }
+% \crefname{defline}{Definition}{Definitions} % singular / plural
 
-\newcounter{deflemma}
-\newcommand{\deflemma}[2][]{
-  \refstepcounter{deflemma}%
-  \noindent
-  \begin{minipage}{0.9\linewidth}\input{#2}\end{minipage}
-  \hfill(\thedeflemma)%
-  \ifx&#1&\else\label{#1}\fi
-  \par
+% \newcounter{deflemma}
+% \newcommand{\deflemma}[2][]{
+%   \refstepcounter{deflemma}%
+%   \noindent
+%   \begin{minipage}{0.9\linewidth}\input{#2}\end{minipage}
+%   \hfill(\thedeflemma)%
+%   \ifx&#1&\else\label{#1}\fi
+%   \par
 
-}
-\crefname{deflemma}{Lemma}{Lemmas} % singular / plural
+% }
+% \crefname{deflemma}{Lemma}{Lemmas} % singular / plural
 
-\newcounter{deftypes}
-\newcommand{\deftypes}[2][]{
-  \refstepcounter{deftypes}%
-  \noindent
-  \begin{minipage}{0.9\linewidth}\input{#2}\end{minipage}
-  \hfill(\thedeftypes)%
-  \ifx&#1&\else\label{#1}\fi
-  \par
+% \newcounter{deftypes}
+% \newcommand{\deftypes}[2][]{
+%   \refstepcounter{deftypes}%
+%   \noindent
+%   \begin{minipage}{0.9\linewidth}\input{#2}\end{minipage}
+%   \hfill(\thedeftypes)%
+%   \ifx&#1&\else\label{#1}\fi
+%   \par
 
-}
-\crefname{deftypes}{Type}{Types} % singular / plural
+% }
+% \crefname{deftypes}{Type}{Types} % singular / plural
