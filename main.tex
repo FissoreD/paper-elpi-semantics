@@ -1518,7 +1518,8 @@ a tree correspond to those returned as a stack.
 \begin{proof}
 We proceed by induction on the execution of \run'. There are four cases
 to consider. The first case arises from \stopt; it deals with
-successful trees. A successful tree must start with an empty list, and
+successful trees. A successful tree corresponds to a stack that
+start with an empty list, and
 therefore we conclude using \stops. The case for \stept
 requires treating two subcases: \step evaluates either a cut or a call.
 Accordingly, we apply \cuts or \calls, followed by the
@@ -1775,7 +1776,7 @@ Their work starts from that semantics and refines it by
 introducing some optimizations usually found in
 the Warren abstract machine~\cite{warren1983abstract,1991ait-wam}.
 They do not use the semantics to prove properties
-on the execution of programs as we do in our use case, hence they do not face the
+on the execution of programs as we do in our case study, hence they do not face the
 difficulty described in \cref{stack-sem} that pushed us to
 develop a more explicit semantics (with respect to cut).
 In a sense, our work is complementary. By combining both works one can show the tree-based semantics
@@ -1788,8 +1789,8 @@ features that~\cite{fissore2026} covers, but it would have
 been sufficient for this first step.
 
 The proof technique we use to relate the two semantics is inspired by
-\cite{yves-equiv}, and we thank Y.~Bertot for insightful discussions on
-the topic. In \cite{yves-equiv}, Bertot mechanizes the correctness of a
+\cite{yves-equiv}, 
+where Bertot mechanizes the correctness of a
 compiler. He relates the semantics of an imperative language to that of
 its compiled assembly code and proves their equivalence. His approach
 uses the compiler as the translation function from one language to the
@@ -1855,6 +1856,11 @@ $\subseteq$ relation defined in~\cite[Section 5]{fissore2026}.
 
 \begin{credits}
 \subsubsection{\ackname}
+We thank 
+Yves Bertot and Laurent Thery for insightful
+discussions on how to prove the quivalence of the
+two semantics.\\
+~\\ 
 Ce travail a bénéficié d'une aide du gouvernement
 français, gérée par l'Agence Nationale de la Recherche au titre du Pl­an
 d’investissement France 2030, dans le cadre du projet "UCA DS4H" portant la
