@@ -1812,53 +1812,52 @@ the same strategy in the proof of \cref{th:elpitotree}.
 \section{Conclusion}
 
 This paper describes two operational semantics for Prolog with cut. The first
-semantics is based on And--Or trees: it is well suited to graphically
-illustrating the scope of cut, and to proving lemmas about the impact of its
-evaluation when reasoning about disjunctions. The second semantics is based on
-a stack of alternatives: it is closer to actual \prologP implentations,
-including the first-order fragment of \elpiP,
-but it loses the explicit structure of the tree-based semantics hance it ease
-when reasoning about cut.
-We show how to translate trees into stacks and prove the two semantics equivalent.
-Using the tree-based semantics, we mechanize a soundness proof
-of the first-order part of the determinacy checker in~\cite{fissore2026},
- namely that a call to a deterministic predicate returns at most one solution.
+semantics is based on And--Or trees: it is well suited both to graphical
+illustrations of the scope of cut and to proving lemmas about the effect of
+cut evaluation when reasoning about disjunctions. The second semantics is
+based on a stack of alternatives: it is closer to actual \prologP
+implementations, including the first-order fragment of \elpiP, but it loses
+the explicit structure of the tree-based semantics and is therefore less
+convenient for reasoning about cut. We show how to translate trees into
+stacks and prove the two semantics equivalent. Using the tree-based
+semantics, we mechanize a soundness proof of the first-order fragment of the
+determinacy checker of~\cite{fissore2026}, namely that a call to a
+deterministic predicate returns at most one solution.
 
 The mechanization consists of approximately 2,500 lines of
 specifications and about 5,000 lines of ssreflect proofs based on
 the Mathematical Components library~\cite{assia_mahboubi_2022_7118596}
 and its finmap~\cite{finmap} extension.
-Roughly 30\%
-of the code is dedicated to the tree semantics (in particular, the proofs in
-\cref{sec:runT}), 15\% to the stack semantics, and 35\% to the equivalence proof.
-The remaining 20\% is devoted to the determinacy checker. 
+Roughly 30\% of the code is dedicated to the tree semantics, in particular
+the proofs in \cref{sec:runT}, 15\% to the stack semantics, and 35\% to the
+equivalence proof. The remaining 20\% is devoted to the determinacy checker.
 The mechanization took us approximately $8$ months.
-We belive the ssreflect proof language and the proof style it advocates
-helped to speed up the many refactorings then mechanization underwent.
-The finmap library provides a comprehensive library to reason about
-finite maps and finite sets on a countable domain. In particular it helped
-describing conditions  like the disjointness of sets of variables with
-the domain of substitution, as well as defining the union of disjoint
-substitutions.
+We believe that the ssreflect proof language, and the proof style it
+advocates, helped us carry out the many refactorings that the mechanization
+underwent. The finmap library provides comprehensive support for reasoning
+about finite maps and finite sets over a countable domain. In particular, it
+helped us express conditions such as the disjointness between sets of
+variables and the domain of a substitution, as well as define the union of
+disjoint substitutions.
 
-In order to build an axioms free mechanization we had to provide an
-implementation for the first-order unification algorithm, since we could
-not find a Rocq mechanization of it. Describing its mechanization in details
-is out of scope for this paper. It amounts to XXX lines of code, YY for the
-termination proof based on lexicographic ordering and ZZ for correctness and
-completeness. Because of the specificity of Lemma XXX that deals with
-the matching of terms with a disjoint support, we did not need to prove that
-the algorithm generates unifiers that are the most general ones.
+To obtain an axiom-free mechanization, we had to provide an implementation
+of the first-order unification algorithm, since we could not find an
+existing Rocq mechanization. Describing this development in detail is out of
+scope for this paper. It amounts to XXX lines of code, including YY lines
+for the termination proof based on a lexicographic ordering and ZZ lines for
+correctness and completeness. Because of the specific form of Lemma XXX,
+which deals with matching terms with disjoint support, we did not need to
+prove that the algorithm produces most-general unifiers.
 \marginpar{Martelli (size, time, relation with saarland (maybe don't say ), substitutions are not finite maps, hence badly integrate with mathcomp, also the algorithm is not explicilty given)}
 
 To fully model the \elpiP language and mechanize~\cite{fissore2026} entirely,
-we would need to account for higher-order
-variables, i.e. variables representing predicates. This extension is ongoing and
-largely orthogonal to the present paper, since cut and higher-order variables do
-not interact in subtle ways. The main difficulty is that the substitution can
-hold predicates, and these predicates need to have a signature that is
-compatible with the one statically assumed, in the sense of the
-$\subseteq$ relation defined in~\cite[Section 5]{fissore2026}.
+we would need to account for higher-order variables, i.e. variables
+representing predicates. This extension is ongoing and largely orthogonal to
+the present paper, since cut and higher-order variables do not interact in
+subtle ways. The main difficulty is that substitutions may contain
+predicates, and these predicates must have a signature compatible with the
+one assumed statically, in the sense of the $\subseteq$ relation defined
+in~\cite[Section 5]{fissore2026}.
 % Last, to keep
 % the mechanization axiom-free, one should extend the unification algorithm
 % to the higher-order case
