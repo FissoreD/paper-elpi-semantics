@@ -1,32 +1,32 @@
+
 \begin{minipage}{0.4\textwidth}
   \begin{prooftree}
     \AxiomC{}
-    \RightLabel{\stops}
-    \UnaryInfC{ \codenames{runS} p $v$ (($\sigma$, \mnil) :: $a$) \msome ($\sigma$, $a$)}
+    \RightLabel{\rulelabel{\stops}}
+    \UnaryInfC{$\runS\ \prog\ v\ ((\sigma, \mnil) :: a) \arr \msome (\sigma, a)$}
   \end{prooftree}
 \end{minipage}
 \begin{minipage}{0.5\textwidth}
 \begin{prooftree}
-  \AxiomC{ \codenames{runS} p $v$ (($\sigma$, $g$) :: $ca$) r }
-  \RightLabel{\cuts}
-  \UnaryInfC{ \codenames{runS} p $v$ (($\sigma$, (cut, $ca$) :: $g$) :: \_) r}
+  \AxiomC{$\runS\ \prog\ v ((\sigma, g) :: a) \arr r$}
+  \RightLabel{\rulelabel{\cuts}}
+  \UnaryInfC{$\runS\ \prog\ v ((\sigma, (\cI{cut}, a) :: g) :: \_) \arr r$}
 \end{prooftree}
 \end{minipage}
 \begin{minipage}{1\textwidth}
 \vspace{10pt}
 \begin{minipage}{0.75\textwidth}
 \begin{prooftree}
-  \AxiomC{ \codenames{stepS} p $v$ $t$ $\sigma$ $a$ $g$ = ($v_1$, $a'$) }
-  \AxiomC{ \codenames{runS} p $v_1$ ($a'$ \mappend $a$) r }
-  \RightLabel{\calls}
-  \BinaryInfC{ \codenames{runS} p $v$ (($\sigma$, (call $t$, \_) :: $g$) :: $a$) r}
+  \AxiomC{ $\backchainS(\prog, v, t, \sigma, a, g) = (v_1, a') \qquad \runS\ \prog\ v_1\ (a' \mappend a) \arr r$ }
+  \RightLabel{\rulelabel{\calls}}
+  \UnaryInfC{$\runS\ \prog\ v\ ((\sigma, (\cI{call}\ t, \_) :: g) :: a) \arr r$}
 \end{prooftree}
 \end{minipage}
 \begin{minipage}{0.22\textwidth}
 \begin{prooftree}
   \AxiomC{\phantom{A}}
-  \RightLabel{\fails}
-  \UnaryInfC{\codenames{runS} p \_ \mnil $\square$}
+  \RightLabel{\rulelabel{\fails}}
+  \UnaryInfC{$\runS \prog\ \_\ \mnil \arr \square$}
 \end{prooftree}
 \end{minipage}
 \end{minipage}

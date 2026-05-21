@@ -1121,33 +1121,31 @@ as pointers to lower levels of the stack itself. This datum is used to implement
 % \input{tex_code/elpi_def.tex}
 \begin{center}
 \begin{coqcode}
-~\ensuremath{\qquad\qquad}~ Inductive alts  := nilA | consA of (~\ensuremath{\Sigma}~ * goals) & alts
-~\ensuremath{\qquad\qquad}~ with      goals := nilG | consG of (Atom * alts)  & goals 
+~\ensuremath{\qquad\qquad}~ Inductive alts  := nilA | consA of (~\ensuremath{\Sigma}~ * goals)  & alts
+~\ensuremath{\qquad\qquad}~ with      goals := nilG | consG of (Atom * alts) & goals 
 \end{coqcode}
 \end{center}
+
+\newcommand{\backchainS}{
+  \ensuremath{\mathcal{B}_S}
+}
 
 % We are completely loosing the tree structure. There are no clean reset
 % points. The backtracking operation is simpler: it is the tail function.
 % The cutr and cutl operations disappears: the alternatives are stored 
 % directly in the cutE terminal.
 \begin{figure}
-
-  \begin{minipage}{0.52\textwidth}
-  \begin{coqcode}
-  Definition save_gs ~$a$~ ~$g$~ ~$b$~ := 
-    [seq (x, ~$a$~) | x <- ~$b$~] ++ ~$g$~.
-
-  Definition save_as ~$a$~ ~$g$~ ~$b$~ := 
-    [seq (x.1, save_gs ~$a$~ ~$g$~ x.2) | x <- ~$b$~].
-  \end{coqcode}
-  \end{minipage}
-  \begin{minipage}{0.38\textwidth}    
-\begin{coqcode}
-Definition stepS p ~\ensuremath{v}~ ~\ensuremath{t}~ ~\ensuremath{\sigma}~ ~\ensuremath{a}~ ~\ensuremath{g}~ ~\ensuremath{\coloneq}~
-  let (~\ensuremath{v'}~, ~\ensuremath{r}~) ~\ensuremath{\coloneq}~ backchain p ~\ensuremath{v}~ ~\ensuremath{t}~ ~\ensuremath{\sigma}~ in
-  (~\ensuremath{v'}~, save_as ~\ensuremath{a}~ ~\ensuremath{g}~ ~\ensuremath{r}~).
-\end{coqcode}
-  \end{minipage}
+   \[
+  \backchainS(p, v, t, \sigma, a, g) =
+  \bigg[
+  \sigma',
+  (
+    [(p, q, a) \mid q \in b] \mappend g
+  )
+  \ \bigg|\ 
+  (\sigma', b) \in \backchain(p, v, t, \sigma)
+  \bigg].
+  \]
 
   \input{nurbp.tex}
 
