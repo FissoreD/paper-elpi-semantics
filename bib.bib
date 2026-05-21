@@ -634,21 +634,42 @@ isbn="978-3-540-71067-7"
   series    = {FPCA '89}
 }
 
-@InProceedings{Trocq,
-author="Cohen, Cyril
-and Crance, Enzo
-and Mahboubi, Assia",
-editor="Weirich, Stephanie",
-title="Trocq: Proof Transfer for Free, With or Without Univalence",
-booktitle="Programming Languages and Systems",
-year="2024",
-publisher="Springer Nature Switzerland",
-address="Cham",
-pages="239--268",
-abstract="This article presents Trocq, a new proof transfer framework for dependent type theory. Trocq is based on a novel formulation of type equivalence, used to generalize the univalent parametricity translation. This framework takes care of avoiding dependency on the axiom of univalence when possible, and may be used with more relations than just equivalences. We have implemented a corresponding plugin for the Coq interactive theorem prover, in the Coq-Elpi meta-language.",
-isbn="978-3-031-57262-3"
+@inproceedings{Trocq,
+  author       = {Cyril Cohen and
+                  Enzo Crance and
+                  Assia Mahboubi},
+  editor       = {Stephanie Weirich},
+  title        = {Trocq: Proof Transfer for Free, With or Without Univalence},
+  booktitle    = {Programming Languages and Systems - 33rd European Symposium on Programming,
+                  {ESOP} 2024, Held as Part of the European Joint Conferences on Theory
+                  and Practice of Software, {ETAPS} 2024, Luxembourg City, Luxembourg,
+                  April 6-11, 2024, Proceedings, Part {I}},
+  series       = {Lecture Notes in Computer Science},
+  pages        = {239--268},
+  publisher    = {Springer},
+  year         = {2024},
+  url          = {https://doi.org/10.1007/978-3-031-57262-3\_10},
+  doi          = {10.1007/978-3-031-57262-3\_10},
+  timestamp    = {Sat, 08 Jun 2024 13:13:57 +0200},
+  biburl       = {https://dblp.org/rec/conf/esop/CohenCM24.bib},
+  bibsource    = {dblp computer science bibliography, https://dblp.org}
 }
-
+@article{TrocqJ,
+  author       = {Cyril Cohen and
+                  Enzo Crance and
+                  Assia Mahboubi},
+  title        = {Trocq: Proof Transfer for Free, Beyond Equivalence and Univalence},
+  journal      = {{ACM} Trans. Program. Lang. Syst.},
+  volume       = {47},
+  number       = {3},
+  pages        = {12:1--12:40},
+  year         = {2025},
+  url          = {https://doi.org/10.1145/3737283},
+  doi          = {10.1145/3737283},
+  timestamp    = {Sun, 12 Apr 2026 09:53:04 +0200},
+  biburl       = {https://dblp.org/rec/journals/toplas/CohenCM25.bib},
+  bibsource    = {dblp computer science bibliography, https://dblp.org}
+}
 @phdthesis{enzo,
   title        = {Meta-Programming for Proof Transfer in Dependent Type Theory},
   author       = {Enzo Crance},
@@ -956,4 +977,33 @@ address = {NLD},
 booktitle = {Handbook of Automated Reasoning},
 pages = {1009–1062},
 numpages = {54}
+}
+
+@article{10.1145/357162.357169,
+author = {Martelli, Alberto and Montanari, Ugo},
+title = {An Efficient Unification Algorithm},
+year = {1982},
+issue_date = {April 1982},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+volume = {4},
+number = {2},
+issn = {0164-0925},
+url = {https://doi.org/10.1145/357162.357169},
+doi = {10.1145/357162.357169},
+journal = {ACM Trans. Program. Lang. Syst.},
+month = apr,
+pages = {258–282},
+numpages = {25}
+}
+@book{assia_mahboubi_2022_7118596,
+  author       = {Assia Mahboubi and
+                  Enrico Tassi},
+  title        = {Mathematical Components},
+  publisher    = {Zenodo},
+  year         = 2022,
+  month        = sep,
+  doi          = {10.5281/zenodo.7118596},
+  url          = {https://doi.org/10.5281/zenodo.7118596},
+  keywords = "inria:book",
 }

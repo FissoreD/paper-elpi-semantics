@@ -6,7 +6,7 @@
 \usepackage{subcaption}
 
 \usepackage{amsfonts}
-\usepackage{hyperref}
+\usepackage[hidelinks]{hyperref}
 \usepackage{amssymb}
 
 \usepackage{minted}
@@ -87,42 +87,49 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{document}
-\author{First Author\inst{1}\orcidID{0000-1111-2222-3333} \and
-Second Author\inst{2,3}\orcidID{1111-2222-3333-4444} \and
-Third Author\inst{3}\orcidID{2222--3333-4444-5555}}
+
+%\funding{This work has been supported by the French government, through the France 2030 investment plan managed by the Agence Nationale de la Recherche, as part of the ``UCA DS4H'' project, reference ANR-17-EURE-0004.}
+
+
+\title{Operational semantics for Prolog with Cut in \rocqP 
+and its application to determinacy analysis} % of \elpiP programs}
+
+\author{Davide Fissore\orcidID{0009-0002-5934-8776} \and
+Enrico Tassi\orcidID{0000-0002-7783-528X}}
 %
-\authorrunning{F. Author et al.}
-% First names are abbreviated in the running head.
-% If there are more than two authors, 'et al.' is used.
-%
-\institute{Princeton University, Princeton NJ 08544, USA \and
-Springer Heidelberg, Tiergartenstr. 17, 69121 Heidelberg, Germany
-\email{lncs@springer.com}\\
-\url{http://www.springer.com/gp/computer-science/lncs} \and
-ABC Institute, Rupert-Karls-University Heidelberg, Heidelberg, Germany\\
-\email{\{abc,lncs\}@uni-heidelberg.de}}
+\authorrunning{D. Fissore, E. Tassi}
+\institute{Université Côte d'Azur, Inria, France\\
+\email{davide.fissore@inria.fr~~~enrico.tassi@inria.fr}}
 %
 \maketitle              % typeset the header of the contribution
 %
 
 % \maketitle
 
-%TODO mandatory: add short abstract of the document
-\begin{abstract} 
-We mechanize two operational semantics for \prologP with cut
-and prove them equivalent in the Rocq prover. The first semantics
-closely models \elpiP's implementation:
-it is based on a stack of alternatives and is well suited for studying
-optimizations employed by \prologP abstract machines. 
-The second semantics is instead based
-on And-Or trees, in which the branches pruned by the cut operator are
-made explicit.
+%TODO mandatory: add short abstract of the document 
+\begin{abstract}
+We mechanize two operational semantics for \prologP with cut and prove their
+equivalence in the Rocq prover.
 
-We use the tree-based semantics to (i) describe introduction and elimination
-rules for disjunction in the presence of cut, which (as expected) depart from
-those of classical logic, and (ii) reason about the determinacy analysis
-introduced in \elpiP version~3.0, which statically identifies computations that
-produce at most one result.%
+The first semantics is closely related to the one introduced by Debray
+and Mishra~\cite{Debray1988} to study the
+optimizations employed by \prologP abstract
+machines~\cite{warren1983abstract,10.1007/BFb0105415}. This semantics is based
+on a stack of alternatives, where the cut operator is represented by a pointer
+to a shorter stack. The interpreter for the \elpiP logic programming language
+is based on this semantics~\cite{dunchev15lpar}.
+
+The second semantics is based on And-Or trees, in which the structure of
+alternative computations is made explicit and preserved throughout execution.
+This enables an explicit characterization of the cut operator as a function
+that prunes selected branches of the tree. The tree-based semantics allows
+us to formulate introduction and elimination rules for disjunction in the
+presence of cut, which, as expected, differ from those of classical logic.
+
+As a case study we use the tree-based semantics to prove the soundness of the
+determinacy analysis introduced in~\cite{fissore2026}. By
+exploiting the equivalence between the two semantics, we relate this result to
+the stack-based semantics of the \elpiP interpreter.
 \end{abstract}
 
 \section{Introduction}
@@ -131,8 +138,10 @@ produce at most one result.%
 \elpiP is a dialect of \lprologP (see \cite{1991miller-pf,Miller_Nadathur_2012,dunchev15lpar,TASSI_2019})
 used as an extension language for the \rocqP prover (formerly the \coqP proof
 assistant). \elpiP has become an important infrastructure component: several
-projects and libraries depend on it~\cite{krebbers25,Trakt,Trocq,Maas2024,fissore2023,fissore2024}.
-Other remarkable libraries include the Hierarchy-Builder library-structuring tool~\cite{cohen_et_al:LIPIcs.FSCD.2020.34}
+projects and libraries depend on it~\cite{krebbers25,Trakt,Maas2024,fissore2023,fissore2024}.
+Other notable Rocq libraries based on \elpiP
+include the Hierarchy-Builder library-structuring tool~\cite{cohen_et_al:LIPIcs.FSCD.2020.34};
+the Trocq proof-transfer tool~\cite{Trocq,TrocqJ}
 and Derive~\cite{tassi2018,tassi2019,tassi2023}, a program-and-proof synthesis
 framework with industrial applications at SkyLabs AI.
 
@@ -145,47 +154,63 @@ harder. The determinacy checker allows the user to assert which predicates
 should be considered deterministic and then checks that these predicates
 behave like functions, i.e., they commit to their first solution and leave
 no \emph{choice points} (places where backtracking could resume). A choice
-point correspond to an suspended \emph{alternative} in the execution trace.
+point correspond to a suspended \emph{alternative} in the execution trace.
 In the following we use \emph{choice point} and \emph{alternative} as
 synonyms.
 
-This paper reports our first steps towards a mechanization, in the \rocqP
-prover, of the determinacy analysis from~\cite{fissore2026}.
-We focus on the control operator \emph{cut}, which is useful to restrict
-backtracking but makes the semantics depart from a pure logical reading.
+Intuitively,
+nondeterminism arises when a computation can be completed using two
+different rules. The static analysis in~\cite{fissore2026}
+excludes this situation in two steps.
+The first one, called mutual exclusion, checks that at most one rule can apply
+to a given query.
+This condition is satisfied if either (i) the rules have non-overlapping heads,
+so that no query can unify with both, or (ii) it account for the presence of
+cut in rule premises: once a rule whose premises contain a cut succeeds, all
+remaining rules are discarded.
+The second step, called rule checking, verifies that each rule either
+(i) calls only functions, ensuring that no choice point remains after the
+premises of the chosen rule have been executed, or (ii) always
+executes a cut after calling relations; in this case any choice points
+left by the call is discarded.
 
-We formalize two operational semantics for \prologP with cut. The first is a
-stack-based semantics that closely models \elpiP's implementation and is
-similar to the semantics mechanized by Pusch in \isabelleP~\cite{10.1007/BFb0105415}
-and to the model of Debray and Mishra~\cite[Sec.~4.3]{Debray1988}.
-This stack-based semantics is a good starting point to study further
-optimizations used by standard \prologP abstract machines~\cite{warren1983abstract,1991ait-wam},
-but it makes reasoning about the scope of cut difficult. To address
-this limitation we introduce a tree-based semantics in which the branches
-pruned by cut are explicit and we prove the two semantics equivalent.
-Using the tree-based semantics, we then prove some properties about the
-impact of evaluating the cut in disjunctive queries. For example, unlike in
-classical logic, $q_1 \lor q_2$ is not equivalent to $q_2 \lor q_1$,
-since $q_2$ may be cut-away by $q_1$.
+The static analysis introduced in~\cite{fissore2026} is supported by
+benchmarks that demonstrate its usefulness, but it is not accompanied by a
+proof of soundness. This paper reports our first steps toward mechanizing
+the soudness of the static analysis. In particular we focus on the control operator
+\emph{cut}, which is pervasively used to write deterministic code and causes
+the semantics to depart from a purely logical reading.
 
-Finally, we use the formal semantics to prove the correctness of a static
-determinacy analysis~\cite{fissore2026}. Intuitively,
-nondeterminism arises when a computation can be completed by applying two
-different rules. We exclude this situation in two ways. Firstly, at
-most one rule should be used on a given query. This condition is
-satisfied if (i) the rules have non-overlapping heads: 
-if two heads do not overlap in the inputs they
-accept, then no query can unify with both, or if (ii) we account for the
-presence of cut in rule premises: once
-a rule whose premises contain a cut succeeds, all remaining rules are discarded.
-Secondly, each rule of a deterministic predicate should (i) either call functions,
-this ensure that no choice point is left after the execution of the premises
-of the chosen rule, (ii) or
-call relations provided that they are followed by the cut operator, so that
-any allocated choice points preceding the cut are discarded.
+We mechanize two operational semantics for \prologP with cut. The first is a
+stack-based semantics that closely models \elpiP's implementation and isessentially
+the semantics given by Debray and Mishra~\cite[Sec.~4.3]{Debray1988} that
+is used by standard \prologP abstract machines~\cite{warren1983abstract,1991ait-wam,10.1007/BFb0105415}.
+However, this semantics makes
+reasoning about the scope of cut difficult: 
+alternatives are stored in a stack, in chronological order, and the cut operator
+is represented as a pointer to a shorter stack. The relation between the rules
+beging cut and the stack frames is not immediately visible.
 
-We show that if every rule defining a deterministic predicate passes this analysis, 
-then any call to that predicate leaves no choice points.
+To address this limitation, we introduce semantics based on And-Or trees where
+the history of the computation is kept in a structured way: Given a goal
+each applicable rule generates an Or branch that in turn is followed by
+an And branch pre premise.
+This enables an explicit characterization of the cut operator as a function
+that prunes selected branches of the tree. The tree-based semantics allows
+us to formulate introduction and elimination rules for disjunction in the
+presence of cut, which, as expected, differ from those of classical logic.
+For example $q_1 \lor q_2$ is not equivalent to $q_2 \lor q_1$,
+since $q_2$ may be cut away by $q_1$.
+
+Finally, we use the tree-based semantics to prove the correctness of the
+static determinacy analysis from~\cite{fissore2026}. 
+We prove in Rocq that any call to a predicate identified as determistic
+leaves no additional Or-branches in the tree when it terminates. By composing
+this result with the equivalence between the two semantics, we obtain that any
+call to a deterministic predicate leaves no choice points on the stack used
+by the \elpiP interpreter. 
+
+Our mechanization is axiom-free and is available at \url{https://github.com/FissoreD/elpi-formalization}.
 
 % questa deve stare vicino all'intro perchè aiuta a capire la det
 \begin{figure}[t]
@@ -266,16 +291,23 @@ rules that apply. More precisely, for each applicable rule it returns the
 rule premises together with an updated substitution obtained by unifying
 the rule head with the query term.
 
-In our mechanization, we abstract over the unifier and its properties.
 The function \eI{unify} takes two terms $t_1$ and $t_2$, together with a
 substitution $\sigma$, as input, and optionally returns a substitution
-$\sigma'$ that extends $\sigma$. The expected behavior of \eI{unify} is
-the standard one (see for example~\cite[section 2.5]{10.5555/778522.778525}), % or \cite{1991miller-pf}),
-limited to the first order.
+$\sigma'$ that extends $\sigma$. 
+% The expected behavior of \eI{unify} is
+% the standard one (see for example~\cite[section 2.5]{10.5555/778522.778525}), % or \cite{1991miller-pf}),
+% limited to first-order. 
+Our mechanization implements the algorithm by
+Martelli and Montanari~\cite{10.1145/357162.357169} that we prove
+terminating, correct and complete.
+
+\marginpar{TODO: write Lemma}
+
 Therefore, if $t_1$ and $t_2$ unify
 under $\sigma$, then $\sigma'~t_1 = \sigma'~t_2$, where
 $\sigma~t$ denotes substitution application and $=$ denotes 
 syntactic equality.
+
 
 
 % \input{tex_code/unif_type.tex}
@@ -379,7 +411,7 @@ syntactic equality.
 \subsection{The cut operator}
 \label{sec:cut-op}
 
-There are quite a few variants of the cut operator.
+There are quite a few variants of the cut operator in the literature.
 The one we are interested in, i.e. the one used in \elpiP, is known as \emph{hard cut}
 (see, e.g., the documentation of \sprologP~\cite{swi-prolog-cut}).
 Whenever the \coqIn{backchain} function returns a non-empty list of alternatives,
@@ -559,7 +591,7 @@ list.
 % \caption{Signatures of the tree-based semantics
 % \label{type:steptag}
 % \label{type:stepT}
-% \label{type:naT}
+% \label{type:naT}a 
 % \label{type:runT}
 % \label{fig:signaturesT}
 % }
@@ -567,7 +599,7 @@ list.
 
 The tree is constructed incrementally by two recursive
 functions, \step and \na. Both traverse the tree depth-first, left-to-right.
-The node to be explored in a tree is retrieved thanks to the \pathend (in~\cref{fig:getend}).
+The node to be explored in a tree is retrieved thanks to \pathend (in~\cref{fig:getend}).
 When this node is \okC we say the entire tree is a \emph{success}, when it
 is \koC we say the tree \emph{failed}, otherwise the tree is \emph{incomplete}.
 In \cref{tree-ex} we mark with a black arrow the result of \pathend.
@@ -579,7 +611,7 @@ Definition prune : ~$\mathbb{B}$~ ~$\to$~ tree ~$\to$~ option tree
 Inductive runT : ~$\mathbb{P}$~ ~$\to$~  ~$\FV$~ ~$\to$~ ~$\Sigma$~ ~$\to$~ tree ~$\to$~ option (~$\Sigma$~ * option tree) ~$\to$~ ~$\mathbb{B}$~ ~$\to$~ ~$\FV$~ ~$\to$~ Prop
 \end{coqcode}
 
-Since all functions must terminate in Rocq, we define their transitive closure
+Since all functions must terminate in Rocq, we define the transitive closure
 of \step and \na as the inductive relation \run.
 More precisely \run iterates calls to \step on incomplete trees to expand
 \cI{Todo} nodes. When a tree fails it calls \na to find
@@ -734,7 +766,7 @@ $r_2$ in $P$.
 % We need the initial \mnone subtree so that we can attach a substitution to $c_1$. 
 Note that $c_1$ (resp. $c_2$) is associated with
 substitution $\sigma_1$ (resp. $\sigma_2$), whose values are the same as in
-\cref{sec:cut-op}. Reset points are defines as follows: %are marked with the $R$ symbol:
+\cref{sec:cut-op}. Reset points are defined as follows: %are marked with the $R$ symbol:
 $R_1 \coloneq [\eI{f Y Z, !}]$, $R_2 \coloneq [\eI{!}]$, and
 $R_3 \coloneq \eI{f Y Z}$. Intuitively, they record the lists of atoms used to
 generate the corresponding subtree. Other examples of \step performing a
@@ -1496,7 +1528,7 @@ returns the empty list.
 The converse direction is stated following~\cite{yves-equiv}: instead of
 using a function to translate a stack into a tree it states that any
 tree that translates to the given stack has an equivalent execution,
-i.e. gives the same solution and returns a unexplored tree that
+i.e. gives the same solution and returns an unexplored tree that
 translates to the unexplored stack.
 
 \input{tex_code/elpi_to_tree.tex}
@@ -1694,7 +1726,7 @@ develop a more explicit semantics (with respect to cut).
 In a sense, our work is complementary. By combining both works one can show the tree-based semantics
 is equivalent to an optimized stack-based one.
 
-Another relevant work is by King~\cite{2011king},
+Another relevant work is by Kriener and King~\cite{2011king},
 but we could not find their Rocq source code. Their semantics
 is denotational and cannot easily cover all the
 features that~\cite{fissore2026} covers, but it would have
@@ -1718,25 +1750,42 @@ This paper describes two operational semantics for Prolog with cut. The first
 semantics is based on And--Or trees: it is well suited to graphically
 illustrating the scope of cut, and to proving lemmas about the impact of its
 evaluation when reasoning about disjunctions. The second semantics is based on
-a stack of alternatives: it is computationally more efficient, but it loses the
-structural expressiveness of the tree-based semantics. Thanks to a dedicated
-function, we translate trees into stacks and prove the two semantics equivalent.
-This stack-based semantics corresponds to the first-order fragment of \elpiP.
-Using the tree-based semantics, we mechanize the first-order part of the
-determinacy checker that has been available in \elpiP since version~3.0, and we
-prove that a call to a deterministic predicate returns at most one solution.
+a stack of alternatives: it is closer to actual \prologP implentations,
+including the first-order fragment of \elpiP,
+but it loses the explicit structure of the tree-based semantics hance it ease
+when reasoning about cut.
+We show how to translate trees into stacks and prove the two semantics equivalent.
+Using the tree-based semantics, we mechanize a soundness proof
+of the first-order part of the determinacy checker in~\cite{fissore2026},
+ namely that a call to a deterministic predicate returns at most one solution.
 
-The formal development consists of approximately 2,500 lines of
-specifications and about 5,000 lines of \textit{ssreflect} proofs. Roughly 30\%
+The mechanization consists of approximately 2,500 lines of
+specifications and about 5,000 lines of ssreflect proofs based on
+the Mathematical Components library~\cite{assia_mahboubi_2022_7118596}
+and its finmap~\cite{finmap} extension.
+Roughly 30\%
 of the code is dedicated to the tree semantics (in particular, the proofs in
 \cref{sec:runT}), 15\% to the stack semantics, and 35\% to the equivalence proof.
-The remaining 20\% is devoted to the determinacy checker. The mechanization took us approximately $8$ months.
+The remaining 20\% is devoted to the determinacy checker. 
+The mechanization took us approximately $8$ months.
+We belive the ssreflect proof language and the proof style it advocates
+helped to speed up the many refactorings then mechanization underwent.
+The finmap library provides a comprehensive library to reason about
+finite maps and finite sets on a countable domain. In particular it helped
+describing conditions  like the disjointness of sets of variables with
+the domain of substitution, as well as defining the union of disjoint
+substitutions.
+
+\marginpar{Martelli (size, time, not described here but necessary for being axiom free)}
 
 To fully model the \elpiP language and mechanize~\cite{fissore2026} entirely,
 we would need to account for higher-order
 variables, i.e. variables representing predicates. This extension is ongoing and
-largely orthogonal to the present paper, since cut and higher-order features do
-not interact in subtle ways.
+largely orthogonal to the present paper, since cut and higher-order variables do
+not interact in subtle ways. The main difficulty is that the substitution can
+hold predicates, and these predicates need to have a signature that is
+compatible with the one statically assumed, in the sense of the
+$\subseteq$ relation defined in~\cite[Section 5]{fissore2026}.
 
 \bibliographystyle{splncs04}
 
