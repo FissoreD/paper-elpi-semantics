@@ -1776,7 +1776,15 @@ describing conditions  like the disjointness of sets of variables with
 the domain of substitution, as well as defining the union of disjoint
 substitutions.
 
-\marginpar{Martelli (size, time, not described here but necessary for being axiom free)}
+In order to build an axioms free mechanization we had to provide an
+implementation for the first-order unification algorithm, since we could
+not find a Rocq mechanization of it. Describing its mechanization in details
+is out of scope for this paper. It amounts to XXX lines of code, YY for the
+termination proof based on lexicographic ordering and ZZ for correctness and
+completeness. Because of the specificity of Lemma XXX that deals with
+the matching of terms with a disjoint support, we did not need to prove that
+the algorithm generates unifiers that are the most general ones.
+\marginpar{Martelli (size, time, relation with saarland (maybe don't say ), substitutions are not finite maps, hence badly integrate with mathcomp, also the algorithm is not explicilty given)}
 
 To fully model the \elpiP language and mechanize~\cite{fissore2026} entirely,
 we would need to account for higher-order
@@ -1786,6 +1794,9 @@ not interact in subtle ways. The main difficulty is that the substitution can
 hold predicates, and these predicates need to have a signature that is
 compatible with the one statically assumed, in the sense of the
 $\subseteq$ relation defined in~\cite[Section 5]{fissore2026}.
+% Last, to keep
+% the mechanization axiom-free, one should extend the unification algorithm
+% to the higher-order case
 
 \bibliographystyle{splncs04}
 
