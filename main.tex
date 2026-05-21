@@ -293,29 +293,18 @@ the rule head with the query term.
 
 The function \eI{unify} takes two terms $t_1$ and $t_2$, together with a
 substitution $\sigma$, as input, and optionally returns a substitution
-$\sigma'$ that extends $\sigma$. 
-% The expected behavior of \eI{unify} is
-% the standard one (see for example~\cite[section 2.5]{10.5555/778522.778525}), % or \cite{1991miller-pf}),
-% limited to first-order. 
-Our mechanization implements the algorithm by
-Martelli and Montanari~\cite{10.1145/357162.357169} that we prove
-terminating, correct and complete.
-
-\begin{lemma}[Correctness]\label{mont-correct}
-  $$\forall t_1\ t_2\ \sigma\ \sigma',\ \mathrm{acyclic}\ \sigma \to \mathrm{unify}\ t_1\ t_2\ \sigma = \sigma' \to \sigma'\ t_1 = \sigma'\ t_2$$
-\end{lemma}
-
-\begin{lemma}[Completeness] \label{mont-completeness}
-  $$\forall t_1\ t_2\ \sigma, \mathrm{acyclic}\ \sigma \to (\exists \sigma', \mathrm{acyclic}\ \sigma'\ \land\ \sigma'\ (\sigma\ t_1) = \sigma'\ (\sigma\ t_2)) \to \exists \sigma'', \mathrm{unify}\ t_1\ t_2\ \sigma =~\sigma''$$
-\end{lemma}
-
-Therefore, if $t_1$ and $t_2$ unify
+$\sigma'$ that extends $\sigma$. Therefore, if $t_1$ and $t_2$ unify
 under $\sigma$, then $\sigma'~t_1 = \sigma'~t_2$, where
 $\sigma~t$ denotes substitution application and $=$ denotes 
-syntactic equality. Moreover, if it exists a substitution making two terms 
-equal under $\sigma$, then the invocation of unify of these two terms succeeds.
+syntactic equality.
 
-
+In order to be axiom-free, our mechanization implements a unification
+algorithm that we shortly describe in~\cref{sec:determinacy}.
+The two semantics and the static analysis use the very same
+unification algorithm, hence simply assuming the existence of one would
+have sufficed for the equivalence proofs. The case study in~\cref{sec:determinacy}
+also requires a few standard properties of this algorithm,
+like correctness and completeness.
 
 % \input{tex_code/unif_type.tex}
 % TODO: state axioms and explain matching; cite Dale's unification results.
@@ -1594,8 +1583,22 @@ determinacy checking, namely~\cite{1996Somogy,king2005,1989Warren}. These works
 need a mode checker that statically ensures that, in a query with ground inputs,
 each recursive call is performed with ground inputs.
 
-In our mechanization, and in particular in the \elpiP language, we adopt a
-special unification routine for input arguments, called
+Our mechanization implements the unification algorithm by
+Martelli and Montanari~\cite{10.1145/357162.357169} that we prove
+terminating, correct and complete.
+
+\begin{lemma}[Correctness]\label{mont-correct}
+  $$\forall t_1\ t_2\ \sigma\ \sigma',\ \mathrm{acyclic}\ \sigma \to \mathrm{unify}\ t_1\ t_2\ \sigma = \sigma' \to \sigma'\ t_1 = \sigma'\ t_2$$
+\end{lemma}
+
+\begin{lemma}[Completeness] \label{mont-completeness}
+  $$\forall t_1\ t_2\ \sigma, \mathrm{acyclic}\ \sigma \to (\exists \sigma', \mathrm{acyclic}\ \sigma'\ \land\ \sigma'\ (\sigma\ t_1) = \sigma'\ (\sigma\ t_2)) \to \exists \sigma'', \mathrm{unify}\ t_1\ t_2\ \sigma =~\sigma''$$
+\end{lemma}
+
+TODO: definite acyclic using finmap.
+
+The \elpiP language adopt a
+restricted unification routine for input arguments, called
 \matching~\cite{1991ait-wam,zhou2012}. Similarly to \unify, \matching takes the
 query term $t_1$ and the pattern $t_2$ and returns an optional substitution
 $\sigma'$ that does not assign any variable in the query.
@@ -1604,8 +1607,8 @@ $\sigma'$ that does not assign any variable in the query.
 % rule-head.
 
 In order to adress this change, we extend the Martelli and
-Montanari~\cite{10.1145/357162.357169} so that it takes a set of variables,
-representing the variables that should not be assigned by unification.
+Montanari unification procedure to take a set of frozen variables:
+variables that cannot be assigned.
 
 The function \matching has the following property:
 
