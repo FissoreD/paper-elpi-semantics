@@ -194,7 +194,7 @@ beging cut and the stack frames is not immediately visible.
 To address this limitation, we introduce semantics based on And-Or trees where
 the history of the computation is kept in a structured way: Given a goal
 each applicable rule generates an Or branch that in turn is followed by
-an And branch pre premise.
+an And branch per premise.
 This enables an explicit characterization of the cut operator as a function
 that prunes selected branches of the tree. The tree-based semantics allows
 us to formulate introduction and elimination rules for disjunction in the
@@ -301,7 +301,13 @@ Our mechanization implements the algorithm by
 Martelli and Montanari~\cite{10.1145/357162.357169} that we prove
 terminating, correct and complete.
 
-\marginpar{TODO: write Lemma}
+\begin{lemma}[Correct] 
+  $\forall t_1\ t_2\ \sigma, \mathrm{unify}\ t_1\ t_2 = \sigma \to \sigma\ t_1 = \sigma\ t_2$
+\end{lemma}
+
+\begin{lemma}[Complete] 
+  $\forall t_1\ t_2, (\exists \sigma, \mathrm{acyclic}\ \sigma\ \land\ \sigma\ t_1 = \sigma\ t_2) \to \exists \sigma', \mathrm{unify}\ t_1\ t_2 =~\sigma'$
+\end{lemma}
 
 Therefore, if $t_1$ and $t_2$ unify
 under $\sigma$, then $\sigma'~t_1 = \sigma'~t_2$, where
