@@ -301,7 +301,7 @@ Our mechanization implements the algorithm by
 Martelli and Montanari~\cite{10.1145/357162.357169} that we prove
 terminating, correct and complete.
 
-\begin{lemma}[Correctness]
+\begin{lemma}[Correctness]\label{mont-correct}
   $$\forall t_1\ t_2\ \sigma\ \sigma',\ \mathrm{acyclic}\ \sigma \to \mathrm{unify}\ t_1\ t_2\ \sigma = \sigma' \to \sigma'\ t_1 = \sigma'\ t_2$$
 \end{lemma}
 
@@ -1602,35 +1602,77 @@ $\sigma'$ that does not assign any variable in the query.
 % call and the pattern is the corresponding input argument in the chosen
 % rule-head.
 
+In order to adress this change, we extend the Martelli and
+Montanari~\cite{10.1145/357162.357169} so that it takes a set of variables,
+representing the variables that should not be assigned by unification.
+
 The function \matching has the following property:
 
 % \input{tex_code/matchdisj.tex}
-\begin{axiom}[matching\_disj]\label{th:matchingdisj}\cI{~\ensuremath{\forall}~ ~\ensuremath{\sigma}~ ~\ensuremath{\sigma'}~ ~\ensuremath{t_1}~ ~\ensuremath{t_2}~, vars ~\ensuremath{t_1}~ ~\ensuremath{\#}~ domf ~\ensuremath{\sigma}~ ~\ensuremath{\to}~ vars ~\ensuremath{t_1}~ ~\ensuremath{\#}~ vars ~\ensuremath{t_2}~ ~\ensuremath{\to}~}~
-\begin{coqcode}
-    matching ~\ensuremath{t_1}~ ~\ensuremath{t_2}~ ~\ensuremath{\sigma}~ = ~\msome~~\ensuremath{\sigma'}~ ~\ensuremath{\to}~ ~\ensuremath{\exists}~ e, domf ~\ensuremath{\sigma'}~ = domf ~\ensuremath{\sigma}~ ~\ensuremath{\cup}~ e ~\ensuremath{\;\land\;}~ e ~\ensuremath{\subseteq}~ vars ~\ensuremath{t_2}~.
-\end{coqcode}
-\end{axiom}
+\begin{lemma}[matching\_disj]\label{um}
+  $$\forall t_1\ t_2\ \sigma\ \sigma', \mathrm{acyclic}\ \sigma \to \mathrm{matching}\ t_1\ t_2\ \sigma = \sigma' \to \sigma'\ (\sigma\ t_1) = \sigma\ t_2$$.
+  \label{th:matchingdisj}
+\end{lemma}
 
-If the variables (\cI{vars}) of two terms are disjoint ($\#$) and the variables in the support of $\sigma$ are
-disjoint from the variables in $t_1$, then, if matching succeeds, only the
-variables in $t_2$ are assigned; that is, $t_1 = \sigma'~t_2$, and the
-variables in $t_1$ are not assigned in $\sigma'$.
+In particular, we can see how the returned substitution $\sigma'$, differently
+from \cref{mont-correct}, it does not affects variables in $\sigma\ t_2$.
+
+% If the variables (\cI{vars}) of two terms are disjoint ($\#$) and the variables in the support of $\sigma$ are
+% disjoint from the variables in $t_1$, then, if matching succeeds, only the
+% variables in $t_2$ are assigned; that is, $t_1 = \sigma'~t_2$, and the
+% variables in $t_1$ are not assigned in $\sigma'$.
 
 
 The \eI{backchain} function uses \eI{matching} or \eI{unify} on the arguments $q$
 depending if the argument is in \emph{input} or \emph{output} mode.
-We assume two important properties of our unification routines.
+% We assume two important properties of our unification routines.
 
-\input{tex_code/unif_trans.tex}
-\input{tex_code/matchunif.tex}
+For the static checker, and in particular in order to validate rule mutual
+exclusion, we need to ensure that no two rules can be used on the same query in
+the absence of cut. We exploit the behavior of the \eI{matching} over input
+argument to guarantee this property: mutual exclusion ensure that every pair of
+rules for a deterministic predicate have an input term that does not satisfy
+unification.
 
-We also assume that refreshing variables does not affect unification.
- In
-particular, a refreshing renaming $f$ for a term $t$ is a function from variables
+
+An important property we derive from the \eI{matchin} and \eI{unify} procedure
+is that given three variable-disjoint terms $h_1$, $h_2$ and $q$, representing
+respectively two rule heads in the database and a query, if both heads are
+matching the query $q$ then the two heads must unify. This idea is formalized
+by the following lemma.
+
+\begin{lemma}[unify\_matching\_trans]
+  \begin{multline*}
+    \forall h_1\ h_2\ q, 
+    \mathrm{disjoint}\ h_1\ h_2 \to \mathrm{disjoint}\ h_1\ q \to \mathrm{disjoint}\ h_2\ q \to \\
+    \mathrm{matching}\ h_1\ q\ \varepsilon \to \mathrm{matching}\ h_2\ q\ \varepsilon \to \mathrm{unify}\ h_1\ h_2\ \varepsilon
+  \end{multline*}
+\end{lemma}
+
+\begin{proof}
+  By \cref{um}, we now that the matching of $h_1$ (resp. $h_2$) and $q$ gives a
+  substitution $\sigma_1$ (resp. $\sigma_2$) where the variables in $q$ are not
+  assigned, i.e. its domain only contains variables in $h_1$ (resp $h_2$). Using
+  \cref{mont-completeness}, on the conclusion, we need to prove that it exists a
+  substitution $\sigma'$ such that $\sigma'\ h_1 = \sigma'\ h_2$. This
+  substitution is the composition of $\sigma_1$ and $\sigma_2$, that is
+  $\sigma' = \lambda x. \sigma_1 (\sigma_2\ x)$. Since $h_1$ and
+  $h_2$ are disjoint, also are the domain of $\sigma_1$ and $\sigma_2$, therefore
+  $\sigma' h_1 = \sigma_2 (\sigma_1\ h_1)$ and $\sigma' h_2 = \sigma_2 (\sigma_1\ h_2)$.
+  We can know conclude the proof: $\sigma'\ h_1 = \sigma_2 (\sigma_1\ h_1) = \sigma_2\ q = q = \sigma_2\ h_2 = \sigma' h_2$.
+\end{proof}
+
+
+% \input{tex_code/unif_trans.tex}
+% \input{tex_code/matchunif.tex}
+
+Finally, we also need a lemma certifying that the refreshing variables operation
+performed at runtime during backchaining does not affect unification.
+In particular, a refreshing renaming $f$ for a term $t$ is a function from variables
 to variables that: (i) $f$ is defined on all the variables in $t$, i.e. all variables get renamed; (ii) $f$ is
 injective, i.e. does not confuse variables; and (iii) $f$ 
 has non-overlapping domain and codomain, i.e. it maps the variables of the term
-to a set of completely fresh variables. 
+to a set of completely fresh variables.
 
 Below, we define
 \cI{refresh_for} to test the validity of a refreshing renaming.
@@ -1644,7 +1686,14 @@ $\alpha$-equivalence of terms and the unification of terms with disjoint
 variables.
 
 \input{tex_code/refresh_for.tex}
-\input{tex_code/unif_ren.tex}
+
+\begin{lemma}[unif\_ren]\label{th:unifren}\cI{~\ensuremath{\forall}~ x y z w ~\ensuremath{t_1}~ ~\ensuremath{t_2}~,}~
+\begin{coqcode}
+  refresh_for w ~\ensuremath{t_1}~ ~\ensuremath{\to}~ refresh_for y ~\ensuremath{t_2}~ ~\ensuremath{\to}~ refresh_for z ~\ensuremath{t_1}~ ~\ensuremath{\to}~ refresh_for x ~\ensuremath{t_2}~ ~\ensuremath{\to}~
+  codomf w ~\ensuremath{\#}~ vars (rename y ~\ensuremath{t_2}~) ~\ensuremath{\to}~ codomf z ~\ensuremath{\#}~ vars (rename x ~\ensuremath{t_2}~) ~\ensuremath{\to}~
+  unify (rename w ~\ensuremath{t_1}~) (rename y ~\ensuremath{t_2}~) ~\ensuremath{\epsilon}~ ~\ensuremath{\to}~ unify (rename z ~\ensuremath{t_1}~) (rename x ~\ensuremath{t_2}~) ~\ensuremath{\epsilon}~.
+\end{coqcode}
+\end{lemma}
 
 In \cref{fig:progx}, the rules of the program are equipped with three
 signatures, one per predicate. Besides the arity of each predicate, a
