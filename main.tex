@@ -1665,11 +1665,17 @@ Martelli and Montanari~\cite{10.1145/357162.357169} that we prove
 terminating (using the standard lexicographic ordering),
 correct and complete.
 
-\begin{definition}
-  $\mathrm{acyclic}\ x := \mathrm{dom}\ x \cap \mathrm{codom}\ x = \varnothing$
+\begin{definition}[acyclic]
+  $\mathrm{acyclic}\ s := \mathrm{dom}\ s \cap \mathrm{codom}\ s = \varnothing$
 \end{definition}
 
-\begin{lemma}[unif\_correct]\label{mont-correct}
+Note that this definition of acyclicity entails that the substitution is
+necessarily self applied, i.e. $\sigma \coloneq \{ X \mapsto f~Y, Y \mapsto a\}$
+is not acyclic, while the equivalet $\sigma' \coloneq \{ X \mapsto f~a\}$ is.
+The algorithm by Martelli and Montanari generates substitutions that
+are acyclic in this sense.
+
+\begin{lemma}[Uunif\_correct]\label{mont-correct}
   $$\forall t_1\ t_2\ \sigma\ \sigma',\ \mathrm{acyclic}\ \sigma \to \mathrm{unify}\ t_1\ t_2\ \sigma = \sigma' \to \sigma'\ t_1 = \sigma'\ t_2$$
 \end{lemma}
 
@@ -1677,29 +1683,30 @@ correct and complete.
   $$\forall t_1\ t_2\ \sigma, \mathrm{acyclic}\ \sigma \to (\exists \sigma', \mathrm{acyclic}\ \sigma'\ \land\ \sigma'\ (\sigma\ t_1) = \sigma'\ (\sigma\ t_2)) \to \exists \sigma'', \mathrm{unify}\ t_1\ t_2\ \sigma =~\sigma''$$
 \end{lemma}
 
-The \elpiP language adopt a
+The \elpiP language adopts a
 restricted unification routine for input arguments, called
 \matching~\cite{1991ait-wam,zhou2012}. Similarly to \unify, \matching takes the
 query term $t_1$ and the pattern $t_2$ and returns an optional substitution
-$\sigma'$ that does not assign any variable in the query.
+$\sigma'$ that does not assign any variable in the query arguments that
+are in input position.
 % The query-term is the argument in input mode taken from a dynamic
 % call and the pattern is the corresponding input argument in the chosen
 % rule-head.
 
-In order to adress this change, we extend the Martelli and
-Montanari unification procedure to take a set of frozen variables:
-variables that cannot be assigned.
-
-The function \matching has the following property:
+In order to adress this need we extend the Martelli and
+Montanari unification procedure to take a set of frozen variables, i.e.
+variables that cannot be assigned. The function \matching has the following property:
 
 % \input{tex_code/matchdisj.tex}
 \begin{lemma}[matching\_disj]\label{um}
-  $$\forall t_1\ t_2\ \sigma\ \sigma', \mathrm{acyclic}\ \sigma \to \mathrm{matching}\ t_1\ t_2\ \sigma = \sigma' \to \sigma'\ (\sigma\ t_1) = \sigma\ t_2$$.
+  $$\forall t_1\ t_2\ \sigma\ \sigma', \mathrm{acyclic}\ \sigma \to \mathrm{matching}\ t_1\ t_2\ \sigma = \sigma' \to \sigma'\ (\sigma\ t_1) = \sigma\ t_2$$
   \label{th:matchingdisj}
 \end{lemma}
 
 In particular, we can see how the returned substitution $\sigma'$, differently
-from \cref{mont-correct}, it does not affects variables in $\sigma\ t_2$.
+from \cref{mont-correct}, does not affect variables in $\sigma\ t_2$.
+
+\marginpar{The statement abouve does not say that $\sigma'\ t_2 = t_2$. Did you prove it?}
 
 % If the variables (\cI{vars}) of two terms are disjoint ($\#$) and the variables in the support of $\sigma$ are
 % disjoint from the variables in $t_1$, then, if matching succeeds, only the
