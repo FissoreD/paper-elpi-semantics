@@ -255,10 +255,10 @@ rules $\mathbb{R}$ together with a signature environment $\mathrm{sig}$.
 We delay the discussion of signatures to \cref{sec:determinacy} where we
 describe the static analysis that concerns them.
 
-A rule is a pair $(\cI{Tm} * \mathrm{list}\ \cI{Atom})$, where
-the first element represents its head (a term) and a list of premises. Each
-premise is an \coqIn{Atom}, i.e. either the cut operator or a predicate
-call. Terms \coqIn{Tm} include predicate symbols, data symbols, variables, and term application.
+A rule is a pair $(\mathrm{Tm} * \mathrm{list}\ \mathrm{Atom})$, where
+the first element represents its head and the second its list of premises. Each
+premise is an Atom, i.e. either the cut operator or a predicate
+call. Terms include predicate symbols, data symbols, variables, and term application.
 The concrete definition of these two algebraic types is given below:
 
 \begin{coqcode}  
@@ -294,7 +294,7 @@ rules that apply. More precisely, for each applicable rule it returns the
 rule premises together with an updated substitution obtained by unifying
 the rule head with the query term.
 
-The function \eI{unify} takes two terms $t_1$ and $t_2$, together with a
+The function \emph{unify} takes two terms $t_1$ and $t_2$, together with a
 substitution $\sigma$, as input, and optionally returns a substitution
 $\sigma'$ that extends $\sigma$. Therefore, if $t_1$ and $t_2$ unify
 under $\sigma$, then $\sigma'~t_1 = \sigma'~t_2$, where
@@ -451,17 +451,17 @@ like correctness and completeness.
 There are quite a few variants of the cut operator in the literature.
 The one we are interested in, i.e. the one used in \elpiP, is known as \emph{hard cut}
 (see, e.g., the documentation of \sprologP~\cite{swi-prolog-cut}).
-Whenever the \coqIn{backchain} function returns a non-empty list of alternatives,
+Whenever the \emph{backchain} function returns a non-empty list of alternatives,
 the first one is explored immediately, while the others are suspended as
 choice points. Within a given alternative, premises are processed from
 left to right, executing each atom in turn. When a cut is encountered, it
-discards (i) all choice points created by \coqIn{backchain} for the current call
+discards (i) all choice points created by backchain for the current call
 and (ii) all choice points created while executing the premises to the left of
 the cut.
 
 For example, consider the program in \cref{fig:progx} and the query
 $\elpiIn{g 0 R}$.
-Both rules for \eI{g} apply to this query. Backchaining therefore returns the
+Both rules for the predicate \eI{g} apply to this query. Backchaining therefore returns the
 following two alternatives:
 \[
   [(\sigma_1, [\eI{r A B, f B C, !}]),\; (\sigma_2, [\eI{f D E, f E F}])]
@@ -532,16 +532,14 @@ in particular how alternatives are stored and how they are pruned by cut.
 
 \vspace{10pt}
 \textit{Notational conventions}
-In the following section we note $\mathbb{B}$ for the boolean type, and $\top$
-and $\bot$ for \cI{true} and \cI{false}. The constructors of the option type are written
-$\msome{t}$ for \coqIn{Some}$~t$ and $\mnone$ for \coqIn{None}. 
+In the following section we note $\mathbb{B}$ for the boolean type. 
 Following the Mathematical Components library, on which we depend,
 we use \coqIn{x.1} and \coqIn{x.2} to denote the first and second projection
 applied to the pair \coqIn{x}. List concatenation is the infix \coqIn{++},
 while list comprehension (i.e. mapping a function on a list) is written
 \coqIn{[seq f x | x <- l]}. The function \coqIn{odflt d o}
 extracts the value from the option \coqIn{o} and returns the default \coqIn{d}
-if \coqIn{o} is $\mnone$.
+if \coqIn{o} is None.
 % \marginpar{spiegare notation for list}
 % $\epsilon$ is the empty substitution.
 
@@ -571,16 +569,16 @@ subqueries to be solved (an And-layer). Intuitively, solving a query requires
 solving one alternative in the Or-layer, but all subqueries in the
 corresponding And-layer.
 
-The tree is built incrementally. The \coqIn{Todo} node
-represents an unexplored branch (an \coqIn{Atom}). When the atom is a
-\coqIn{call}, we use the backchaining procedure from
+The tree is built incrementally. The \emph{Todo} node
+represents an unexplored branch (an atom). When the atom is a
+call, we use the backchaining procedure from
 \cref{sec:preliminaries} to compute the two layers to attach to the tree:
 alternatives form the Or-layer, and the premises of each applicable rule form
 the corresponding And-layer. This expansion step is performed by the
-\coqIn{step} procedure described in \cref{sec:step}.
+\emph{step} procedure described in \cref{sec:step}.
 
 In
-addition to the \coqIn{Todo} node we have two distinguished nodes, \koC and
+addition to the Todo node we have two distinguished nodes, \koC and
 \okC, which represent respectively the smallest failed and successful tree.
 
 The \orC node, written \(A \lor B_\sigma\), represents the addition of an
@@ -642,16 +640,16 @@ is \koC we say the tree \emph{failed}, otherwise the tree is \emph{incomplete}.
 In \cref{tree-ex} we mark with a black arrow the result of \pathend.
 The type of these two functions is given below.
 %
-$$\mathrm{step} : (\mathbb{P} * \FV * \Sigma * \cI{tree}) \to (\FV * \cI{tag} * \cI{tree})$$
-$$\mathrm{prune} : (\mathbb{B} * \cI{tree}) \to \cI{tree} + \mnone$$
+$$\mathrm{step} : (\mathbb{P} * \FV * \Sigma * \mathrm{tree}) \to (\FV * \mathrm{tag} * \mathrm{tree})$$
+$$\mathrm{prune} : (\mathbb{B} * \mathrm{tree}) \to \mathrm{option\ tree}$$
 
-The \cI{step} routine, among its outputs, also returns a \cI{tag}. We delay
-the definition in the very following section. $\cI{test}$
+The step routine, among its outputs, also returns a \emph{tag}, whose definition
+is delayed in the very following section.
 
 Since all functions must terminate in Rocq, we define the transitive closure
 of \step and \na as the inductive relation \run.
 More precisely \run iterates calls to \step on incomplete trees to expand
-\cI{Todo} nodes. When a tree fails it calls \na to find
+Todo nodes. When a tree fails it calls \na to find
 the next alternative and continues from there, if one exists.
 % We detail \step, \na, and \run in \cref{sec:step,sec:next_alt,sec:runT}.
 
@@ -779,11 +777,11 @@ Inductive tag := Expanded | CutBrothers | Failed | Success.
 \end{coqcode}
 
 It indicates which kind of step was
-performed.  \cI{Failure} and \cI{Success} are returned for trees that satisfy,
+performed.  Failure and Success are returned for trees that satisfy,
 respectively, the \failed and \success tests. 
-\cI{CutBrothers}
+CutBrothers
 indicates the interpretation of a superficial cut: \step was called on an 
-And-layer and its \pathend is the cut atom. Finally, \cI{Expanded}
+And-layer and its \pathend is the cut atom. Finally, Expanded
 accounts for the interpretation of predicate calls and non-superficial cuts.
 
 The \step procedure evaluates atoms. In particular, it leaves the tree
@@ -801,7 +799,7 @@ unchanged when the tree is \emph{success} or \emph{failed}.
 % \input{tex_code/success_step.tex}
 % \input{tex_code/failed_step.tex}
 
-The \step procedure expands \coqIn{Todo} nodes by calling \coqIn{backchain}, which returns a list
+The \step procedure expands Todo nodes by calling backchain, which returns a list
 $l$ of alternatives. If $l$ is empty, then the current call atom is replaced by
 \koC. Otherwise, it is replaced by a right-skewed tree of \orC nodes, where
 each leaf corresponds to a list of atoms $e \in l$. If $e$ is empty, the leaf
@@ -861,7 +859,7 @@ amounts to discarding the third rule of predicate \eI{r}.
 \subsection{The \na procedure}\label{sec:next_alt}
 \label{sec:na}
 
-When \coqIn{backchain} returns an empty list, \step produces a tree that \emph{failed}
+When backchain returns an empty list, \step produces a tree that \emph{failed}
 and the computation must backtrack. The \na procedure is
 responsible for producing the new tree from which the computation can
 continue.
@@ -943,16 +941,16 @@ complements \step with respect to failed, successful, and incomplete trees.
 
 % \mvspace{}
 \begin{lemma}[incomplete\_prune\_id]\label{th:incompletepruneid}
-  $\forall b\ t, \cI{incomplete}\ t \to \cI{prune}\ b\ t = t$
-  % \cI{~\ensuremath{\forall}~ ~\ensuremath{b}~ ~\ensuremath{t}~, incomplete ~\ensuremath{t}~ ~\ensuremath{\to}~ prune ~\ensuremath{b}~ ~\ensuremath{t}~ = ~\msome~~\ensuremath{t}~.}
+  $\forall b\ t, \mathrm{incomplete}\ t \to \mathrm{prune}\ b\ t = t$
+  % \mathrm{~\}nsuremath{\forall}~ ~\ensuremath{b}~ ~\ensuremath{t}~, incomplete ~\ensuremath{t}~ ~\ensuremath{\to}~ prune ~\ensuremath{b}~ ~\ensuremath{t}~ = ~\msome~~\ensuremath{t}~.}
 \end{lemma}
 
 \begin{lemma}[prune\_Some]\label{th:pruneSome}
-  $\forall b\ t\ t', \cI{prune}\ b\ t = t \to \cI{failed}\ t' = \bot$
+  $\forall b\ t\ t', \mathrm{prune}\ b\ t = t \to \mathrm{failed}\ t' = \bot$
 \end{lemma}
 
 \begin{lemma}[prune\_None]\label{th:pruneNone}
-  $\forall t\ t', \cI{prune}\ \bot\ t = \bot \to \cI{failed}\ t' = \top$
+  $\forall t\ t', \mathrm{prune}\ \bot\ t = \bot \to \mathrm{failed}\ t' = \top$
 \end{lemma}
 
 
@@ -981,7 +979,7 @@ complements \step with respect to failed, successful, and incomplete trees.
 
 The inductive relation \runT has the following type:
 %
-$$\runT : \mathbb{P} \times \vec{\FV} \times \Sigma \times \mathbb{T} \to ((\Sigma, \mathbb{T} + \mnone) + \mnone, \mathbb{B}, \vec{\FV})$$
+$$\mathrm{\runT} : \mathbb{P} \times \vec{\FV} \times \Sigma \times \mathbb{T} \to ((\Sigma, \mathbb{T} + \mnone) + \mnone, \mathbb{B}, \vec{\FV})$$
 
 It takes a program, a set of variables, an initial substitution $\sigma$, and a
 tree $t$. The outputs are an optional result $r$, a boolean $b$, and an updated set of variable
