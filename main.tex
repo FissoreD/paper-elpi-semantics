@@ -274,6 +274,7 @@ disjoint supports as $\sigma_1 + \sigma_2$. %\marginpar{usiamo + ?}
 The backchaining operation applies all rules to a query term; it is
 central to both semantics.
 %\input{tex_code/bc_type.tex}
+
 \begin{center}\cI{Definition backchain : ~\ensuremath{\mathbb{P}}~ ~\ensuremath{\to}~ ~\ensuremath{\FV}~ ~\ensuremath{\to}~ Tm ~\ensuremath{\to}~ ~\ensuremath{\Sigma}~ ~\ensuremath{\to}~ ~\ensuremath{\FV}~ * list (~\ensuremath{\Sigma}~ * list Atom) }
 \end{center}
 % \cI{Definition backchain : ~\ensuremath{\mathbb{P}}~ ~\ensuremath{\to}~ ~\ensuremath{\FV}~ ~\ensuremath{\to}~ Tm ~\ensuremath{\to}~ ~\ensuremath{\Sigma}~ ~\ensuremath{\to}~ ~\ensuremath{\FV}~ * list (~\ensuremath{\Sigma}~ * list Atom) ~\ensuremath{\coloneq}~ ...}
@@ -291,8 +292,46 @@ The function \eI{unify} takes two terms $t_1$ and $t_2$, together with a
 substitution $\sigma$, as input, and optionally returns a substitution
 $\sigma'$ that extends $\sigma$. Therefore, if $t_1$ and $t_2$ unify
 under $\sigma$, then $\sigma'~t_1 = \sigma'~t_2$, where
-$\sigma~t$ denotes substitution application and $=$ denotes 
+$\sigma~t$ denotes substitution application (see \cref{fig:deref}) and $=$ denotes 
 syntactic equality.
+
+\begin{figure}
+  \begin{center}    
+  \begin{subfigure}{0.38\textwidth}
+    \begin{prooftree}
+      \AxiomC{}
+      \RightLabel{\rulelabel{\phantom{i}}}
+      \UnaryInfC{$\sigma\ (\cI{Tm_D}\ d) = \cI{Tm_D}\ d$}
+    \end{prooftree}
+  \end{subfigure}
+  \begin{subfigure}{0.38\textwidth}    
+    \begin{prooftree}
+      \AxiomC{}
+      \RightLabel{\rulelabel{\phantom{i}}}
+      \UnaryInfC{$\sigma\ (\cI{Tm_P}\ p) = \cI{Tm_P}\ p$}
+    \end{prooftree}
+  \end{subfigure}
+  \end{center}
+
+  \begin{center}    
+  \begin{subfigure}{0.45\textwidth}    
+    \begin{prooftree}
+      \AxiomC{$\mathrm{if}\ v \in \sigma\ \mathrm{then}\ r = \sigma[v]\ \mathrm{else}\ r = v$}
+      \RightLabel{\rulelabel{\phantom{i}}}
+      \UnaryInfC{$\sigma\ (\cI{Tm_V}\ v) = r$}
+    \end{prooftree}
+  \end{subfigure}
+  \begin{subfigure}{0.5\textwidth}    
+    \begin{prooftree}
+      \AxiomC{$\sigma\ t_1 = t_1' \quad \sigma\ t_2 = t_2'$}
+      \RightLabel{\rulelabel{\phantom{i}}}
+      \UnaryInfC{$\sigma\ (\cI{Tm_App}\ t_1\ t_2) = \cI{Tm_App}\ t_1'\ t_2'$}
+    \end{prooftree}
+  \end{subfigure}
+  \end{center}
+  \caption{Rules for substitution application}
+  \label{fig:deref}
+\end{figure}
 
 In order to be axiom-free, our mechanization implements a unification
 algorithm that we shortly describe in~\cref{sec:determinacy}.
@@ -1588,15 +1627,17 @@ Martelli and Montanari~\cite{10.1145/357162.357169} that we prove
 terminating (using the standard lexicographic ordering),
 correct and complete.
 
-\begin{lemma}[Correctness]\label{mont-correct}
+\begin{definition}
+  $\mathrm{acyclic}\ x := \mathrm{dom}\ x \cap \mathrm{codom}\ x = \varnothing$
+\end{definition}
+
+\begin{lemma}[unif\_correct]\label{mont-correct}
   $$\forall t_1\ t_2\ \sigma\ \sigma',\ \mathrm{acyclic}\ \sigma \to \mathrm{unify}\ t_1\ t_2\ \sigma = \sigma' \to \sigma'\ t_1 = \sigma'\ t_2$$
 \end{lemma}
 
-\begin{lemma}[Completeness] \label{mont-completeness}
+\begin{lemma}[unif\_complete] \label{mont-completeness}
   $$\forall t_1\ t_2\ \sigma, \mathrm{acyclic}\ \sigma \to (\exists \sigma', \mathrm{acyclic}\ \sigma'\ \land\ \sigma'\ (\sigma\ t_1) = \sigma'\ (\sigma\ t_2)) \to \exists \sigma'', \mathrm{unify}\ t_1\ t_2\ \sigma =~\sigma''$$
 \end{lemma}
-
-TODO: definite acyclic using finmap.
 
 The \elpiP language adopt a
 restricted unification routine for input arguments, called
