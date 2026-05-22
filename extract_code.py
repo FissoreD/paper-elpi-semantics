@@ -18,15 +18,16 @@ def find_close_par(l, i):
     return -1
 
 def remove_some_par(l):
-    s = "(Some"
-    if s not in l: return l
-    p = l.index(s)
-    cl = find_close_par(l, p)
-    if cl > p:
-        l = l[:p] + "s" + l[p+2:cl] + l[cl+1:]
-        return remove_some_par(l)
-    else:
-        raise Exception("ERROR")
+    return l
+    # s = "(Some"
+    # if s not in l: return l
+    # p = l.index(s)
+    # cl = find_close_par(l, p)
+    # if cl > p:
+    #     l = l[:p] + "s" + l[p+2:cl] + l[cl+1:]
+    #     return remove_some_par(l)
+    # else:
+    #     raise Exception("ERROR")
 
 def clean_line_global(l,escape):
     # if you want to replace with math notation, prefix the string with a call to m
@@ -56,7 +57,7 @@ def clean_line_global(l,escape):
     # l = re.sub(":=", esc(m("\\\\coloneq")), l)
     l = re.sub("forall", esc(m("\\\\forall")), l)
     l = re.sub("exists", esc(m("\\\\exists")), l)
-    l = re.sub("None", esc(m("\\\\square")), l)
+    # l = re.sub("None", esc(m("\\\\square")), l)
     l = re.sub(r"\bmkR\b", "", l)
     # l = re.sub(r"\bA\b", "Atom", l)
     l = re.sub(r"\bseq\b", "list", l)
@@ -69,13 +70,14 @@ def clean_line_global(l,escape):
     l = re.sub(r"∨", esc(m("\\\\lor")), l)
     l = re.sub(r"∧", esc(m("\\\\land")), l)
     if escape:
-        l = re.sub("some *", esc("\\\\msome"), l)
-        l = re.sub("Some *", esc("\\\\msome"), l)
+        l = re.sub("some *", "Some ", l)
+        # l = re.sub("some *", esc("\\\\msome"), l)
+        # l = re.sub("Some *", esc("\\\\msome"), l)
     else:
-        l = re.sub("Some", esc("\\\\msome"), l)
-        l = re.sub("some", esc("\\\\msome"), l)
-    l = re.sub("true", esc(m("\\\\top")), l)
-    l = re.sub("false", esc(m("\\\\bot")), l)
+        l = re.sub("some *", "Some ", l)
+        # l = re.sub("some", esc("\\\\msome"), l)
+    # l = re.sub("true", esc(m("\\\\top")), l)
+    # l = re.sub("false", esc(m("\\\\bot")), l)
     l = l.replace("\bsm\b", " " + esc(m("s_m")) + " ")
     pat = ["v","b","t","r","a", "g", "l"]
 

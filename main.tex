@@ -307,14 +307,14 @@ syntactic equality.
     \begin{prooftree}
       \AxiomC{}
       \RightLabel{\rulelabel{\phantom{i}}}
-      \UnaryInfC{$\sigma\ (\mathrm{Symb}\ d) = \mathrm{Symb}\ d$}
+      \UnaryInfC{$\sigma\ (\mathrm{Symb}\ n) = \mathrm{Symb}\ n$}
     \end{prooftree}
   \end{subfigure}
   \begin{subfigure}{0.38\textwidth}    
     \begin{prooftree}
       \AxiomC{}
       \RightLabel{\rulelabel{\phantom{i}}}
-      \UnaryInfC{$\sigma\ (\mathrm{Pred}\ p) = \mathrm{Pred}\ p$}
+      \UnaryInfC{$\sigma\ (\mathrm{Pred}\ n) = \mathrm{Pred}\ n$}
     \end{prooftree}
   \end{subfigure}
   \end{center}
@@ -322,7 +322,7 @@ syntactic equality.
   \begin{center}    
   \begin{subfigure}{0.45\textwidth}    
     \begin{prooftree}
-      \AxiomC{$\mathrm{if}\ v \in \sigma\ \mathrm{then}\ r = \sigma[v]\ \mathrm{else}\ r = v$}
+      \AxiomC{$\mathrm{if}\ n \in \sigma\ \mathrm{then}\ r = \sigma[n]\ \mathrm{else}\ r = v$}
       \RightLabel{\rulelabel{\phantom{i}}}
       \UnaryInfC{$\sigma\ (\mathrm{Var}\ v) = r$}
     \end{prooftree}
@@ -451,7 +451,7 @@ like correctness and completeness.
 There are quite a few variants of the cut operator in the literature.
 The one we are interested in, i.e. the one used in \elpiP, is known as \emph{hard cut}
 (see, e.g., the documentation of \sprologP~\cite{swi-prolog-cut}).
-Whenever the \emph{backchain} function returns a non-empty list of alternatives,
+Whenever the backchain function returns a non-empty list of alternatives,
 the first one is explored immediately, while the others are suspended as
 choice points. Within a given alternative, premises are processed from
 left to right, executing each atom in turn. When a cut is encountered, it
@@ -546,22 +546,25 @@ if \cI{o} is None.
 
 \section{And-Or Tree semantics}
 \label{tree-sem}
-\begin{figure}[b]
-    % \input{tex_code/tree_def.tex}
-    \begin{coqcode}
-Inductive tree ~$\coloneq$~
-  | KO | OK                            (* failure and success *)
-  | Todo of Atom                       (* unexplored branch *)
-  | Or   of option tree & ~$\Sigma$~ & tree ~$\!$~    (* $A \lor B_\sigma$ *) 
-  | And  of tree & list Atom & tree.   (* $A \land_{B_0} B$ *)
-\end{coqcode}
-\caption{Definition of And-Or tree}
-\label{fig:tree-ty}
-\end{figure}
+% \begin{figure}[b]
+%     % \input{tex_code/tree_def.tex}
+% %     \begin{coqcode}
+% % Inductive tree ~$\coloneq$~
+% %   | KO | OK                            (* failure and success *)
+% %   | Todo of Atom                       (* unexplored branch *)
+% %   | Or   of option tree & ~$\Sigma$~ & tree ~$\!$~    (* $A \lor B_\sigma$ *) 
+% %   | And  of tree & list Atom & tree.   (* $A \land_{B_0} B$ *)
+% % \end{coqcode}
+%   $$\TREE := \mathrm{KO} \mid \mathrm{OK} \mid \mathrm{Todo}\ \ATOM \mid \mathrm{Or}\ (\mathrm{option}\ \TREE)\ \Sigma\ \TREE \mid \mathrm{And}\ \TREE\ (\mathrm{list}\ \ATOM)\ \TREE$$
+% \caption{Definition of And-Or tree}
+% \label{fig:tree-ty}
+% \end{figure}
 
-An And-Or tree is a stratified, variable-width tree, defined in
-Rocq as in \cref{fig:tree-ty}.
-It consists of two kinds %\marginpar{corner case: prog2.elpi}
+An And-Or tree is a stratified, variable-width tree, defined as follows:
+%
+$$\TREE := \mathrm{KO} \mid \mathrm{OK} \mid \mathrm{Todo}\ \ATOM \mid \mathrm{Or}\ (\mathrm{option}\ \TREE)\ \Sigma\ \TREE \mid \mathrm{And}\ \TREE\ (\mathrm{list}\ \ATOM)\ \TREE$$
+
+It consists of two kinds \marginpar{non vero, nel tipo possiamo scrivere tutto. Serve valid tree}
 of layers that alternate: a disjunctive layer is followed by a conjunctive
 layer and vice versa. At the root (a query), the tree records a list of
 alternatives (an Or-layer); for each alternative, it records a list of
@@ -640,8 +643,12 @@ is \koC we say the tree \emph{failed}, otherwise the tree is \emph{incomplete}.
 In \cref{tree-ex} we mark with a black arrow the result of \pathend.
 The type of these two functions is given below.
 %
-$$\mathrm{step} : (\mathbb{P} * \FV * \Sigma * \mathrm{tree}) \to (\FV * \mathrm{tag} * \mathrm{tree})$$
-$$\mathrm{prune} : (\mathbb{B} * \mathrm{tree}) \to \mathrm{option\ tree}$$
+\begin{align*}
+  \mathrm{step}  & : \mathbb{P} \to \FV \to \Sigma \to \TREE \to (\FV * \mathrm{tag} * \TREE)\\
+  \mathrm{prune} & : \mathbb{B} \to \TREE \to \mathrm{option}\ \TREE
+\end{align*}
+% $$\mathrm{step} : (\mathbb{P} * \FV * \Sigma * \mathrm{tree}) \to (\FV * \mathrm{tag} * \mathrm{tree})$$
+% $$\mathrm{prune} : (\mathbb{B} * \mathrm{tree}) \to \mathrm{option\ tree}$$
 
 The step routine, among its outputs, also returns a \emph{tag}, whose definition
 is delayed in the very following section.
@@ -682,7 +689,7 @@ the next alternative and continues from there, if one exists.
       % \input{tex_code/failed_path.tex}
       % \input{tex_code/path_atom.tex}
     \input{tex_code/next_aux.tex}
-    \vspace{20pt}
+    % \vspace{20pt}
       % \caption{Functions from \getend}
       % \label{fig:geten/d-aux}
   \end{subfigure}
@@ -770,11 +777,11 @@ tree. It is passed to backchain so that rules can be refreshed correctly.
 % to \emph{backchain} returns a list of atoms whose variables are disjoint from
 % the variables of the current working tree.\marginpar{not true in figure:fix + also fix in \cref{sec:cut-op}}
 
-The \steptag is implemented as follows:
-
-\begin{coqcode}
-Inductive tag := Expanded | CutBrothers | Failed | Success.
-\end{coqcode}
+The \steptag is implemented as follows: 
+%
+% \begin{coqcode}
+$$tag := \mathrm{Expanded} \mid \mathrm{CutBrothers} \mid \mathrm{Failed} \mid \mathrm{Success}$$
+% \end{coqcode}
 
 It indicates which kind of step was
 performed.  Failure and Success are returned for trees that satisfy,
@@ -872,10 +879,10 @@ reconsidered under substitution $\sigma_4$.
 
 Furthermore, \na serves another important purpose. Its behavior depends on the
 boolean flag it receives as input: \na false $t$ recursively removes
-all failures (if any) from $t$, whereas \na\emph{$\top$\ $t$} removes the
+all failures (if any) from $t$, whereas \na true $t$ removes the
 first success in $t$. For example, the tree in \cref{tree-ex6} contains a
 successful path that maps \eI{R} to \eI{2}. Calling \na\ on this tree returns
-\mnone, since there are no alternatives in the tree after the success.
+None, since there are no alternatives in the tree after the success.
 
 
 % The interpreter should return this sucess, but, due to
@@ -970,10 +977,10 @@ complements \step with respect to failed, successful, and incomplete trees.
 
 The inductive relation \runT has the following type:
 %
-$$\mathrm{\runT} : \mathbb{P} \times \vec{\FV} \times \Sigma \times \mathbb{T} \to (\mathrm{option}\ (\Sigma, \mathrm{option}\ \mathbb{T}), \mathbb{B}, \vec{\FV})$$
+$$\mathrm{\runT} : \mathbb{P} \to \vec{\FV} \to \Sigma \to \mathbb{T} \to (\mathrm{option}\ (\Sigma, \mathrm{option}\ \mathbb{T}), \mathbb{B}, \vec{\FV}) \to \cI{Prop}$$
 
-It takes a program, a set of variables, an initial substitution $\sigma$, and a
-tree $t$. The outputs are an optional result $r$, a boolean $b$, and an updated set of variable
+It associates a program, a set of variables, an initial substitution $\sigma$, and a
+tree $t$ to an optional result $r$, a boolean $b$, and an updated set of variable
 names.
 
 The main result $r$ is None when the execution fails; otherwise
@@ -984,7 +991,7 @@ superficial cut was evaluated during execution.
 % , and the updated variable set tracks freshly generated names.
 
 The \run predicate has four cases, depicted as inference rules in \cref{fig:run-rules}.
-(\stopt) If \pathend\ $t$ is a success, then the substitution
+(\stopt). If \pathend\ $t$ is a success, then the substitution
 $\sigma'$ is extracted from $t$ (starting from $\sigma$) and the input tree is
 cleaned of its successful path. (\stept) If \pathend\ $t$ is an atom,
 then \step is invoked to evaluate $t$, and \run is called recursively on the
@@ -1211,17 +1218,17 @@ predicates.
 % \mvspace{}
 % \deftypes[type:nur]{tex_code/nur_type.tex}
 % \mvspace{}
-$$\runS : \vec{\FV} \times \cI{alts} \to (\Sigma \times \cI{alts}) + \mnone$$
+$$\runS : \vec{\FV} \to \cI{alts} \to \mathrm{option}\ (\Sigma * \cI{alts})$$
 
 \noindent
 The \nur predicates relates a set of variables and a
-list of alternatives to optional result. \mnone stands for failure,
-i.e., no solution, whereas $\msome(\sigma, a)$ represent success with $\sigma$ begin the solution and $a$ as the list of non-yet-explored
+list of alternatives to optional result. None stands for failure,
+i.e., no solution, whereas Some $(\sigma, a)$ represent success with $\sigma$ begin the solution and $a$ as the list of non-yet-explored
 alternatives.
 
 The rule system for \nur is given in \cref{fig:nur-rules} and is made by $4$
 cases. We distinguish two main cases. If we run out of alternatives
-we fail: (\fails) stops the execution and return $\mnone$.
+we fail: (\fails) stops the execution and return None.
 If the list of alternatives is $(\sigma_0, h) :: a$, then
 we look at the list of goals $h$ (under the substitution $\sigma_0$). If $h$ is empty, (\stops) stops the execution with a success $\sigma_0$
 leaving $a$ as the unexplored alternatives.

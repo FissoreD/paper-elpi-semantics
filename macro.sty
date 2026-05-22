@@ -76,15 +76,15 @@
 % \newcommand{\deadC}{\codenames{Dead}}
 \newcommand{\taC}{\codenames{Todo}}
 
-\newcommand{\stopt}{\rulelabel{StopT}}
-\newcommand{\stept}{\rulelabel{StepT}}
-\newcommand{\backt}{\rulelabel{BackT}}
-\newcommand{\failt}{\rulelabel{FailT}}
+\newcommand{\stopt}{Stop\TREE}
+\newcommand{\stept}{Step\TREE}
+\newcommand{\backt}{Back\TREE}
+\newcommand{\failt}{Fail\TREE}
 
-\newcommand{\stops}{\rulelabel{StopS}}
-\newcommand{\cuts}{\rulelabel{CutS}}
-\newcommand{\calls}{\rulelabel{CallS}}
-\newcommand{\fails}{\rulelabel{FailS}}
+\newcommand{\stops}{Stop\STACK}
+\newcommand{\cuts} {Cut\STACK}
+\newcommand{\calls}{Call\STACK}
+\newcommand{\fails}{Fail\STACK}
 
 %  ______ _    _ _   _  _____ _______ _____ ____  _   _  _____ 
 % |  ____| |  | | \ | |/ ____|__   __|_   _/ __ \| \ | |/ ____|
@@ -114,8 +114,8 @@
 \newcommand{\ttl}{\codenames{t2l}}
 \newcommand{\ltt}{\codenames{l2t}}
 \newcommand{\vast}{\codenames{valid\_tree}}
-\newcommand{\run}{\codenames{runT}}
-\newcommand{\nur}{\codenames{runS}}
+\newcommand{\run}{run\TREE}
+\newcommand{\nur}{run\STACK}
 \newcommand{\vt}{\codenames{vt}} % valid_tree
 \newcommand{\step}{\codenames{step}}
 \newcommand{\na}{\codenames{prune}}
@@ -135,6 +135,8 @@
 \newcommand{\PROG}[1][]{\ensuremath{\mathbb{P}#1}\xspace}
 \newcommand{\ATOM}[1][]{\ensuremath{\mathbb{A}#1}\xspace}
 \newcommand{\TERM}[1][]{\ensuremath{\mathbb{T}#1}\xspace}
+\newcommand{\TREE}[1][]{\ensuremath{\mathcal{T}#1}\xspace}
+\newcommand{\STACK}[1][]{\ensuremath{\mathcal{S}#1}\xspace}
 
 \newcommand{\runS}{\codenames{runS}}
 \newcommand{\runT}{\codenames{runT}}
