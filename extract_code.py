@@ -240,31 +240,68 @@ class theorem(C):
             args = []
         return ls[0].lower(), name, args
 
+    def clean_line(self, l:str):
+        l = l.strip()
+        l = l.replace('_', '\_')
+        l = l.replace("#", "\#")
+        l = l.replace("forall", "\\forall")
+        l = l.replace("exists", "\\exists")
+        l = l.replace("∧", "\land")
+        l = l.replace("/\\", "\land")
+        l = l.replace("\\/", "\lor")
+        l = l.replace("∨", "\lor")
+        l = l.replace("<->", "\leftrightarrow")
+        l = l.replace("->", "\\to")
+        l = l.replace("`|`", "\cup")
+        l = l.replace("`<=`", "\\subseteq")
+        l = l.replace("domf", "dom")
+        l = l.replace("fun", "\\lambda")
+        l = l.replace("=>", "\\Rightarrow")
+        if l.endswith("."): l = l[:-1]
+        def clean_esc(l):
+            m = l.group(1)
+            return  " \\phantom{!}_{\!\!\!\!" + m.replace("~", "").replace("$","") + "}"
+        l = re.sub(r' -sub\(([^)]*)\)', lambda x: (clean_esc(x)), l)
+        l = l.replace("(", " ( ")
+        l = l.replace(")", " ) ")
+        l = l.replace(",", " ,")
+
+        lst = l.split()
+        l = ""
+        def infix(l: str): return l in ["\\to", "=", '\\leftrightarrow',"\\Rightarrow", "\\lor", "\\land"]
+        def befor(l: str): return l in ")," or infix(l)
+        def after(l: str): return l in "(" or infix(l)
+        def stand(l: str): 
+            l = l.replace("'", "")
+            return l
+        for i,e in enumerate(lst):
+            if e[-1] in "0123456789":
+                e = e[:-1] + "_" + e[-1]
+            elif len(stand(e)) > 1 and e[0] != "\\":
+                e = f"\mathrm{{{e}}}"
+            l += e +  (" " if after(e) or (i+1 < len(lst) and befor(lst[i+1])) or (i + 1 == len(lst)) else "\\ ")
+        return l
+
     def print_tex(self,lines, fout, raw = False):
         if lines == []: return
         cnt = ""
         (env,name,args), tl = self.th_name(lines[0]), lines[1:]
         n1 = name.replace('_', '\_')
         n2 = name.replace('_', '')
-        args = "" if len(args) == 0 else (f" \\{self.MINT_INLINE}{{" + self.clean_line(" ".join(args)) + "}")
-        cnt += f"\\begin{{{env}}}[{n1}{args}]\label{{th:{n2}}}"
-        # if len(tl) == 1:
+        args = "" if len(args) == 0 else (f" $" + self.clean_line(" ".join(args)) + "$")
+        cnt += f"\\begin{{{env}}}[{n1}{args}]\label{{th:{n2}}}%\n"
+        # if len(tl) > 0:
         #     txt = self.clean_line(tl[0].strip())
         #     cnt += f"\\{self.MINT_INLINE}{{{txt}}}"
-        # else:
+        #     tl = tl[1:]
+        # if len(tl) != 0:
         #     cnt += f"~\n\\begin{{{self.MINT_TAG}}}\n"
         #     for l in tl:
         #         cnt += self.clean_line(self.clean_comment(l))
         #     cnt += f"\\end{{{self.MINT_TAG}}}\n"
-        if len(tl) > 0:
-            txt = self.clean_line(tl[0].strip())
-            cnt += f"\\{self.MINT_INLINE}{{{txt}}}"
-            tl = tl[1:]
-        if len(tl) != 0:
-            cnt += f"~\n\\begin{{{self.MINT_TAG}}}\n"
-            for l in tl:
-                cnt += self.clean_line(self.clean_comment(l))
-            cnt += f"\\end{{{self.MINT_TAG}}}\n"
+        for i,e in enumerate(tl):
+            end = "" if i == len(tl)-1 else "\\\\"
+            cnt += f"\t${self.clean_line(e)}${end}%\n"
         cnt += f"\end{{{env}}}"
         
         super().write(fout,cnt)
