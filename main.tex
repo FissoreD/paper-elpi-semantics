@@ -217,31 +217,31 @@ Our mechanization is axiom-free and is available at \url{https://github.com/Fiss
 
 \section{Preliminaries: syntax and informal semantics of cut}
 \label{sec:preliminaries}
-\begin{figure}[b]
-\begin{coqcode}
-Inductive Tm := Symb of S | Pred of P | Var of V | App of Tm & Tm.
-Inductive Atom := cut | call of Tm.
-Record R := mkR { head : Tm; premises : list Atom }.
-Record ~\ensuremath{\mathbb{P}}~ := { rules : seq R; sig : sigT }.
-Definition ~\ensuremath{\Sigma}~ := {fmap V -> Tm}.
-\end{coqcode}
-\vspace{-1.4em}
-  % \caption{Syntax of \elpiP programs}
-  % \end{minipage}
-  % \begin{minipage}{.45\textwidth}    
-  % \input{tex_code/atom_type.tex}\\
-  % \input{tex_code/R_type.tex}\\
-  % \input{tex_code/program_type.tex}\\
-  % \input{tex_code/sigma_type.tex}
-\caption{Definition of term, rule, program and substitution}
-  \label{type:atom}
-  \label{type:r}
-  \label{type:prog}
-  \label{type:sigma}
-  \label{fig:basex}
-% \end{minipage}
+% \begin{figure}[b]
+% \begin{coqcode}
+% Inductive Tm := Symb of S | Pred of P | Var of V | App of Tm & Tm.
+% Inductive Atom := cut | call of Tm.
+% Record R := mkR { head : Tm; premises : list Atom }.
+% Record ~\ensuremath{\mathbb{P}}~ := { rules : seq R; sig : sigT }.
+% Definition ~\ensuremath{\Sigma}~ := {fmap V -> Tm}.
+% \end{coqcode}
+% \vspace{-1.4em}
+%   % \caption{Syntax of \elpiP programs}
+%   % \end{minipage}
+%   % \begin{minipage}{.45\textwidth}    
+%   % \input{tex_code/atom_type.tex}\\
+%   % \input{tex_code/R_type.tex}\\
+%   % \input{tex_code/program_type.tex}\\
+%   % \input{tex_code/sigma_type.tex}
+% \caption{Definition of term, rule, program and substitution}
+%   \label{type:atom}
+%   \label{type:r}
+%   \label{type:prog}
+%   \label{type:sigma}
+%   \label{fig:basex}
+% % \end{minipage}
 
-\end{figure}
+% \end{figure}
 
 In the entire paper we use \Cref{fig:progx} as our running example, and
 we start by describing how we represent a program like that one.
@@ -249,15 +249,23 @@ In the concrete syntax, variables are written with capital letters, and
 predicate application follows the $\lambda$-calculus style (no
 parentheses).
 
-The description of a program is given by the record $\mathbb{P}$ (in \cref{type:atom}) and
-is shared by both semantics. A program consists of a list of
-rules \coqIn{R} together with a signature environment \coqIn{sig}.
+The description of a program is given by a a pair $(\mathrm{list}\ \mathbb{R} * \mathrm{sigT})$
+and is shared by both semantics. A program consists of a list of
+rules $\mathbb{R}$ together with a signature environment $\mathrm{sig}$.
 We delay the discussion of signatures to \cref{sec:determinacy} where we
 describe the static analysis that concerns them.
 
-A rule consists of a head term \coqIn{Tm} and a list of premises. Each
+A rule is a pair $(\cI{Tm} * \mathrm{list}\ \cI{Atom})$, where
+the first element represents its head (a term) and a list of premises. Each
 premise is an \coqIn{Atom}, i.e. either the cut operator or a predicate
 call. Terms \coqIn{Tm} include predicate symbols, data symbols, variables, and term application.
+The concrete definition of these two algebraic types is given below:
+
+\begin{coqcode}  
+Inductive Tm := Symb of S | Pred of P | Var of V | App of Tm & Tm.
+Inductive Atom := cut | call of Tm.
+\end{coqcode}
+
 The syntax tree allows variables to be applied and predicates to be mixed with data.
 These higher-order features play no role in the current paper that focuses on
 first order logic programming, but allows future extensions to full $\lambda$Prolog
@@ -272,13 +280,11 @@ while the composition of two substitutions $\sigma_1$ and $\sigma_2$ with
 disjoint supports as $\sigma_1 + \sigma_2$. %\marginpar{usiamo + ?}
  
 The backchaining operation applies all rules to a query term; it is
-central to both semantics.
+central to both semantics it has the following type:
 %\input{tex_code/bc_type.tex}
+%
+$$\mathrm{backchain} : (\mathbb{P} * \FV * \cI{Tm} * \Sigma) \to (\FV * \mathrm{list}\ (\Sigma * \mathrm{list}\ \cI{Atom})) $$
 
-\begin{center}\cI{Definition backchain : ~\ensuremath{\mathbb{P}}~ ~\ensuremath{\to}~ ~\ensuremath{\FV}~ ~\ensuremath{\to}~ Tm ~\ensuremath{\to}~ ~\ensuremath{\Sigma}~ ~\ensuremath{\to}~ ~\ensuremath{\FV}~ * list (~\ensuremath{\Sigma}~ * list Atom) }
-\end{center}
-% \cI{Definition backchain : ~\ensuremath{\mathbb{P}}~ ~\ensuremath{\to}~ ~\ensuremath{\FV}~ ~\ensuremath{\to}~ Tm ~\ensuremath{\to}~ ~\ensuremath{\Sigma}~ ~\ensuremath{\to}~ ~\ensuremath{\FV}~ * list (~\ensuremath{\Sigma}~ * list Atom) ~\ensuremath{\coloneq}~ ...}
-%\noindent
 Since a rule may be applied multiple times, its variables must be
 freshened before each application. Accordingly, the backchain function
 takes a program, the set of variable names used so far (\FV), a
@@ -295,7 +301,7 @@ under $\sigma$, then $\sigma'~t_1 = \sigma'~t_2$, where
 $\sigma~t$ denotes substitution application (see \cref{fig:deref}) and $=$ denotes 
 syntactic equality.
 
-\begin{figure}
+\begin{figure}[t]
   \begin{center}    
   \begin{subfigure}{0.38\textwidth}
     \begin{prooftree}
@@ -634,14 +640,13 @@ The node to be explored in a tree is retrieved thanks to \pathend (in~\cref{fig:
 When this node is \okC we say the entire tree is a \emph{success}, when it
 is \koC we say the tree \emph{failed}, otherwise the tree is \emph{incomplete}.
 In \cref{tree-ex} we mark with a black arrow the result of \pathend.
+The type of these two functions is given below.
+%
+$$\mathrm{step} : (\mathbb{P} * \FV * \Sigma * \cI{tree}) \to (\FV * \cI{tag} * \cI{tree})$$
+$$\mathrm{prune} : (\mathbb{B} * \cI{tree}) \to \cI{tree} + \mnone$$
 
-\begin{coqcode}
-Inductive tag ~$\coloneq$~ Expanded | CutBrothers | Failed | Success.
-Definition step : ~$\mathbb{P}$~ ~$\to$~ ~$\FV$~ ~$\to$~ ~$\Sigma$~ ~$\to$~ tree ~$\to$~ (~$\FV$~ * tag * tree)
-Definition prune : ~$\mathbb{B}$~ ~$\to$~ tree ~$\to$~ option tree
-Inductive runT : ~$\mathbb{P}$~ ~$\to$~  ~$\FV$~ ~$\to$~ ~$\Sigma$~ ~$\to$~ tree ~$\to$~ 
-                    option (~$\Sigma$~ * option tree) ~$\to$~ ~$\mathbb{B}$~ ~$\to$~ ~$\FV$~ ~$\to$~ Prop
-\end{coqcode}
+The \cI{step} routine, among its outputs, also returns a \cI{tag}. We delay
+the definition in the very following section. $\cI{test}$
 
 Since all functions must terminate in Rocq, we define the transitive closure
 of \step and \na as the inductive relation \run.
@@ -759,7 +764,7 @@ the next alternative and continues from there, if one exists.
 
 The \step procedure takes as input a program, a set of variables, a
 substitution, and a tree, and returns an updated set of variables, a
-\steptag, and an updated tree.  
+\steptag, and an updated tree.
 
 The set of variables is assumed to contain all variables occurring in the
 tree. It is passed to backchain so that rules can be refreshed correctly.
@@ -767,7 +772,13 @@ tree. It is passed to backchain so that rules can be refreshed correctly.
 % to \emph{backchain} returns a list of atoms whose variables are disjoint from
 % the variables of the current working tree.\marginpar{not true in figure:fix + also fix in \cref{sec:cut-op}}
 
-The \steptag indicates which kind of step was
+The \steptag is implemented as follows:
+
+\begin{coqcode}
+Inductive tag := Expanded | CutBrothers | Failed | Success.
+\end{coqcode}
+
+It indicates which kind of step was
 performed.  \cI{Failure} and \cI{Success} are returned for trees that satisfy,
 respectively, the \failed and \success tests. 
 \cI{CutBrothers}
@@ -778,8 +789,17 @@ accounts for the interpretation of predicate calls and non-superficial cuts.
 The \step procedure evaluates atoms. In particular, it leaves the tree
 unchanged when the tree is \emph{success} or \emph{failed}.
 
-\input{tex_code/success_step.tex}
-\input{tex_code/failed_step.tex}
+\begin{lemma}[succ\_step\_iff]\label{th:succstepiff}
+  $\forall \prog\ v\ \sigma\ t, \cI{success}\ t  %
+    \leftrightarrow\ \cI{step} (\prog, v, \sigma, t) = (v, \cI{Success}, t)$
+\end{lemma}
+
+\begin{lemma}[fail\_step\_iff]\label{th:failstepiff}
+    $\forall \prog\ v\ \sigma\ t, \cI{failed}\ t  %
+    \leftrightarrow\ \cI{step} (\prog, v, \sigma, t) = (v, \cI{Failed}, t)$
+\end{lemma}
+% \input{tex_code/success_step.tex}
+% \input{tex_code/failed_step.tex}
 
 The \step procedure expands \coqIn{Todo} nodes by calling \coqIn{backchain}, which returns a list
 $l$ of alternatives. If $l$ is empty, then the current call atom is replaced by
@@ -922,9 +942,23 @@ Some interesting properties of \na are shown below; they illustrate how \na
 complements \step with respect to failed, successful, and incomplete trees.
 
 % \mvspace{}
-\input{tex_code/incomplete_prune_id.tex}
-\input{tex_code/na_failed.tex}
-\input{tex_code/naNfail.tex}
+\begin{lemma}[incomplete\_prune\_id]\label{th:incompletepruneid}
+  $\forall b\ t, \cI{incomplete}\ t \to \cI{prune}\ b\ t = t$
+  % \cI{~\ensuremath{\forall}~ ~\ensuremath{b}~ ~\ensuremath{t}~, incomplete ~\ensuremath{t}~ ~\ensuremath{\to}~ prune ~\ensuremath{b}~ ~\ensuremath{t}~ = ~\msome~~\ensuremath{t}~.}
+\end{lemma}
+
+\begin{lemma}[prune\_Some]\label{th:pruneSome}
+  $\forall b\ t\ t', \cI{prune}\ b\ t = t \to \cI{failed}\ t' = \bot$
+\end{lemma}
+
+\begin{lemma}[prune\_None]\label{th:pruneNone}
+  $\forall t\ t', \cI{prune}\ \bot\ t = \bot \to \cI{failed}\ t' = \top$
+\end{lemma}
+
+
+% \input{tex_code/incomplete_prune_id.tex}
+% \input{tex_code/na_failed.tex}
+% \input{tex_code/naNfail.tex}
 % \mvspace{}
 
 
@@ -1513,7 +1547,11 @@ we hide it behind existentials.
 
 % The definition we use is the following:
 
-\input{tex_code/runt1.tex}
+\begin{definition}\label{th:runT'}
+  $\cI{runT'}\ \prog\ v\ \sigma\ t\ r := \exists\ b\ v',\ \cI{runT}\ \prog\ v\ \sigma\ t\ r\ b\ v'$
+\end{definition}
+
+% \input{tex_code/runt1.tex}
 
 From \cref{tree-ex,ex-elpi}, we observe that, upon backtracking, \run may perform
 more steps than \nur before returning a solution or a failure.

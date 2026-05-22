@@ -135,11 +135,12 @@
 % | |  | |_| |_| |\  |  | |  | |____| |__| |
 % |_|  |_|_____|_| \_|  |_|  |______|_____/ 
 
+\newcommand{\codehelper}[2]{\text{\normalfont{\mintinline[fontsize=\small,escapeinside=~~]{#1}{#2}}}}
 
-\newcommand{\elpiIn}[1]{\text{\mintinline[fontsize=\small,escapeinside=~~]{elpi}{#1}}}
-\newcommand{\coqIn}[1]{\text{\mintinline[fontsize=\small,escapeinside=~~]{coq}{#1}}}
-\newcommand{\eI}[1]{\text{\elpiIn{#1}}}
-\newcommand{\cI}[1]{\text{\coqIn{#1}}}
+\newcommand{\elpiIn}[1]{\codehelper{elpi}{#1}}
+\newcommand{\coqIn}[1]{\codehelper{coq}{#1}}
+\newcommand{\eI}[1]{\elpiIn{#1}}
+\newcommand{\cI}[1]{\coqIn{#1}}
 
 \newenvironment{coqcode}{%
   % \vspace{0.2em}%
