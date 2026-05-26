@@ -1671,12 +1671,18 @@ is not acyclic, while the equivalet $\sigma' \coloneq \{ X \mapsto f~a\}$ is.
 The algorithm by Martelli and Montanari generates substitutions that
 are acyclic in this sense.
 
-\begin{lemma}[unif\_correct]\label{mont-correct}
-  $\forall t_1\ t_2\ \sigma\ \sigma',\ \mathrm{acyclic}\ \sigma \to \mathrm{unify}\ t_1\ t_2\ \sigma = \sigma' \to \sigma'\ t_1 = \sigma'\ t_2$
+% \input{tex_code/unif_correct.tex}
+
+\begin{lemma}[unify\_correct]\label{th:unifycorrect}%
+\begin{multline*}
+	\forall\ t_1\ t_2\ s\ s' ,\ \mathrm{acyclic\_sigma}\ s \to \mathrm{unify}\ t_1\ t_2\ s = \mathrm{Some}\ s' \to s'\ t_1 = s'\ t_2 
+\end{multline*}
 \end{lemma}
 
-\begin{lemma}[unif\_complete] \label{mont-completeness}
-  $$\forall t_1\ t_2\ \sigma, \mathrm{acyclic}\ \sigma \to (\exists \sigma', \mathrm{acyclic}\ \sigma'\ \land\ \sigma'\ (\sigma\ t_1) = \sigma'\ (\sigma\ t_2)) \to \exists \sigma'', \mathrm{unify}\ t_1\ t_2\ \sigma =~\sigma''$$
+% \input{tex_code/unify_complete.tex}
+\begin{lemma}[unify\_complete]\label{th:unifycomplete} $\forall\ t_1\ t_2\ s ,\ \mathrm{acyclic\_sigma}\ s \to$
+% \begin{multline*}
+$$( \exists\ s' ,\ \mathrm{acyclic\_sigma}\ s' \land s'\ ( s\ t_1 ) = s'\ ( s\ t_2 ) ) \to \exists\ s'' ,\ \mathrm{unify}\ t_1\ t_2\ s = \mathrm{Some}\ s''$$
 \end{lemma}
 
 The \elpiP language adopts a
@@ -1699,7 +1705,7 @@ variables that cannot be assigned. The function \matching has the following prop
 \end{lemma}
 
 In particular, we can see how the returned substitution $\sigma'$, differently
-from \cref{mont-correct}, does not affect variables in $\sigma\ t_2$.
+from \cref{th:unifycorrect}, does not affect variables in $\sigma\ t_2$.
 
 \marginpar{The statement abouve does not say that $\sigma'\ t_2 = t_2$. Did you prove it?}
 
@@ -1738,7 +1744,7 @@ by the following lemma.
   By \cref{um}, we now that the matching of $h_1$ (resp. $h_2$) and $q$ gives a
   substitution $\sigma_1$ (resp. $\sigma_2$) where the variables in $q$ are not
   assigned, i.e. its domain only contains variables in $h_1$ (resp $h_2$). Using
-  \cref{mont-completeness}, on the conclusion, we need to prove that it exists a
+  \cref{th:unifycomplete}, on the conclusion, we need to prove that it exists a
   substitution $\sigma'$ such that $\sigma'\ h_1 = \sigma'\ h_2$. This
   substitution is the composition of $\sigma_1$ and $\sigma_2$, that is
   $\sigma' = \lambda x. \sigma_1 (\sigma_2\ x)$. Since $h_1$ and
@@ -1756,7 +1762,7 @@ performed at runtime during backchaining does not affect unification.
 In particular, a refreshing renaming $f$ for a term $t$ is a function from variables
 to variables that: (i) $f$ is defined on all the variables in $t$, i.e. all variables get renamed; (ii) $f$ is
 injective, i.e. does not confuse variables. Refreshing produces
-therefore $\alpha$-equivalent terms.
+therefore $\alpha$-equivalent terms.\marginpar{spiegare disjoint in hyp of lemma 17}
 
 % Below, we define
 % \emph{refresh\_for} to test the validity of a refreshing renaming.

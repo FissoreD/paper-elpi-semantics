@@ -305,9 +305,9 @@ class theorem(C):
         # if len(l) == 1:
         #     cnt += f"\t${l[0]}$"
         # else:
-        cnt += f"\\begin{{multline*}}"
-        cnt += "\\\\\n".join(l)
-        cnt += f"\\end{{multline*}}"
+        cnt += f"\\begin{{multline*}}\n\t"
+        cnt += "\\\\\n\t".join(l)
+        cnt += f"\n\\end{{multline*}}"
         # for i,e in enumerate(tl):
         #     end = "" if i == len(tl)-1 else "\\\\"
         #     cnt += f"\t${self.clean_line(e)}${end}%\n"
