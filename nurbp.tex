@@ -3,30 +3,30 @@
   \begin{prooftree}
     \AxiomC{}
     \RightLabel{\rulelabel{\stops}}
-    \UnaryInfC{$\runS\ \prog\ v\ ((\sigma, \mnil) :: a) \arr \msome (\sigma, a)$}
+    \UnaryInfC{$\mathrm{\runS}\ \prog\ v\ ((\sigma, \mnil) :: a) \arr \mathrm{Some}\ (\sigma, a)$}
   \end{prooftree}
 \end{minipage}
 \begin{minipage}{0.5\textwidth}
 \begin{prooftree}
-  \AxiomC{$\runS\ \prog\ v ((\sigma, g) :: a) \arr r$}
+  \AxiomC{$\mathrm{\runS}\ \prog\ v ((\sigma, g) :: a) \arr r$}
   \RightLabel{\rulelabel{\cuts}}
-  \UnaryInfC{$\runS\ \prog\ v ((\sigma, (\cI{cut}, a) :: g) :: \_) \arr r$}
+  \UnaryInfC{$\mathrm{\runS}\ \prog\ v ((\sigma, (\cI{cut}, a) :: g) :: \_) \arr r$}
 \end{prooftree}
 \end{minipage}
 \begin{minipage}{1\textwidth}
 \vspace{10pt}
 \begin{minipage}{0.75\textwidth}
 \begin{prooftree}
-  \AxiomC{ $\backchainS(\prog, v, t, \sigma, a, g) = (v_1, a') \qquad \runS\ \prog\ v_1\ (a' \mappend a) \arr r$ }
+  \AxiomC{ $\backchainS(\prog, v, t, \sigma, a, g) = (v_1, a') \qquad \mathrm{\runS}\ \prog\ v_1\ (a' \mappend a) \arr r$ }
   \RightLabel{\rulelabel{\calls}}
-  \UnaryInfC{$\runS\ \prog\ v\ ((\sigma, (\cI{call}\ t, \_) :: g) :: a) \arr r$}
+  \UnaryInfC{$\mathrm{\runS}\ \prog\ v\ ((\sigma, (\cI{call}\ t, \_) :: g) :: a) \arr r$}
 \end{prooftree}
 \end{minipage}
 \begin{minipage}{0.22\textwidth}
 \begin{prooftree}
   \AxiomC{\phantom{A}}
   \RightLabel{\rulelabel{\fails}}
-  \UnaryInfC{$\runS \prog\ \_\ \mnil \arr \square$}
+  \UnaryInfC{$\mathrm{\runS} \prog\ \_\ \mnil \arr \mathrm{None}$}
 \end{prooftree}
 \end{minipage}
 \end{minipage}

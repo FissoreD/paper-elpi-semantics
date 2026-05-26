@@ -302,39 +302,13 @@ $\sigma~t$ denotes substitution application (see \cref{fig:deref}) and $=$ denot
 syntactic equality.
 
 \begin{figure}[t]
-  \begin{center}    
-  \begin{subfigure}{0.38\textwidth}
-    \begin{prooftree}
-      \AxiomC{}
-      \RightLabel{\rulelabel{\phantom{i}}}
-      \UnaryInfC{$\sigma\ (\mathrm{Symb}\ n) = \mathrm{Symb}\ n$}
-    \end{prooftree}
-  \end{subfigure}
-  \begin{subfigure}{0.38\textwidth}    
-    \begin{prooftree}
-      \AxiomC{}
-      \RightLabel{\rulelabel{\phantom{i}}}
-      \UnaryInfC{$\sigma\ (\mathrm{Pred}\ n) = \mathrm{Pred}\ n$}
-    \end{prooftree}
-  \end{subfigure}
-  \end{center}
-
-  \begin{center}    
-  \begin{subfigure}{0.45\textwidth}    
-    \begin{prooftree}
-      \AxiomC{$\mathrm{if}\ n \in \sigma\ \mathrm{then}\ r = \sigma[n]\ \mathrm{else}\ r = v$}
-      \RightLabel{\rulelabel{\phantom{i}}}
-      \UnaryInfC{$\sigma\ (\mathrm{Var}\ v) = r$}
-    \end{prooftree}
-  \end{subfigure}
-  \begin{subfigure}{0.5\textwidth}    
-    \begin{prooftree}
-      \AxiomC{$\sigma\ t_1 = t_1' \quad \sigma\ t_2 = t_2'$}
-      \RightLabel{\rulelabel{\phantom{i}}}
-      \UnaryInfC{$\sigma\ (\mathrm{App}\ t_1\ t_2) = \mathrm{App}\ t_1'\ t_2'$}
-    \end{prooftree}
-  \end{subfigure}
-  \end{center}
+  \begin{align*}
+    \sigma\ (\mathrm{Symb}\ n) &= \mathrm{Symb}\ n \\
+    \sigma\ (\mathrm{Pred}\ n) &= \mathrm{Pred}\ n \\
+    \sigma\ (\mathrm{Var}\ n) &= t\quad \mathrm{if}\ (n,t) \in \sigma\\
+    \sigma\ (\mathrm{Var}\ n) &= \mathrm{Var}\ n\quad \mathrm{otherwise}\\
+    \sigma\ (\mathrm{App}\ t_1\ t_2) &= \mathrm{App}\ (\sigma\ t_1)\ (\sigma\ t_2)
+  \end{align*}
   \caption{Rules for substitution application}
   \label{fig:deref}
 \end{figure}
@@ -564,13 +538,16 @@ An And-Or tree is a stratified, variable-width tree, defined as follows:
 %
 $$\TREE := \mathrm{KO} \mid \mathrm{OK} \mid \mathrm{Todo}\ \ATOM \mid \mathrm{Or}\ (\mathrm{option}\ \TREE)\ \Sigma\ \TREE \mid \mathrm{And}\ \TREE\ (\mathrm{list}\ \ATOM)\ \TREE$$
 
-It consists of two kinds \marginpar{non vero, nel tipo possiamo scrivere tutto. Serve valid tree}
+It consists of two kinds
 of layers that alternate: a disjunctive layer is followed by a conjunctive
 layer and vice versa. At the root (a query), the tree records a list of
 alternatives (an Or-layer); for each alternative, it records a list of
 subqueries to be solved (an And-layer). Intuitively, solving a query requires
 solving one alternative in the Or-layer, but all subqueries in the
-corresponding And-layer.
+corresponding And-layer. These invariants about the \TREE data type
+are precisely debscribed in \cref{sec:validtree} where we introduce the
+\vast predicate.
+
 
 The tree is built incrementally. The \emph{Todo} node
 represents an unexplored branch (an atom). When the atom is a
@@ -990,14 +967,18 @@ The boolean $b$ records whether a
 superficial cut was evaluated during execution.
 % , and the updated variable set tracks freshly generated names.
 
-The \run predicate has four cases, depicted as inference rules in \cref{fig:run-rules}.
-(\stopt). If \pathend\ $t$ is a success, then the substitution
+The \run predicate has four cases, depicted as inference rules in \cref{fig:run-rules},
+where we separate the first four arguments and the last one with a squiggle arrow,
+evocative of the fact that the given set of rules is deterministic (\cref{th:runTdet}).
+
+
+Rule \stopt says that if \pathend\ $t$ is a success, then the substitution
 $\sigma'$ is extracted from $t$ (starting from $\sigma$) and the input tree is
-cleaned of its successful path. (\stept) If \pathend\ $t$ is an atom,
+cleaned of its successful path. Rule \stept applies when \pathend\ $t$ is an atom,
 then \step is invoked to evaluate $t$, and \run is called recursively on the
-updated tree. (\backt) If \pathend\ $t$ is a failure, then \na is
-called to clear the failed path; if the resulting cleaned tree exists, \run is
-called recursively on it. Finally, (\failt) accounts for trees with no
+updated tree. When \pathend\ $t$ is a failure, rule \backt calls \na
+to clear the failed path; if the resulting cleaned tree exists, \run is
+called recursively on it. Finally, rule \failt accounts for trees with no
 solutions.
 
 
@@ -1033,7 +1014,6 @@ solutions.
 % \subsubsection{Properties of \run}
 \label{sec:run-prop}
 
-The set of rules defining \run is deterministic.\marginpar{dire che: deterministic = \arr in fig5}
 
 \input{tex_code/runT_det.tex}
 
@@ -1366,46 +1346,40 @@ may have been explored, and consequently must be a valid tree.
 
 
 \begin{figure}  
-
-  \begin{minipage}{0.50\textwidth}
     \input{tex_code/valid_tree.tex}
-    % \caption{Valid tree}
-  \end{minipage}
-  \begin{minipage}{.40\textwidth}
-    \begin{coqcode}
-      Fixpoint t2l ~$t$~ ~$\sigma$~ (cp: alts) : alts ~$\coloneq$~
-      match ~$t$~ with
-      | OK     ~$\Rightarrow$~ [(~$\sigma$~, ~\mnil\unskip~)]
-      | KO     ~$\Rightarrow$~ ~\mnil~
-      | TA a   ~$\Rightarrow$~ [(~$\sigma$~, [(a, ~\mnil\unskip~)])]
-      ...
-    \end{coqcode}
-    % \caption{Tree to list}
-  \end{minipage}
-  \caption{Valid tree and Tree to stack
-  \label{fig:ttl}
-  \label{fig:vt}
-}
-% \caption{Valid tree}
+    \caption{Valid tree \label{fig:vt} }
 \end{figure}
 
+% \begin{figure}  
+%     \begin{coqcode}
+%       Fixpoint t2l ~$t$~ ~$\sigma$~ (cp: alts) : alts ~$\coloneq$~
+%       match ~$t$~ with
+%       | OK     ~$\Rightarrow$~ [(~$\sigma$~, ~\mnil\unskip~)]
+%       | KO     ~$\Rightarrow$~ ~\mnil~
+%       | TA a   ~$\Rightarrow$~ [(~$\sigma$~, [(a, ~\mnil\unskip~)])]
+%       ...
+%     \end{coqcode}
+%   \caption{Tree to stack \label{fig:ttl} }
+% \end{figure}
+% \marginpar{TODO: put all code}
 \subsection{From trees to stacks}\label{sec:t2l}
 
-\marginpar{t2l should be t2s or tree\_to\_stack}
+% \marginpar{t2l should be t2s or tree\_to\_stack}
 
 The \ttl recursive function translates a tree to a stack.
-For space constraints %\marginpar{DAVVERO?}
-\cref{fig:ttl} only gives the base cases, while we
-describe the recursive cases in the following text.
+
+$$
+\mathrm{\ttl} : \TREE \to \Sigma \to \mathrm{alts} \to \mathrm{alts}
+$$
+
 % we give junst the implementation of the
 % base cases, the full implementation is available at \href{https://github.com/FissoreD/elpi-formalization/blob/ho-check-ffun/theories/t2l.v}{\emph{this}} link.
 
 The function \ttl takes as input the tree $t_0$, a substitution
-$\sigma_0$, and a list of choice points $cp$. These choice points
+$\sigma$ for the input tree, and an auxiliary list of choice points $cp$.
+These choice points
 represent alternatives that appear at the same level of the current
-tree, such as, for example, the right siblings of an \orC{} node. The
-substitution is used to determine under which substitution the
-subtree being computed lives.
+tree, such as, for example, the right siblings of an \orC{} node. 
 
 The \okC node represents one successful alternative; therefore it is translated
 into a singleton list whose only element has an empty list of goals. The \koC
@@ -1707,7 +1681,12 @@ variables that cannot be assigned. The function \matching has the following prop
 In particular, we can see how the returned substitution $\sigma'$, differently
 from \cref{th:unifycorrect}, does not affect variables in $\sigma\ t_2$.
 
-\marginpar{The statement abouve does not say that $\sigma'\ t_2 = t_2$. Did you prove it?}
+\begin{corollary}[matching\_same]\label{umm}\label{th:matchingsame}
+  $$\forall t\ q\ \sigma\ \sigma', \mathrm{acyclic}\ \sigma \to \mathrm{matching}\ t\ q\ \sigma = \sigma' \to \sigma'\ q = \sigma\ q$$
+\end{corollary}
+
+
+% \marginpar{The statement abouve does not say that $\sigma'\ t_2 = t_2$. Did you prove it?}
 
 % If the variables (\cI{vars}) of two terms are disjoint ($\#$) and the variables in the support of $\sigma$ are
 % disjoint from the variables in $t_1$, then, if matching succeeds, only the
@@ -1762,7 +1741,8 @@ performed at runtime during backchaining does not affect unification.
 In particular, a refreshing renaming $f$ for a term $t$ is a function from variables
 to variables that: (i) $f$ is defined on all the variables in $t$, i.e. all variables get renamed; (ii) $f$ is
 injective, i.e. does not confuse variables. Refreshing produces
-therefore $\alpha$-equivalent terms.\marginpar{spiegare disjoint in hyp of lemma 17}
+therefore $\alpha$-equivalent terms.
+%\marginpar{spiegare disjoint in hyp of lemma 17}
 
 % Below, we define
 % \emph{refresh\_for} to test the validity of a refreshing renaming.
@@ -1779,14 +1759,16 @@ therefore $\alpha$-equivalent terms.\marginpar{spiegare disjoint in hyp of lemma
 
 % The refreshing performed at runtime ensures that 
 
-\begin{definition}[alpha\_equiv]
-  $\lambda t_1\ t_2. \exists (r:\mathrm{renaming}), t_1 = \mathrm{rename}\ r\ t_2$
+\begin{definition}[$=_\alpha$]
+  $\lambda t_1\ t_2. \exists (r:\mathrm{renaming\_for}\ t_2), t_1 = \mathrm{rename}\ r\ t_2$
 \end{definition}
 
 \begin{lemma}[unif\_ren\_ac]\label{th:unifren}
+  $\forall\ t_1\ t_2\ t_1'\ t_2',$
   \begin{multline*}
-  \forall\ t_1\ t_2\ t_1'\ t_2',\ \mathrm{alpha\_equiv}\ t_1\ t_1' \to \mathrm{alpha\_equiv}\ t_2\ t_2' \to \\
-  \mathrm{vars\_tm}\ t_1' \cap \mathrm{vars\_tm}\ t_2' = \varnothing \to
+  t_1 =_\alpha t_1' \land t_2 =_\alpha t_2' \land
+  \mathrm{vars}\ t_1 \cap \mathrm{vars}\ t_2 = \varnothing \land
+  \mathrm{vars}\ t_1' \cap \mathrm{vars}\ t_2' = \varnothing \to\\
   \mathrm{unify}\ t_1\ t_2\ \varepsilon \to \mathrm{unify}\ t_1'\ t_2'\ \varepsilon
   \end{multline*}
 \end{lemma}

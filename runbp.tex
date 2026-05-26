@@ -1,28 +1,28 @@
 
 \begin{prooftree}
-  \AxiomC{\ensuremath{\codenames{success}\ t }}
-  \AxiomC{\ensuremath{\codenames{next\_subst}\ \sigma\ t \arr \sigma' }}
-  \AxiomC{\ensuremath{\codenames{prune}\ \top\ t \arr t' }}
+  \AxiomC{\ensuremath{\mathrm{success}\ t }}
+  \AxiomC{\ensuremath{\mathrm{next\_subst}\ \sigma\ t \arr \sigma' }}
+  \AxiomC{\ensuremath{\mathrm{prune}\ \mathrm{true}\ t \arr t' }}
   \RightLabel{\rulelabel{\stopt}}
-  \TrinaryInfC{\ensuremath{\runT\ \prog\ v\ \sigma\ t \arr (\msome(\sigma', t'), \bot, v)}}
+  \TrinaryInfC{\ensuremath{\mathrm{\runT}\ \prog\ v\ \sigma\ t \arr (\mathrm{Some}\ (\sigma', t'), \mathrm{false}, v)}}
 \end{prooftree}
 \begin{prooftree}
   \AxiomC{\ensuremath{
-      \codenames{incomplete}\ t \quad 
-      \codenames{step}\ \prog\ v\ \sigma\ t \arr (v', tg, t') \quad 
-      \runT\ \prog\ v'\ \sigma\ t' \arr (r, b, v'')}}
+      \mathrm{incomplete}\ t \quad 
+      \mathrm{step}\ \prog\ v\ \sigma\ t \arr (v', tg, t') \quad 
+      \mathrm{\runT}\ \prog\ v'\ \sigma\ t' \arr (r, b, v'')}}
   \RightLabel{\rulelabel{\stept}}
-  \UnaryInfC{\ensuremath{\runT\ \prog\ v\ \sigma\ t\ \arr (r, (tg = \codenames{CutBrothers}) \lor b, v'')}}
+  \UnaryInfC{\ensuremath{\mathrm{\runT}\ \prog\ v\ \sigma\ t\ \arr (r, (tg = \mathrm{CutBrothers}) \lor b, v'')}}
 \end{prooftree}
 \begin{prooftree}
-  \AxiomC{\ensuremath{\codenames{failed}\ t} }
-  \AxiomC{\ensuremath{\codenames{prune}\ \bot\ t \arr \msome t'} }
-  \AxiomC{\ensuremath{\runT\ \prog\ v\ \sigma\ t' \arr r} }
+  \AxiomC{\ensuremath{\mathrm{failed}\ t} }
+  \AxiomC{\ensuremath{\mathrm{prune}\ \mathrm{false}\ t \arr \mathrm{Some}\ t'} }
+  \AxiomC{\ensuremath{\mathrm{\runT}\ \prog\ v\ \sigma\ t' \arr r} }
   \RightLabel{\rulelabel{\backt}}
-  \TrinaryInfC{\ensuremath{\runT\ \prog\ v\ \sigma\ t \arr r}}
+  \TrinaryInfC{\ensuremath{\mathrm{\runT}\ \prog\ v\ \sigma\ t \arr r}}
 \end{prooftree}
 \begin{prooftree}
-  \AxiomC{\ensuremath{\codenames{prune}\ \bot\ t \arr \square}}
+  \AxiomC{\ensuremath{\mathrm{prune}\ \mathrm{false}\ t \arr \mathrm{None}}}
   \RightLabel{\rulelabel{\failt}}
-  \UnaryInfC{\ensuremath{\runT\ \prog\ v\ \sigma\ t \arr (\square, \bot, v)}}
+  \UnaryInfC{\ensuremath{\mathrm{\runT}\ \prog\ v\ \sigma\ t \arr (\mathrm{None}, \mathrm{false}, v)}}
 \end{prooftree}
