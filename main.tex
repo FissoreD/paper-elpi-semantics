@@ -115,8 +115,7 @@ The first semantics is closely related to the one introduced by Debray and
 Mishra~\cite{Debray1988} for studying the optimizations employed by
 \prologP abstract machines~\cite{warren1983abstract,10.1007/BFb0105415}.
 This semantics is based on a stack of alternatives, where the cut operator is
-represented by a pointer to a shorter stack. The interpreter for the \elpiP
-logic programming language is based on this semantics~\cite{dunchev15lpar}.
+represented by a pointer to a shorter stack. 
 
 The second semantics is based on And-Or trees, in which the structure of
 alternative computations is made explicit and preserved throughout execution.
@@ -128,7 +127,8 @@ presence of cut, which, as expected, differ from those of classical logic.
 As a case study, we use the tree-based semantics to prove the soundness of
 the determinacy analysis introduced in~\cite{fissore2026}. By exploiting the
 equivalence between the two semantics, we relate this result to the
-stack-based semantics of the \elpiP interpreter.
+stack-based semantics implemented by the interpreter of the \elpiP
+logic programming language~\cite{dunchev15lpar}.
 \end{abstract}
 
 \section{Introduction}
@@ -153,7 +153,7 @@ allows users to specify which predicates should be considered deterministic
 and then verifies that these predicates behave like functions, i.e., that
 they commit to their first solution and leave no \emph{choice points}
 (places where backtracking could resume). A choice point corresponds to a
-suspended \emph{alternative} in the execution trace. In the following, we
+suspended, \emph{alternative}, computation. In the following, we
 use \emph{choice point} and \emph{alternative} as synonyms.
 
 Intuitively, nondeterminism arises when a computation can be completed using
