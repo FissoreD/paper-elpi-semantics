@@ -1772,12 +1772,12 @@ variables.
 
 \input{tex_code/refresh_for.tex}
 
-\begin{lemma}[unif\_ren]\label{th:unifren}\cI{~\ensuremath{\forall}~ x y z w ~\ensuremath{t_1}~ ~\ensuremath{t_2}~,}~
-\begin{coqcode}
-  refresh_for w ~\ensuremath{t_1}~ ~\ensuremath{\to}~ refresh_for y ~\ensuremath{t_2}~ ~\ensuremath{\to}~ refresh_for z ~\ensuremath{t_1}~ ~\ensuremath{\to}~ refresh_for x ~\ensuremath{t_2}~ ~\ensuremath{\to}~
-  codomf w ~\ensuremath{\#}~ vars (rename y ~\ensuremath{t_2}~) ~\ensuremath{\to}~ codomf z ~\ensuremath{\#}~ vars (rename x ~\ensuremath{t_2}~) ~\ensuremath{\to}~
-  unify (rename w ~\ensuremath{t_1}~) (rename y ~\ensuremath{t_2}~) ~\ensuremath{\epsilon}~ ~\ensuremath{\to}~ unify (rename z ~\ensuremath{t_1}~) (rename x ~\ensuremath{t_2}~) ~\ensuremath{\epsilon}~.
-\end{coqcode}
+\begin{lemma}[unif\_ren\_ac]\label{th:unifren}
+  \begin{multline*}
+  \forall\ t_1\ t_2\ t_1'\ t_2',\ \mathrm{alpha\_equiv}\ t_1\ t_1' \to \mathrm{alpha\_equiv}\ t_2\ t_2' \to \\
+  \mathrm{vars\_tm}\ t_1' \cap \mathrm{vars\_tm}\ t_2' = \varnothing \to
+  \mathrm{unify}\ t_1\ t_2 \varepsilon \to \mathrm{unify} t_1'\ t_2' \varepsilon
+  \end{multline*}
 \end{lemma}
 
 In \cref{fig:progx}, the rules of the program are equipped with three
