@@ -1921,12 +1921,12 @@ disjoint substitutions.
 To obtain an axiom-free mechanization, we had to provide an implementation
 of the first-order unification algorithm, since we could not find an
 existing Rocq mechanization. Describing this development in detail is out of
-scope for this paper. It amounts to XXX lines of code, including YY lines
-for the termination proof based on a lexicographic ordering and ZZ lines for
-correctness and completeness. Because of the specific form of Lemma XXX,
-which deals with matching terms with disjoint support, we did not need to
+scope for this paper. It amounts to about 1700 lines of ssreflect code, including 200 lines
+for the termination proof based on a lexicographic ordering and 800 lines for
+correctness and completeness. Because of the specific form of \cref{th:unifren,th:matchingdisj},
+which deals with matching and unification of terms with disjoint support, we did not need to
 prove that the algorithm produces most-general unifiers.
-\marginpar{Martelli (size, time, relation with saarland (maybe don't say ), substitutions are not finite maps, hence badly integrate with mathcomp, also the algorithm is not explicilty given)}
+% \marginpar{Martelli (size, time, relation with saarland (maybe don't say ), substitutions are not finite maps, hence badly integrate with mathcomp, also the algorithm is not explicilty given)}
 
 To fully model the \elpiP language and mechanize~\cite{fissore2026} entirely,
 we would need to account for higher-order variables, i.e. variables
