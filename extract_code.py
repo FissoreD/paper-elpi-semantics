@@ -271,7 +271,7 @@ class theorem(C):
         lst = l.split()
         l = ""
         def infix(l: str): return l in ["\\to", "=", '\\leftrightarrow',"\\Rightarrow", "\\lor", "\\land"]
-        def befor(l: str): return l in ")," or infix(l)
+        def befor(l: str): return l in "),." or infix(l)
         def after(l: str): return l in "(" or infix(l)
         def stand(l: str): 
             l = l.replace("'", "")
@@ -290,8 +290,12 @@ class theorem(C):
         (env,name,args), tl = self.th_name(lines[0]), lines[1:]
         n1 = name.replace('_', '\_')
         n2 = name.replace('_', '')
-        args = "" if len(args) == 0 else (f" $" + self.clean_line(" ".join(args)) + "$")
-        cnt += f"\\begin{{{env}}}[{n1}{args}]\label{{th:{n2}}}%\n"
+        # args = "" if len(args) == 0 else (f" $" + self.clean_line(" ".join(args)) + "$")
+        
+        if len (args) > 0:
+            tl[0] = f"fun {' '.join(args)} . " + tl[0]
+
+        cnt += f"\\begin{{{env}}}[{n1}]\label{{th:{n2}}}%\n"
         # if len(tl) > 0:
         #     txt = self.clean_line(tl[0].strip())
         #     cnt += f"\\{self.MINT_INLINE}{{{txt}}}"
