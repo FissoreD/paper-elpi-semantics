@@ -306,12 +306,12 @@ class theorem(C):
         #         cnt += self.clean_line(self.clean_comment(l))
         #     cnt += f"\\end{{{self.MINT_TAG}}}\n"
         l = list(map(lambda x: f"{self.clean_line(x)}", tl))
-        # if len(l) == 1:
-        #     cnt += f"\t${l[0]}$"
-        # else:
-        cnt += f"\\begin{{multline*}}\n\t"
-        cnt += "\\\\\n\t".join(l)
-        cnt += f"\n\\end{{multline*}}"
+        if len(l) == 1:
+            cnt += f"\t${l[0]}$"
+        else:
+            cnt += f"\\begin{{multline*}}\n\t"
+            cnt += "\\\\\n\t".join(l)
+            cnt += f"\n\\end{{multline*}}"
         # for i,e in enumerate(tl):
         #     end = "" if i == len(tl)-1 else "\\\\"
         #     cnt += f"\t${self.clean_line(e)}${end}%\n"
