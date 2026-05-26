@@ -1755,28 +1755,33 @@ Finally, we also need a lemma certifying that the refreshing variables operation
 performed at runtime during backchaining does not affect unification.
 In particular, a refreshing renaming $f$ for a term $t$ is a function from variables
 to variables that: (i) $f$ is defined on all the variables in $t$, i.e. all variables get renamed; (ii) $f$ is
-injective, i.e. does not confuse variables; and (iii) $f$ 
-has non-overlapping domain and codomain, i.e. it maps the variables of the term
-to a set of completely fresh variables.
+injective, i.e. does not confuse variables. Refreshing produces
+therefore $\alpha$-equivalent terms.
 
-Below, we define
-\emph{refresh\_for} to test the validity of a refreshing renaming.
-\Cref{th:unifren} states the property of term unifiability with respect to term
-renaming. That is, if the renamings of terms $t_1$ and $t_2$ are unifiable
-under two respective valid refreshing renamings, and they have disjoint
-variables, then for any pair of renamings $z$ and $x$ that are valid renamings
-for $t_1$ and $t_2$, respectively, and are disjoint from each other,
-unification also succeeds. In other words, this theorem accounts for
-$\alpha$-equivalence of terms and the unification of terms with disjoint
-variables.
+% Below, we define
+% \emph{refresh\_for} to test the validity of a refreshing renaming.
+% \Cref{th:unifren} states the property of term unifiability with respect to term
+% renaming. That is, if the renamings of terms $t_1$ and $t_2$ are unifiable
+% under two respective valid refreshing renamings, and they have disjoint
+% variables, then for any pair of renamings $z$ and $x$ that are valid renamings
+% for $t_1$ and $t_2$, respectively, and are disjoint from each other,
+% unification also succeeds. In other words, this theorem accounts for
+% $\alpha$-equivalence of terms and the unification of terms with disjoint
+% variables.
 
-\input{tex_code/refresh_for.tex}
+% \input{tex_code/refresh_for.tex}
+
+% The refreshing performed at runtime ensures that 
+
+\begin{definition}[alpha\_equiv]
+  $\lambda t_1\ t_2. \exists (r:\mathrm{renaming}), t_1 = \mathrm{rename}\ r\ t_2$
+\end{definition}
 
 \begin{lemma}[unif\_ren\_ac]\label{th:unifren}
   \begin{multline*}
   \forall\ t_1\ t_2\ t_1'\ t_2',\ \mathrm{alpha\_equiv}\ t_1\ t_1' \to \mathrm{alpha\_equiv}\ t_2\ t_2' \to \\
   \mathrm{vars\_tm}\ t_1' \cap \mathrm{vars\_tm}\ t_2' = \varnothing \to
-  \mathrm{unify}\ t_1\ t_2 \varepsilon \to \mathrm{unify} t_1'\ t_2' \varepsilon
+  \mathrm{unify}\ t_1\ t_2\ \varepsilon \to \mathrm{unify}\ t_1'\ t_2'\ \varepsilon
   \end{multline*}
 \end{lemma}
 
