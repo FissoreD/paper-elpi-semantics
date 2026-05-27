@@ -955,18 +955,25 @@ complements \step with respect to failed, successful, and incomplete trees.
 
 The inductive relation \runT has the following type:
 %
-$$\mathrm{\runT} : \mathbb{P} \to \vec{\FV} \to \Sigma \to \mathbb{T} \to (\mathrm{option}\ (\Sigma, \mathrm{option}\ \mathbb{T}), \mathbb{B}, \vec{\FV}) \to \cI{Prop}$$
+$$\mathrm{\runT} : \mathbb{P} \to \vec{\FV} \to \Sigma \to \mathbb{T} \to (\mathrm{sol}, \mathbb{B}, \vec{\FV}) \to \cI{Prop}$$
 
 It associates a program, a set of variables, an initial substitution $\sigma$, and a
-tree $t$ to an optional result $r$, a boolean $b$, and an updated set of variable
-names.
+tree $t$ with a solution $r$, a boolean $b$, and an updated set of variable
+names $v'$.
 
-The main result $r$ is None when the execution fails; otherwise
-if $r = \mathrm{Some}\ (\sigma', t')$ the execution succeeded and produced the solution
-$\sigma'$; $t'$ represents the remaining, not-yet-explored alternatives. 
-The boolean $b$ records whether a
-superficial cut was evaluated during execution.
-% , and the updated variable set tracks freshly generated names.
+The type of sol is defined as follows:
+%
+$$\mathrm{sol} := \mathrm{Zero} \mid \mathrm{One}\ \Sigma \mid \mathrm{Many}\ \Sigma\ \TREE$$
+
+Zero represents a failing execution. One\ $\sigma$ represents an interpretation
+producing exactly one solution, i.e. no backtracking is possible from the given
+state. It also carries the substitution $\sigma$ that makes the interpretation
+succeed. Finally, Many $\sigma\ t$ represents an execution in which the
+original state produces the solution $\sigma$, while $t$ represents the
+remaining unexplored alternatives.
+
+The boolean $b$ records whether a superficial cut was evaluated during execution,
+and $v'$ is the updated set of variables tracking freshly generated names.
 
 The \run predicate has four cases, depicted as inference rules in \cref{fig:run-rules},
 where we separate the first four arguments and the last one with a squiggle arrow,
@@ -985,7 +992,7 @@ solutions.
 
 \begin{figure}
 
-  \input{runbp.tex}
+  \input{tex_code/runbp.tex}
   % \begin{prooftree}
   %   \AxiomC{$\success\ A$}
   %   \RightLabel{$\run\_done$}
@@ -1647,9 +1654,7 @@ are acyclic in this sense.
 % \input{tex_code/unif_correct.tex}
 
 \begin{lemma}[unify\_correct]\label{th:unifycorrect}%
-\begin{multline*}
-	\forall\ t_1\ t_2\ s\ s' ,\ \mathrm{acyclic\_sigma}\ s \to \mathrm{unify}\ t_1\ t_2\ s = \mathrm{Some}\ s' \to s'\ t_1 = s'\ t_2 
-\end{multline*}
+$$\forall\ t_1\ t_2\ s\ s' ,\ \mathrm{acyclic\_sigma}\ s \to \mathrm{unify}\ t_1\ t_2\ s = \mathrm{Some}\ s' \to s'\ t_1 = s'\ t_2 $$
 \end{lemma}
 
 % \input{tex_code/unify_complete.tex}

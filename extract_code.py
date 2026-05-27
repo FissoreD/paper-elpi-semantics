@@ -212,8 +212,10 @@ def clean_line_math_mode(l:str):
     #AD HOC:
     l = l.replace("%G", "")
     l = l.replace("++", "\\mappend")
-    l = re.sub("_[A-Za-z0-9]*", "_", l)
+    l = re.sub(" _[A-Za-z0-9]*", " _", l)
     l = l.replace("stepE", "\\backchainS")
+    # l = l.replace('==', '=_b')
+
 
     l = l.strip()
     l = l.replace('_', '\_')
@@ -242,7 +244,7 @@ def clean_line_math_mode(l:str):
 
     lst = l.split()
     l = ""
-    def infix(l: str): return l in ["\\to", "=", '\\leftrightarrow',"\\Rightarrow", "\\lor", "\\land"]
+    def infix(l: str): return l in ["\\to", "=", "=_b", '\\leftrightarrow',"\\Rightarrow", "\\lor", "\\land"]
     def befor(l: str): return l in "),." or infix(l)
     def after(l: str): return l in "(" or infix(l)
     def stand(l: str): 
@@ -251,6 +253,8 @@ def clean_line_math_mode(l:str):
     for i,e in enumerate(lst):
         if e[-1] in "0123456789":
             e = e[:-1] + "_" + e[-1]
+        elif e == "==":
+            e = "=_b"
         elif len(stand(e)) > 1 and e[0] != "\\":
             e = f"\mathrm{{{e}}}"
         l += e +  (" " if after(e) or (i+1 < len(lst) and befor(lst[i+1])) or (i + 1 == len(lst)) else "\\ ")
@@ -347,33 +351,36 @@ class bussproof(C):
     def print_bp(self,name,hyps,concl):
         lines = ["\\begin{prooftree}"]
         # reset hyps if too many or too few
-        if len(hyps) == 4:
-            x = []
-            for i in range (len(hyps)//2):
-                x.append(stack_anchor(hyps[2*i], hyps[2*i+1]))
-            hyps = x
+        # if len(hyps) == 4:
+        #     x = []
+        #     for i in range (len(hyps)//2):
+        #         x.append(stack_anchor(hyps[2*i], hyps[2*i+1]))
+        #     hyps = x
             
 
-        for s in hyps:
-            lines.append(f"  \\AxiomC{{${(s)}$}}")
+        # for s in hyps:
+        #     lines.append(f"  \\AxiomC{{${(s)}$}}")
 
-        n = len(hyps)            
+        # n = len(hyps)            
 
-        if n == 0:
-            n = 1
-            lines.append("  \\AxiomC{\phantom{A}}")
+        # if n == 0:
+        #     n = 1
+        #     lines.append("  \\AxiomC{\phantom{A}}")
+        if len(hyps) == 0:
+            hyps_cat = "~"
+        else:
+            hyps_cat = " \\qquad ".join(hyps)
+        lines.append(f"\t\\AxiomC{{${hyps_cat}$}}")
 
         lines.append(f"  \\RightLabel{{${name}$}}")
 
-        L = ["Unary","Binary","Trinary"]
+        # if n > len(L):
+        #     print(hyps)
+        #     raise ValueError("Too many premises for bussproofs")
+        # else:
+        #     tag = L[n-1]
 
-        if n > len(L):
-            print(hyps)
-            raise ValueError("Too many premises for bussproofs")
-        else:
-            tag = L[n-1]
-
-        lines.append(f"  \\{tag}InfC{{${(concl)}$}}")
+        lines.append(f"  \\UnaryInfC{{${(concl)}$}}")
 
         lines.append("\\end{prooftree}")
         return "\n".join(lines)
