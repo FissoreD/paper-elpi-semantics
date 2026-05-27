@@ -960,7 +960,7 @@ complements \step with respect to failed, successful, and incomplete trees.
 
 The inductive relation \runT has the following type:
 %
-$$\mathrm{\runT} : \mathbb{P} \to \vec{\FV} \to \Sigma \to \mathbb{T} \to (\mathrm{sol}, \mathbb{B}, \vec{\FV}) \to \cI{Prop}$$
+$$\mathrm{\runT} : \mathbb{P} \to \vec{\FV} \to \Sigma \to \mathbb{T} \to \mathrm{sol} \times \mathbb{B} \times \vec{\FV} \to \cI{Prop}$$
 
 It associates a program, a set of variables, an initial substitution $\sigma$, and a
 tree $t$ with a solution $r$, a boolean $b$, and an updated set of variable
