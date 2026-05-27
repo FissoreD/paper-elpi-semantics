@@ -208,6 +208,55 @@ class snip(C):
                 cnt += f"\\end{{{self.MINT_TAG}}}\n"
         super().write(fout,cnt)
 
+def clean_line_math_mode(l:str):
+    #AD HOC:
+    l = l.replace("%G", "")
+    l = l.replace("++", "\\mappend")
+    l = re.sub("_[A-Za-z0-9]*", "_", l)
+    l = l.replace("stepE", "\\backchainS")
+
+    l = l.strip()
+    l = l.replace('_', '\_')
+    l = l.replace("#", "\#")
+    l = l.replace("forall", "\\forall")
+    l = l.replace("exists", "\\exists")
+    l = l.replace("∧", "\land")
+    l = l.replace("/\\", "\land")
+    l = l.replace("\\/", "\lor")
+    l = l.replace("∨", "\lor")
+    l = l.replace("<->", "\leftrightarrow")
+    l = l.replace("->", "\\to")
+    l = l.replace("`|`", "\cup")
+    l = l.replace("`<=`", "\\subseteq")
+    l = l.replace("domf", "dom")
+    l = l.replace("fun", "\\lambda")
+    l = l.replace("=>", "\\Rightarrow")
+    if l.endswith("."): l = l[:-1]
+    def clean_esc(l):
+        m = l.group(1)
+        return  " \\phantom{!}_{\!\!\!\!" + m.replace("~", "").replace("$","") + "}"
+    l = re.sub(r' -sub\(([^)]*)\)', lambda x: (clean_esc(x)), l)
+    l = l.replace("(", " ( ")
+    l = l.replace(")", " ) ")
+    l = l.replace(",", " ,")
+
+    lst = l.split()
+    l = ""
+    def infix(l: str): return l in ["\\to", "=", '\\leftrightarrow',"\\Rightarrow", "\\lor", "\\land"]
+    def befor(l: str): return l in "),." or infix(l)
+    def after(l: str): return l in "(" or infix(l)
+    def stand(l: str): 
+        l = l.replace("'", "")
+        return l
+    for i,e in enumerate(lst):
+        if e[-1] in "0123456789":
+            e = e[:-1] + "_" + e[-1]
+        elif len(stand(e)) > 1 and e[0] != "\\":
+            e = f"\mathrm{{{e}}}"
+        l += e +  (" " if after(e) or (i+1 < len(lst) and befor(lst[i+1])) or (i + 1 == len(lst)) else "\\ ")
+    return l
+
+
 """
 It takes a text on several lines.
 The first MUST be of the for "<TAG> th_name:"
@@ -242,47 +291,6 @@ class theorem(C):
             args = []
         return ls[0].lower(), name, args
 
-    def clean_line(self, l:str):
-        l = l.strip()
-        l = l.replace('_', '\_')
-        l = l.replace("#", "\#")
-        l = l.replace("forall", "\\forall")
-        l = l.replace("exists", "\\exists")
-        l = l.replace("∧", "\land")
-        l = l.replace("/\\", "\land")
-        l = l.replace("\\/", "\lor")
-        l = l.replace("∨", "\lor")
-        l = l.replace("<->", "\leftrightarrow")
-        l = l.replace("->", "\\to")
-        l = l.replace("`|`", "\cup")
-        l = l.replace("`<=`", "\\subseteq")
-        l = l.replace("domf", "dom")
-        l = l.replace("fun", "\\lambda")
-        l = l.replace("=>", "\\Rightarrow")
-        if l.endswith("."): l = l[:-1]
-        def clean_esc(l):
-            m = l.group(1)
-            return  " \\phantom{!}_{\!\!\!\!" + m.replace("~", "").replace("$","") + "}"
-        l = re.sub(r' -sub\(([^)]*)\)', lambda x: (clean_esc(x)), l)
-        l = l.replace("(", " ( ")
-        l = l.replace(")", " ) ")
-        l = l.replace(",", " ,")
-
-        lst = l.split()
-        l = ""
-        def infix(l: str): return l in ["\\to", "=", '\\leftrightarrow',"\\Rightarrow", "\\lor", "\\land"]
-        def befor(l: str): return l in "),." or infix(l)
-        def after(l: str): return l in "(" or infix(l)
-        def stand(l: str): 
-            l = l.replace("'", "")
-            return l
-        for i,e in enumerate(lst):
-            if e[-1] in "0123456789":
-                e = e[:-1] + "_" + e[-1]
-            elif len(stand(e)) > 1 and e[0] != "\\":
-                e = f"\mathrm{{{e}}}"
-            l += e +  (" " if after(e) or (i+1 < len(lst) and befor(lst[i+1])) or (i + 1 == len(lst)) else "\\ ")
-        return l
 
     def print_tex(self,lines, fout, raw = False):
         if lines == []: return
@@ -305,7 +313,7 @@ class theorem(C):
         #     for l in tl:
         #         cnt += self.clean_line(self.clean_comment(l))
         #     cnt += f"\\end{{{self.MINT_TAG}}}\n"
-        l = list(map(lambda x: f"{self.clean_line(x)}", tl))
+        l = list(map(lambda x: f"{clean_line_math_mode(x)}", tl))
         if len(l) == 1:
             cnt += f"\t${l[0]}$"
         else:
@@ -347,7 +355,7 @@ class bussproof(C):
             
 
         for s in hyps:
-            lines.append(f"  \\AxiomC{{{(s)}}}")
+            lines.append(f"  \\AxiomC{{${(s)}$}}")
 
         n = len(hyps)            
 
@@ -355,7 +363,7 @@ class bussproof(C):
             n = 1
             lines.append("  \\AxiomC{\phantom{A}}")
 
-        lines.append(f"  \\RightLabel{{\\textit{{{(name)}}}}}")
+        lines.append(f"  \\RightLabel{{${name}$}}")
 
         L = ["Unary","Binary","Trinary"]
 
@@ -365,25 +373,25 @@ class bussproof(C):
         else:
             tag = L[n-1]
 
-        lines.append(f"  \\{tag}InfC{{{(concl)}}}")
+        lines.append(f"  \\{tag}InfC{{${(concl)}$}}")
 
         lines.append("\\end{prooftree}")
         return "\n".join(lines)
 
-    def clean_line(self, l):
-        # l = l.replace("_","\_")
-        # l = l.replace("&","\&")
-        return super().clean_line(l)
+    # def clean_line(self, l):
+    #     # l = l.replace("_","\_")
+    #     # l = l.replace("&","\&")
+    #     return super().clean_line(l)
     
     def split_hyps(self,hyps):
         hyps = hyps.split("->")
-        hyps = [self.clean_line(i) for i in hyps]
+        hyps = [clean_line_math_mode(i) for i in hyps]
         return hyps
 
     def parse_inductive (self,l):
         l = l.split(":",1)
         # print("LINES:= ", l)
-        cname = self.clean_line(l[0].split(maxsplit=1)[0])
+        cname = clean_line_math_mode(l[0].split(maxsplit=1)[0])
         hyps = flatten([self.split_hyps(i) for i in l[1:]])
         return self.print_bp(cname, hyps[:-1],hyps[-1])
 
