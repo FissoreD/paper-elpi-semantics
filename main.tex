@@ -1608,7 +1608,7 @@ translates to the unexplored stack.
 \end{theorem}
 
 \noindent
-\begin{minipage}{0.65\textwidth}
+\begin{minipage}{0.6\textwidth}
 \begin{proof}
 The proof is based on the idea explained in~\cite[Section
 3.5.1]{yves-equiv} and depicted in the figure on the right:
@@ -1840,7 +1840,7 @@ The theorem we want to prove is the following one:
 
 % \input{tex_code/det_check_call.tex}
 \begin{theorem}[det\_check\_call]\label{th:detcheckcall}%
-	$$\forall\ p\ \sigma\ t\ v ,\ \mathrm{check\_program}\ p \to \mathrm{tm\_is\_det}\ p\ t \to \mathrm{is\_det}\ p\ \sigma\ v\ ( \mathrm{TA}\ ( \mathrm{call}\ t ) ) $$
+	$$\forall\ p\ \sigma\ t\ v ,\ \mathrm{check\_program}\ p \to \mathrm{tm\_is\_det}\ p\ t \to \mathrm{is\_det}\ p\ \sigma\ v\ ( \mathrm{Unexplored}\ ( \mathrm{call}\ t ) ) $$
 \end{theorem}
 
 Here, \emph{check\_program} denotes the function that checks the program
