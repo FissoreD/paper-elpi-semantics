@@ -79,13 +79,13 @@ def clean_line_global(l,escape):
     # l = re.sub("true", esc(m("\\\\top")), l)
     # l = re.sub("false", esc(m("\\\\bot")), l)
     l = l.replace("\bsm\b", " " + esc(m("s_m")) + " ")
-    pat = ["v","b","t","r","a", "g", "l"]
 
     def clean_esc(l):
         m = l.group(1)
         return  "\\ensuremath{\\phantom{!}_{\!\!" + m.replace("~", "").replace("$","") + "}}"
 
 
+    pat = ["v","b","t","r","a", "g", "l"]
     def change_vars(vn, gl, l):
         return re.sub(f"\\b{vn}('+)|\\b{vn}\\b", esc(m(f"{gl}\g<1>")), l)
     def it_pat(pat,gl,l):
@@ -214,6 +214,7 @@ def clean_line_math_mode(l:str):
     l = l.replace("++", "\\mappend")
     l = re.sub(" _[A-Za-z0-9]*", " _", l)
     l = l.replace("stepE", "\\backchainS")
+    l = l.replace("&", "\land")
     # l = l.replace('==', '=_b')
 
 
@@ -234,28 +235,43 @@ def clean_line_math_mode(l:str):
     l = l.replace("fun", "\\lambda")
     l = l.replace("=>", "\\Rightarrow")
     if l.endswith("."): l = l[:-1]
+
+    space_bef = "()[]{},"
+    for p in space_bef:
+        l = l.replace(p, f" {p} ")
+
     def clean_esc(l):
         m = l.group(1)
         return  " \\phantom{!}_{\!\!\!\!" + m.replace("~", "").replace("$","") + "}"
     l = re.sub(r' -sub\(([^)]*)\)', lambda x: (clean_esc(x)), l)
-    l = l.replace("(", " ( ")
-    l = l.replace(")", " ) ")
-    l = l.replace(",", " ,")
+
+    pat = ["v","b","t","r","a", "g", "l", "h"]
+    def change_vars(vn, gl, l):
+        return re.sub(f"\\b{vn}('+)|\\b{vn}\\b", f"{gl}\g<1>", l)
+    def it_pat(pat,gl,l):
+        l = change_vars(pat, gl, l)
+        for i in range(10):
+            l = change_vars(f"{pat}{i}", f"{gl}_{i}", l)
+        return l
+    l = it_pat("s", "\\\\sigma", l)
+    for p in pat:
+        l = it_pat(p, p, l)
+
 
     lst = l.split()
     l = ""
     def infix(l: str): return l in ["\\to", "=", "=_b", '\\leftrightarrow',"\\Rightarrow", "\\lor", "\\land"]
-    def befor(l: str): return l in "),." or infix(l)
-    def after(l: str): return l in "(" or infix(l)
+    def befor(l: str): return l in "]}),." or infix(l)
+    def after(l: str): return l in "{[(" or infix(l)
     def stand(l: str): 
         l = l.replace("'", "")
         return l
     for i,e in enumerate(lst):
-        if e[-1] in "0123456789":
-            e = e[:-1] + "_" + e[-1]
-        elif e == "==":
+        # if e[-1] in "0123456789":
+        #     e = e[:-1] + "_" + e[-1]
+        if e == "==":
             e = "=_b"
-        elif len(stand(e)) > 1 and e[0] != "\\":
+        elif len(stand(e)) > 1 and e[0] != "\\" and e[-1] not in "0123456789":
             e = f"\mathrm{{{e}}}"
         l += e +  (" " if after(e) or (i+1 < len(lst) and befor(lst[i+1])) or (i + 1 == len(lst)) else "\\ ")
     return l

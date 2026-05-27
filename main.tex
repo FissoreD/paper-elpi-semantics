@@ -975,14 +975,16 @@ remaining unexplored alternatives.
 The boolean $b$ records whether a superficial cut was evaluated during execution,
 and $v'$ is the updated set of variables tracking freshly generated names.
 
-The \run predicate has four cases, depicted as inference rules in \cref{fig:run-rules},
+The \run predicate has five cases, depicted as inference rules in \cref{fig:run-rules},
 where we separate the first four arguments and the last one with a squiggle arrow,
 evocative of the fact that the given set of rules is deterministic (\cref{th:runTdet}).
 
 
-Rule \stopt says that if \pathend\ $t$ is a success, then the substitution
-$\sigma'$ is extracted from $t$ (starting from $\sigma$) and the input tree is
-cleaned of its successful path. Rule \stept applies when \pathend\ $t$ is an atom,
+Rules \stopot and \stopt say that if the tree $t$ is success, then the substitution
+$\sigma'$ is extracted from $t$ (starting from $\sigma$), depending
+on the result of \na true $t$ -- aiming to clean the tree from its successful
+path -- we return One or Many, if there exist alternatives
+to be explored. Rule \stept applies when \pathend\ $t$ is an atom,
 then \step is invoked to evaluate $t$, and \run is called recursively on the
 updated tree. When \pathend\ $t$ is a failure, rule \backt calls \na
 to clear the failed path; if the resulting cleaned tree exists, \run is
@@ -1030,7 +1032,7 @@ because the rules are selected based on \pathend\ $t$. In particular, the
 hypotheses \success $t$, \incomplete $t$, and \failed $t$ are
 mutually exclusive. Moreover, by \cref{th:pruneNone}, the hypothesis of
 \failt implies that $t$ \emph{failed}; hence \failt is exclusive
-with \stopt and \stept, and it is also exclusive with
+with \stopot, \stopt and \stept, and it is also exclusive with
 \backt since they impose different requirements on the output of \na.
 
 The boolean output of \run allows us to state interesting properties about the
@@ -1206,7 +1208,7 @@ predicates.
 % \mvspace{}
 % \deftypes[type:nur]{tex_code/nur_type.tex}
 % \mvspace{}
-$$\runS : \vec{\FV} \to \cI{alts} \to \mathrm{option}\ (\Sigma * \cI{alts})$$
+$$\mathrm{\runS} : \vec{\FV} \to \cI{alts} \to \mathrm{option}\ (\Sigma * \cI{alts})$$
 
 \noindent
 The \nur predicates relates a set of variables and a
@@ -1216,17 +1218,17 @@ alternatives.
 
 The rule system for \nur is given in \cref{fig:nur-rules} and is made by $4$
 cases. We distinguish two main cases. If we run out of alternatives
-we fail: (\fails) stops the execution and return None.
+we fail: rule \fails stops the execution and return None.
 If the list of alternatives is $(\sigma_0, h) :: a$, then
-we look at the list of goals $h$ (under the substitution $\sigma_0$). If $h$ is empty, (\stops) stops the execution with a success $\sigma_0$
+we look at the list of goals $h$ (under the substitution $\sigma_0$). If $h$ is empty, rule \stops stops the execution with a success $\sigma_0$
 leaving $a$ as the unexplored alternatives.
 If $h$ is not empty we look at its head goal $(t, ca)$ where $t$ is the atom and $ca$ is its
-cut-to alternatives. If $t$ is a cut rule
-(\cuts) continues to evaluate the tail of $h$ under with alternatives $ca$. Finally, when $t$ is a call, rule (\calls) backchains:
+cut-to alternatives. If $t$ is a cut, rule
+\cuts continues to evaluate the tail of $h$ under with alternatives $ca$. Finally, when $t$ is a call, rule \calls backchains:
 for each rule it pairs each premise with the current stack of
 alternatives, and prepends the obtained goals to the tail of $h$.
-Note that if backchain returns the empty list, (\calls) second
-premise amounts to exploring the next item in the current
+Note that if backchain returns the empty list, the second
+premise of rule \calls amounts to exploring the next item in the current
 stack.
 
 \subsection{Example of execution}
@@ -1237,6 +1239,7 @@ arrows in the images represent the cut-to pointers.
 \begin{figure}[!hb]
   \centering
   \begin{subfigure}{0.2\textwidth}
+    \centering
     \includegraphics[width=0.35\textwidth, keepaspectratio]{./src/exec_example1E/elpi0.pdf}
     \caption{Initial query}
     \label{ex-elpi0}
@@ -1525,11 +1528,11 @@ we hide it behind existentials.
 
 % The definition we use is the following:
 
-\begin{definition}\label{th:runT'}
-  $\mathrm{runT'}\ \prog\ v\ \sigma\ t\ r := \exists\ b\ v',\ \mathrm{runT}\ \prog\ v\ \sigma\ t\ r\ b\ v'$
-\end{definition}
+% \begin{definition}\label{th:runT'}
+%   $\mathrm{runT'}\ \prog\ v\ \sigma\ t\ r := \exists\ b\ v',\ \mathrm{runT}\ \prog\ v\ \sigma\ t\ r\ b\ v'$
+% \end{definition}
 
-% \input{tex_code/runt1.tex}
+\input{tex_code/runt1.tex}
 
 From \cref{tree-ex,ex-elpi}, we observe that, upon backtracking, \run may perform
 more steps than \nur before returning a solution or a failure.
@@ -1537,7 +1540,7 @@ These silent transitions must be skipped
 when proving the equivalence between the two semantics. Therefore, we
 prove the following lemma.
 
-\input{tex_code/pruneF_t2l.tex}
+\input{tex_code/pruneF_tree_to_stack.tex}
 \begin{proof}By induction on the tree $t$. %\marginpar{dire di $v$}
 \end{proof}
 
@@ -1641,6 +1644,11 @@ Martelli and Montanari~\cite{10.1145/357162.357169} that we prove
 terminating (using the standard lexicographic ordering),
 correct and complete.
 
+In the following definitions and lemmas, we use the notation $x \cap y =
+\varnothing$ to denote that the two sets $x$ and $y$ are disjoint. When the
+arguments are terms, as in $t_1 \cap t_2 = \varnothing$, we mean that the two
+terms do not share any variables.
+
 \begin{definition}[acyclic]
   $\lambda s. \mathrm{dom}\ s \cap \mathrm{codom}\ s = \varnothing$
 \end{definition}
@@ -1679,14 +1687,14 @@ variables that cannot be assigned. The function \matching has the following prop
 
 % \input{tex_code/matchdisj.tex}
 \begin{lemma}[matching\_disj]\label{um}\label{th:matchingdisj}
-  $$\forall t_1\ t_2\ \sigma\ \sigma', \mathrm{acyclic}\ \sigma \to \mathrm{matching}\ t_1\ t_2\ \sigma = \sigma' \to \sigma'\ t_1 = \sigma\ t_2$$
+  $$\forall t_1\ t_2\ \sigma\ \sigma', \mathrm{acyclic}\ \sigma \to \mathrm{matching}\ t_1\ t_2\ \sigma = \mathrm{Some}\ \sigma' \to \sigma'\ t_1 = \sigma\ t_2$$
 \end{lemma}
 
 In particular, we can see how the returned substitution $\sigma'$, differently
 from \cref{th:unifycorrect}, does not affect variables in $\sigma\ t_2$.
 
 \begin{corollary}[matching\_same]\label{umm}\label{th:matchingsame}
-  $$\forall t\ q\ \sigma\ \sigma', \mathrm{acyclic}\ \sigma \to \mathrm{matching}\ t\ q\ \sigma = \sigma' \to \sigma'\ q = \sigma\ q$$
+  $$\forall t\ q\ \sigma\ \sigma', \mathrm{acyclic}\ \sigma \to \mathrm{matching}\ t\ q\ \sigma = \mathrm{Some}\ \sigma' \to \sigma'\ q = \sigma\ q$$
 \end{corollary}
 
 
@@ -1715,12 +1723,13 @@ respectively two rule heads in the database and a query, if both heads are
 matching the query $q$ then the two heads must unify. This idea is formalized
 by the following lemma.
 
-\begin{lemma}[unify\_matching\_trans]
-  \begin{multline*}
-    \forall h_1\ h_2\ q, 
-    \mathrm{disjoint}\ h_1\ h_2 \to \mathrm{disjoint}\ h_1\ q \to \mathrm{disjoint}\ h_2\ q \to \\
-    \mathrm{matching}\ h_1\ q\ \varepsilon \to \mathrm{matching}\ h_2\ q\ \varepsilon \to \mathrm{unify}\ h_1\ h_2\ \varepsilon
-  \end{multline*}
+% \input{tex_code/matching_unify_transP.tex}
+
+\begin{lemma}[matching\_unify\_transP]\label{th:matchingunifytransP}%
+\begin{multline*}
+	\lambda\ h_1\ h_2\ q .\ h_1 \cap h_2 = \varnothing \to h_1 \cap q = \varnothing \to h_2 \cap q = \varnothing \to \\
+	\mathrm{matching}\ h_1\ q\ \varnothing \to \mathrm{matching}\ h_2\ q\ \varnothing \to \mathrm{unify}\ h_1\ h_2\ \varnothing 
+\end{multline*}
 \end{lemma}
 
 \begin{proof}
@@ -1767,12 +1776,13 @@ therefore $\alpha$-equivalent terms.
   $\lambda t_1\ t_2. \exists (r:\mathrm{renaming\_for}\ t_2), t_1 = \mathrm{rename}\ r\ t_2$
 \end{definition}
 
+% \input{tex_code/unif_ren.tex}
 \begin{lemma}[unif\_ren\_ac]\label{th:unifren}
   $\forall\ t_1\ t_2\ t_1'\ t_2',$
   \begin{multline*}
   t_1 =_\alpha t_1' \land t_2 =_\alpha t_2' \land
-  \mathrm{vars}\ t_1 \cap \mathrm{vars}\ t_2 = \varnothing \land
-  \mathrm{vars}\ t_1' \cap \mathrm{vars}\ t_2' = \varnothing \to\\
+  t_1 \cap t_2 = \varnothing \land
+  t_1' \cap t_2' = \varnothing \to\\
   \mathrm{unify}\ t_1\ t_2\ \varepsilon \to \mathrm{unify}\ t_1'\ t_2'\ \varepsilon
   \end{multline*}
 \end{lemma}
