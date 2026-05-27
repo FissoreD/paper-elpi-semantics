@@ -518,9 +518,7 @@ Following the Mathematical Components library, on which we depend,
 we use \cI{x.1} and \cI{x.2} to denote the first and second projection
 applied to the pair \cI{x}. List concatenation is the infix \mappend,
 while list comprehension (i.e. mapping a function on a list) is written
-\cI{[seq f x | x <- l]}. The function \cI{odflt d o}
-extracts the value from the option \cI{o} and returns the default \cI{d}
-if \cI{o} is None.
+\cI{[seq f x | x <- l]}.
 % \marginpar{spiegare notation for list}
 % $\epsilon$ is the empty substitution.
 
@@ -793,7 +791,7 @@ is \okC; otherwise, it is a right-skewed tree of \andC nodes.
 % , we provide a graphical representation a call to \step on the query
 %\marginpar{sottolineare le sostituzioni}
 We run query \eI{q 0 R} against the program $P$ in \cref{fig:progx}. Let $c_0$, $c_1$, and $c_2$
-be the children of the root. By construction, $c_0$ is the \mnone tree, while
+be the children of the root. By construction, $c_0$ is None, while
 $c_1$ and $c_2$ correspond respectively to the premises of rules $r_1$ and
 $r_2$ in $P$. 
 % We need the initial \mnone subtree so that we can attach a substitution to $c_1$. 
@@ -1586,7 +1584,7 @@ the non-injective behavior of \ttl; however, thanks to
 \cref{th:pruneFtreetostack} and the induction hypothesis, the conclusion is
 proved. The last case arises from the derivation \failt. It is
 easily proved using \fails and the fact that if \na returns
-$\mnone$ when trying to erase failure in $t$, then \ttl applied to $t$
+None when trying to erase failure in $t$, then \ttl applied to $t$
 returns the empty list.
 \end{proof}
 
@@ -1830,7 +1828,7 @@ into deterministic a non-deterministic.
 
 A program execution behaves deterministically if, given a program, a
 substitution, and an input tree for the \run\ inductive, the execution either
-fails or, if it succeeds, the resulting tree of alternatives is $\mnone$.
+fails or, if it succeeds with no alternatives to be explored.
 % Below, we define \texttt{is\_det}.
 
 
