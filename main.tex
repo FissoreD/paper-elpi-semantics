@@ -256,13 +256,13 @@ In the concrete syntax, variables are written with capital letters, and
 predicate application follows the $\lambda$-calculus style (no
 parentheses).
 
-The description of a program is given by a a pair $\PROG := (\mathrm{list}\ \mathbb{R} * \mathrm{sigT})$
+The description of a program is given by a a pair $\PROG := (\mathrm{list}\ \mathbb{R} \times \mathrm{sigT})$
 and is shared by both semantics. A program consists of a list of
 rules together with a signature environment $\mathrm{sig}$.
 We delay the discussion of signatures to \cref{sec:determinacy} where we
 describe the static analysis that concerns them.
 
-A rule is a pair $\RULE := (\TERM * \mathrm{list}\ \ATOM)$, where
+A rule is a pair $\RULE := (\TERM \times \mathrm{list}\ \ATOM)$, where
 the first element represents its head and the second its list of premises. Each
 premise is an atom, i.e. either the cut operator or a term
 call. Terms include predicate symbols, data symbols, variables, and term application.
@@ -290,7 +290,7 @@ The backchaining operation applies all rules to a query term; it is
 central to both semantics it has the following type:
 %\input{tex_code/bc_type.tex}
 %
-$$\mathrm{backchain} : \mathbb{P} \to \FV \to \TERM \to \Sigma \to (\FV * \mathrm{list}\ (\Sigma * \mathrm{list}\ \ATOM)) $$
+$$\mathrm{backchain} : \mathbb{P} \to \FV \to \TERM \to \Sigma \to (\FV \times \mathrm{list}\ (\Sigma \times \mathrm{list}\ \ATOM)) $$
 
 Since a rule may be applied multiple times, its variables must be
 freshened before each application. Accordingly, the backchain function
@@ -626,11 +626,11 @@ In \cref{tree-ex} we mark with a black arrow the result of \pathend.
 The type of these two functions is given below.
 %
 \begin{align*}
-  \mathrm{step}  & : \mathbb{P} \to \FV \to \Sigma \to \TREE \to (\FV * \mathrm{tag} * \TREE)\\
+  \mathrm{step}  & : \mathbb{P} \to \FV \to \Sigma \to \TREE \to (\FV\times\mathrm{tag}\times\TREE)\\
   \mathrm{prune} & : \mathbb{B} \to \TREE \to \mathrm{option}\ \TREE
 \end{align*}
-% $$\mathrm{step} : (\mathbb{P} * \FV * \Sigma * \mathrm{tree}) \to (\FV * \mathrm{tag} * \mathrm{tree})$$
-% $$\mathrm{prune} : (\mathbb{B} * \mathrm{tree}) \to \mathrm{option\ tree}$$
+% $$\mathrm{step} : (\mathbb{P}\times\FV\times\Sigma\times\mathrm{tree}) \to (\FV\times\mathrm{tag}\times\mathrm{tree})$$
+% $$\mathrm{prune} : (\mathbb{B}\times\mathrm{tree}) \to \mathrm{option\ tree}$$
 
 The step routine, among its outputs, also returns a \emph{tag}, whose definition
 is delayed in the very following section.
@@ -1220,7 +1220,7 @@ predicates.
 % \mvspace{}
 % \deftypes[type:nur]{tex_code/nur_type.tex}
 % \mvspace{}
-$$\mathrm{\runS} : \vec{\FV} \to \cI{alts} \to \mathrm{option}\ (\Sigma * \cI{alts})$$
+$$\mathrm{\runS} : \vec{\FV} \to \cI{alts} \to \mathrm{option}\ (\Sigma \times \cI{alts})$$
 
 \noindent
 The \nur predicates relates a set of variables and a
