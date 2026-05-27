@@ -1558,22 +1558,20 @@ a tree correspond to those returned as a stack.
 \begin{multline*}
 	\forall\ p\ t\ \sigma\ r ,\ \mathrm{let}\ v\ \mathrm{:=}\ \mathrm{vars}\ t\ \cup\ \mathrm{vars}\ \sigma\ \mathrm{in}\ 
 	\mathrm{valid\_tree}\ t \to \mathrm{runT'}\ p\ v\ \sigma\ t\ r \to \\
-	\mathrm{let}\ r'\ \mathrm{:=}\ 
 	\begin{cases}
-	\mathrm{None} & \mathrm{if}\ r = \mathrm{Zero}\\
-	\mathrm{Some}\ (\sigma', \mnil) & \mathrm{if}\ r = \mathrm{One}\ \sigma'\\
-	\mathrm{Some}\ ( \sigma' ,\ \mathrm{tree\_to\_stack}\ t'\ \sigma\ \mnil) & \mathrm{if}\ r = \mathrm{Many}\ \sigma'\ t'\\
-	\end{cases}\\
-	\mathrm{runS}\ p\ v\ ( \mathrm{tree\_to\_stack}\ t\ \sigma\ [ \mathrm{::} ] )\ r' 
+	\mathrm{runS}\ p\ v\ ( \mathrm{tree\_to\_stack}\ t\ \sigma\ \mnil )\ \mathrm{None} & \mathrm{if}\ r = \mathrm{Zero}\\
+	\mathrm{runS}\ p\ v\ ( \mathrm{tree\_to\_stack}\ t\ \sigma\ \mnil )\ (\mathrm{Some}\ (\sigma', \mnil)) & \mathrm{if}\ r = \mathrm{One}\ \sigma'\\
+	\mathrm{runS}\ p\ v\ ( \mathrm{tree\_to\_stack}\ t\ \sigma\ \mnil )\ (\mathrm{Some}\ ( \sigma' ,\ \mathrm{tree\_to\_stack}\ t'\ \sigma\ \mnil)) & \mathrm{if}\ r = \mathrm{Many}\ \sigma'\ t'\\
+	\end{cases}
 \end{multline*}
 \end{theorem}
 
 \begin{proof}
-We proceed by induction on the execution of \run'. There are four cases
-to consider. The first case arises from \stopt; it deals with
+We proceed by induction on the execution of \run'. There are five cases
+to consider. The first (similar) cases arises from \stopot and \stopt; they deal with
 successful trees. A successful tree corresponds to a stack that
-start with an empty list, and
-therefore we conclude using \stops. The case for \stept
+start with an empty list, in both cases
+we conclude using \stops. The case for \stept
 requires treating two subcases: \step evaluates either a cut or a call.
 Accordingly, we apply \cuts or \calls, followed by the
 induction hypothesis. The case for \backt is silent: it represents
@@ -1622,11 +1620,11 @@ stack is $a'$. %This proof strategy is indirectly providing a kind of \ltt funct
 
 \vspace{10pt}
 
-Stating the converse direction in a symmetric way
+Stating the converse direction of \cref{th:runTtorunS} in a symmetric way
 would require a function
 \ltt transforming a stack $a$ into a tree $t$.
 Writing this function is far from trivial, since the structure of
-the tree is lost by \saveas and \run that
+the tree is lost by \backchainS and \nur that
 intuitively keep the state as a big disjunction of conjunctions by
 distributing conjunctions over disjunctions. Moreover, one would need to
 define a notion of valid stack that is equally intricate.
