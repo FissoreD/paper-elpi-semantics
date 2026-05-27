@@ -1890,7 +1890,7 @@ Another relevant work is by Kriener and King~\cite{2011king},
 but we could not find their Rocq source code. Their semantics
 is denotational and cannot easily cover all the
 features that~\cite{fissore2026} covers, but it would have
-been sufficient for this first step.
+been sufficient for the first order setting covered by this paper.
 
 The proof technique we use to relate the two semantics is inspired by
 \cite{yves-equiv}, 
@@ -1902,7 +1902,7 @@ other, but does not introduce a decompiler, just as we do not define a
 function from stacks to trees.
 To show that the assembly code behaves like the imperative language, he
 proceeds by induction on the execution of the assembly program. We adopt
-the same strategy in the proof of \cref{th:elpitotree}.
+the same strategy in the proof of \cref{th:runStorunT}.
 
 When it comes to the static analysis for determinacy,
 we use a semantics in which input arguments are \emph{matched},
