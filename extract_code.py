@@ -214,7 +214,8 @@ def clean_line_math_mode(l:str):
     l = l.replace("++", "\\mappend")
     l = re.sub(" _[A-Za-z0-9]*", " _", l)
     l = l.replace("stepE", "\\backchainS")
-    l = l.replace("&", "\land")
+    l = l.replace("&", "\\land")
+    l = l.replace("[::]", "\\mnil")
     # l = l.replace('==', '=_b')
 
 

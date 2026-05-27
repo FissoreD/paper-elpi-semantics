@@ -22,7 +22,7 @@
 \newcommand{\msome}{\ensuremath{\cdot}}
 \newcommand{\mnone}{\ensuremath{\square}\xspace}
 \newcommand{\mappend}{\ensuremath{\mathbin{+\!\!+}}\xspace}
-\newcommand{\mnil}{\ensuremath{\varnothing}\xspace}
+\newcommand{\mnil}{\ensuremath{[]}\xspace}
 \newtheorem{axiom}{Axiom}
 
 %\pdfoutput=1 %uncomment to ensure pdflatex processing (mandatatory e.g. to submit to arXiv)
@@ -1553,17 +1553,20 @@ valid tree is matched by the execution of the stack obtained by
 translating the tree. Moreover, the unexplored alternatives returned as
 a tree correspond to those returned as a stack.
 
-\input{tex_code/tree_to_elpi.tex}
-% \begin{theorem}[tree\_to\_elpi]\label{th:treetoelpi}\cI{~\ensuremath{\forall}~ p ~\ensuremath{t}~ ~\ensuremath{\sigma}~ ~\ensuremath{r}~, let ~\ensuremath{v}~ := vars_tree ~\ensuremath{t}~ ~\ensuremath{\cup}~ vars_sigma ~\ensuremath{\sigma}~ in}~
-% \begin{coqcode}
-%     valid_tree ~\ensuremath{t}~ ~\ensuremath{\to}~
-%       runT' p ~\ensuremath{v}~ ~\ensuremath{\sigma}~ ~\ensuremath{t}~ ~\ensuremath{r}~ ~\ensuremath{\to}~ 
-%         let ~\ensuremath{a}~ := t2l ~\ensuremath{t}~ ~\ensuremath{\sigma}~ ~\mnil~ in
-%         let ~\ensuremath{r'}~ :=  if ~\ensuremath{r}~ is ~\msome~(~\ensuremath{\sigma'}~, ~\ensuremath{t}~) then  ~\msome~(~\ensuremath{\sigma'}~, t2l (odflt KO ~\ensuremath{t}~) ~\ensuremath{\sigma}~ ~\mnil~)
-%                   else ~\ensuremath{\square}~ in
-%         runS p ~\ensuremath{v}~ ~\ensuremath{a}~ ~\ensuremath{r'}~.
-% \end{coqcode}
-% \end{theorem}
+% \input{tex_code/tree_to_elpi.tex}
+\begin{theorem}[runT\_to\_runS]\label{th:runTtorunS}%
+\begin{multline*}
+	\forall\ p\ t\ \sigma\ r ,\ \mathrm{let}\ v\ \mathrm{:=}\ \mathrm{vars}\ t\ \cup\ \mathrm{vars}\ \sigma\ \mathrm{in}\ 
+	\mathrm{valid\_tree}\ t \to \mathrm{runT'}\ p\ v\ \sigma\ t\ r \to \\
+	\mathrm{let}\ r'\ \mathrm{:=}\ 
+	\begin{cases}
+	\mathrm{None} & \mathrm{if}\ r = \mathrm{Zero}\\
+	\mathrm{Some}\ (\sigma', \mnil) & \mathrm{if}\ r = \mathrm{One}\ \sigma'\\
+	\mathrm{Some}\ ( \sigma' ,\ \mathrm{tree\_to\_stack}\ t'\ \sigma\ \mnil) & \mathrm{if}\ r = \mathrm{Many}\ \sigma'\ t'\\
+	\end{cases}\\
+	\mathrm{runS}\ p\ v\ ( \mathrm{tree\_to\_stack}\ t\ \sigma\ [ \mathrm{::} ] )\ r' 
+\end{multline*}
+\end{theorem}
 
 \begin{proof}
 We proceed by induction on the execution of \run'. There are four cases
@@ -1575,7 +1578,7 @@ requires treating two subcases: \step evaluates either a cut or a call.
 Accordingly, we apply \cuts or \calls, followed by the
 induction hypothesis. The case for \backt is silent: it represents
 the non-injective behavior of \ttl; however, thanks to
-\cref{th:pruneFt2l} and the induction hypothesis, the conclusion is
+\cref{th:pruneFtreetostack} and the induction hypothesis, the conclusion is
 proved. The last case arises from the derivation \failt. It is
 easily proved using \fails and the fact that if \na returns
 $\mnone$ when trying to erase failure in $t$, then \ttl applied to $t$
@@ -1587,7 +1590,20 @@ using a function to translate a stack into a tree it states that any
 tree that translates to the given stack has an equivalent execution,
 i.e. gives the same solution and returns an unexplored tree that
 translates to the unexplored stack.
-\input{tex_code/elpi_to_tree.tex}
+% \input{tex_code/elpi_to_tree.tex}
+\begin{theorem}[runS\_to\_runT]\label{th:runStorunT}%
+\begin{multline*}
+	\forall\ p\ v\ a\ r ,\ \mathrm{runS}\ p\ v\ a\ r \to
+	\forall\ \sigma\ t ,\ \mathrm{valid\_tree}\ t \to \mathrm{tree\_to\_stack}\ t\ \sigma\ \mnil = a \to \\
+	% \mathrm{match}\ r\ \mathrm{with} \\
+  \begin{cases}
+    \mathrm{runT'}\ p\ v\ \sigma\ t\ \mathrm{Zero}             & \mathrm{if}\ r = \mathrm{None} \\
+    \mathrm{runT'}\ p\ v\ \sigma\ t\ ( \mathrm{One}\ \sigma' ) & \mathrm{if}\ r = \mathrm{Some}\ ( \sigma' ,\ \mnil ) \\
+    \exists\ t' ,\ \mathrm{runT'}\ p\ v\ \sigma\ t\ ( \mathrm{Many}\ \sigma'\ t' ) 
+    \land \mathrm{tree\_to\_stack}\ t'\ \sigma\ \mnil = a'     & \mathrm{if}\ r =  \mathrm{Some}\ ( \sigma' ,\ a' ) \\
+  \end{cases}
+\end{multline*}
+\end{theorem}
 
 \noindent
 \begin{minipage}{0.75\textwidth}
