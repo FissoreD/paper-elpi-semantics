@@ -1109,7 +1109,8 @@ If $A$ does not cut, the elimination rule has the usual two premises, together
 with the additional constraint that whenever $B$ holds, $A$ must have failed.
 This again reflects the depth-first traversal of the proof tree.
 
-$$
+% $$
+\begin{center}  
 \begin{bprooftree}
   \AxiomC{$A \lor B$}
   \AxiomC{[A]}
@@ -1119,7 +1120,9 @@ $$
   \RightLabel{$(\lor_{e1})$}
   \TrinaryInfC{$C$}
 \end{bprooftree}
-\quad
+
+\vspace{18pt}
+
 \begin{bprooftree}
   \AxiomC{$A \lor B$}
   \AxiomC{[A] }
@@ -1131,7 +1134,8 @@ $$
   \RightLabel{$(\lor_{e2})$}
   \TrinaryInfC{C}
 \end{bprooftree}
-$$
+% $$
+\end{center}
 
 It is worth recalling that the ``$A$ cuts'' side-condition in the rules above is
 precisely the boolean result returned by \run. Without this information, it is

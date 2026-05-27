@@ -236,14 +236,14 @@ def clean_line_math_mode(l:str):
     l = l.replace("=>", "\\Rightarrow")
     if l.endswith("."): l = l[:-1]
 
-    space_bef = "()[]{},"
-    for p in space_bef:
-        l = l.replace(p, f" {p} ")
-
     def clean_esc(l):
         m = l.group(1)
         return  " \\phantom{!}_{\!\!\!\!" + m.replace("~", "").replace("$","") + "}"
     l = re.sub(r' -sub\(([^)]*)\)', lambda x: (clean_esc(x)), l)
+
+    space_bef = "()[],"
+    for p in space_bef:
+        l = l.replace(p, f" {p} ")
 
     pat = ["v","b","t","r","a", "g", "l", "h"]
     def change_vars(vn, gl, l):
