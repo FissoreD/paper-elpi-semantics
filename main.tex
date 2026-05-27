@@ -1844,7 +1844,7 @@ The theorem we want to prove is the following one:
 
 % \input{tex_code/det_check_call.tex}
 \begin{theorem}[det\_check\_call]\label{th:detcheckcall}%
-	$$\forall\ p\ \sigma\ t\ v ,\ \mathrm{check\_program}\ p \to \mathrm{tm\_is\_det}\ \mathrm{p.}\ ( \mathrm{sig} )\ t \to \mathrm{is\_det}\ p\ \sigma\ v\ ( \mathrm{TA}\ ( \mathrm{call}\ t ) ) $$
+	$$\forall\ p\ \sigma\ t\ v ,\ \mathrm{check\_program}\ p \to \mathrm{tm\_is\_det}\ p\ t \to \mathrm{is\_det}\ p\ \sigma\ v\ ( \mathrm{TA}\ ( \mathrm{call}\ t ) ) $$
 \end{theorem}
 
 Here, \emph{check\_program} denotes the function that checks the program
@@ -1864,7 +1864,7 @@ desired properties, and then prove the following more general theorem:
 
 % \input{tex_code/det_check_tree.tex}
 \begin{lemma}[det\_check\_tree]\label{th:detchecktree}%
-	$$\forall\ \sigma\ v\ p\ t ,\ \mathrm{check\_program}\ p \to \mathrm{det\_tree}\ \mathrm{p.}\ ( \mathrm{sig} )\ t \to \mathrm{is\_det}\ p\ \sigma\ v\ t $$
+	$$\forall\ \sigma\ v\ p\ t ,\ \mathrm{check\_program}\ p \to \mathrm{det\_tree}\ p\ t \to \mathrm{is\_det}\ p\ \sigma\ v\ t $$
 \end{lemma}
 
 Our target theorem det\_check\_call is a corollary of det\_check\_tree.
