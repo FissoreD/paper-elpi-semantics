@@ -658,13 +658,10 @@ the next alternative and continues from there, if one exists.
 % latter case, we note that $B$ can be non-dead, but this is not a problem
 % since the interpreter can run $B$ only if $A$ is non-dead.
 
-\begin{figure}[b]
-  \begin{subfigure}{0.45\textwidth}
+\begin{figure}
     \input{tex_code/next.tex}
     % \caption{Defintion of \getend}
     % \label{fig:getend}
-  \end{subfigure}
-  \begin{subfigure}{0.45\textwidth}
       % \input{tex_code/get_subst.tex}
       % \input{tex_code/path_end.tex}
       % \input{tex_code/succ_path.tex}
@@ -674,7 +671,6 @@ the next alternative and continues from there, if one exists.
     % \vspace{20pt}
       % \caption{Functions from \getend}
       % \label{fig:geten/d-aux}
-  \end{subfigure}
   \caption{\getend routine and derived functions}
   \label{fig:getend}
 \end{figure}
@@ -1441,7 +1437,7 @@ note that \ref{tree-ex3} and \ref{tree-ex4} are both translated into
 the same stack. Consequently, there are transitions in \run that are not visible
 in \nur.
 %
-\begin{figure}[b]
+\begin{figure}[t]
   \begin{center}
     
     \includegraphics[width=0.8\textwidth, keepaspectratio]{src/t2lex.pdf}
@@ -1612,7 +1608,7 @@ translates to the unexplored stack.
 \end{theorem}
 
 \noindent
-\begin{minipage}{0.75\textwidth}
+\begin{minipage}{0.65\textwidth}
 \begin{proof}
 The proof is based on the idea explained in~\cite[Section
 3.5.1]{yves-equiv} and depicted in the figure on the right:
