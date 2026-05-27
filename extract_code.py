@@ -65,7 +65,7 @@ def clean_line_global(l,escape):
     l = re.sub(r"\bget_subst\b", "next_subst", l)
     l = re.sub(r"\bpath_end\b", "next_tree", l)
     l = re.sub(r"\bget_end\b", "next", l)
-    l = re.sub(r"\bTA\b", "Todo", l)
+    l = re.sub(r"\bTA\b", "Unexplored", l)
     l = re.sub(r"`<=`", esc(m("\\\\subseteq")), l)
     l = re.sub(r"∨", esc(m("\\\\lor")), l)
     l = re.sub(r"∧", esc(m("\\\\land")), l)

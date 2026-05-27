@@ -541,7 +541,7 @@ while list comprehension (i.e. mapping a function on a list) is written
 
 An And-Or tree is a stratified, variable-width tree, defined as follows:
 %
-$$\TREE := \mathrm{KO} \mid \mathrm{OK} \mid \mathrm{Todo}\ \ATOM \mid \mathrm{Or}\ (\mathrm{option}\ \TREE)\ \Sigma\ \TREE \mid \mathrm{And}\ \TREE\ (\mathrm{list}\ \ATOM)\ \TREE$$
+$$\TREE := \mathrm{KO} \mid \mathrm{OK} \mid \mathrm{Unexplored}\ \ATOM \mid \mathrm{Or}\ (\mathrm{option}\ \TREE)\ \Sigma\ \TREE \mid \mathrm{And}\ \TREE\ (\mathrm{list}\ \ATOM)\ \TREE$$
 
 It consists of two kinds
 of layers that alternate: a disjunctive layer is followed by a conjunctive
@@ -554,7 +554,7 @@ are precisely debscribed in \cref{sec:validtree} where we introduce the
 \vast predicate.
 
 
-The tree is built incrementally. The \emph{Todo} node
+The tree is built incrementally. The \emph{Unexplored} node
 represents an unexplored branch (an atom). When the atom is a
 call, we use the backchaining procedure from
 \cref{sec:preliminaries} to compute the two layers to attach to the tree:
@@ -563,7 +563,7 @@ the corresponding And-layer. This expansion step is performed by the
 \emph{step} procedure described in \cref{sec:step}.
 
 In
-addition to the Todo node we have two distinguished nodes, \koC and
+addition to the Unexplored node we have two distinguished nodes, \koC and
 \okC, which represent respectively the smallest failed and successful tree.
 
 The \orC node, written \(A \lor B_\sigma\), represents the addition of an
@@ -638,7 +638,7 @@ is delayed in the very following section.
 Since all functions must terminate in Rocq, we define the transitive closure
 of \step and \na as the inductive relation \run.
 More precisely \run iterates calls to \step on incomplete trees to expand
-Todo nodes. When a tree fails it calls \na to find
+Unexplored nodes. When a tree fails it calls \na to find
 the next alternative and continues from there, if one exists.
 % We detail \step, \na, and \run in \cref{sec:step,sec:next_alt,sec:runT}.
 
@@ -780,7 +780,7 @@ unchanged when the tree is \emph{success} or \emph{failed}.
 \input{tex_code/success_step.tex}
 \input{tex_code/failed_step.tex}
 
-The \step procedure expands Todo nodes by calling backchain, which returns a list
+The \step procedure expands Unexplored nodes by calling backchain, which returns a list
 $l$ of alternatives. If $l$ is empty, then the current call atom is replaced by
 \koC. Otherwise, it is replaced by a right-skewed tree of \orC nodes, where
 each leaf corresponds to a list of atoms $e \in l$. If $e$ is empty, the leaf
