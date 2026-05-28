@@ -1518,7 +1518,7 @@ The translations of the trees in \cref{tree-ex} are shown in \cref{ex-elpi}.
 The letters in the figures relate each tree to the corresponding stack.
 For example, \ref{tree-ex1} is translated into \ref{ex-elpi1}. We also
 note that \ref{tree-ex3} and \ref{tree-ex4} are both translated into
-\ref{ex-elpi3}, showing that $t2l$ is not injective: different trees can map to
+\ref{ex-elpi3}, showing that \ttl is not injective: different trees can map to
 the same stack. Consequently, there are transitions in \run that are not visible
 in \nur.
 %
@@ -1725,17 +1725,17 @@ it recovers the missing tree structure.
 
 \section{Case study: determinacy analysis}\label{sec:determinacy}
 
-An interesting application of the tree semantics is determinacy checking,
-introduced in version~3 of the \elpiP{} language~\cite{fissore2026}. The
-checker takes as input the signatures of the predicates declared by the
-user and verifies that the rules of a deterministic predicate generate at
-most one solution; we call this particular kind of predicate a function.
-Thanks to this static verification, the user can better control
-unexpected backtracking.
+As an application of the tree semantics, we mechanize the soundness proof
+of the determinacy-checking algorithm introduced in version~3 of the
+\elpiP{} language~\cite{fissore2026}. The static checker takes as input
+the signatures of the predicates declared by the user and verifies that
+the rules of a deterministic predicate generate at most one solution; we
+call this kind of predicate a function. Thanks to this static
+verification, the user can better control unexpected backtracking.
 
 A predicate behaves deterministically if two conditions are
 satisfied: \emph{mutual exclusion} guarantees that at most one rule can
-be successfully applied to any given query, whereas \emph{rule checking}
+be successfully applied to any given query, whereas \emph{rule body checking}
 ensures that each rule does not create choice points, for example by
 calling non-deterministic predicates.
 
@@ -1747,8 +1747,8 @@ need a mode checker that statically ensures that, in a query with ground inputs,
 each recursive call is performed with ground inputs.
 
 Our mechanization implements the unification algorithm by
-Martelli and Montanari~\cite{10.1145/357162.357169} that we prove
-terminating (using the standard lexicographic ordering),
+Martelli and Montanari~\cite{10.1145/357162.357169}, which we prove
+terminating using the standard lexicographic ordering,
 correct and complete.
 
 In the following definitions and lemmas, we use the notation $x \cap y =
@@ -1762,7 +1762,8 @@ terms do not share any variables.
 
 Note that this definition of acyclicity entails that the substitution is
 necessarily self applied, i.e. $\sigma \coloneq \{ X \mapsto f~Y, Y \mapsto a\}$
-is not acyclic, while the equivalet $\sigma' \coloneq \{ X \mapsto f~a\}$ is.
+is not acyclic, whereas the equivalent $\sigma' \coloneq \{ X \mapsto f~a\}$
+is.
 The algorithm by Martelli and Montanari generates substitutions that
 are acyclic in this sense.
 
@@ -1788,9 +1789,9 @@ are in input position.
 % call and the pattern is the corresponding input argument in the chosen
 % rule-head.
 
-In order to adress this need we extend the Martelli and
-Montanari unification procedure to take a set of frozen variables, i.e.
-variables that cannot be assigned. The function \matching has the following property:
+To address this need, we extend the Martelli-Montanari unification
+procedure so that it takes a set of frozen variables, i.e. variables that
+cannot be assigned. The function \matching has the following property:
 
 % \input{tex_code/matchdisj.tex}
 \begin{lemma}[matching\_disj]\label{um}\label{th:matchingdisj}
@@ -1814,21 +1815,22 @@ from \cref{th:unifycorrect}, does not affect variables in $\sigma\ t_2$.
 
 
 The backchain function uses matching or unify on the arguments $q$
-depending if the argument is in \emph{input} or \emph{output} mode.
+depending on whether the argument is in \emph{input} or
+\emph{output} mode.
 % We assume two important properties of our unification routines.
 
 For the static checker, and in particular in order to validate rule mutual
 exclusion, we need to ensure that no two rules can be used on the same query in
 the absence of cut. We exploit the behavior of the matching over input
-argument to guarantee this property: mutual exclusion ensure that every pair of
-rules for a deterministic predicate have an input term that does not satisfy
-unification.
+arguments to guarantee this property: mutual exclusion ensures that every
+pair of rules for a deterministic predicate has an input term that does
+not unify.
 
-An important property we derive from the matching and unify procedure
-is that given three variable-disjoint terms $h_1$, $h_2$ and $q$, representing
-respectively two rule heads in the database and a query, if both heads are
-matching the query $q$ then the two heads must unify. This idea is formalized
-by the following lemma.
+An important property we derive from the matching and unification
+procedures is the following. Given three pairwise variable-disjoint terms
+$h_1$, $h_2$, and $q$, representing two rule heads in the database and a
+query, if both heads match the query $q$, then the two heads must unify.
+This idea is formalized by the following lemma.
 
 % \input{tex_code/matching_unify_transP.tex}
 
@@ -1858,10 +1860,11 @@ by the following lemma.
 
 Finally, we also need a lemma certifying that the refreshing variables operation
 performed at runtime during backchaining does not affect unification.
-In particular, a refreshing renaming $f$ for a term $t$ is a function from variables
-to variables that: (i) $f$ is defined on all the variables in $t$, i.e. all variables get renamed; (ii) $f$ is
-injective, i.e. does not confuse variables. Refreshing produces
-therefore $\alpha$-equivalent terms.
+In particular, a refreshing renaming $f$ for a term $t$ is a function from
+variables to variables such that: (i) $f$ is defined on all variables in
+$t$, i.e. every variable is renamed; and (ii) $f$ is injective, i.e. it
+does not identify distinct variables. Refreshing therefore produces
+$\alpha$-equivalent terms.
 %\marginpar{spiegare disjoint in hyp of lemma 17}
 
 % Below, we define
@@ -1907,12 +1910,12 @@ outputs; therefore, all three predicates are expected to take an
 
 The signatures of the program are stored in the \texttt{sig} field of
 the program and are encoded as described in
-\cite{fissore2026}: we distinguish data from predicates, and predicates are classified
-into deterministic a non-deterministic.
+\cite{fissore2026}: we distinguish data from predicates, and predicates
+are classified as deterministic or non-deterministic.
 
 A program execution behaves deterministically if, given a program, a
-substitution, and an input tree for the \run\ inductive, the execution either
-fails or, if it succeeds with no alternatives to be explored.
+substitution, and an input tree for the \run\ inductive, the execution
+either fails or succeeds with no alternatives left to explore.
 % Below, we define \texttt{is\_det}.
 
 
@@ -1940,8 +1943,8 @@ hypothesis is too weak since it talks about \taC trees (i.e. atoms),
 whereas we need it on any tree.
 
 To address this issue, we introduce the notion of deterministic trees
-(\emph{det\_tree}), show that a tree satisfying this condition enjoys the
-desired properties\marginpar{TODO: step preserves it?}, and then prove the following more general theorem:
+(\emph{det\_tree}), show that $\mathrm{runT}$ preserves it, and finally
+prove the following more general theorem:
 
 % \input{tex_code/det_check_tree.tex}
 \begin{lemma}[det\_check\_tree]\label{th:detchecktree}%
@@ -1958,52 +1961,52 @@ Our target theorem det\_check\_call is a corollary of det\_check\_tree.
 
 \section{Related work}
 
-The only mechanization of \prologP's semantics
-we could find is the one by Pusch in \isabelleP~\cite{10.1007/BFb0105415}
-that is based on the model of Debray and Mishra~\cite[Sec.~4.3]{Debray1988}.
-Their work starts from that semantics and refines it by
-introducing some optimizations usually found in
-the Warren abstract machine~\cite{warren1983abstract,1991ait-wam}.
-They do not use the semantics to prove properties
-on the execution of programs as we do in our case study, hence they do not face the
-difficulty described in \cref{stack-sem} that pushed us to
-develop a more explicit semantics (with respect to cut).
-In a sense, our work is complementary. By combining both works one can show the tree-based semantics
-is equivalent to an optimized stack-based one.
+The only mechanization of \prologP's semantics that we could find is
+Pusch's \isabelleP formalization~\cite{10.1007/BFb0105415}, which is
+based on the model of Debray and Mishra~\cite[Sec.~4.3]{Debray1988}.
+That work starts from this semantics and refines it by introducing
+optimizations commonly found in the Warren abstract
+machine~\cite{warren1983abstract,1991ait-wam}. Unlike our case study,
+it does not use the semantics to prove properties of program execution;
+consequently, it does not encounter the difficulty described in
+\cref{stack-sem}, which led us to develop a semantics in which the
+effect of cut is more explicit. In this sense, the two approaches are
+complementary: taken together, they suggest that the tree-based
+semantics is equivalent to an optimized stack-based one.
 
-Another relevant work is by Kriener and King~\cite{2011king},
-but we could not find their Rocq source code. Their semantics
-is denotational and cannot easily cover all the
-features that~\cite{fissore2026} covers, but it would have
-been sufficient for the first order setting covered by this paper.
+Another relevant work is due to Kriener and King~\cite{2011king}, but
+we could not find their Rocq source code. Their semantics is
+denotational and cannot easily account for all the features covered
+in~\cite{fissore2026}, although it would have been sufficient for the
+first-order fragment considered in this paper.
 
-The proof technique we use to relate the two semantics is inspired by
-\cite{yves-equiv}, 
-where Bertot mechanizes the correctness of a
+The proof technique we use to relate the two semantics is inspired
+by~\cite{yves-equiv}, where Bertot mechanizes the correctness of a
 compiler. He relates the semantics of an imperative language to that of
 its compiled assembly code and proves their equivalence. His approach
 uses the compiler as the translation function from one language to the
 other, but does not introduce a decompiler, just as we do not define a
-function from stacks to trees.
-To show that the assembly code behaves like the imperative language, he
-proceeds by induction on the execution of the assembly program. We adopt
-the same strategy in the proof of \cref{th:runStorunT}.
+function from stacks to trees. To show that the assembly code behaves
+like the imperative language, he proceeds by induction on the execution
+of the assembly program. We adopt the same strategy in the proof of
+\cref{th:runStorunT}.
 
-When it comes to the static analysis for determinacy,
-we use a semantics in which input arguments are \emph{matched},
-rather than unified, against rule  heads. This choice agrees with the \elpiP
-interpreter, which is in turn inspired by B-\prologP's
-``matching-clauses''~\cite{1991ait-wam,zhou2012}. 
+For the static analysis of determinacy, we use a semantics in which
+input arguments are \emph{matched}, rather than unified, against rule
+heads. This choice agrees with the \elpiP interpreter, which is in turn
+inspired by B-\prologP's
+``matching-clauses''~\cite{1991ait-wam,zhou2012}.
 
-Applying our work to a semantics entirely based on unification is possible with
-the addition of two extra assumtions in \cref{th:detcheckcall}. First, one has
-to require that $t$ has ground inputs. Second, that the program $p$ is well-moded.
-Well-moded predicates produce ground outputs when given ground inputs;
-hence, starting from an initial query with ground inputs, well-moded
-programs behave exactly as if input arguments were matched. Said otherwise
-lemma \cref{th:matchingdisj} would use unification, but would also have
-an extra assumption that the input arguments are ground, an with that
-unification and matching are equivalent.
+Applying our results to a semantics based entirely on unification is
+possible by adding two extra assumptions to
+\cref{th:detcheckcall}. First, the initial query must have ground inputs. Second, the
+program must be well-moded. Well-moded predicates produce ground
+outputs when given ground inputs; hence, starting from an initial query
+with ground inputs, well-moded programs behave exactly as if input
+arguments were matched. In other words, lemma
+\cref{th:matchingdisj} could be reformulated using unification, at the
+cost of an additional assumption that the input arguments are ground;
+under that assumption, unification and matching coincide.
 
 \section{Conclusion}
 
@@ -2039,21 +2042,23 @@ disjoint substitutions.
 To obtain an axiom-free mechanization, we had to provide an implementation
 of the first-order unification algorithm, since we could not find an
 existing Rocq mechanization. Describing this development in detail is out of
-scope for this paper. It amounts to about 1700 lines of ssreflect code, including 200 lines
-for the termination proof based on a lexicographic ordering and 800 lines for
-correctness and completeness. Because of the specific form of \cref{th:unifren,th:matchingdisj},
-which deals with matching and unification of terms with disjoint support, we did not need to
+scope for this paper. It amounts to about 1,700 lines of ssreflect code,
+including 200 lines for the termination proof based on a lexicographic
+ordering and 800 lines for correctness and completeness. Because of the
+specific form of \cref{th:unifren,th:matchingdisj}, which deals with
+matching and unification of terms with disjoint support, we did not need to
 prove that the algorithm produces most-general unifiers.
 % \marginpar{Martelli (size, time, relation with saarland (maybe don't say ), substitutions are not finite maps, hence badly integrate with mathcomp, also the algorithm is not explicilty given)}
 
 To fully model the \elpiP language and mechanize~\cite{fissore2026} entirely,
-we would need to account for higher-order variables, i.e. variables
-representing predicates. This extension is ongoing and largely orthogonal to
+we would need to account for higher-order variables, that is, variables that
+represent predicates. This extension is ongoing and largely orthogonal to
 the present paper, since cut and higher-order variables do not interact in
 subtle ways. The main difficulty is that substitutions may contain
-predicates, and these predicates must have a signature compatible with the
-one assumed statically, in the sense of the $\subseteq$ relation defined
-in~\cite[Section 5]{fissore2026}.
+predicates, and these predicates must have signatures compatible with those
+assumed statically, in the sense of the $\subseteq$ relation defined
+in~\cite[Section~5]{fissore2026}. Dynamic predicates also require minor
+changes to the conditions for mutual exclusion.
 % Last, to keep
 % the mechanization axiom-free, one should extend the unification algorithm
 % to the higher-order case
