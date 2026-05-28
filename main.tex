@@ -4,6 +4,7 @@
 % \usepackage{caption}
 
 \usepackage{subcaption}
+\usepackage{comment}
 
 \usepackage{amsfonts}
 \usepackage[hidelinks]{hyperref}
@@ -91,7 +92,7 @@
 %\funding{This work has been supported by the French government, through the France 2030 investment plan managed by the Agence Nationale de la Recherche, as part of the ``UCA DS4H'' project, reference ANR-17-EURE-0004.}
 
 
-\title{Operational semantics for Prolog with Cut in \rocqP 
+\title{Operational semantics for \prologP with Cut in \rocqP 
 and its application to determinacy analysis} % of \elpiP programs}
 
 % \author{Davide Fissore\orcidID{0009-0002-5934-8776} \and
@@ -100,10 +101,10 @@ and its application to determinacy analysis} % of \elpiP programs}
 % \authorrunning{D. Fissore, E. Tassi}
 % \institute{Université Côte d'Azur, Inria, France\\
 % \email{davide.fissore@inria.fr~~~enrico.tassi@inria.fr}}
-\author{ANON\orcidID{XYZ} \and YMOUS\orcidID{ABC}}
-\authorrunning{ANON, YMOUS}
-\institute{AoE\\
-\email{todo@institute.com}}
+\author{Anonymous\orcidID{000}}
+\authorrunning{Anonymous}
+\institute{Anonymous\\
+\email{anonymous@institute.com}}
 
 %
 \maketitle              % typeset the header of the contribution
@@ -132,10 +133,94 @@ presence of cut, which, as expected, differ from those of classical logic.
 As a case study, we use the tree-based semantics to prove the soundness of
 the determinacy analysis introduced in~\cite{fissore2026}. By exploiting the
 equivalence between the two semantics, we relate this result to the
-stack-based semantics implemented by the interpreter of the \elpiP
-logic programming language~\cite{dunchev15lpar}.
+stack-based semantics used in efficient implementations of logic programming
+such as~\cite{dunchev15lpar}.
 \end{abstract}
 
+\section{Introduction}
+
+Backtracking is a compelling feature of logic programming, but it is also a
+double-edged sword. On the one hand, it makes it possible to write concise
+code that searches for a solution or enumerates all solutions. On the other
+hand, backtracking is often a source of poor performance and can make logic
+programs harder to debug. To mitigate these problems, the logic programming
+community has studied various forms of determinacy
+analysis~\cite{1989Warren,1996Somogy,1996henderson,2011king,lopez2004determinacy,hanus2025,fissore2026}
+that identify logic programs that are deterministic, i.e., that compute
+functions rather than relations: they commit to their first solution and
+leave no \emph{choice points} (places where backtracking could resume). A
+choice point corresponds to a suspended \emph{alternative} computation, and
+in the following we use \emph{choice point} and \emph{alternative} as
+synonyms. The control operator \emph{cut} allows the programmer to discard
+choice points and is therefore pervasively used to write deterministic code,
+but it is also well known to make the semantics of the programming language
+depart from a purely logical reading, thereby making reasoning about code
+ harder.
+
+Intuitively, nondeterminism arises when a computation can be completed using
+two different rules. This situation is typically ruled out statically by
+performing two complementary checks. The first one, called
+\emph{mutual exclusion}, checks that at most one rule can apply to a given
+query. This condition is satisfied if either (i) no two rules have
+overlapping heads, so that no query can unify with both, or (ii) the
+analysis accounts for the presence of cut in rule premises, so that once the
+cut is executed all remaining rules are discarded. The second check, called
+\emph{rule-body checking}, verifies that each rule either (i) calls only
+functions, ensuring that no choice point remains after the premises of the
+chosen rule have been executed, or (ii) executes a cut after calling
+relations, in which case any choice points left by the call are discarded.
+
+Most papers in the literature only provide paper proofs for the soundness
+of their analysis, with the exception of Kriener and King~\cite{2011king}.
+They mechanize in the Rocq prover (formerly the Coq proof assistant) a
+denotational semantics for \prologP with cut and use it to prove the
+soundness of an abstract-interpretation-based determinacy inference
+algorithm. This mechanization has two shortcomings, in addition to the Rocq
+code being unavailable. First, the analysis does not scale to dynamic
+predicates (see \cite[Sec.~8]{fissore2026}), so it cannot be applied to
+$\lambda$\prologP~\cite{1991miller-pf,Miller_Nadathur_2012}. Second, there is
+no mechanized link between their denotational semantics and the operational
+semantics of Debray and Mishra~\cite{Debray1988}, which underlie standard
+\prologP abstract machines~\cite{warren1983abstract,1991ait-wam,10.1007/BFb0105415}.
+
+\paragraph{Contributions}
+In this paper we mechanize in Rocq two operational semantics for
+\prologP with cut. The first is the stack-based semantics given by Debray
+and Mishra. This semantics is closely related to actual \prologP
+implementations, but it makes reasoning about the scope of cut difficult:
+alternatives are stored in a stack, in chronological order, and the cut
+operator is represented as a pointer to a shorter stack. The relation
+between the rules being cut and the affected stack frames is therefore not
+immediately visible.
+
+To address this limitation, we introduce a semantics based on And-Or trees,
+in which the history of the computation is represented in a structured way:
+given a goal, each applicable rule generates an Or-branch, which is in turn
+followed by an And-branch for each premise. This enables an explicit
+characterization of the cut operator as a function that prunes selected
+branches of the tree. The tree-based semantics allows us to formulate
+introduction and elimination rules for disjunction in the presence of cut,
+which, as expected, differ from those of classical logic. For example,
+$q_1 \lor q_2$ is not equivalent to $q_2 \lor q_1$, since $q_2$ may be cut
+away by $q_1$.
+
+Finally, we use the tree-based semantics to prove the correctness of the
+determinacy analysis from~\cite{fissore2026}. We prove in Rocq that
+any call to a predicate identified as deterministic leaves no additional
+Or-branches in the tree when it terminates. By composing this result with
+the equivalence between the two semantics, we obtain that any call to a
+deterministic predicate leaves no choice points on the stack used by actual
+\prologP implementations, including the \elpiP~\cite{dunchev15lpar}
+interpreter, which implements the analysis from~\cite{fissore2026}.
+% \elpiP~\cite{dunchev15lpar} is a dialect of \lprologP used as an extension
+% language for the \rocqP prover that has recently become an important infrastructure
+% component~\cite{krebbers25,Trakt,Maas2024,fissore2023,fissore2024,cohen_et_al:LIPIcs.FSCD.2020.34,Trocq,TrocqJ,tassi2018,tassi2019,tassi2023}.
+
+Our mechanization is axiom-free and is available at
+% \url{https://github.com/FissoreD/elpi-formalization}.
+\url{ANONYMEZED}
+
+\begin{comment}
 \section{Introduction}
 
 
@@ -214,7 +299,7 @@ deterministic predicate leaves no choice points on the stack used by the
 Our mechanization is axiom-free and is available at 
 % \url{https://github.com/FissoreD/elpi-formalization}.
 \url{ANONYMEZED_FOR_BLINDNESS}
-
+\end{comment}
 % questa deve stare vicino all'intro perchè aiuta a capire la det
 \begin{figure}[t]
     \inputminted[fontsize=\small,autogobble,escapeinside=~~,mathescape=true,frame=leftline,framerule=0pt,framesep=1em]{elpi.py:ElpiLexer}{./progx.elpi}
@@ -275,7 +360,7 @@ The concrete definition of these two algebraic types is given below:
 
 The syntax tree allows variables to be applied and predicates to be mixed with data.
 These higher-order features play no role in the current paper that focuses on
-first order logic programming, but allows future extensions to full $\lambda$Prolog
+first order logic programming, but allows future extensions to full $\lambda$\prologP
 to be based on the same mechanization.
 
 Variables, predicates and data symbols
@@ -1856,7 +1941,7 @@ whereas we need it on any tree.
 
 To address this issue, we introduce the notion of deterministic trees
 (\emph{det\_tree}), show that a tree satisfying this condition enjoys the
-desired properties, and then prove the following more general theorem:
+desired properties\marginpar{TODO: step preserves it?}, and then prove the following more general theorem:
 
 % \input{tex_code/det_check_tree.tex}
 \begin{lemma}[det\_check\_tree]\label{th:detchecktree}%
@@ -1873,7 +1958,7 @@ Our target theorem det\_check\_call is a corollary of det\_check\_tree.
 
 \section{Related work}
 
-The only mechanization of Prolog's semantics
+The only mechanization of \prologP's semantics
 we could find is the one by Pusch in \isabelleP~\cite{10.1007/BFb0105415}
 that is based on the model of Debray and Mishra~\cite[Sec.~4.3]{Debray1988}.
 Their work starts from that semantics and refines it by
@@ -1906,8 +1991,8 @@ the same strategy in the proof of \cref{th:runStorunT}.
 
 When it comes to the static analysis for determinacy,
 we use a semantics in which input arguments are \emph{matched},
-rather than unified, against rule heads. This choice agrees with the \elpiP
-interpreter, which is in turn inspired by B-Prolog's
+rather than unified, against rule  heads. This choice agrees with the \elpiP
+interpreter, which is in turn inspired by B-\prologP's
 ``matching-clauses''~\cite{1991ait-wam,zhou2012}. 
 
 Applying our work to a semantics entirely based on unification is possible with
@@ -1922,7 +2007,7 @@ unification and matching are equivalent.
 
 \section{Conclusion}
 
-This paper describes two operational semantics for Prolog with cut. The first
+This paper describes two operational semantics for \prologP with cut. The first
 semantics is based on And--Or trees: it is well suited both to graphical
 illustrations of the scope of cut and to proving lemmas about the effect of
 cut evaluation when reasoning about disjunctions. The second semantics is
