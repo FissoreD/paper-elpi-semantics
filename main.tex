@@ -1134,7 +1134,7 @@ implicitly denotes $(\mathrm{Some}\ A) \lor B_\sigma$.
 \input{tex_code/runNF_or.tex}
 % $$$$
 
-\Cref{th:runSSTor,th:runNTor,th:runNFor} correspond to the introduction rules
+\Cref{th:orintroleft,th:orintroright,th:orintroright2} correspond to the introduction rules
 for disjunction. If $A$ executes a cut, one \emph{cannot} obtain $A \lor B$ from
 $B$: the execution of $A$, whether it ultimately succeeds or fails, makes the
 success of $B$ irrelevant (the cut discards it). In the first lemma, $B$ is
@@ -1168,7 +1168,7 @@ Depicted as rules:
 \end{center}
 
 
-\Cref{th:runorSST,th:runorSNT} are elimination
+\Cref{th:orelim1,th:orelim2} are elimination
 rules for disjunction. 
 
 \input{tex_code/run_orSST.tex}
