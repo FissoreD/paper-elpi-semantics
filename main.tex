@@ -2,7 +2,7 @@
 \documentclass[a4paper,UKenglish,cleveref, autoref, thm-restate, lineno, anonymous]{llncs}
 
 % \usepackage{caption}
-
+\pagestyle{plain}
 \usepackage{subcaption}
 \usepackage{comment}
 
@@ -301,11 +301,6 @@ Our mechanization is axiom-free and is available at
 \url{ANONYMEZED_FOR_BLINDNESS}
 \end{comment}
 % questa deve stare vicino all'intro perchè aiuta a capire la det
-\begin{figure}[t]
-    \inputminted[fontsize=\small,autogobble,escapeinside=~~,mathescape=true,frame=leftline,framerule=0pt,framesep=1em]{elpi.py:ElpiLexer}{./progx.elpi}
-    \caption{Running example of a \elpiP program}
-    \label{fig:progx}
-  \end{figure}
 
 \section{Preliminaries: syntax and informal semantics of cut}
 \label{sec:preliminaries}
@@ -363,6 +358,18 @@ These higher-order features play no role in the current paper that focuses on
 first order logic programming, but allows future extensions to full $\lambda$\prologP
 to be based on the same mechanization.
 
+\begin{figure}
+  \begin{align*}
+    \sigma\ (\mathrm{Symb}\ n) &= \mathrm{Symb}\ n \\
+    \sigma\ (\mathrm{Pred}\ n) &= \mathrm{Pred}\ n \\
+    \sigma\ (\mathrm{Var}\ n) &= t\quad \mathrm{if}\ (n,t) \in \sigma\\
+    \sigma\ (\mathrm{Var}\ n) &= \mathrm{Var}\ n\quad \mathrm{otherwise}\\
+    \sigma\ (\mathrm{App}\ t_1\ t_2) &= \mathrm{App}\ (\sigma\ t_1)\ (\sigma\ t_2)
+  \end{align*}
+  \caption{Rules for substitution application}
+  \label{fig:deref}
+\end{figure}
+
 Variables, predicates and data symbols
 are identified by natural numbers. We represent substitutions
 (of type $\Sigma$) as finitely supported maps from variables to terms, using the
@@ -393,25 +400,13 @@ under $\sigma$, then $\sigma'~t_1 = \sigma'~t_2$, where
 $\sigma~t$ denotes substitution application (see \cref{fig:deref}) and $=$ denotes 
 syntactic equality.
 
-\begin{figure}[t]
-  \begin{align*}
-    \sigma\ (\mathrm{Symb}\ n) &= \mathrm{Symb}\ n \\
-    \sigma\ (\mathrm{Pred}\ n) &= \mathrm{Pred}\ n \\
-    \sigma\ (\mathrm{Var}\ n) &= t\quad \mathrm{if}\ (n,t) \in \sigma\\
-    \sigma\ (\mathrm{Var}\ n) &= \mathrm{Var}\ n\quad \mathrm{otherwise}\\
-    \sigma\ (\mathrm{App}\ t_1\ t_2) &= \mathrm{App}\ (\sigma\ t_1)\ (\sigma\ t_2)
-  \end{align*}
-  \caption{Rules for substitution application}
-  \label{fig:deref}
-\end{figure}
 
-In order to be axiom-free, our mechanization implements a unification
-algorithm that we shortly describe in~\cref{sec:determinacy}.
-The two semantics and the static analysis use the very same
-unification algorithm, hence simply assuming the existence of one would
-have sufficed for the equivalence proofs. The case study in~\cref{sec:determinacy}
-also requires a few standard properties of this algorithm,
-like correctness and completeness.
+To keep the mechanization axiom-free, we implement a unification
+algorithm, which we briefly describe in~\cref{sec:determinacy} and prove
+sound and complete.
+Since the two semantics and the static analysis use the same
+unification algorithm, the equivalence proof is completely agnostic to
+the particular implementation chosen for that algorithm.
 
 % \input{tex_code/unif_type.tex}
 % TODO: state axioms and explain matching; cite Dale's unification results.
@@ -511,19 +506,25 @@ like correctness and completeness.
 % for each rule filtered rules $r$, it returnes a pair containing the extension of
 % $\sigma$ making the head of $r$ and $q$ unify and the list of premises of $r$.
 
+\begin{figure}[t]
+    \inputminted[fontsize=\small,autogobble,escapeinside=~~,mathescape=true,frame=leftline,framerule=0pt,framesep=1em]{elpi.py:ElpiLexer}{./progx.elpi}
+    \caption{Running example of a \elpiP program}
+    \label{fig:progx}
+  \end{figure}
+
 \subsection{The cut operator}
 \label{sec:cut-op}
 
-There are quite a few variants of the cut operator in the literature.
-The one we are interested in, i.e. the one used in \elpiP, is known as \emph{hard cut}
+There are several variants of the cut operator in the literature. The
+most widely adopted one is the \emph{hard cut}
 (see, e.g., the documentation of \sprologP~\cite{swi-prolog-cut}).
 Whenever the backchain function returns a non-empty list of alternatives,
-the first one is explored immediately, while the others are suspended as
+the first is explored immediately, while the others are suspended as
 choice points. Within a given alternative, premises are processed from
-left to right, executing each atom in turn. When a cut is encountered, it
-discards (i) all choice points created by backchain for the current call
-and (ii) all choice points created while executing the premises to the left of
-the cut.
+left to right, executing each atom in turn. When a cut is encountered,
+it discards (i) all choice points created by backchaining for the current
+call and (ii) all choice points created while executing the premises to
+the left of the cut.
 
 For example, consider the program in \cref{fig:progx} and the query
 $\elpiIn{g 0 R}$.
@@ -1041,7 +1042,7 @@ complements \step with respect to failed, successful, and incomplete trees.
 
 The inductive relation \runT has the following type:
 %
-$$\mathrm{\runT} : \mathbb{P} \to \vec{\FV} \to \Sigma \to \mathbb{T} \to \mathrm{sol} \times \mathbb{B} \times \vec{\FV} \to \cI{Prop}$$
+$$\mathrm{\runT} : \mathbb{P} \to \vec{\FV} \to \Sigma \to \mathbb{T} \to \mathrm{sol} \to \mathbb{B} \to \vec{\FV} \to \cI{Prop}$$
 
 It associates a program, a set of variables, an initial substitution $\sigma$, and a
 tree $t$ with a solution $r$, a boolean $b$, and an updated set of variable
@@ -1193,7 +1194,7 @@ From $A \lor B$, when $A$ is not inert (i.e. not already explored), we cannot
 deduce $A$ or $B$ independently. Instead, we can only derive a weakened
 conclusion of the form $\top \lor B'$, where $B'$ provides no information in the
 case where the exploration of $A$ performs a cut. This yields an elimination
-rule that is stronger than the usual one (depicted on the left).
+rule that is stronger than the usual one.
 If $A$ does not cut, the elimination rule has the usual two premises, together
 with the additional constraint that whenever $B$ holds, $A$ must have failed.
 This again reflects the depth-first traversal of the proof tree.
@@ -1424,7 +1425,7 @@ The class of valid trees is captured by the \vast
 function shown in Figure~\ref{fig:vt}.
 While all base cases of {tree} are valid, we need to analyze the \orC and
 \andC constructors more carefully.
-\marginpar{TODO: explain better valid tree as requested by reviewr, maybe make a few examples}
+% \marginpar{TODO: explain better valid tree as requested by reviewr, maybe make a few examples}
 
 For the \orC constructor, we distinguish two cases depending on whether the
 left-hand side is present. If it is not, then the right-hand side must be a
