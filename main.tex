@@ -379,7 +379,7 @@ while the composition of two substitutions $\sigma_1$ and $\sigma_2$ with
 disjoint supports as $\sigma_1 + \sigma_2$. %\marginpar{usiamo + ?}
  
 The backchaining operation applies all rules to a query term; it is
-central to both semantics it has the following type:
+central to both semantics and it has the following type:
 %\input{tex_code/bc_type.tex}
 %
 $$\mathrm{backchain} : \mathbb{P} \to \FV \to \TERM \to \Sigma \to (\FV \times \mathrm{list}\ (\Sigma \times \mathrm{list}\ \ATOM)) $$
@@ -719,9 +719,9 @@ The type of these two functions is given below.
 % $$\mathrm{prune} : (\mathbb{B}\times\mathrm{tree}) \to \mathrm{option\ tree}$$
 
 The step routine, among its outputs, also returns a \emph{tag}, whose definition
-is delayed in the very following section.
+is described in the very following section.
 
-Since all functions must terminate in Rocq, we define the transitive closure
+To avoid the constraint that all functions must terminate in Rocq, we define the transitive closure
 of \step and \na as the inductive relation \run.
 More precisely \run iterates calls to \step on incomplete trees to expand
 Unexplored nodes. When a tree fails it calls \na to find
