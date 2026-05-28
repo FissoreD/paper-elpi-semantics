@@ -1123,25 +1123,11 @@ with \stopot, \stopt and \stept, and it is also exclusive with
 \backt since they impose different requirements on the output of \na.
 
 The boolean output of \run allows us to state interesting properties about the
-\orC node in the presence of cut. Here we report only a selection of those we
-proved.
-% We have proven several
-% properties that are avalable at
-% \href{https://github.com/FissoreD/elpi-formalization/blob/ho-check-ffun/theories/tree_prop_hard.v}{\emph{this}}
-% link. Below we show two of these lemmas.
-
-% \begin{lemma}[\texttt{runSST\_or}] $\forall p\ v_0\ v_1\ s_0\ s_1\ t_0\ t_0'\ s_m\ t_1$,
-%   $$\texttt{\run p}\ v_0\ s_0\ t_0\ \boxed{s_1, \boxed{t_0'}}\ \top\ v_1 \to%
-%     \texttt{\run p}\ v_0\ s_0\ (\texttt{Or}\ \boxed{t_0}\ s_m\ t_1)\ %
-%     \boxed{s_1, \boxed{\texttt{Or }\boxed{t_0'}\ s_m\texttt{ KO}}}\ \bot\ v_1$$
-% \end{lemma}
-
-% \begin{lemma}
-%   $$
-%   \run\ p\ v_0\ s_0\ (Or \boxed{t_0}\ s_m\ t_1) (Some\ (s_1, (Or\ \boxed{t_0'}\ s_m\ t_1')))\ \bot\ v_2\ \to
-%     \exists b, \run\ p\ v_0\ s_0\ t_0\ (Some (s_1, \boxed{t_0'}))\ b\ v_2\ \land t_1' = \text{ if } b \text{ then \koC else } t_1.
-%   $$
-% \end{lemma}
+\orC node in the presence of cut. Below, we report only a selection of the
+lemmas that were proved. To simplify their presentation, we introduce the
+following notation for \orC nodes. When the left-hand side is $\mathrm{None}$,
+we write the symbol $\square$. Otherwise, the notation $A \lor B_\sigma$
+implicitly denotes $(\mathrm{Some}\ A) \lor B_\sigma$.
 
 \input{tex_code/runSST_or.tex}
 \input{tex_code/runNT_or.tex}
