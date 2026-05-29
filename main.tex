@@ -1958,8 +1958,9 @@ whereas we need it on any tree.
 To overcome this issue, we introduce the notion of deterministic trees,
 written \emph{det\_tree}. Intuitively, a deterministic tree is a tree
 whose interpretation does not generate choice points. The definition is
-shown below.
+shown in~\cref{fig:dettree}.
 
+\begin{figure}
 \begin{coqcode}
   Fixpoint det_tree (p: program) A :=
     match A with
@@ -1980,6 +1981,8 @@ shown below.
         else (B == KO)
     end.
 \end{coqcode}
+\caption{The \emph{det\_tree} predicate\label{fig:dettree}}
+\end{figure}
 
 For a call to a term $t$, the tree is deterministic whenever $t$ calls a
 deterministic predicate. The recursive cases correspond to the \andC and
