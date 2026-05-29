@@ -1301,8 +1301,10 @@ computation, coupling a substitution with all the goals to be
 solved.
 
 Goals pair an atom with a list of the \emph{cut-to} alternatives, 
-making the two datatypes mutually recursive, but these alternatives have a very different role. They have to be understood
-as pointers to lower levels of the stack itself. This datum is used to implement the cut, i.e. to prune the stack of alternatives.
+making the two datatypes mutually recursive, but these alternatives
+have a very different role. They have to be understood
+as pointers to lower levels of the stack itself.
+They are used to implement the cut, i.e. to prune the stack of alternatives.
 $$\mathrm{alts} := \mathrm{list}\ (\Sigma \times \mathrm{goals})  \qquad \mathrm{goals} := \mathrm{list}\ (\ATOM \times \mathrm{alts})$$
 
 \newcommand{\backchainS}{
@@ -1333,7 +1335,8 @@ $$\mathrm{\runS} : \vec{\FV} \to \mathrm{alts} \to \mathrm{option}\ (\Sigma \tim
 \noindent
 The \nur predicates relates a set of variables and a
 list of alternatives to optional result. None stands for failure,
-i.e., no solution, whereas Some $(\sigma, a)$ represent success with $\sigma$ begin the solution and $a$ as the list of non-yet-explored
+i.e., no solution, whereas Some $(\sigma, a)$ represents success with $\sigma$
+begin the solution and $a$ as the list of not-yet-explored
 alternatives.
 \begin{figure}
    \[
