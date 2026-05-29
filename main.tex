@@ -358,17 +358,6 @@ These higher-order features play no role in the current paper that focuses on
 first order logic programming, but allows future extensions to full $\lambda$\prologP
 to be based on the same mechanization.
 
-\begin{figure}
-  \begin{align*}
-    \sigma\ (\mathrm{Symb}\ n) &= \mathrm{Symb}\ n \\
-    \sigma\ (\mathrm{Pred}\ n) &= \mathrm{Pred}\ n \\
-    \sigma\ (\mathrm{Var}\ n) &= t\quad \mathrm{if}\ (n,t) \in \sigma\\
-    \sigma\ (\mathrm{Var}\ n) &= \mathrm{Var}\ n\quad \mathrm{otherwise}\\
-    \sigma\ (\mathrm{App}\ t_1\ t_2) &= \mathrm{App}\ (\sigma\ t_1)\ (\sigma\ t_2)
-  \end{align*}
-  \caption{Rules for substitution application}
-  \label{fig:deref}
-\end{figure}
 
 Variables, predicates and data symbols
 are identified by natural numbers. We represent substitutions
@@ -397,9 +386,8 @@ The function \emph{unify} takes two terms $t_1$ and $t_2$, together with a
 substitution $\sigma$, as input, and optionally returns a substitution
 $\sigma'$ that extends $\sigma$. Therefore, if $t_1$ and $t_2$ unify
 under $\sigma$, then $\sigma'~t_1 = \sigma'~t_2$, where
-$\sigma~t$ denotes substitution application (see \cref{fig:deref}) and $=$ denotes 
+$\sigma~t$ denotes substitution application and $=$ denotes 
 syntactic equality.
-
 
 To keep the mechanization axiom-free, we implement a unification
 algorithm, which we briefly describe in~\cref{sec:determinacy} and prove
@@ -1763,8 +1751,20 @@ In the following definitions and lemmas, we use the notation $x \cap y =
 arguments are terms, as in $t_1 \cap t_2 = \varnothing$, we mean that the two
 terms do not share any variables.
 
+The first notion to provide is the application of an acyclic substitution:
+
+\begin{definition}[deref]
+  \begin{align*}
+    \sigma\ (\mathrm{Symb}\ n) &= \mathrm{Symb}\ n \\
+    \sigma\ (\mathrm{Pred}\ n) &= \mathrm{Pred}\ n \\
+    \sigma\ (\mathrm{Var}\ n) &= t\quad \mathrm{if}\ (n,t) \in \sigma\\
+    \sigma\ (\mathrm{Var}\ n) &= \mathrm{Var}\ n\quad \mathrm{otherwise}\\
+    \sigma\ (\mathrm{App}\ t_1\ t_2) &= \mathrm{App}\ (\sigma\ t_1)\ (\sigma\ t_2)
+  \end{align*}
+\end{definition}
+
 \begin{definition}[acyclic]
-  $\lambda s. \mathrm{dom}\ s \cap \mathrm{codom}\ s = \varnothing$
+  $\lambda \sigma. \mathrm{dom}\ \sigma \cap \mathrm{codom}\ \sigma = \varnothing$
 \end{definition}
 
 Note that this definition of acyclicity entails that the substitution is
