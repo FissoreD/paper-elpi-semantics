@@ -2121,6 +2121,15 @@ denotational and cannot easily account for all the features covered
 in~\cite{fissore2026}, although it would have been sufficient for the
 first-order fragment considered in this paper.
 
+Hanus and Prott~\cite{hanus2025} formalize a determinacy checker. The main
+difference between their formalization and ours is that they analyze the
+determinacy of expressions without attempting to evaluate predicate calls back
+into the program. In contrast, this evaluation mechanism is a central component
+of our development. Supporting it requires not only a formalization of the
+unification algorithm, but also the implementation of a mutual exclusion checker,
+which ensures that at most one rule can be successfully applied to a given
+query.
+
 The proof technique we use to relate the two semantics is inspired
 by~\cite{yves-equiv}, where Bertot mechanizes the correctness of a
 compiler. He relates the semantics of an imperative language to that of
