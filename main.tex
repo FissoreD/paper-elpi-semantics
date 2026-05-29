@@ -824,14 +824,13 @@ the next alternative and continues from there, if one exists.
   \begin{coqcode}
   Definition step pr fv s A :=
     match A with
-    | OK             => (fv, Success, OK)
-    | KO             => (fv, Failed, A)
-    | TA cut         => (fv, CutBrothers, OK)
-    | TA (call t)    => 
+    | OK                  => (fv, Success, OK)
+    | KO                  => (fv, Failed, A)
+    | Unexplored cut      => (fv, CutBrothers, OK)
+    | Unexplored (call t) => 
       let: (fv, l) := backchain u pr fv t s in
       (fv, Expanded, if l is ((s, r) :: xs) then (Or None s (big_or r xs))
                      else KO)
-    (* recursive cases *)
     | Or A sB B =>
         if A is Some A then 
           let: (fv, tA, rA) := step pr fv s A in
@@ -947,22 +946,18 @@ amounts to discarding the third rule of predicate \eI{r}.
     match A with
     | KO => None
     | OK => if b then None else Some OK
-    | TA _ => Some A
+    | Unexplored _ => Some A
     | And A B0 B =>
       let build_B0 A := And A B0 (big_and B0) in
       if success A then
-        match prune b B with
-        | None => omap build_B0 (prune true A)
-        | Some B' => Some (And A B0 B')
-        end
+        if prune b B is Some B' then Some (And A B0 B')
+        else omap build_B0 (prune true A)
       else if failed A then omap build_B0 (prune false A) 
       else Some (And A B0 B)
     | Or None sB B => omap (fun x => Or None sB x) (prune b B)
     | Or (Some A) sB B =>
-        match prune b A with
-        | None => omap (fun x => Or None sB x) (prune false B)
-        | Some A' => Some (Or (Some A') sB B)
-       end
+        if prune b A is Some A' then Some (Or (Some A') sB B)
+        else omap (fun x => Or None sB x) (prune false B)
   end.
   \end{coqcode}
   \caption{The \na function}
@@ -1291,14 +1286,7 @@ solved.
 Goals pair an atom with a list of the \emph{cut-to} alternatives, 
 making the two datatypes mutually recursive, but these alternatives have a very different role. They have to be understood
 as pointers to lower levels of the stack itself. This datum is used to implement the cut, i.e. to prune the stack of alternatives.
-
-% \input{tex_code/elpi_def.tex}
-\begin{center}
-\begin{coqcode}
-~\ensuremath{\qquad\qquad}~ Inductive alts  := nilA | consA of (~\ensuremath{\Sigma}~ * goals)  & alts
-~\ensuremath{\qquad\qquad}~ with      goals := nilG | consG of (Atom * alts) & goals 
-\end{coqcode}
-\end{center}
+$$\mathrm{alts} := \mathrm{list}\ (\Sigma \times \mathrm{goals})  \qquad \mathrm{goals} := \mathrm{list}\ (\ATOM \times \mathrm{alts})$$
 
 \newcommand{\backchainS}{
   \ensuremath{\mathcal{B}_S}
@@ -1308,6 +1296,28 @@ as pointers to lower levels of the stack itself. This datum is used to implement
 % points. The backtracking operation is simpler: it is the tail function.
 % The cutr and cutl operations disappears: the alternatives are stored 
 % directly in the cutE terminal.
+%\noindent
+The stack-based semantics is described by the \nur inductive
+predicates.
+% %
+% % \mvspace{}
+% % \deftypes[type:nur]{tex_code/nur_type.tex}
+% % \mvspace{}
+% % \input{tex_code/elpi_def.tex}
+% \begin{center}
+% \begin{coqcode}
+% ~\ensuremath{\qquad\qquad}~ Inductive alts  := nilA | consA of (~\ensuremath{\Sigma}~ * goals)  & alts
+% ~\ensuremath{\qquad\qquad}~ with      goals := nilG | consG of (Atom * alts) & goals 
+% \end{coqcode}
+% \end{center}
+
+$$\mathrm{\runS} : \vec{\FV} \to \mathrm{alts} \to \mathrm{option}\ (\Sigma \times \mathrm{alts}) \to \cI{Prop}$$
+
+\noindent
+The \nur predicates relates a set of variables and a
+list of alternatives to optional result. None stands for failure,
+i.e., no solution, whereas Some $(\sigma, a)$ represent success with $\sigma$ begin the solution and $a$ as the list of non-yet-explored
+alternatives.
 \begin{figure}
    \[
   \backchainS\ p\ v\ t\ \sigma\ a\ g =
@@ -1327,20 +1337,6 @@ as pointers to lower levels of the stack itself. This datum is used to implement
   \label{fig:nur-rules}
 \end{figure}
 
-\noindent
-The stack-based semantics is described by the \nur inductive
-predicates.
-%
-% \mvspace{}
-% \deftypes[type:nur]{tex_code/nur_type.tex}
-% \mvspace{}
-$$\mathrm{\runS} : \vec{\FV} \to \cI{alts} \to \mathrm{option}\ (\Sigma \times \cI{alts}) \to \cI{Prop}$$
-
-\noindent
-The \nur predicates relates a set of variables and a
-list of alternatives to optional result. None stands for failure,
-i.e., no solution, whereas Some $(\sigma, a)$ represent success with $\sigma$ begin the solution and $a$ as the list of non-yet-explored
-alternatives.
 
 The rule system for \nur is given in \cref{fig:nur-rules} and is made by $4$
 cases. We distinguish two main cases. If we run out of alternatives
@@ -1812,13 +1808,13 @@ terms do not share any variables.
 The first notion to provide is the application of an acyclic substitution:
 
 \begin{definition}[deref]
-  \begin{align*}
-    \sigma\ (\mathrm{Symb}\ n) &= \mathrm{Symb}\ n \\
-    \sigma\ (\mathrm{Pred}\ n) &= \mathrm{Pred}\ n \\
-    \sigma\ (\mathrm{Var}\ n) &= t\quad \mathrm{if}\ (n,t) \in \sigma\\
-    \sigma\ (\mathrm{Var}\ n) &= \mathrm{Var}\ n\quad \mathrm{otherwise}\\
+  $$
+  \begin{array}{rlrlr}
+    \sigma\ (\mathrm{Symb}\ n) &= \mathrm{Symb}\ n & \qquad\sigma\ (\mathrm{Var}\ n) &= t &\mathrm{if}\ (n,t) \in \sigma\\
+    \sigma\ (\mathrm{Pred}\ n) &= \mathrm{Pred}\ n & \qquad\sigma\ (\mathrm{Var}\ n) &= \mathrm{Var}\ n& \mathrm{otherwise}\\
     \sigma\ (\mathrm{App}\ t_1\ t_2) &= \mathrm{App}\ (\sigma\ t_1)\ (\sigma\ t_2)
-  \end{align*}
+  \end{array}
+  $$
 \end{definition}
 
 \begin{definition}[acyclic]
