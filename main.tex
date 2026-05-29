@@ -598,6 +598,171 @@ applied to the pair \cI{x}.
 % \marginpar{spiegare notation for list}
 % $\epsilon$ is the empty substitution.
 
+\section{Stack-based semantics}
+\label{stack-sem}
+
+The stack-based semantics we present is very close to what is
+implemented by the \elpiP interpreter. This semantics is 
+similar to the one proposed by Pusch in
+\cite{10.1007/BFb0105415}, which is in turn closely related to the
+semantics given by Debray and Mishra in
+\cite[Section~4.3]{Debray1988}. Pusch mechanized this
+semantics in Isabelle/HOL, together with several optimizations that are
+also present in the Warren Abstract Machine
+\cite{warren1983abstract,1991ait-wam}.
+
+The execution state is a stack of alternatives.
+Each alternative is a list of goals. Intuitively it amounts to
+a disjunctive normal form: each stack item is a self contained
+computation, coupling a substitution with all the goals to be
+solved.
+
+Goals pair an atom with a list of the \emph{cut-to} alternatives, 
+making the two datatypes mutually recursive, but these alternatives
+have a very different role. They have to be understood
+as pointers to lower levels of the stack itself.
+They are used to implement the cut, i.e. to prune the stack of alternatives.
+$$\mathrm{alts} := \mathrm{list}\ (\Sigma \times \mathrm{goals})  \qquad \mathrm{goals} := \mathrm{list}\ (\ATOM \times \mathrm{alts})$$
+
+\newcommand{\backchainS}{
+  \ensuremath{\mathcal{B}_S}
+}
+
+% We are completely loosing the tree structure. There are no clean reset
+% points. The backtracking operation is simpler: it is the tail function.
+% The cutr and cutl operations disappears: the alternatives are stored 
+% directly in the cutE terminal.
+%\noindent
+The stack-based semantics is described by the \nur inductive
+predicates.
+% %
+% % \mvspace{}
+% % \deftypes[type:nur]{tex_code/nur_type.tex}
+% % \mvspace{}
+% % \input{tex_code/elpi_def.tex}
+% \begin{center}
+% \begin{coqcode}
+% ~\ensuremath{\qquad\qquad}~ Inductive alts  := nilA | consA of (~\ensuremath{\Sigma}~ * goals)  & alts
+% ~\ensuremath{\qquad\qquad}~ with      goals := nilG | consG of (Atom * alts) & goals 
+% \end{coqcode}
+% \end{center}
+
+$$\mathrm{\runS} : \vec{\FV} \to \mathrm{alts} \to \mathrm{option}\ (\Sigma \times \mathrm{alts}) \to \cI{Prop}$$
+
+\noindent
+The \nur predicates relates a set of variables and a
+list of alternatives to optional result. None stands for failure,
+i.e., no solution, whereas Some $(\sigma, a)$ represents success with $\sigma$
+begin the solution and $a$ as the list of not-yet-explored
+alternatives.
+\begin{figure}
+   \[
+  \backchainS\ p\ v\ t\ \sigma\ a\ g =
+  \bigg[
+  \sigma',
+  (
+    [(p, q, a) \mid q \in b] \mappend g
+  )
+  \ \bigg|\ 
+  (\sigma', b) \in \mathrm{backchain}\ p\ v\ t\ \sigma
+  \bigg].
+  \]
+
+  \input{tex_code/nurbp.tex}
+
+  \caption{Rule system for \nur}
+  \label{fig:nur-rules}
+\end{figure}
+
+
+The rule system for \nur is given in \cref{fig:nur-rules} and is made by $4$
+cases. We distinguish two main cases. If we run out of alternatives
+we fail: rule \fails stops the execution and return None.
+If the list of alternatives is $(\sigma_0, h) :: a$, then
+we look at the list of goals $h$ (under the substitution $\sigma_0$). If $h$ is empty, rule \stops stops the execution with a success $\sigma_0$
+leaving $a$ as the unexplored alternatives.
+If $h$ is not empty we look at its head goal $(t, ca)$ where $t$ is the atom and $ca$ is its
+cut-to alternatives. If $t$ is a cut, rule
+\cuts continues to evaluate the tail of $h$ under with alternatives $ca$. Finally, when $t$ is a call, rule \calls backchains:
+for each rule it pairs each premise with the current stack of
+alternatives, and prepends the obtained goals to the tail of $h$.
+Note that if backchain returns the empty list, the second
+premise of rule \calls amounts to exploring the next item in the current
+stack.
+
+\subsection{Example of execution}
+
+We propose an example of the execution of \nur in \cref{ex-elpi}. The
+arrows in the images represent the cut-to pointers. 
+
+\begin{figure}[!htb]
+  \centering
+  \begin{subfigure}{0.2\textwidth}
+    \centering
+    \includegraphics[width=0.35\textwidth, keepaspectratio]{./src/exec_example1E/elpi0.pdf}
+    \caption{Initial query}
+    \label{ex-elpi0}
+  \end{subfigure}
+  \begin{subfigure}{0.4\textwidth}
+    \includegraphics[width=\textwidth, keepaspectratio]{./src/exec_example1E/elpi1.pdf}
+    \caption{Stack after call to \eI{g 0 R}}
+    \label{ex-elpi1}
+  \end{subfigure}
+  ~\\~\\
+  \begin{subfigure}{0.5\textwidth}
+    \includegraphics[width=\textwidth, keepaspectratio]{./src/exec_example1E/elpi2.pdf}
+    \caption{Stack after evaluating \cref{ex-elpi1}}
+    \label{ex-elpi2}
+  \end{subfigure}
+  \begin{subfigure}{0.48\textwidth}
+    \includegraphics[width=\textwidth, keepaspectratio]{./src/exec_example1E/elpi3.pdf}
+    \caption{Stack after evaluating \cref{ex-elpi2}}
+    \label{ex-elpi3}
+  \end{subfigure}
+  ~\\~\\
+  \begin{subfigure}{0.48\textwidth}
+    \includegraphics[width=\textwidth, keepaspectratio]{./src/exec_example1E/elpi4.pdf}
+    \caption{Stack after evaluating \cref{ex-elpi3}}
+    \label{ex-elpi4}
+  \end{subfigure}
+  \begin{subfigure}{0.45\textwidth}
+    \includegraphics[width=\textwidth, keepaspectratio]{./src/exec_example1E/elpi5.pdf}
+    \caption{Stack after evaluating \cref{ex-elpi4}}
+    \label{ex-elpi5}
+  \end{subfigure}
+  \caption{Example of execution}
+  \label{ex-elpi}
+\end{figure}
+
+We have not drawn arrows coming out of call atoms since the interpreter
+ignores the cut-alternatives in this case. 
+The evolution
+of the stack in \cref{ex-elpi} mirrors the example in \cref{sec:cut-op}:
+we evaluate the first goal of the first alternative. 
+During backchaining,
+we add a pointer to the remaining alternatives to each new cut operator.
+
+If a cut is evaluated, we replace the remaining alternatives with the
+cut-to alternatives. For example, in \cref{ex-elpi5}, evaluating the cut
+discards the second and third elements in the stack. Backtracking is
+performed by simply consuming the first alternative from the stack, as shown
+in \cref{ex-elpi3}.
+
+\subsection{Inadequacy of the stack-based semantics for formal reasoning}
+
+The lemmas that we presented in
+\cref{sec:run-prop} are hard to express in the stack-based semantics, due to the
+lack of structure in the stack to delimit the scope of the cut operator. For
+example, consider a stack $a_0, a_1, \dots, a_n$. If $a_0$ succeeds but executes a
+cut, it is hard to relate the remaining alternatives $a_1, \dots, a_n$ to the
+alternatives $b_1, \dots, b_m$ that survive the cut, since the only simple
+invariant is that $b_1, \dots, b_m$ is a suffix of $a_1, \dots, a_n$. If
+$a_1, \dots, a_n$ were generated before the call whose execution generates the cut
+in $a_0$, then they all stay; but if some were generated afterwards, they are
+discarded. Expressing this precisely would require attaching, at the very least,
+time-stamps (or depths) to goals, which amounts to a cumbersome encoding of a
+tree.
+
 
 \section{And-Or Tree semantics}
 \label{tree-sem}
@@ -1281,170 +1446,7 @@ Indeed, an atom preceding the cut may fail, so the cut is never reached.
 As anticipated in the introduction, these lemmas contradict the commutativity of
 disjunction.
 
-\section{Stack-based semantics}
-\label{stack-sem}
 
-The stack-based semantics we present is very close to what is
-implemented by the \elpiP interpreter. This semantics is 
-similar to the one proposed by Pusch in
-\cite{10.1007/BFb0105415}, which is in turn closely related to the
-semantics given by Debray and Mishra in
-\cite[Section~4.3]{Debray1988}. Pusch mechanized this
-semantics in Isabelle/HOL, together with several optimizations that are
-also present in the Warren Abstract Machine
-\cite{warren1983abstract,1991ait-wam}.
-
-The execution state is a stack of alternatives.
-Each alternative is a list of goals. Intuitively it amounts to
-a disjunctive normal form: each stack item is a self contained
-computation, coupling a substitution with all the goals to be
-solved.
-
-Goals pair an atom with a list of the \emph{cut-to} alternatives, 
-making the two datatypes mutually recursive, but these alternatives
-have a very different role. They have to be understood
-as pointers to lower levels of the stack itself.
-They are used to implement the cut, i.e. to prune the stack of alternatives.
-$$\mathrm{alts} := \mathrm{list}\ (\Sigma \times \mathrm{goals})  \qquad \mathrm{goals} := \mathrm{list}\ (\ATOM \times \mathrm{alts})$$
-
-\newcommand{\backchainS}{
-  \ensuremath{\mathcal{B}_S}
-}
-
-% We are completely loosing the tree structure. There are no clean reset
-% points. The backtracking operation is simpler: it is the tail function.
-% The cutr and cutl operations disappears: the alternatives are stored 
-% directly in the cutE terminal.
-%\noindent
-The stack-based semantics is described by the \nur inductive
-predicates.
-% %
-% % \mvspace{}
-% % \deftypes[type:nur]{tex_code/nur_type.tex}
-% % \mvspace{}
-% % \input{tex_code/elpi_def.tex}
-% \begin{center}
-% \begin{coqcode}
-% ~\ensuremath{\qquad\qquad}~ Inductive alts  := nilA | consA of (~\ensuremath{\Sigma}~ * goals)  & alts
-% ~\ensuremath{\qquad\qquad}~ with      goals := nilG | consG of (Atom * alts) & goals 
-% \end{coqcode}
-% \end{center}
-
-$$\mathrm{\runS} : \vec{\FV} \to \mathrm{alts} \to \mathrm{option}\ (\Sigma \times \mathrm{alts}) \to \cI{Prop}$$
-
-\noindent
-The \nur predicates relates a set of variables and a
-list of alternatives to optional result. None stands for failure,
-i.e., no solution, whereas Some $(\sigma, a)$ represents success with $\sigma$
-begin the solution and $a$ as the list of not-yet-explored
-alternatives.
-\begin{figure}
-   \[
-  \backchainS\ p\ v\ t\ \sigma\ a\ g =
-  \bigg[
-  \sigma',
-  (
-    [(p, q, a) \mid q \in b] \mappend g
-  )
-  \ \bigg|\ 
-  (\sigma', b) \in \mathrm{backchain}\ p\ v\ t\ \sigma
-  \bigg].
-  \]
-
-  \input{tex_code/nurbp.tex}
-
-  \caption{Rule system for \nur}
-  \label{fig:nur-rules}
-\end{figure}
-
-
-The rule system for \nur is given in \cref{fig:nur-rules} and is made by $4$
-cases. We distinguish two main cases. If we run out of alternatives
-we fail: rule \fails stops the execution and return None.
-If the list of alternatives is $(\sigma_0, h) :: a$, then
-we look at the list of goals $h$ (under the substitution $\sigma_0$). If $h$ is empty, rule \stops stops the execution with a success $\sigma_0$
-leaving $a$ as the unexplored alternatives.
-If $h$ is not empty we look at its head goal $(t, ca)$ where $t$ is the atom and $ca$ is its
-cut-to alternatives. If $t$ is a cut, rule
-\cuts continues to evaluate the tail of $h$ under with alternatives $ca$. Finally, when $t$ is a call, rule \calls backchains:
-for each rule it pairs each premise with the current stack of
-alternatives, and prepends the obtained goals to the tail of $h$.
-Note that if backchain returns the empty list, the second
-premise of rule \calls amounts to exploring the next item in the current
-stack.
-
-\subsection{Example of execution}
-
-We propose an example of the execution of \nur in \cref{ex-elpi}. The
-arrows in the images represent the cut-to pointers. 
-
-\begin{figure}[!hb]
-  \centering
-  \begin{subfigure}{0.2\textwidth}
-    \centering
-    \includegraphics[width=0.35\textwidth, keepaspectratio]{./src/exec_example1E/elpi0.pdf}
-    \caption{Initial query}
-    \label{ex-elpi0}
-  \end{subfigure}
-  \begin{subfigure}{0.4\textwidth}
-    \includegraphics[width=\textwidth, keepaspectratio]{./src/exec_example1E/elpi1.pdf}
-    \caption{Stack after call to \eI{g 0 R}}
-    \label{ex-elpi1}
-  \end{subfigure}
-  ~\\~\\
-  \begin{subfigure}{0.5\textwidth}
-    \includegraphics[width=\textwidth, keepaspectratio]{./src/exec_example1E/elpi2.pdf}
-    \caption{Stack after evaluating \cref{ex-elpi1}}
-    \label{ex-elpi2}
-  \end{subfigure}
-  \begin{subfigure}{0.48\textwidth}
-    \includegraphics[width=\textwidth, keepaspectratio]{./src/exec_example1E/elpi3.pdf}
-    \caption{Stack after evaluating \cref{ex-elpi2}}
-    \label{ex-elpi3}
-  \end{subfigure}
-  ~\\~\\
-  \begin{subfigure}{0.48\textwidth}
-    \includegraphics[width=\textwidth, keepaspectratio]{./src/exec_example1E/elpi4.pdf}
-    \caption{Stack after evaluating \cref{ex-elpi3}}
-    \label{ex-elpi4}
-  \end{subfigure}
-  \begin{subfigure}{0.45\textwidth}
-    \includegraphics[width=\textwidth, keepaspectratio]{./src/exec_example1E/elpi5.pdf}
-    \caption{Stack after evaluating \cref{ex-elpi4}}
-    \label{ex-elpi5}
-  \end{subfigure}
-  \caption{Example of execution}
-  \label{ex-elpi}
-\end{figure}
-
-We have not drawn arrows coming out of call atoms since the interpreter
-ignores the cut-alternatives in this case. 
-The evolution
-of the stack in \cref{ex-elpi} mirrors the example in \cref{sec:cut-op}:
-we evaluate the first goal of the first alternative. 
-During backchaining,
-we add a pointer to the remaining alternatives to each new cut operator.
-
-If a cut is evaluated, we replace the remaining alternatives with the
-cut-to alternatives. For example, in \cref{ex-elpi5}, evaluating the cut
-discards the second and third elements in the stack. Backtracking is
-performed by simply consuming the first alternative from the stack, as shown
-in \cref{ex-elpi3}.
-
-\subsection{Inadequacy of the stack-based semantics for formal reasoning}
-
-The lemmas that we presented in
-\cref{sec:run-prop} are hard to express in the stack-based semantics, due to the
-lack of structure in the stack to delimit the scope of the cut operator. For
-example, consider a stack $a_0, a_1, \dots, a_n$. If $a_0$ succeeds but executes a
-cut, it is hard to relate the remaining alternatives $a_1, \dots, a_n$ to the
-alternatives $b_1, \dots, b_m$ that survive the cut, since the only simple
-invariant is that $b_1, \dots, b_m$ is a suffix of $a_1, \dots, a_n$. If
-$a_1, \dots, a_n$ were generated before the call whose execution generates the cut
-in $a_0$, then they all stay; but if some were generated afterwards, they are
-discarded. Expressing this precisely would require attaching, at the very least,
-time-stamps (or depths) to goals, which amounts to a cumbersome encoding of a
-tree.
 
 \section{Equivalence of the two semantics}
 
