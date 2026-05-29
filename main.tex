@@ -149,9 +149,8 @@ analysis~\cite{1989Warren,1996Somogy,1996henderson,2011king,lopez2004determinacy
 that identify logic programs that are deterministic, i.e., that compute
 functions rather than relations: they commit to their first solution and
 leave no \emph{choice points} (places where backtracking could resume). A
-choice point corresponds to a suspended \emph{alternative} computation, and
-in the following we use \emph{choice point} and \emph{alternative} as
-synonyms. The control operator \emph{cut} allows the programmer to discard
+choice point corresponds to a suspended \emph{alternative} computation.
+The control operator \emph{cut} allows the programmer to discard
 choice points and is therefore pervasively used to write deterministic code,
 but it is also well known to make the semantics of the programming language
 depart from a purely logical reading, thereby making reasoning about code
@@ -205,20 +204,22 @@ $q_1 \lor q_2$ is not equivalent to $q_2 \lor q_1$, since $q_2$ may be cut
 away by $q_1$.
 
 Finally, we use the tree-based semantics to prove the correctness of the
-determinacy analysis from~\cite{fissore2026}. We prove in Rocq that
-any call to a predicate identified as deterministic leaves no additional
-Or-branches in the tree when it terminates. By composing this result with
-the equivalence between the two semantics, we obtain that any call to a
-deterministic predicate leaves no choice points on the stack used by actual
-\prologP implementations, including the \elpiP~\cite{dunchev15lpar} $\lambda$\prologP
-interpreter.
-% \elpiP~\cite{dunchev15lpar} is a dialect of \lprologP used as an extension
-% language for the \rocqP prover that has recently become an important infrastructure
-% component~\cite{krebbers25,Trakt,Maas2024,fissore2023,fissore2024,cohen_et_al:LIPIcs.FSCD.2020.34,Trocq,TrocqJ,tassi2018,tassi2019,tassi2023}.
+determinacy analysis from~\cite{fissore2026}. In Rocq, we prove that any
+terminating call to a predicate identified as deterministic introduces no
+additional Or-branches into the tree. Combined with the equivalence
+between the two semantics, this result implies that any call to a
+deterministic predicate leaves no choice points on the stack used by
+actual \prologP implementations, including the
+\elpiP~\cite{dunchev15lpar} $\lambda$\prologP interpreter, for which the
+static analysis of~\cite{fissore2026} was originally developed. \elpiP
+serves as an extension language for the \rocqP prover and has become an
+important component of the Rocq ecosystem~\cite{krebbers25,Trakt,Maas2024,fissore2023,fissore2024,cohen_et_al:LIPIcs.FSCD.2020.34,Trocq,TrocqJ,tassi2018,tassi2019,tassi2023};
+our result therefore further strengthens confidence in its
+implementation.
 
 Our mechanization is axiom-free and is available at
 % \url{https://github.com/FissoreD/elpi-formalization}.
-\url{ANONYMEZED}
+\url{ANONYMEZED} (joined as supplementary material).
 
 \begin{comment}
 \section{Introduction}
@@ -496,7 +497,7 @@ the particular implementation chosen for that algorithm.
 
 \begin{figure}[t]
     \inputminted[fontsize=\small,autogobble,escapeinside=~~,mathescape=true,frame=leftline,framerule=0pt,framesep=1em]{elpi.py:ElpiLexer}{./progx.elpi}
-    \caption{Running example of a \elpiP program}
+    \caption{Running example of a logic program in \elpiP syntax}
     \label{fig:progx}
   \end{figure}
 
@@ -591,7 +592,7 @@ In the following section we note $\mathbb{B}$ for the boolean type.
 Following the Mathematical Components library, on which we depend,
 we use \cI{x.1} and \cI{x.2} to denote the first and second projection
 applied to the pair \cI{x}. List concatenation is the infix \mappend,
-while list comprehension (i.e. mapping a function on a list) is written
+while mapping a function \cI{f} on a list \cI{l} is written
 \cI{[seq f x | x <- l]}.
 % \marginpar{spiegare notation for list}
 % $\epsilon$ is the empty substitution.
@@ -1990,7 +1991,7 @@ deterministic predicate. The recursive cases correspond to the \andC and
 
 A conjunction behaves deterministically when its right-hand side is a
 deterministic tree. The test
-$\mathrm{prune}(\mathrm{success}\ A)\ A == \mathrm{None}$ checks whether
+$\mathrm{prune}(\mathrm{success}\ A)\ A = \mathrm{None}$ checks whether
 the left-hand side may still contain internal choice points due to
 \orC nodes. Such choice points could later be activated by
 backtracking and therefore interact with the reset point.
