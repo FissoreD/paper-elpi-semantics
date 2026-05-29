@@ -212,6 +212,7 @@ def clean_line_math_mode(l:str):
     #AD HOC:
     l = l.replace("%G", "")
     l = l.replace("++", "\\mappend")
+    l = l.replace("\square", "\\square\ ")
     l = re.sub(" _[A-Za-z0-9]*", " _", l)
     l = l.replace("stepE", "\\backchainS")
     l = l.replace("&", "\\land")
