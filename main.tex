@@ -591,9 +591,10 @@ in particular how alternatives are stored and how they are pruned by cut.
 In the following section we note $\mathbb{B}$ for the boolean type. 
 Following the Mathematical Components library, on which we depend,
 we use \cI{x.1} and \cI{x.2} to denote the first and second projection
-applied to the pair \cI{x}. List concatenation is the infix \mappend,
-while mapping a function \cI{f} on a list \cI{l} is written
-\cI{[seq f x | x <- l]}.
+applied to the pair \cI{x}.
+% List concatenation is the infix \mappend,
+% while mapping a function \cI{f} on a list \cI{l} is written
+% \cI{[seq f x | x <- l]}.
 % \marginpar{spiegare notation for list}
 % $\epsilon$ is the empty substitution.
 
@@ -822,28 +823,29 @@ the next alternative and continues from there, if one exists.
 \subsection{The \step procedure}\label{sec:step}
 \begin{figure}
   \begin{coqcode}
-  Definition step pr fv s A :=
+  Definition step p v s A :=
     match A with
-    | OK                  => (fv, Success, OK)
-    | KO                  => (fv, Failed, A)
-    | Unexplored cut      => (fv, CutBrothers, OK)
+    | OK                  => (v, Success, OK)
+    | KO                  => (v, Failed, A)
+    | Unexplored cut      => (v, CutBrothers, OK)
     | Unexplored (call t) => 
-      let: (fv, l) := backchain u pr fv t s in
-      (fv, Expanded, if l is ((s, r) :: xs) then (Or None s (big_or r xs))
-                     else KO)
+        let: (v, l) := backchain u p v t s in
+        (v, Expanded,
+        if l is ((s, r) :: xs) then Or None s (big_or r xs) else KO)
     | Or A sB B =>
         if A is Some A then 
-          let: (fv, tA, rA) := step pr fv s A in
-          (fv, if is_cb tA then Expanded else tA, 
-               Or (Some rA) sB (if is_cb tA then KO else B))
+          let: (v, tA, rA) := step p v s A in
+          (v, if is_cb tA then Expanded else tA, 
+           Or (Some rA) sB (if is_cb tA then KO else B))
         else
-          let: (fv, tB, rB) := (step pr fv sB B) in
-          (fv, if is_cb tB then Expanded else tB, Or A sB rB)
+          let: (v, tB, rB) := step p v sB B in
+          (v, if is_cb tB then Expanded else tB, Or A sB rB)
     | And A B0 B =>
         if success A then 
-          let: (fv, tB, rB) := (step pr fv (next_subst s A) B) in
-          (fv, tB, And (if is_cb tB then cutl A else A) B0 rB)
-        else let: (fv, tA, rA) := step pr fv s A in (fv, tA, And rA B0 B)
+          let: (v, tB, rB) := step p v (next_subst s A) B in
+          (v, tB, And (if is_cb tB then cutl A else A) B0 rB)
+        else
+          let: (v, tA, rA) := step p v s A in (v, tA, And rA B0 B)
     end.
   \end{coqcode}
   \caption{The \step procedure}
@@ -862,7 +864,7 @@ tree. It is passed to backchain so that rules can be refreshed correctly.
 The \steptag is implemented as follows: 
 %
 % \begin{coqcode}
-$$tag := \mathrm{Expanded} \mid \mathrm{CutBrothers} \mid \mathrm{Failed} \mid \mathrm{Success}$$
+$$\mathrm{tag} := \mathrm{Expanded} \mid \mathrm{CutBrothers} \mid \mathrm{Failed} \mid \mathrm{Success}$$
 % \end{coqcode}
 
 It indicates which kind of step was
@@ -948,16 +950,16 @@ amounts to discarding the third rule of predicate \eI{r}.
     | OK => if b then None else Some OK
     | Unexplored _ => Some A
     | And A B0 B =>
-      let build_B0 A := And A B0 (big_and B0) in
-      if success A then
-        if prune b B is Some B' then Some (And A B0 B')
-        else omap build_B0 (prune true A)
-      else if failed A then omap build_B0 (prune false A) 
-      else Some (And A B0 B)
-    | Or None sB B => omap (fun x => Or None sB x) (prune b B)
+        let build_B0 b := omap (~$\lambda$~x. And x B0 (big_and B0)) (prune b A) in
+        if success A then
+          if prune b B is Some B' then Some (And A B0 B')
+          else build_B0 true
+        else if failed A then build_B0 false
+        else Some (And A B0 B)
+    | Or None sB B => omap (~$\lambda$~x. Or None sB x) (prune b B)
     | Or (Some A) sB B =>
         if prune b A is Some A' then Some (Or (Some A') sB B)
-        else omap (fun x => Or None sB x) (prune false B)
+        else omap (~$\lambda$~x. Or None sB x) (prune false B)
   end.
   \end{coqcode}
   \caption{The \na function}
@@ -1327,7 +1329,7 @@ alternatives.
     [(p, q, a) \mid q \in b] \mappend g
   )
   \ \bigg|\ 
-  (\sigma', b) \in \mathrm{backchain}(p, v, t, \sigma)
+  (\sigma', b) \in \mathrm{backchain}\ p\ v\ t\ \sigma
   \bigg].
   \]
 
@@ -1788,12 +1790,13 @@ be successfully applied to any given query, whereas \emph{rule body checking}
 ensures that each rule does not create choice points, for example by
 calling non-deterministic predicates.
 
-Determinacy checking is strongly related to the modes of predicates: we
-differentiate between input and output arguments. A deterministic call relates
-to its inputs only one output. In the literature, we find several works on
-determinacy checking, namely~\cite{1996Somogy,king2005,1989Warren}. These works
-need a mode checker that statically ensures that, in a query with ground inputs,
-each recursive call is performed with ground inputs.
+% Determinacy checking is strongly related to the modes of predicates: we
+% differentiate between input and output arguments. A deterministic call relates
+% to its inputs only one output.
+% In the literature, we find several works on
+% determinacy checking, namely~\cite{1996Somogy,king2005,1989Warren}. These works
+% need a mode checker that statically ensures that, in a query with ground inputs,
+% each recursive call is performed with ground inputs.
 
 Our mechanization implements the unification algorithm by
 Martelli and Montanari~\cite{10.1145/357162.357169}, which we prove
@@ -1949,8 +1952,8 @@ $\alpha$-equivalent terms.
 
 % \input{tex_code/unif_ren.tex}
 \begin{lemma}[unif\_ren\_ac]\label{th:unifren}
-  $\forall\ t_1\ t_2\ t_1'\ t_2', t_1 =_\alpha t_1' \land t_2 =_\alpha t_2'$\\
-  $\qquad
+  $\forall\ t_1\ t_2\ t_1'\ t_2', t_1 =_\alpha t_1' \land t_2 =_\alpha t_2' \to$\\
+  $\phantom{xxxxA}
   t_1 \cap t_2 = \varnothing \land t_1' \cap t_2' = \varnothing \to
   \mathrm{unify}\ t_1\ t_2\ \varepsilon \to \mathrm{unify}\ t_1'\ t_2'\ \varepsilon
   $
@@ -1984,19 +1987,19 @@ either fails or succeeds with no alternatives left to explore.
 \end{definition}
 
 \begin{definition}[tm\_is\_det]\label{def:tmisdet}
-  Given a program $\PROG$ and a term $t$,
-  we say that $t$ is deterministic if its head is a predicate $p$
-  which is declared as deterministic in \PROG.
+  Given a program $p$ and a term $t$,
+  we say that $t$ is deterministic if its head is a predicate $f$
+  which is declared as deterministic in $p$.
 \end{definition}
 
 The theorem we want to prove is the following one:
 
 % \input{tex_code/det_check_call.tex}
-\begin{theorem}[det\_check\_call]\label{th:detcheckcall}%
-	$$\forall\ p\ \sigma\ t\ v ,\ \mathrm{check\_program}\ p \to \mathrm{tm\_is\_det}\ p\ t \to \mathrm{is\_det}\ p\ \sigma\ v\ ( \mathrm{Unexplored}\ ( \mathrm{call}\ t ) ) $$
+\begin{theorem}[det\_check\_call]\label{th:detcheckcall}$\forall\ p\ \sigma\ t\ v ,$\\
+	$\phantom{xxxxx} \mathrm{check\_program}\ p \to \mathrm{tm\_is\_det}\ p\ t \to \mathrm{is\_det}\ p\ \sigma\ v\ ( \mathrm{Unexplored}\ ( \mathrm{call}\ t ) ) $
 \end{theorem}
 
-Here, \emph{check\_program} denotes the function that checks the program
+Here, check\_program denotes the function that checks the program
 with respect to mutual exclusion and rule checking. %, and \emph{tm\_is\_det}
 % denotes the function that tests whether the head of the term refers to a rigid
 % constant with a deterministic type.
@@ -2008,7 +2011,7 @@ hypothesis is too weak since it talks about \taC trees (i.e. atoms),
 whereas we need it on any tree.
 
 To overcome this issue, we introduce the notion of deterministic trees,
-written \emph{det\_tree}. Intuitively, a deterministic tree is a tree
+written det\_tree. Intuitively, a deterministic tree is a tree
 whose interpretation does not generate choice points. The definition is
 shown in~\cref{fig:dettree}.
 
