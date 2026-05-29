@@ -656,10 +656,10 @@ i.e., no solution, whereas Some $(\sigma, a)$ represents success with $\sigma$
 being the solution and $a$ as the list of not-yet-explored
 alternatives.
 \begin{figure}
-   \begin{multline*}
-  \backchainS\ p\ v\ t\ \sigma\ a\ g =
+   \begin{align*}
+  \backchainS\ p\ v\ t\ \sigma\ a\ g =\ &
   \mathrm{let}\ (v', rs) := \mathrm{backchain}\ p\ v\ t\ \sigma\ \mathrm{in}\\
-  \bigg(v', \bigg[
+  &\bigg(v', \bigg[
   \sigma',
   (
     [(p, q, a) \mid q \in b] \mappend g
@@ -667,7 +667,7 @@ alternatives.
   \ \bigg|\ 
   (\sigma', b) \in rs
   \bigg]\bigg)
-  \end{multline*}
+  \end{align*}
 
   \input{tex_code/nurbp.tex}
 
