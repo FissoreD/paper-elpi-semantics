@@ -1767,10 +1767,10 @@ intuitively keep the state as a big disjunction of conjunctions by
 distributing conjunctions over disjunctions. Moreover, one would need to
 define a notion of valid stack that is equally intricate.
 
-The constructive nature of the logic of Rocq tells us that the proof above
-provides an effective function translating stacks into trees. However, that
-function also uses an execution trace of the stack-based semantics, from which
-it recovers the missing tree structure.
+% The constructive nature of the logic of Rocq tells us that the proof above
+% provides an effective function translating stacks into trees. However, that
+% function also uses an execution trace of the stack-based semantics, from which
+% it recovers the missing tree structure.
 
 \section{Case study: determinacy analysis}\label{sec:determinacy}
 
@@ -1891,13 +1891,13 @@ An important property we derive from the matching and unification
 procedures is the following. Given three pairwise variable-disjoint terms
 $h_1$, $h_2$, and $q$, representing two rule heads in the database and a
 query, if both heads match the query $q$, then the two heads must unify.
-This idea is formalized by the following lemma.
+This is formalized in the following lemma.
 
 % \input{tex_code/matching_unify_transP.tex}
 
 \begin{lemma}[matching\_unify\_transP]\label{th:matchingunifytransP}%
 \begin{multline*}
-	\lambda\ h_1\ h_2\ q .\ h_1 \cap h_2 = \varnothing \to h_1 \cap q = \varnothing \to h_2 \cap q = \varnothing \to \\
+	\forall\ h_1\ h_2\ q .\ h_1 \cap h_2 = \varnothing \to h_1 \cap q = \varnothing \to h_2 \cap q = \varnothing \to \\
 	\mathrm{matching}\ h_1\ q\ \varnothing \to \mathrm{matching}\ h_2\ q\ \varnothing \to \mathrm{unify}\ h_1\ h_2\ \varnothing 
 \end{multline*}
 \end{lemma}
@@ -1906,7 +1906,7 @@ This idea is formalized by the following lemma.
   By \cref{um}, we now that the matching of $h_1$ (resp. $h_2$) and $q$ gives a
   substitution $\sigma_1$ (resp. $\sigma_2$) where the variables in $q$ are not
   assigned, i.e. its domain only contains variables in $h_1$ (resp $h_2$). Using
-  \cref{th:unifycomplete}, on the conclusion, we need to prove that it exists a
+  \cref{th:unifycomplete} we need to prove that it exists a
   substitution $\sigma'$ such that $\sigma'\ h_1 = \sigma'\ h_2$. This
   substitution is the composition of $\sigma_1$ and $\sigma_2$, that is
   $\sigma' = \lambda x. \sigma_1 (\sigma_2\ x)$. Since $h_1$ and
@@ -1949,13 +1949,11 @@ $\alpha$-equivalent terms.
 
 % \input{tex_code/unif_ren.tex}
 \begin{lemma}[unif\_ren\_ac]\label{th:unifren}
-  $\forall\ t_1\ t_2\ t_1'\ t_2',$
-  \begin{multline*}
-  t_1 =_\alpha t_1' \land t_2 =_\alpha t_2' \land
-  t_1 \cap t_2 = \varnothing \land
-  t_1' \cap t_2' = \varnothing \to\\
+  $\forall\ t_1\ t_2\ t_1'\ t_2', t_1 =_\alpha t_1' \land t_2 =_\alpha t_2'$\\
+  $\qquad
+  t_1 \cap t_2 = \varnothing \land t_1' \cap t_2' = \varnothing \to
   \mathrm{unify}\ t_1\ t_2\ \varepsilon \to \mathrm{unify}\ t_1'\ t_2'\ \varepsilon
-  \end{multline*}
+  $
 \end{lemma}
 
 In \cref{fig:progx}, the rules of the program are equipped with three
@@ -2023,16 +2021,11 @@ shown in~\cref{fig:dettree}.
     | KO | OK => true
     | And A B0 B =>
         det_tree p B &&
-        if prune (success A) A == None
-        then det_tree p A || has_cut B
-        else
-          (det_tree p A || (has_cut B && has_cut_seq B0)) &&
-          det_tree_seq p B0
+        ((prune (success A) A == None) ||
+         ((det_tree p A || (has_cut B && has_cuts B0)) && det_trees p B0))
     | Or None _ B => det_tree p B
     | Or (Some A) _ B =>
-        det_tree p A &&
-        if has_cut A then det_tree p B
-        else (B == KO)
+        det_tree p A && if has_cut A then det_tree p B else (B == KO)
     end.
 \end{coqcode}
 \caption{The \emph{det\_tree} predicate\label{fig:dettree}}
@@ -2044,7 +2037,7 @@ deterministic predicate. The recursive cases correspond to the \andC and
 
 A conjunction behaves deterministically when its right-hand side is a
 deterministic tree. Then we have two cases to take into account: if
-$\mathrm{prune}(\mathrm{success}\ A)\ A = \mathrm{None}$ is true then the tree
+$\mathrm{prune}\ (\mathrm{success}\ A)\ A = \mathrm{None}$ is true then the tree
 produces no choice points: it is either a tree which always fails or a tree
 containing only a successfull path. In this case, since det\_tree $p$ $B$, then
 we can conclude that the whole tree is deterministic.
@@ -2070,21 +2063,24 @@ produce a successful branch, leading to non-deterministic behaviour.
 The following lemmas show that deterministic trees are preserved by the
 operations \step and \na.
 
-\input{tex_code/det_tree_step.tex}
+%\input{tex_code/det_tree_step.tex}
+\begin{lemma}[det\_tree\_step]\label{th:dettreestep}
+  $\forall\ \mathrm{p}\ v\ \sigma_1\ A\ r ,\ \mathrm{check\_program}\ \mathrm{p} \to$\\
+	$\phantom{xxxxx} \mathrm{step}\ u\ \mathrm{p}\ v\ \sigma_1\ A = r \to \mathrm{det\_tree}\ \mathrm{pr}\ (\mathrm{snd}\ r) $
+\end{lemma}
 
 % \input{tex_code/det_tree_prune.tex}
 \begin{lemma}[det\_tree\_prune]\label{th:dettreeprune}%
 	$$\forall\ p\ A\ B\ b ,\ \mathrm{det\_tree}\ p\ A \to \mathrm{prune}\ b\ A = \mathrm{Some}\ B \to \mathrm{det\_tree}\ p\ B $$
 \end{lemma}
 
-Finally, we can prove the following theorem:
+\noindent Finally, we can prove the following lemma that entails det\_check\_call:
 
 % \input{tex_code/det_check_tree.tex}
 \begin{lemma}[det\_check\_tree]\label{th:detchecktree}%
 	$$\forall\ \sigma\ v\ p\ t ,\ \mathrm{check\_program}\ p \to \mathrm{det\_tree}\ p\ t \to \mathrm{is\_det}\ p\ \sigma\ v\ t $$
 \end{lemma}
 
-Our target theorem det\_check\_call is a corollary of det\_check\_tree.
 
 % As an important remark, proving the same lemma with the stack semantics, it is
 % difficult to correctly define the predicate \cI{det_stack}, checking for the
@@ -2095,8 +2091,8 @@ Our target theorem det\_check\_call is a corollary of det\_check\_tree.
 \section{Related work}
 
 The only mechanization of \prologP's semantics that we could find is
-Pusch's \isabelleP formalization~\cite{10.1007/BFb0105415}, which is
-based on the model of Debray and Mishra~\cite[Sec.~4.3]{Debray1988}.
+Pusch's \isabelleP formalization~\cite{10.1007/BFb0105415}, which follows
+ Debray and Mishra~\cite[Sec.~4.3]{Debray1988}.
 That work starts from this semantics and refines it by introducing
 optimizations commonly found in the Warren abstract
 machine~\cite{warren1983abstract,1991ait-wam}. Unlike our case study,
@@ -2113,19 +2109,14 @@ denotational and cannot easily account for all the features covered
 in~\cite{fissore2026}, although it would have been sufficient for the
 first-order fragment considered in this paper.
 
-Hanus and Prott~\cite{hanus2025} formalize a determinacy checker. The
-main difference between their formalization and ours is that they analyze
-the determinacy of expressions without attempting to evaluate predicate
-calls back into the program. In contrast, this evaluation mechanism is a
-central component of our development. Supporting it requires not only a
-formalization of the unification algorithm, but also the implementation
-of a mutual exclusion checker, which guarantees that at most one rule can
-be successfully applied to a given query.
-Moreover, the treatment of choice points differs significantly between
-the two approaches. In Hanus and Prott's development, encountering a
-superficial \cI{?} node always results in a determinacy error. In our
-formalization, instead, the determinacy of an \orC node depends on the
-presence of cuts that may prevent alternatives from escaping the node.
+Hanus and Prott~\cite{hanus2025} formalize a determinacy checker for
+the logic-functional Curry language. In this language choice points
+are eplicitly denoted by the \cI{?} node in the syntax of expressions.
+In this setting the mutual exclusion of rules does not need to be
+ensured resorting to unification: the overlap of rules is explicit in the
+syntax. Similarly the operator to absorb choice points, \cI{allValues},
+explicitly receives the expression containing them as an argument making the
+scope of this control operator trivial to analyze.
 
 The proof technique we use to relate the two semantics is inspired
 by~\cite{yves-equiv}, where Bertot mechanizes the correctness of a
@@ -2143,14 +2134,13 @@ input arguments are \emph{matched}, rather than unified, against rule
 heads. This choice agrees with the \elpiP interpreter, which is in turn
 inspired by B-\prologP's
 ``matching-clauses''~\cite{1991ait-wam,zhou2012}.
-
 Applying our results to a semantics based entirely on unification is
 possible by adding two extra assumptions to
 \cref{th:detcheckcall}. First, the initial query must have ground inputs. Second, the
 program must be well-moded. Well-moded predicates produce ground
 outputs when given ground inputs; hence, starting from an initial query
 with ground inputs, well-moded programs behave exactly as if input
-arguments were matched. In other words, lemma
+arguments were matched. In other words,
 \cref{th:matchingdisj} could be reformulated using unification, at the
 cost of an additional assumption that the input arguments are ground;
 under that assumption, unification and matching coincide.
