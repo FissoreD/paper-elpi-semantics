@@ -2035,18 +2035,19 @@ For a call to a term $t$, the tree is deterministic whenever $t$ calls a
 deterministic predicate. The recursive cases correspond to the \andC and
 \orC nodes.
 
-A conjunction behaves deterministically when its right-hand side is a
-deterministic tree. Then we have two cases to take into account: if
-$\mathrm{prune}\ (\mathrm{success}\ A)\ A = \mathrm{None}$ is true then the tree
-produces no choice points: it is either a tree which always fails or a tree
-containing only a successfull path. In this case, since det\_tree $p$ $B$, then
-we can conclude that the whole tree is deterministic.
+A conjunction behaves deterministically whenever its right-hand side is a
+deterministic tree. Two cases must then be considered.
 
-Otherwise, the left hand side can be and potentially backtrack, the reset point
-must behave deterministically, meaning that all calls inside it are
-deterministic. Moreover, either $A$ is deterministic,
-or both $B$ and the reset point contain a cut that prevents the
-non-deterministic behaviour of the evaluation of $A$.
+If $\mathrm{prune}\ (\mathrm{success}\ A)\ A = \mathrm{None}$, then $A$ produces
+no choice points: it either always fails or contains a single successful
+execution path. Since $\mathrm{det\_tree}\ p\ B$ holds, the entire conjunction
+is therefore deterministic.
+
+Otherwise, the left-hand side may introduce backtracking, potentially
+resuming the reset point, which must itself behave deterministically.
+In this case, either $A$ is deterministic, or both $B$ and the reset
+point contain a cut that prevents the non-deterministic behaviour arising
+from the evaluation of $A$.
 
 For \orC trees, the interesting case is when the left-hand side contains
 an tree. In this case, $A$ must be deterministic. If $A$
