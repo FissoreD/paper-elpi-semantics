@@ -1214,8 +1214,23 @@ Depicted as rules:
 \Cref{th:orelim1,th:orelim2} are elimination
 rules for disjunction. 
 
-\input{tex_code/run_orSST.tex}
-\input{tex_code/run_orSNT.tex}
+% \input{tex_code/run_orSST.tex}
+\begin{lemma}[or\_elim1]\label{th:orelim1}$\forall\ p\ v\ v'\ \sigma\ \sigma'\ \sigma_1\ A\ A'\ B\ B' ,$
+\begin{multline*}
+	\mathrm{runT}\ p\ v\ \sigma\ ( A \lor B\ \phantom{!}_{\!\!\!\!\sigma_1} )\ ( \mathrm{Many}\ \sigma'\ ( A' \lor B'\ \phantom{!}_{\!\!\!\!\sigma_1} ) )\ \mathrm{false}\ v' \to \\
+	\exists\ b ,\ \mathrm{runT}\ p\ v\ \sigma\ A\ ( \mathrm{Many}\ \sigma'\ A' )\ b\ v' \land B' = \mathrm{if}\ b\ \mathrm{then}\ \mathrm{KO}\ \mathrm{else}\ B 
+\end{multline*}
+\end{lemma}
+
+%\input{tex_code/run_orSNT.tex}
+\begin{lemma}[or\_elim2]\label{th:orelim2}
+  $\forall\ p\ v\ v'\ \sigma\ \sigma'\ \sigma_1\ A\ B\ B' ,$
+\begin{multline*}
+	\mathrm{runT}\ p\ v\ \sigma\ ( A \lor B\ \phantom{!}_{\!\!\!\!\sigma_1} )\ ( \mathrm{Many}\ \sigma'\ ( \square\ \lor B'\ \phantom{!}_{\!\!\!\!\sigma_1} ) )\ \mathrm{false}\ v' \to \\
+	( \mathrm{runT}\ p\ v\ \sigma\ A\ ( \mathrm{One}\ \sigma' )\ \mathrm{false}\ v' )\ \lor \\
+	( \exists\ v_2\ b ,\ \mathrm{runT}\ p\ v\ \sigma\ A\ \mathrm{Zero}\ \mathrm{false}\ v_2 \land \mathrm{runT}\ p\ v_2\ \sigma_1\ B\ ( \mathrm{Many}\ \sigma'\ B' )\ b\ v' ) 
+\end{multline*}
+\end{lemma}
 
 
 
@@ -1434,7 +1449,6 @@ In order to relate the two semantics we have to relate the computations states,
 i.e., the And-Or tree and the stack of alternatives. We define a translation from trees to stacks, called \ttl, but
 we do not explicitly provide the converse translation, an economy
 allowed by the proof technique we employ, inspired by~\cite{yves-equiv}.
-
 Before describing the translation of trees to stacks (in~\cref{sec:t2l})
 we need to define the notion of \emph{valid tree}. The {tree}
 datatype indeed contains trees that cannot be generated
@@ -1450,6 +1464,11 @@ tree construction strategy.
 % states. In the next to subsection we propose the two functions \vast and \ttl.
 
 \subsection{Valid trees}\label{sec:validtree}
+\begin{figure}[b]
+    \input{tex_code/valid_tree.tex}
+    \caption{Valid tree \label{fig:vt} }
+\end{figure}
+
 
 The class of valid trees is captured by the \vast
 function shown in Figure~\ref{fig:vt}.
@@ -1484,7 +1503,7 @@ are preserved by calls to \step and \na.
 
 % \input{tex_code/valid_tree_step.tex}
 \begin{lemma}[valid\_tree\_step]\label{th:validtreestep}%
-	$$\forall\ \sigma\ v\ A\ r ,\ \mathrm{valid\_tree}\ A \to \mathrm{step}\ u\ p\ v\ \sigma\ A = r \to \mathrm{valid\_tree}\ r.2 $$
+	$$\forall\ \sigma\ v\ A\ r ,\ \mathrm{valid\_tree}\ A \to \mathrm{step}\ u\ p\ v\ \sigma\ A = r \to \mathrm{valid\_tree}\ (\mathrm{snd}\ r)$$
 \end{lemma}
 
 % \input{tex_code/valid_tree_prune.tex}
@@ -1492,18 +1511,13 @@ are preserved by calls to \step and \na.
 	$$\forall\ A\ B\ b ,\ \mathrm{valid\_tree}\ A \to \mathrm{prune}\ b\ A = \mathrm{Some}\ B \to \mathrm{valid\_tree}\ B $$
 \end{lemma}
 
-We can therefore derive how valid trees are preserved by the stack interpreter.
+% We can therefore derive how valid trees are preserved by the stack interpreter.
 
 % \input{tex_code/valid_tree_run.tex}
 \begin{theorem}[valid\_tree\_run]\label{th:validtreerun}%
 	$\forall\ b\ \sigma\ \sigma'\ v\ v'\ A\ B,$
   $$\mathrm{valid\_tree}\ A \to \mathrm{runT}\ u\ p\ v\ \sigma\ A\ ( \mathrm{Many}\ \sigma'\ B )\ b\ v' \to \mathrm{valid\_tree}\ B $$
 \end{theorem}
-
-\begin{figure}  
-    \input{tex_code/valid_tree.tex}
-    \caption{Valid tree \label{fig:vt} }
-\end{figure}
 
 % \begin{figure}  
 %     \begin{coqcode}
@@ -1894,7 +1908,7 @@ An important property we derive from the matching and unification
 procedures is the following. Given three pairwise variable-disjoint terms
 $h_1$, $h_2$, and $q$, representing two rule heads in the database and a
 query, if both heads match the query $q$, then the two heads must unify.
-This is formalized in the following lemma.
+% This is formalized in the following lemma.
 
 % \input{tex_code/matching_unify_transP.tex}
 
@@ -1922,8 +1936,8 @@ This is formalized in the following lemma.
 % \input{tex_code/unif_trans.tex}
 % \input{tex_code/matchunif.tex}
 
-Finally, we also need a lemma certifying that the refreshing variables operation
-performed at runtime during backchaining does not affect unification.
+Finally, we also need to prove that the refreshing of variables
+performed at runtime does not affect unification.
 In particular, a refreshing renaming $f$ for a term $t$ is a function from
 variables to variables such that: (i) $f$ is defined on all variables in
 $t$, i.e. every variable is renamed; and (ii) $f$ is injective, i.e. it
@@ -1952,7 +1966,8 @@ $\alpha$-equivalent terms.
 
 % \input{tex_code/unif_ren.tex}
 \begin{lemma}[unif\_ren\_ac]\label{th:unifren}
-  $\forall\ t_1\ t_2\ t_1'\ t_2', t_1 =_\alpha t_1' \land t_2 =_\alpha t_2' \to$\\
+  $\forall\ t_1\ t_2\ t_1'\ t_2', t_1 =_\alpha t_1' \land t_2 =_\alpha t_2' \to$
+  \vspace{.8em}\\
   $\phantom{xxxxA}
   t_1 \cap t_2 = \varnothing \land t_1' \cap t_2' = \varnothing \to
   \mathrm{unify}\ t_1\ t_2\ \varepsilon \to \mathrm{unify}\ t_1'\ t_2'\ \varepsilon
@@ -1995,7 +2010,8 @@ either fails or succeeds with no alternatives left to explore.
 The theorem we want to prove is the following one:
 
 % \input{tex_code/det_check_call.tex}
-\begin{theorem}[det\_check\_call]\label{th:detcheckcall}$\forall\ p\ \sigma\ t\ v ,$\\
+\begin{theorem}[det\_check\_call]\label{th:detcheckcall}$\forall\ p\ \sigma\ t\ v ,$
+  \vspace{.8em}\\
 	$\phantom{xxxxx} \mathrm{check\_program}\ p \to \mathrm{tm\_is\_det}\ p\ t \to \mathrm{is\_det}\ p\ \sigma\ v\ ( \mathrm{Unexplored}\ ( \mathrm{call}\ t ) ) $
 \end{theorem}
 
