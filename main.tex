@@ -612,17 +612,19 @@ also present in the Warren Abstract Machine
 \cite{warren1983abstract,1991ait-wam}.
 
 The execution state is a stack of alternatives.
+
+$$\mathrm{alts} := \mathrm{list}\ (\Sigma \times \mathrm{goals})  \qquad \mathrm{goals} := \mathrm{list}\ (\ATOM \times \mathrm{alts})$$
+
 Each alternative is a list of goals. Intuitively it amounts to
 a disjunctive normal form: each stack item is a self contained
 computation, coupling a substitution with all the goals to be
 solved.
 
-Goals pair an atom with a list of the \emph{cut-to} alternatives, 
-making the two datatypes mutually recursive, but these alternatives
-have a very different role. They have to be understood
+The datatypes of goals alnd alternatives are mutually recursive since
+a goal pairs an atom with a list of the \emph{cut-to} alternatives. 
+Still, these alternatives have a very different role: they have to be understood
 as pointers to lower levels of the stack itself.
 They are used to implement the cut, i.e. to prune the stack of alternatives.
-$$\mathrm{alts} := \mathrm{list}\ (\Sigma \times \mathrm{goals})  \qquad \mathrm{goals} := \mathrm{list}\ (\ATOM \times \mathrm{alts})$$
 
 \newcommand{\backchainS}{
   \ensuremath{\mathcal{B}_S}
@@ -749,21 +751,6 @@ discards the second and third elements in the stack. Backtracking is
 performed by simply consuming the first alternative from the stack, as shown
 in \cref{ex-elpi3}.
 
-\subsection{Inadequacy of the stack-based semantics for formal reasoning}
-
-The lemmas that we presented in
-\cref{sec:run-prop} are hard to express in the stack-based semantics, due to the
-lack of structure in the stack to delimit the scope of the cut operator. For
-example, consider a stack $a_0, a_1, \dots, a_n$. If $a_0$ succeeds but executes a
-cut, it is hard to relate the remaining alternatives $a_1, \dots, a_n$ to the
-alternatives $b_1, \dots, b_m$ that survive the cut, since the only simple
-invariant is that $b_1, \dots, b_m$ is a suffix of $a_1, \dots, a_n$. If
-$a_1, \dots, a_n$ were generated before the call whose execution generates the cut
-in $a_0$, then they all stay; but if some were generated afterwards, they are
-discarded. Expressing this precisely would require attaching, at the very least,
-time-stamps (or depths) to goals, which amounts to a cumbersome encoding of a
-tree.
-
 
 \section{And-Or Tree semantics}
 \label{tree-sem}
@@ -771,19 +758,19 @@ tree.
 %     % \input{tex_code/tree_def.tex}
 % %     \begin{coqcode}
 % % Inductive tree ~$\coloneq$~
-% %   | KO | OK                            (* failure and success *)
+% %   | Bot | Top                            (* failure and success *)
 % %   | Todo of Atom                       (* unexplored branch *)
 % %   | Or   of option tree & ~$\Sigma$~ & tree ~$\!$~    (* $A \lor B_\sigma$ *) 
 % %   | And  of tree & list Atom & tree.   (* $A \land_{B_0} B$ *)
 % % \end{coqcode}
-%   $$\TREE := \mathrm{KO} \mid \mathrm{OK} \mid \mathrm{Todo}\ \ATOM \mid \mathrm{Or}\ (\mathrm{option}\ \TREE)\ \Sigma\ \TREE \mid \mathrm{And}\ \TREE\ (\mathrm{list}\ \ATOM)\ \TREE$$
+%   $$\TREE := \bot \mid \top \mid \mathrm{Todo}\ \ATOM \mid \mathrm{Or}\ (\mathrm{option}\ \TREE)\ \Sigma\ \TREE \mid \mathrm{And}\ \TREE\ (\mathrm{list}\ \ATOM)\ \TREE$$
 % \caption{Definition of And-Or tree}
 % \label{fig:tree-ty}
 % \end{figure}
 
 An And-Or tree is a stratified, variable-width tree, defined as follows:
 %
-$$\TREE := \mathrm{KO} \mid \mathrm{OK} \mid \mathrm{Unexplored}\ \ATOM \mid \mathrm{Or}\ (\mathrm{option}\ \TREE)\ \Sigma\ \TREE \mid \mathrm{And}\ \TREE\ (\mathrm{list}\ \ATOM)\ \TREE$$
+$$\TREE := \mathrm{Top} \mid \mathrm{Bot} \mid \mathrm{Unexplored}\ \ATOM \mid \mathrm{Or}\ (\mathrm{option}\ \TREE)\ \Sigma\ \TREE \mid \mathrm{And}\ \TREE\ (\mathrm{list}\ \ATOM)\ \TREE$$
 
 It consists of two kinds
 of layers that alternate: a disjunctive layer is followed by a conjunctive
@@ -806,13 +793,13 @@ the corresponding And-layer. This expansion step is performed by the
 
 In
 addition to the Unexplored node we have two distinguished nodes, \koC and
-\okC, which represent respectively the smallest failed and successful tree.
+\okC, written $\bot$ and $\top$, which represent respectively the smallest failed and successful tree.
 
 The \orC node, written \(A \lor B_\sigma\), represents the addition of an
 alternative \(B_\sigma\) to an existing disjunction $A$. The left subtree
 \(A\) is optional and is absent once that branch has been fully explored.
 The right alternative is paired with a substitution \(\sigma\), which becomes
-the current substitution when backtracking to \(B\). %\marginpar{why option and not KO?}
+the current substitution when backtracking to \(B\). %\marginpar{why option and not Bot?}
 
 The \andC{} node, written \(A \land_{B_0} B\), represents the addition
 of a subquery \(B\) to the first choice point in \(A\). We call
@@ -991,18 +978,18 @@ the next alternative and continues from there, if one exists.
   \begin{coqcode}
   Definition step p v s A :=
     match A with
-    | OK                  => (v, Success, OK)
-    | KO                  => (v, Failed, A)
-    | Unexplored cut      => (v, CutBrothers, OK)
+    | Top                 => (v, Success, Top)
+    | Bot                 => (v, Failed, A)
+    | Unexplored cut      => (v, CutBrothers, Bot)
     | Unexplored (call t) => 
         let: (v, l) := backchain u p v t s in
         (v, Expanded,
-        if l is ((s, r) :: xs) then Or None s (big_or r xs) else KO)
+        if l is ((s, r) :: xs) then Or None s (big_or r xs) else Bot)
     | Or A sB B =>
         if A is Some A then 
           let: (v, tA, rA) := step p v s A in
           (v, if is_cb tA then Expanded else tA, 
-           Or (Some rA) sB (if is_cb tA then KO else B))
+           Or (Some rA) sB (if is_cb tA then Bot else B))
         else
           let: (v, tB, rB) := step p v sB B in
           (v, if is_cb tB then Expanded else tB, Or A sB rB)
@@ -1112,8 +1099,8 @@ amounts to discarding the third rule of predicate \eI{r}.
   Definition omap f o := match o with Some b => Some (f b) | _ => o end.
   Definition prune b A : option tree :=
     match A with
-    | KO => None
-    | OK => if b then None else Some OK
+    | Bot => None
+    | Top => if b then None else Some Top
     | Unexplored _ => Some A
     | And A B0 B =>
         let build_B0 b := omap (~$\lambda$~x. And x B0 (big_and B0)) (prune b A) in
@@ -1384,7 +1371,7 @@ rules for disjunction.
 \begin{lemma}[or\_elim1]\label{th:orelim1}$\forall\ p\ v\ v'\ \sigma\ \sigma'\ \sigma_1\ A\ A'\ B\ B' ,$
 \begin{multline*}
 	\mathrm{runT}\ p\ v\ \sigma\ ( A \lor B\ \phantom{!}_{\!\!\!\!\sigma_1} )\ ( \mathrm{Many}\ \sigma'\ ( A' \lor B'\ \phantom{!}_{\!\!\!\!\sigma_1} ) )\ \mathrm{false}\ v' \to \\
-	\exists\ b ,\ \mathrm{runT}\ p\ v\ \sigma\ A\ ( \mathrm{Many}\ \sigma'\ A' )\ b\ v' \land B' = \mathrm{if}\ b\ \mathrm{then}\ \mathrm{KO}\ \mathrm{else}\ B 
+	\exists\ b ,\ \mathrm{runT}\ p\ v\ \sigma\ A\ ( \mathrm{Many}\ \sigma'\ A' )\ b\ v' \land B' = \mathrm{if}\ b\ \mathrm{then}\ \bot\ \mathrm{else}\ B 
 \end{multline*}
 \end{lemma}
 
@@ -1447,6 +1434,21 @@ Indeed, an atom preceding the cut may fail, so the cut is never reached.
 As anticipated in the introduction, these lemmas contradict the commutativity of
 disjunction.
 
+\subsection{Inadequacy of the stack-based semantics for formal reasoning}
+
+The lemmas that we presented in
+\cref{sec:run-prop} are hard to express in the stack-based semantics, due to the
+lack of structure in the stack to delimit the scope of the cut operator. For
+example, consider a stack $a_0, a_1, \dots, a_n$. If $a_0$ succeeds but executes a
+cut, it is hard to relate the remaining alternatives $a_1, \dots, a_n$ to the
+alternatives $b_1, \dots, b_m$ that survive the cut, since the only simple
+invariant is that $b_1, \dots, b_m$ is a suffix of $a_1, \dots, a_n$. If
+$a_1, \dots, a_n$ were generated before the call whose execution generates the cut
+in $a_0$, then they all stay; but if some were generated afterwards, they are
+discarded. Expressing this precisely would require attaching, at the very least,
+time-stamps (or depths) to goals, which amounts to a cumbersome encoding of a
+tree.
+
 
 
 \section{Equivalence of the two semantics}
@@ -1456,7 +1458,7 @@ i.e., the And-Or tree and the stack of alternatives. We define a translation fro
 we do not explicitly provide the converse translation, an economy
 allowed by the proof technique we employ, inspired by~\cite{yves-equiv}.
 Before describing the translation of trees to stacks (in~\cref{sec:t2l})
-we need to define the notion of \emph{valid tree}. The {tree}
+we need to define the notion of \emph{valid SLD tree}. The {tree}
 datatype indeed contains trees that cannot be generated
 by {runT} via {step} or {prune}, for example
 all the trees that do not correspond to a depth-first left-to-right
@@ -1469,14 +1471,14 @@ tree construction strategy.
 % generated from a call. Secondly, we need to translate trees into elpi
 % states. In the next to subsection we propose the two functions \vast and \ttl.
 
-\subsection{Valid trees}\label{sec:validtree}
+\subsection{Valid SLD trees}\label{sec:validtree}
 \begin{figure}[b]
     \input{tex_code/valid_tree.tex}
-    \caption{Valid tree \label{fig:vt} }
+    \caption{Valid SLD tree \label{fig:vt} }
 \end{figure}
 
 
-The class of valid trees is captured by the \vast
+The class of valid SLD trees is captured by the \vast
 function shown in Figure~\ref{fig:vt}.
 While all base cases of {tree} are valid, we need to analyze the \orC and
 \andC constructors more carefully.
@@ -1484,7 +1486,7 @@ While all base cases of {tree} are valid, we need to analyze the \orC and
 
 For the \orC constructor, we distinguish two cases depending on whether the
 left-hand side is present. If it is not, then the right-hand side must be a
-valid tree. Otherwise, the left-hand side must be a valid tree, and the
+valid SLD tree. Otherwise, the left-hand side must be a valid SLD tree, and the
 right-hand side must either be the \koC tree or be unexplored. The former case
 occurs when the right-hand side is cut away by the evaluation of a superficial
 cut in the left-hand side.
@@ -1492,7 +1494,7 @@ In the latter case we use the \emph{base\_or} predicate
 to check that $B$ is the right-skewed tree formed by a disjunction of
 conjunctions, generated after a successful backchain for a call.
 
-For the \andC constructor, the left hand side is required to be a valid tree.
+For the \andC constructor, the left hand side is required to be a valid SLD tree.
 The shape of the right hand side depends on whether the left hand side is a
 success. If it is not successful, then the right hand side must not be
 explored, i.e. $B$ must be
@@ -1502,35 +1504,35 @@ from the reset point $B_0$ (the same procedure used to
 transform each alternative output by backchain into the And-layer
 of the resulting tree).
 When the left hand side is successful, then the right hand side
-may have been explored, and consequently must be a valid tree.
+may have been explored, and consequently must be a valid SLD tree.
 
-We point out the two main invariants that stating that valid trees
+We point out the two main invariants that stating that valid SLD trees
 are preserved by calls to \step and \na.
 
 % \input{tex_code/valid_tree_step.tex}
-\begin{lemma}[valid\_tree\_step]\label{th:validtreestep}%
-	$$\forall\ \sigma\ v\ A\ r ,\ \mathrm{valid\_tree}\ A \to \mathrm{step}\ u\ p\ v\ \sigma\ A = r \to \mathrm{valid\_tree}\ (\mathrm{snd}\ r)$$
+\begin{lemma}[sld\_tree\_step]\label{th:validtreestep}%
+	$$\forall\ \sigma\ v\ A\ r ,\ \mathrm{sld\_tree}\ A \to \mathrm{step}\ u\ p\ v\ \sigma\ A = r \to \mathrm{sld\_tree}\ (\mathrm{snd}\ r)$$
 \end{lemma}
 
 % \input{tex_code/valid_tree_prune.tex}
-\begin{lemma}[valid\_tree\_prune]\label{th:validtreeprune}%
-	$$\forall\ A\ B\ b ,\ \mathrm{valid\_tree}\ A \to \mathrm{prune}\ b\ A = \mathrm{Some}\ B \to \mathrm{valid\_tree}\ B $$
+\begin{lemma}[sld\_tree\_prune]\label{th:validtreeprune}%
+	$$\forall\ A\ B\ b ,\ \mathrm{sld\_tree}\ A \to \mathrm{prune}\ b\ A = \mathrm{Some}\ B \to \mathrm{sld\_tree}\ B $$
 \end{lemma}
 
 % We can therefore derive how valid trees are preserved by the stack interpreter.
 
 % \input{tex_code/valid_tree_run.tex}
-\begin{theorem}[valid\_tree\_run]\label{th:validtreerun}%
+\begin{theorem}[sld\_tree\_run]\label{th:validtreerun}%
 	$\forall\ b\ \sigma\ \sigma'\ v\ v'\ A\ B,$
-  $$\mathrm{valid\_tree}\ A \to \mathrm{runT}\ u\ p\ v\ \sigma\ A\ ( \mathrm{Many}\ \sigma'\ B )\ b\ v' \to \mathrm{valid\_tree}\ B $$
+  $$\mathrm{sld\_tree}\ A \to \mathrm{runT}\ u\ p\ v\ \sigma\ A\ ( \mathrm{Many}\ \sigma'\ B )\ b\ v' \to \mathrm{sld\_tree}\ B $$
 \end{theorem}
 
 % \begin{figure}  
 %     \begin{coqcode}
 %       Fixpoint t2l ~$t$~ ~$\sigma$~ (cp: alts) : alts ~$\coloneq$~
 %       match ~$t$~ with
-%       | OK     ~$\Rightarrow$~ [(~$\sigma$~, ~\mnil\unskip~)]
-%       | KO     ~$\Rightarrow$~ ~\mnil~
+%       | Top     ~$\Rightarrow$~ [(~$\sigma$~, ~\mnil\unskip~)]
+%       | Bot     ~$\Rightarrow$~ ~\mnil~
 %       | TA a   ~$\Rightarrow$~ [(~$\sigma$~, [(a, ~\mnil\unskip~)])]
 %       ...
 %     \end{coqcode}
@@ -1709,7 +1711,7 @@ prove the following lemma.
 \end{proof}
 
 The first direction of the equivalence states that the execution of a
-valid tree is matched by the execution of the stack obtained by
+valid SLD tree is matched by the execution of the stack obtained by
 translating the tree. Moreover, the unexplored alternatives returned as
 a tree correspond to those returned as a stack.
 
@@ -1717,7 +1719,7 @@ a tree correspond to those returned as a stack.
 \begin{theorem}[runT\_to\_runS]\label{th:runTtorunS}%
 \begin{multline*}
 	\forall\ p\ t\ \sigma\ r ,\ \mathrm{let}\ v\ \mathrm{:=}\ \mathrm{vars}\ t\ \cup\ \mathrm{vars}\ \sigma\ \mathrm{in}\ 
-	\mathrm{valid\_tree}\ t \to \mathrm{runT'}\ p\ v\ \sigma\ t\ r \to \\
+	\mathrm{sld\_tree}\ t \to \mathrm{runT'}\ p\ v\ \sigma\ t\ r \to \\
 	\begin{cases}
 	\mathrm{runS}\ p\ v\ ( \mathrm{tree\_to\_stack}\ t\ \sigma\ \mnil )\ \mathrm{None} & \mathrm{if}\ r = \mathrm{Zero}\\
 	\mathrm{runS}\ p\ v\ ( \mathrm{tree\_to\_stack}\ t\ \sigma\ \mnil )\ (\mathrm{Some}\ (\sigma', \mnil)) & \mathrm{if}\ r = \mathrm{One}\ \sigma'\\
@@ -1752,7 +1754,7 @@ translates to the unexplored stack.
 \begin{theorem}[runS\_to\_runT]\label{th:runStorunT}%
 \begin{multline*}
 	\forall\ p\ v\ a\ r ,\ \mathrm{runS}\ p\ v\ a\ r \to
-	\forall\ \sigma\ t ,\ \mathrm{valid\_tree}\ t \to \mathrm{tree\_to\_stack}\ t\ \sigma\ \mnil = a \to \\
+	\forall\ \sigma\ t ,\ \mathrm{sld\_tree}\ t \to \mathrm{tree\_to\_stack}\ t\ \sigma\ \mnil = a \to \\
 	% \mathrm{match}\ r\ \mathrm{with} \\
   \begin{cases}
     \mathrm{runT'}\ p\ v\ \sigma\ t\ \mathrm{Zero}             & \mathrm{if}\ r = \mathrm{None} \\
@@ -2043,14 +2045,14 @@ shown in~\cref{fig:dettree}.
     match A with
     | Unexplored cut => true
     | Unexplored (call t) => tm_is_det p t
-    | KO | OK => true
+    | Bot | Top => true
     | And A B0 B =>
         det_tree p B &&
         ((prune (success A) A == None) ||
          ((det_tree p A || (has_cut B && has_cuts B0)) && det_trees p B0))
     | Or None _ B => det_tree p B
     | Or (Some A) _ B =>
-        det_tree p A && if has_cut A then det_tree p B else (B == KO)
+        det_tree p A && if has_cut A then det_tree p B else (B == Bot)
     end.
 \end{coqcode}
 \caption{The \emph{det\_tree} predicate\label{fig:dettree}}
@@ -2081,9 +2083,9 @@ if $A$ succeeds, the cut discards $B$; otherwise, if $A$ fails before
 reaching the cut, then no solution is produced by $A$ and $B$ is evaluated.
 
 Finally, if $A$ does not contain a cut, then $B$ must be equal to
-$\mathrm{KO}$, that is, a tree already discarded by a cut. This
+$\bot$, that is, a tree already discarded by a cut. This
 condition is essential. Otherwise, if $A$ succeeds without a
-superficial cut and $B$ is not $\mathrm{KO}$, then $B$ could still
+superficial cut and $B$ is not $\bot$, then $B$ could still
 produce a successful branch, leading to non-deterministic behaviour.
 
 The following lemmas show that deterministic trees are preserved by the
