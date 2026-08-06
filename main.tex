@@ -1,14 +1,12 @@
 
-\documentclass[a4paper,UKenglish,cleveref, autoref, thm-restate, lineno, anonymous]{llncs}
+\documentclass[sigplan,10pt,anonymous,review]{acmart}
+\settopmatter{printfolios=true,printccs=false,printacmref=false}
 
 % \usepackage{caption}
-\pagestyle{plain}
 \usepackage{subcaption}
 \usepackage{comment}
 
-\usepackage{amsfonts}
-\usepackage[hidelinks]{hyperref}
-\usepackage{amssymb}
+\hypersetup{hidelinks}
 
 \usepackage{minted}
 \usepackage{mathtools}
@@ -89,30 +87,32 @@
 
 \begin{document}
 
-%\funding{This work has been supported by the French government, through the France 2030 investment plan managed by the Agence Nationale de la Recherche, as part of the ``UCA DS4H'' project, reference ANR-17-EURE-0004.}
+% \author{Davide Fissore}
+% \email{davide.fissore@inria.fr}
+% \orcid{0009-0002-5934-8776}
+% \affiliation{
+%   \institution{Université Côte d'Azur, Inria}
+%   \country{France}
+% }
+%
+% \author{Enrico Tassi}
+% \email{enrico.tassi@inria.fr}
+% \orcid{0000-0002-7783-528X}
+% \affiliation{
+%   \institution{Université Côte d'Azur, Inria}
+%   \country{France}
+% }
+\author{Anonymous Author(s)}
+\affiliation{
+  \institution{Anonymous Institution}
+  \country{Anonymous}
+}
+\email{anonymous@institute.com}
 
-
-\title{Operational semantics for \prologP with Cut in \rocqP 
+\title{Operational semantics for \prologP with Cut in \rocqP
 and its application to determinacy analysis} % of \elpiP programs}
 
-% \author{Davide Fissore\orcidID{0009-0002-5934-8776} \and
-% Enrico Tassi\orcidID{0000-0002-7783-528X}}
-% %
-% \authorrunning{D. Fissore, E. Tassi}
-% \institute{Université Côte d'Azur, Inria, France\\
-% \email{davide.fissore@inria.fr~~~enrico.tassi@inria.fr}}
-\author{Anonymous\orcidID{000}}
-\authorrunning{Anonymous}
-\institute{Anonymous\\
-\email{anonymous@institute.com}}
-
-%
-\maketitle              % typeset the header of the contribution
-%
-
-% \maketitle
-
-%TODO mandatory: add short abstract of the document 
+%TODO mandatory: add short abstract of the document
 \begin{abstract}
 We mechanize two operational semantics for \prologP with cut and prove their
 equivalence in the Rocq prover.
@@ -136,6 +136,10 @@ equivalence between the two semantics, we relate this result to the
 stack-based semantics used in efficient implementations of logic programming
 such as~\cite{dunchev15lpar}.
 \end{abstract}
+
+\keywords{Semantics, Prolog, Elpi, Determinacy Analysis, Rocq, Coq}
+
+\maketitle              % typeset the header of the contribution
 
 \section{Introduction}
 
@@ -2228,22 +2232,21 @@ changes to the conditions for mutual exclusion.
 % the mechanization axiom-free, one should extend the unification algorithm
 % to the higher-order case
 
-\begin{credits}
-\subsubsection{\ackname}
+\begin{acks}
   TODO: hidden for review
-% We thank 
+% We thank
 % Yves Bertot and Laurent Thery for insightful
 % discussions on how to prove the quivalence of the
 % two semantics.\\
-% ~\\ 
+% ~\\
 % Ce travail a bénéficié d'une aide du gouvernement
 % français, gérée par l'Agence Nationale de la Recherche au titre du Pl­an
 % d’investissement France 2030, dans le cadre du projet "UCA DS4H" portant la
 % référence n° ANR-17-EURE-0004.
-\end{credits}
+\end{acks}
 
 
-\bibliographystyle{splncs04}
+\bibliographystyle{ACM-Reference-Format}
 
 \bibliography{bib}
 
