@@ -221,7 +221,7 @@ important component of the Rocq ecosystem~\cite{krebbers25,Trakt,Maas2024,fissor
 our result therefore further strengthens confidence in its
 implementation.
 
-Our mechanization is axiom-free and is available at
+Our mechanization is axiom-free and is available at\\
 % \url{https://github.com/FissoreD/elpi-formalization}.
 \url{ANONYMEZED} (joined as supplementary material).
 
@@ -499,11 +499,11 @@ the particular implementation chosen for that algorithm.
 % for each rule filtered rules $r$, it returnes a pair containing the extension of
 % $\sigma$ making the head of $r$ and $q$ unify and the list of premises of $r$.
 
-\begin{figure}[t]
+\begin{figure*}[t]
     \inputminted[fontsize=\small,autogobble,escapeinside=~~,mathescape=true,frame=leftline,framerule=0pt,framesep=1em]{elpi.py:ElpiLexer}{./progx.elpi}
     \caption{Running example of a logic program in \elpiP syntax}
     \label{fig:progx}
-  \end{figure}
+  \end{figure*}
 
 \subsection{The cut operator}
 \label{sec:cut-op}
@@ -663,7 +663,7 @@ being the solution and $a$ as the list of not-yet-explored
 alternatives.
 \begin{figure}
    \begin{align*}
-  \backchainS\ p\ v\ t\ \sigma\ a\ g =\ &
+  \backchainS\ p\ v\ t\ & \sigma\ a\ g =\ 
   \mathrm{let}\ (v', rs) := \mathrm{backchain}\ p\ v\ t\ \sigma\ \mathrm{in}\\
   &\bigg(v', \bigg[
   \sigma',
@@ -673,7 +673,7 @@ alternatives.
   \ \bigg|\ 
   (\sigma', b) \in rs
   \bigg]\bigg)
-  \end{align*}
+  \end{align*}\vspace{.5em}
 
   \input{tex_code/nurbp.tex}
 
@@ -702,7 +702,7 @@ stack.
 We propose an example of the execution of \nur in \cref{ex-elpi}. The
 arrows in the images represent the cut-to pointers. 
 
-\begin{figure}[!htb]
+\begin{figure*}[!htb]
   \centering
   \begin{subfigure}{0.2\textwidth}
     \centering
@@ -739,7 +739,7 @@ arrows in the images represent the cut-to pointers.
   \end{subfigure}
   \caption{Example of execution}
   \label{ex-elpi}
-\end{figure}
+\end{figure*}
 
 We have not drawn arrows coming out of call atoms since the interpreter
 ignores the cut-alternatives in this case. 
@@ -774,7 +774,12 @@ in \cref{ex-elpi3}.
 
 An And-Or tree is a stratified, variable-width tree, defined as follows:
 %
-$$\TREE := \mathrm{Top} \mid \mathrm{Bot} \mid \mathrm{Unexplored}\ \ATOM \mid \mathrm{Or}\ (\mathrm{option}\ \TREE)\ \Sigma\ \TREE \mid \mathrm{And}\ \TREE\ (\mathrm{list}\ \ATOM)\ \TREE$$
+$$
+\begin{array}{ll}
+\TREE := & \mathrm{Top} \mid \mathrm{Bot} \mid \mathrm{Unexplored}\ \ATOM \\
+&  \mid \mathrm{Or}\ (\mathrm{option}\ \TREE)\ \Sigma\ \TREE \mid \mathrm{And}\ \TREE\ (\mathrm{list}\ \ATOM)\ \TREE
+\end{array}
+$$
 
 It consists of two kinds
 of layers that alternate: a disjunctive layer is followed by a conjunctive
