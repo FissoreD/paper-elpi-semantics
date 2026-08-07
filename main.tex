@@ -5,6 +5,7 @@
 % \usepackage{caption}
 \usepackage{subcaption}
 \usepackage{comment}
+\usepackage{pifont}
 
 \hypersetup{hidelinks}
 
@@ -502,7 +503,7 @@ the particular implementation chosen for that algorithm.
 % $\sigma$ making the head of $r$ and $q$ unify and the list of premises of $r$.
 
 \begin{figure*}[t]
-    \inputminted[fontsize=\small,autogobble,escapeinside=~~,mathescape=true,frame=leftline,framerule=0pt,framesep=1em]{elpi.py:ElpiLexer}{./progx.elpi}
+    \inputminted[fontsize=\footnotesize,autogobble,escapeinside=~~,mathescape=true,frame=leftline,framerule=0pt,framesep=1em]{elpi.py:ElpiLexer}{./progx.elpi}
     \caption{Running example of a logic program in \elpiP syntax}
     \label{fig:progx}
   \end{figure*}
@@ -712,28 +713,28 @@ arrows in the images represent the cut-to pointers.
     \begin{lrbox}{\elpibox}
     \begin{tikzpicture}[baseline]
     \matrix (outer0) at (0,0) [matrix of nodes,
-                     nodes={draw, minimum width=0.5cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex, anchor=center},
+                     nodes={draw, minimum width=0.5cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex, anchor=center, font=\fontsize{8pt}{9.6pt}\selectfont},
                      column sep=0.3cm, row sep=0.3cm] {
     g 0 R\\
     };
 
     \matrix (outer1) at (5,0) [matrix of nodes,
-                     nodes={draw, minimum width=0.5cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex, anchor=center},
+                     nodes={draw, minimum width=0.5cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex, anchor=center, font=\fontsize{8pt}{9.6pt}\selectfont},
                      column sep=0.3cm, row sep=0.3cm] {
     \phantom{AAAAAAAAAAAAAA} & \phantom{AAAAAAAAAAA} &  \node[draw=none] (A1) {\phantom{!}};\\
     };
     \matrix (inner1a) [matrix of nodes,
-                     nodes={minimum width=0.6cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex},
+                     nodes={minimum width=0.6cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex, font=\fontsize{8pt}{9.6pt}\selectfont},
                      column sep=0.1cm, row sep=0.1cm] at (outer1-1-1.center) {
     r A B, & f B C, & ! \\
     };
     \matrix (inner1b) [matrix of nodes,
-                     nodes={minimum width=0.6cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex},
+                     nodes={minimum width=0.6cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex, font=\fontsize{8pt}{9.6pt}\selectfont},
                      column sep=0.1cm, row sep=0.1cm] at (outer1-1-2.center) {
     f D E, & f E F \\
     };
     \matrix (inner1c) [matrix of nodes,
-                     nodes={minimum width=0.6cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex},
+                     nodes={minimum width=0.6cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex, font=\fontsize{8pt}{9.6pt}\selectfont},
                      column sep=0.1cm, row sep=0.1cm] at (A1.center) {
     \phantom{x} \\
     };
@@ -745,32 +746,32 @@ arrows in the images represent the cut-to pointers.
     \node at ($(outer1-1-2.north west)+(-0,0.2)$) {$\sigma_2$};
 
     \matrix (outer2) at (0,-3) [matrix of nodes,
-                     nodes={draw, minimum width=0.5cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex, anchor=center},
+                     nodes={draw, minimum width=0.5cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex, anchor=center, font=\fontsize{8pt}{9.6pt}\selectfont},
                      column sep=0.3cm, row sep=0.3cm] {
     \phantom{AAAAAAAA} & \phantom{AAAAAAAA} & \phantom{AAAAAAAAAAA} & \phantom{AAAAAAAAA} &  \node[draw=none] (A2) {\phantom{xx}};\\
     };
     \matrix (inner2a) [matrix of nodes,
-                     nodes={minimum width=0.6cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex},
+                     nodes={minimum width=0.6cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex, font=\fontsize{8pt}{9.6pt}\selectfont},
                      column sep=0.1cm, row sep=0.1cm] at (outer2-1-1.center) {
     f B C, & ! \\
     };
     \matrix (inner2b) [matrix of nodes,
-                     nodes={minimum width=0.6cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex},
+                     nodes={minimum width=0.6cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex, font=\fontsize{8pt}{9.6pt}\selectfont},
                      column sep=0.1cm, row sep=0.1cm] at (outer2-1-2.center) {
     f B C, & ! \\
     };
     \matrix (inner2c) [matrix of nodes,
-                     nodes={minimum width=0.6cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex},
+                     nodes={minimum width=0.6cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex, font=\fontsize{8pt}{9.6pt}\selectfont},
                      column sep=0.1cm, row sep=0.1cm] at (outer2-1-3.center) {
     !, & f B C, & ! \\
     };
     \matrix (inner2d) [matrix of nodes,
-                     nodes={minimum width=0.6cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex},
+                     nodes={minimum width=0.6cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex, font=\fontsize{8pt}{9.6pt}\selectfont},
                      column sep=0.1cm, row sep=0.1cm] at (outer2-1-4.center) {
     f D E, & f E F \\
     };
     \matrix (inner2L) [matrix of nodes,
-                     nodes={minimum width=0.6cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex},
+                     nodes={minimum width=0.6cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex, font=\fontsize{8pt}{9.6pt}\selectfont},
                      column sep=0.1cm, row sep=0.1cm] at (A2.center) {
     \phantom{x} \\
     };
@@ -796,27 +797,27 @@ arrows in the images represent the cut-to pointers.
     \node at ($(outer2-1-4.north west)+(-0,0.2)$) {$\sigma_2$};
 
     \matrix (outer3) at (10,-3) [matrix of nodes,
-                     nodes={draw, minimum width=0.5cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex, anchor=center},
+                     nodes={draw, minimum width=0.5cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex, anchor=center, font=\fontsize{8pt}{9.6pt}\selectfont},
                      column sep=0.3cm, row sep=0.3cm] {
     \phantom{AAAAAAAA} & \phantom{AAAAAAAAAA} & \phantom{AAAAAAAAAA} &  \node[draw=none] (A3) {\phantom{xx}};\\
     };
     \matrix (inner3a) [matrix of nodes,
-                     nodes={minimum width=0.6cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex},
+                     nodes={minimum width=0.6cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex, font=\fontsize{8pt}{9.6pt}\selectfont},
                      column sep=0.1cm, row sep=0.1cm] at (outer3-1-1.center) {
     f B C, & ! \\
     };
     \matrix (inner3b) [matrix of nodes,
-                     nodes={minimum width=0.6cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex},
+                     nodes={minimum width=0.6cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex, font=\fontsize{8pt}{9.6pt}\selectfont},
                      column sep=0.1cm, row sep=0.1cm] at (outer3-1-2.center) {
     ! & f B C, & ! \\
     };
     \matrix (inner3c) [matrix of nodes,
-                     nodes={minimum width=0.6cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex},
+                     nodes={minimum width=0.6cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex, font=\fontsize{8pt}{9.6pt}\selectfont},
                      column sep=0.1cm, row sep=0.1cm] at (outer3-1-3.center) {
     f D E, & f E F \\
     };
     \matrix (inner3L) [matrix of nodes,
-                     nodes={minimum width=0.6cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex},
+                     nodes={minimum width=0.6cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex, font=\fontsize{8pt}{9.6pt}\selectfont},
                      column sep=0.1cm, row sep=0.1cm] at (A3.center) {
     \phantom{x} \\
     };
@@ -837,27 +838,27 @@ arrows in the images represent the cut-to pointers.
     \node at ($(outer3-1-3.north west)+(-0,0.2)$) {$\sigma_2$};
 
     \matrix (outer4) at (0,-6) [matrix of nodes,
-                     nodes={draw, minimum width=0.5cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex, anchor=center},
+                     nodes={draw, minimum width=0.5cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex, anchor=center, font=\fontsize{8pt}{9.6pt}\selectfont},
                      column sep=0.3cm, row sep=0.3cm] {
     \phantom{AAAAAAAA} & \phantom{AAAAAAAAAA} & \phantom{AAAAAAAAAA} &  \node[draw=none] (A4) {\phantom{xx}};\\
     };
     \matrix (inner4a) [matrix of nodes,
-                     nodes={minimum width=0.6cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex},
+                     nodes={minimum width=0.6cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex, font=\fontsize{8pt}{9.6pt}\selectfont},
                      column sep=0.1cm, row sep=0.1cm] at (outer4-1-1.center) {
     f B C, & ! \\
     };
     \matrix (inner4b) [matrix of nodes,
-                     nodes={minimum width=0.6cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex},
+                     nodes={minimum width=0.6cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex, font=\fontsize{8pt}{9.6pt}\selectfont},
                      column sep=0.1cm, row sep=0.1cm] at (outer4-1-2.center) {
     !, & f B C, & ! \\
     };
     \matrix (inner4c) [matrix of nodes,
-                     nodes={minimum width=0.6cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex},
+                     nodes={minimum width=0.6cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex, font=\fontsize{8pt}{9.6pt}\selectfont},
                      column sep=0.1cm, row sep=0.1cm] at (outer4-1-3.center) {
     f D E, & f E F \\
     };
     \matrix (inner4L) [matrix of nodes,
-                     nodes={minimum width=0.6cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex},
+                     nodes={minimum width=0.6cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex, font=\fontsize{8pt}{9.6pt}\selectfont},
                      column sep=0.1cm, row sep=0.1cm] at (A4.center) {
     \phantom{x} \\
     };
@@ -878,27 +879,27 @@ arrows in the images represent the cut-to pointers.
     \node at ($(outer4-1-3.north west)+(-0,0.2)$) {$\sigma_2$};
 
     \matrix (outer5) at (9,-6) [matrix of nodes,
-                     nodes={draw, minimum width=0.5cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex, anchor=center},
+                     nodes={draw, minimum width=0.5cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex, anchor=center, font=\fontsize{8pt}{9.6pt}\selectfont},
                      column sep=0.3cm, row sep=0.3cm] {
     \phantom{AAA} & \phantom{AAAAAAAAAA} & \phantom{AAAAAAAAAA} &  \node[draw=none] (A5) {\phantom{xx}};\\
     };
     \matrix (inner5a) [matrix of nodes,
-                     nodes={minimum width=0.6cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex},
+                     nodes={minimum width=0.6cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex, font=\fontsize{8pt}{9.6pt}\selectfont},
                      column sep=0.1cm, row sep=0.1cm] at (outer5-1-1.center) {
     ! \\
     };
     \matrix (inner5b) [matrix of nodes,
-                     nodes={minimum width=0.6cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex},
+                     nodes={minimum width=0.6cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex, font=\fontsize{8pt}{9.6pt}\selectfont},
                      column sep=0.1cm, row sep=0.1cm] at (outer5-1-2.center) {
     !, & f B C, & ! \\
     };
     \matrix (inner5c) [matrix of nodes,
-                     nodes={minimum width=0.6cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex},
+                     nodes={minimum width=0.6cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex, font=\fontsize{8pt}{9.6pt}\selectfont},
                      column sep=0.1cm, row sep=0.1cm] at (outer5-1-3.center) {
     f D E, & f E F \\
     };
     \matrix (inner5L) [matrix of nodes,
-                     nodes={minimum width=0.6cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex},
+                     nodes={minimum width=0.6cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex, font=\fontsize{8pt}{9.6pt}\selectfont},
                      column sep=0.1cm, row sep=0.1cm] at (A5.center) {
     \phantom{x} \\
     };
@@ -1458,7 +1459,10 @@ remaining unexplored alternatives.
 The boolean $b$ records whether a superficial cut was evaluated during execution,
 and $v'$ is the updated set of variables tracking freshly generated names.
 
-The \run predicate has five cases, depicted as inference rules in \cref{fig:run-rules}.
+The \run predicate has five cases, depicted as inference rules in \cref{fig:run-rules}
+where we shorten \success to \ding{51},
+\failed to \ding{55} and \incomplete to $\circlearrowright$. 
+
 % where we separate the first four arguments and the last one with a squiggle arrow,
 % evocative of the fact that the given set of rules is deterministic (\cref{th:runTdet}).
 
@@ -1475,10 +1479,48 @@ called recursively on it. Finally, rule \failt accounts for trees with no
 solutions.
 
 
-\begin{figure}
+\begin{figure*}
 
-  \input{tex_code/runbp.tex}
-  % \begin{prooftree}
+\begingroup
+\small
+\begin{bprooftree}
+  \AxiomC{
+    \ensuremath{
+  %{\mathrm{success}\ t} \quad
+  {\text{\ding{51}}\ t} \quad
+  {\mathrm{next\_subst}\ \sigma\ t \arr \sigma' } \quad
+  {\mathrm{prune}\ \mathrm{true}\ t \arr t' }
+  }}
+  \RightLabel{\rulelabel{\stopt}}
+  \UnaryInfC{\ensuremath{\mathrm{\runT}\ \prog\ v\ \sigma\ t \arr (\mathrm{Some}\ (\sigma', t'), \mathrm{false}, v)}}
+\end{bprooftree}
+\begin{bprooftree}
+  \AxiomC{\ensuremath{
+      %\mathrm{incomplete}\ t \quad 
+      \circlearrowright\ t \quad 
+      \mathrm{step}\ \prog\ v\ \sigma\ t \arr (v', tg, t') \quad 
+      \mathrm{\runT}\ \prog\ v'\ \sigma\ t' \arr (r, b, v'')}}
+  \RightLabel{\rulelabel{\stept}}
+  \UnaryInfC{\ensuremath{\mathrm{\runT}\ \prog\ v\ \sigma\ t\ \arr (r, (tg = \mathrm{CutBrothers}) \lor b, v'')}}
+\end{bprooftree}
+~\\\vspace{0.5em}
+\begin{bprooftree}
+  \AxiomC{\ensuremath{
+  % {\mathrm{failed}\ t} \quad
+  {\text{\ding{55}}\ t} \quad
+  {\mathrm{prune}\ \mathrm{false}\ t \arr \mathrm{Some}\ t'} \quad
+  {\mathrm{\runT}\ \prog\ v\ \sigma\ t' \arr r} } }
+  \RightLabel{\rulelabel{\backt}}
+  \UnaryInfC{\ensuremath{\mathrm{\runT}\ \prog\ v\ \sigma\ t \arr r}}
+\end{bprooftree}
+\begin{bprooftree}
+  \AxiomC{\ensuremath{\mathrm{prune}\ \mathrm{false}\ t \arr \mathrm{None}}}
+  \RightLabel{\rulelabel{\failt}}
+  \UnaryInfC{\ensuremath{\mathrm{\runT}\ \prog\ v\ \sigma\ t \arr (\mathrm{None}, \mathrm{false}, v)}}
+\end{bprooftree}
+\endgroup
+
+% \begin{prooftree}
   %   \AxiomC{$\success\ A$}
   %   \RightLabel{$\run\_done$}
   %   \UnaryInfC{$\run\ fv\ s_1\ A\ (\getsubst\ s_1\ A)\ (\na\ \top\ A)$}
@@ -1502,7 +1544,7 @@ solutions.
 
   \caption{Rule system for \run}
   \label{fig:run-rules}
-\end{figure}
+\end{figure*}
 
 % \subsubsection{Properties of \run}
 \label{sec:run-prop}
@@ -1795,13 +1837,13 @@ note that \ref{tree-ex3} and \ref{tree-ex4} are both translated into
 the same stack. Consequently, there are transitions in \run that are not visible
 in \nur.
 %
-\begin{figure}[t]
+\begin{figure*}[t]
   \begin{center}
     
     \includegraphics[width=0.8\textwidth, keepaspectratio]{src/t2lex.pdf}
   \end{center}
 \caption{Example of \ttl execution\label{fig:cc}}
-\end{figure}
+\end{figure*}
 %
 As an example of a call to \ttl, we take the tree and the stack in~\cref{fig:cc},
 which are respectively taken from \cref{tree-ex2,ex-elpi2}. The red arrows

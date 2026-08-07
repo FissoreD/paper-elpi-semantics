@@ -1,4 +1,6 @@
 
+\begingroup
+\footnotesize
 \begin{prooftree}
   \AxiomC{\ensuremath{\mathrm{success}\ t }}
   \AxiomC{\ensuremath{\mathrm{next\_subst}\ \sigma\ t \arr \sigma' }}
@@ -26,3 +28,4 @@
   \RightLabel{\rulelabel{\failt}}
   \UnaryInfC{\ensuremath{\mathrm{\runT}\ \prog\ v\ \sigma\ t \arr (\mathrm{None}, \mathrm{false}, v)}}
 \end{prooftree}
+\endgroup
