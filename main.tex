@@ -505,7 +505,12 @@ the particular implementation chosen for that algorithm.
 % $\sigma$ making the head of $r$ and $q$ unify and the list of premises of $r$.
 
 \begin{figure*}[t]
+  \begin{minipage}{0.48\textwidth}
     \inputminted[fontsize=\footnotesize,autogobble,escapeinside=~~,mathescape=true,frame=leftline,framerule=0pt,framesep=1em]{elpi.py:ElpiLexer}{./progx.elpi}
+  \end{minipage}
+  \begin{minipage}{0.48\textwidth}
+    \inputminted[fontsize=\footnotesize,autogobble,escapeinside=~~,mathescape=true,frame=leftline,framerule=0pt,framesep=1em]{elpi.py:ElpiLexer}{./progy.elpi}
+  \end{minipage}\vfill
     \caption{Running example of a logic program in \elpiP syntax}
     \label{fig:progx}
   \end{figure*}
@@ -2171,20 +2176,38 @@ translates to the unexplored stack.
 \end{multline*}
 \end{theorem}
 
-\noindent
-% \begin{minipage}{0.6\textwidth}
-\begin{proof}
+\noindent\hskip\labelsep{\itshape Proof.}\ignorespaces
+
+\begin{wrapfigure}{r}{.15\textwidth}
+  \centering
+  \resizebox{\linewidth}{!}{%
+  \begin{tikzpicture}[]
+      \node (t1) at (0,0) {$t$};
+      \node (t2) [right=2cm of t1]  {$t'$};
+      \node (e1) [below=2cm of t1]  {$a$};
+      \node (e2) [right=2cm of e1]  {$a'$};
+      % letf to right arrows
+      \draw [->] (t1) -- (t2) node[midway, above]{\run'\ $t$};
+      \draw [->] (e1) -- (e2) node[midway, below]{\nur\ $a$};
+
+      % up to down arrows
+      \draw [->] (t1) -- (e1);
+      \draw [->] (t2) -- (e2);
+      \node[rotate=-90, anchor=center] at ($(t1)!0.5!(e1) + (-0.35,0)$) {tree\_to\_stack};
+      \node[rotate=-90, anchor=center] at ($(t2)!0.5!(e2) + (0.35,0)$) {tree\_to\_stack};
+
+      % diagonal arrow
+      \path[->] (e1) edge (t2);
+  \end{tikzpicture}%
+  }
+\end{wrapfigure}
+
 The proof is based on the idea explained in~\cite[Section
 3.5.1]{yves-equiv} and depicted in the figure on the right:
 we have a tree $t$ whose translation is $a$, we proceed by
 induction on the execution of \nur. This gives us not only the output $a'$ but
 that hypothesis that it exists a tree $t'$ such that its translation to a
-stack is $a'$. %This proof strategy is indirectly providing a kind of \ltt function by combining the execution of the \nur and \ttl.
-\end{proof}
-% \end{minipage}~~~~~~
-% \begin{minipage}{0.35\textwidth}
-  \includegraphics[width=.4\textwidth, keepaspectratio]{./src/e2t_ind.pdf}
-% \end{minipage}
+stack is $a'$.\qed %This proof strategy is indirectly providing a kind of \ltt function by combining the execution of the \nur and \ttl.
 
 \vspace{10pt}
 
