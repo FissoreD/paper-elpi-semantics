@@ -1336,35 +1336,35 @@ the next alternative and continues from there, if one exists.
   \end{figure*}
 
 \subsection{The \step procedure}\label{sec:step}
-\begin{figure}
-  \begin{coqcode}
-  Definition step p v s A :=
-    match A with
-    | Top                 => (v, Success, Top)
-    | Bot                 => (v, Failed, A)
-    | Unexplored cut      => (v, CutBrothers, Bot)
-    | Unexplored (call t) => 
-        let: (v, l) := backchain u p v t s in
-        (v, Expanded,
-        if l is ((s, r) :: xs) then Or None s (big_or r xs) else Bot)
-    | Or A sB B =>
-        if A is Some A then 
-          let: (v, tA, rA) := step p v s A in
-          (v, if is_cb tA then Expanded else tA, 
-           Or (Some rA) sB (if is_cb tA then Bot else B))
-        else
-          let: (v, tB, rB) := step p v sB B in
-          (v, if is_cb tB then Expanded else tB, Or A sB rB)
-    | And A B0 B =>
-        if success A then 
-          let: (v, tB, rB) := step p v (next_subst s A) B in
-          (v, tB, And (if is_cb tB then cutl A else A) B0 rB)
-        else
-          let: (v, tA, rA) := step p v s A in (v, tA, And rA B0 B)
-    end.
-  \end{coqcode}
-  \caption{The \step procedure}
-\end{figure}
+% \begin{figure}
+%   \begin{coqcode}
+%   Definition step p v s A :=
+%     match A with
+%     | Top                 => (v, Success, Top)
+%     | Bot                 => (v, Failed, A)
+%     | Unexplored cut      => (v, CutBrothers, Bot)
+%     | Unexplored (call t) => 
+%         let: (v, l) := backchain u p v t s in
+%         (v, Expanded,
+%         if l is ((s, r) :: xs) then Or None s (big_or r xs) else Bot)
+%     | Or A sB B =>
+%         if A is Some A then 
+%           let: (v, tA, rA) := step p v s A in
+%           (v, if is_cb tA then Expanded else tA, 
+%            Or (Some rA) sB (if is_cb tA then Bot else B))
+%         else
+%           let: (v, tB, rB) := step p v sB B in
+%           (v, if is_cb tB then Expanded else tB, Or A sB rB)
+%     | And A B0 B =>
+%         if success A then 
+%           let: (v, tB, rB) := step p v (next_subst s A) B in
+%           (v, tB, And (if is_cb tB then cutl A else A) B0 rB)
+%         else
+%           let: (v, tA, rA) := step p v s A in (v, tA, And rA B0 B)
+%     end.
+%   \end{coqcode}
+%   \caption{The \step procedure}
+% \end{figure}
 
 The \step procedure takes as input a program, a set of variables, a
 substitution, and a tree, and returns an updated set of variables, a
@@ -1456,29 +1456,29 @@ amounts to discarding the third rule of predicate \eI{r}.
 \subsection{The \na procedure}\label{sec:next_alt}
 \label{sec:na}
 
-\begin{figure}
-  \begin{coqcode}
-  Definition omap f o := match o with Some b => Some (f b) | _ => o end.
-  Definition prune b A : option tree :=
-    match A with
-    | Bot => None
-    | Top => if b then None else Some Top
-    | Unexplored _ => Some A
-    | And A B0 B =>
-        let build_B0 b := omap (~$\lambda$~x. And x B0 (big_and B0)) (prune b A) in
-        if success A then
-          if prune b B is Some B' then Some (And A B0 B')
-          else build_B0 true
-        else if failed A then build_B0 false
-        else Some (And A B0 B)
-    | Or None sB B => omap (~$\lambda$~x. Or None sB x) (prune b B)
-    | Or (Some A) sB B =>
-        if prune b A is Some A' then Some (Or (Some A') sB B)
-        else omap (~$\lambda$~x. Or None sB x) (prune false B)
-  end.
-  \end{coqcode}
-  \caption{The \na function}
-\end{figure}
+% \begin{figure}
+%   \begin{coqcode}
+%   Definition omap f o := match o with Some b => Some (f b) | _ => o end.
+%   Definition prune b A : option tree :=
+%     match A with
+%     | Bot => None
+%     | Top => if b then None else Some Top
+%     | Unexplored _ => Some A
+%     | And A B0 B =>
+%         let build_B0 b := omap (~$\lambda$~x. And x B0 (big_and B0)) (prune b A) in
+%         if success A then
+%           if prune b B is Some B' then Some (And A B0 B')
+%           else build_B0 true
+%         else if failed A then build_B0 false
+%         else Some (And A B0 B)
+%     | Or None sB B => omap (~$\lambda$~x. Or None sB x) (prune b B)
+%     | Or (Some A) sB B =>
+%         if prune b A is Some A' then Some (Or (Some A') sB B)
+%         else omap (~$\lambda$~x. Or None sB x) (prune false B)
+%   end.
+%   \end{coqcode}
+%   \caption{The \na function}
+% \end{figure}
 
 When backchain returns an empty list, \step produces a tree that \emph{failed}
 and the computation must backtrack. The \na procedure is
@@ -1952,11 +1952,9 @@ are preserved by calls to \step and \na.
 % \marginpar{t2l should be t2s or tree\_to\_stack}
 
 The \ttl recursive function translates a tree to a stack.
-
 $$
 \mathrm{\ttl} : \TREE \to \Sigma \to \mathrm{alts} \to \mathrm{alts}
 $$
-
 % we give junst the implementation of the
 % base cases, the full implementation is available at \href{https://github.com/FissoreD/elpi-formalization/blob/ho-check-ffun/theories/t2l.v}{\emph{this}} link.
 
@@ -2136,22 +2134,22 @@ a tree correspond to those returned as a stack.
 \end{multline*}
 \end{theorem}
 
-\begin{proof}
-We proceed by induction on the execution of \run'. There are five cases
-to consider. The first (similar) cases arises from \stopot and \stopt; they deal with
-successful trees. A successful tree corresponds to a stack that
-start with an empty list, in both cases
-we conclude using \stops. The case for \stept
-requires treating two subcases: \step evaluates either a cut or a call.
-Accordingly, we apply \cuts or \calls, followed by the
-induction hypothesis. The case for \backt is silent: it represents
-the non-injective behavior of \ttl; however, thanks to
-\cref{th:pruneFtreetostack} and the induction hypothesis, the conclusion is
-proved. The last case arises from the derivation \failt. It is
-easily proved using \fails and the fact that if \na returns
-None when trying to erase failure in $t$, then \ttl applied to $t$
-returns the empty list.
-\end{proof}
+% \begin{proof}
+% We proceed by induction on the execution of \run'. There are five cases
+% to consider. The first (similar) cases arises from \stopot and \stopt; they deal with
+% successful trees. A successful tree corresponds to a stack that
+% start with an empty list, in both cases
+% we conclude using \stops. The case for \stept
+% requires treating two subcases: \step evaluates either a cut or a call.
+% Accordingly, we apply \cuts or \calls, followed by the
+% induction hypothesis. The case for \backt is silent: it represents
+% the non-injective behavior of \ttl; however, thanks to
+% \cref{th:pruneFtreetostack} and the induction hypothesis, the conclusion is
+% proved. The last case arises from the derivation \failt. It is
+% easily proved using \fails and the fact that if \na returns
+% None when trying to erase failure in $t$, then \ttl applied to $t$
+% returns the empty list.
+% \end{proof}
 
 The converse direction is stated following~\cite{yves-equiv}: instead of
 using a function to translate a stack into a tree it states that any
@@ -2174,7 +2172,7 @@ translates to the unexplored stack.
 \end{theorem}
 
 \noindent
-\begin{minipage}{0.6\textwidth}
+% \begin{minipage}{0.6\textwidth}
 \begin{proof}
 The proof is based on the idea explained in~\cite[Section
 3.5.1]{yves-equiv} and depicted in the figure on the right:
@@ -2183,10 +2181,10 @@ induction on the execution of \nur. This gives us not only the output $a'$ but
 that hypothesis that it exists a tree $t'$ such that its translation to a
 stack is $a'$. %This proof strategy is indirectly providing a kind of \ltt function by combining the execution of the \nur and \ttl.
 \end{proof}
-\end{minipage}~~~~~~
-\begin{minipage}{0.35\textwidth}
-  \includegraphics[width=1\textwidth, keepaspectratio]{./src/e2t_ind.pdf}
-\end{minipage}
+% \end{minipage}~~~~~~
+% \begin{minipage}{0.35\textwidth}
+  \includegraphics[width=.4\textwidth, keepaspectratio]{./src/e2t_ind.pdf}
+% \end{minipage}
 
 \vspace{10pt}
 
@@ -2240,17 +2238,17 @@ terms do not share any variables.
 
 The first notion to provide is the application of an acyclic substitution:
 
-\begin{definition}[deref]
-  $$
-  \begin{array}{rlr}
-    \sigma\ (\mathrm{Var}\ n) &= t &\mathrm{if}\ (n,t) \in \sigma\\
-    \sigma\ (\mathrm{Var}\ n) &= \mathrm{Var}\ n& \mathrm{otherwise}\\
-    \sigma\ (\mathrm{Symb}\ n) &= \mathrm{Symb}\ n \\
-    \sigma\ (\mathrm{Pred}\ n) &= \mathrm{Pred}\ n \\
-    \sigma\ (\mathrm{App}\ t_1\ t_2) &= \mathrm{App}\ (\sigma\ t_1)\ (\sigma\ t_2)
-  \end{array}
-  $$
-\end{definition}
+% \begin{definition}[deref]
+%   $$
+%   \begin{array}{rlr}
+%     \sigma\ (\mathrm{Var}\ n) &= t &\mathrm{if}\ (n,t) \in \sigma\\
+%     \sigma\ (\mathrm{Var}\ n) &= \mathrm{Var}\ n& \mathrm{otherwise}\\
+%     \sigma\ (\mathrm{Symb}\ n) &= \mathrm{Symb}\ n \\
+%     \sigma\ (\mathrm{Pred}\ n) &= \mathrm{Pred}\ n \\
+%     \sigma\ (\mathrm{App}\ t_1\ t_2) &= \mathrm{App}\ (\sigma\ t_1)\ (\sigma\ t_2)
+%   \end{array}
+%   $$
+% \end{definition}
 
 \begin{definition}[acyclic]
   $\lambda \sigma. \mathrm{dom}\ \sigma \cap \mathrm{codom}\ \sigma = \varnothing$
