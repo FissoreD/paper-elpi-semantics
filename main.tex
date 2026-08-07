@@ -1,4 +1,5 @@
 
+\PassOptionsToPackage{dvipsnames,table}{xcolor}
 \documentclass[sigplan,10pt,anonymous,review]{acmart}
 \settopmatter{printfolios=true,printccs=false,printacmref=false}
 
@@ -18,6 +19,7 @@
 
 \usepackage{cleveref}
 \usepackage{macro}
+\usepackage{tree}
 \usepackage{custom_ref}
 
 \renewcommand{\epsilon}{\varepsilon}
@@ -1123,45 +1125,204 @@ the next alternative and continues from there, if one exists.
 \begin{figure*}
   \begin{subfigure}{0.99\textwidth}
     \centering
-    \includegraphics[width=0.05\textwidth, keepaspectratio]{./src/exec_example1/step1.pdf}
+    \resizebox{0.05\textwidth}{!}{%
+    \begin{forest}
+    for tree={
+      l sep=1.5em, s sep=1.5em,
+      align=right
+    }
+    [{{g 0 R}}]
+    \end{forest}%
+    }
     \caption{Initial query}
-    \label{tree-ex0} 
+    \label{tree-ex0}
   \end{subfigure}
-  ~\\~\\
+  ~\\
   \begin{subfigure}{0.4\textwidth}
-    \includegraphics[width=\textwidth, keepaspectratio]{./src/exec_example1/step2.pdf}
+    \resizebox{0.8\textwidth}{!}{%
+    \begin{forest}
+    for tree={
+      l sep=1.5em, s sep=1.5em,
+      align=right
+    }
+    [\orN,orNode
+      [\deadN, deadNode,edge=dashed]
+      [\andN, andNode,edge label={node[midway,right] {$\sigma_1$}}
+        [{{r A B}},name=cur]
+        [{{f B C}},edge label={node[midway,right] {$R_1$}}]
+        [{{!}},edge label={node[midway,right] {$R_2$}}]
+      ]
+      [\andN,andNode,edge label={node[midway,right] {$\sigma_2$}}
+        [{{f D E}}]
+        [{{f E F}}, edge label={node[midway,right] {$R_3$}}]
+      ]
+    ]
+    \curnodeNE{cur};
+    \end{forest}%
+    }
     \caption{Tree after \step on \eI{g 0 R}}
-    \label{tree-ex1} 
+    \label{tree-ex1}
   \end{subfigure}~~
   \begin{subfigure}{0.5\textwidth}
-    \includegraphics[width=\textwidth, keepaspectratio]{./src/exec_example1/step3.pdf}
+    \resizebox{0.8\textwidth}{!}{%
+    \begin{forest}
+    for tree={
+      l sep=1.5em, s sep=1.5em,
+      align=right
+    }
+    [\orN,orNode
+      [\deadN, deadNode,edge=dashed]
+      [\andN, andNode,edge label={node[midway,right] {$\sigma_1$}}
+        [\orN,orNode, name=s1
+          [\deadN, deadNode,edge=dashed]
+          [\okN,okNode,edge label={node[midway,right] {$\sigma_3$}}]
+          [\okN,okNode,edge label={node[midway,right] {$\sigma_4$}}]
+          [{{!}},edge label={node[midway,right] {$\sigma_5$}}]
+        ]
+        [{{f B C}},name=cur,edge label={node[midway,right] {$R_1$}}]
+        [{{!}},edge label={node[midway,right] {$R_2$}}]
+      ]
+      [\andN,andNode,edge label={node[midway,right] {$\sigma_2$}}
+        [{{f D E}}]
+        [{{f E F}},edge label={node[midway,right] {$R_3$}}]
+      ]
+    ]
+    \curnodeNE{cur};
+    \end{forest}%
+    }
     \caption{\step on \cref{tree-ex1}}
-    \label{tree-ex2} 
+    \label{tree-ex2}
   \end{subfigure}
-  ~\\~\\
+  ~\\
   \begin{subfigure}{0.49\textwidth}
-    \includegraphics[width=\textwidth, keepaspectratio]{./src/exec_example1/step4.pdf}
+    \resizebox{0.8\textwidth}{!}{%
+    \begin{forest}
+    for tree={
+      l sep=1.5em, s sep=1.5em,
+      align=right
+    }
+    [\orN,orNode
+     [\deadN, deadNode,edge=dashed]
+      [\andN, andNode,edge label={node[midway,right] {$\sigma_1$}}
+        [\orN,orNode
+          [\deadN, deadNode,edge=dashed]
+          [\okN,okNode,edge label={node[midway,right] {$\sigma_3$}}]
+          [\okN,okNode,edge label={node[midway,right] {$\sigma_4$}}]
+          [{{!}},edge label={node[midway,right] {$\sigma_5$}}]
+        ]
+        [\koN, koNode,name=cur,edge label={node[midway,right] {$R_1$}}]
+        [{{!}},edge label={node[midway,right] {$R_2$}}]
+      ]
+      [\andN,andNode,edge label={node[midway,right] {$\sigma_2$}}
+        [{{f D E}}]
+        [{{f E F}},edge label={node[midway,right] {$R_3$}}]
+      ]
+    ]
+    \curnodeNE{cur};
+    \end{forest}%
+    }
     \renewcommand\thesubfigure{d.1}
     \caption{\step on \cref{tree-ex2}}
-    \label{tree-ex3} 
+    \label{tree-ex3}
   \end{subfigure}
   \begin{subfigure}{0.49\textwidth}
-    \includegraphics[width=\textwidth, keepaspectratio]{./src/exec_example1/step5.pdf}
+    \resizebox{0.8\textwidth}{!}{%
+    \begin{forest}
+    for tree={
+      l sep=1.5em, s sep=1.5em,
+      align=right
+    }
+    [\orN,orNode
+     [\deadN, deadNode,edge=dashed]
+      [\andN, andNode,edge label={node[midway,right] {$\sigma_1$}}
+        [\orN,orNode
+          [\deadN, deadNode,edge=dashed]
+          [\deadN, deadNode,edge=dashed]
+          [\okN,okNode,edge label={node[midway,right] {$\sigma_4$}}]
+          [{{!}},edge label={node[midway,right] {$\sigma_5$}}]
+        ]
+        [{{f B C}},name=cur,edge label={node[midway,right] {$R_1$}}]
+        [{{!}},edge label={node[midway,right] {$R_2$}}]
+      ]
+      [\andN,andNode,edge label={node[midway,right] {$\sigma_2$}}
+        [{f D E}]
+        [{f E F},edge label={node[midway,right] {$R_3$}}]
+      ]
+    ]
+    \curnodeNE{cur};
+    \end{forest}%
+    }
     \renewcommand\thesubfigure{d.2}
     \caption{\na on \cref{tree-ex3}}
-    \label{tree-ex4} 
+    \label{tree-ex4}
   \end{subfigure}
-  ~\\~\\
+  ~\\
   \setcounter{subfigure}{4}
   \begin{subfigure}{0.54\textwidth}
-    \includegraphics[width=\textwidth, keepaspectratio]{./src/exec_example1/step6.pdf}
+    \resizebox{0.8\textwidth}{!}{%
+    \begin{forest}
+    for tree={
+      l sep=1.5em, s sep=1.5em,
+      align=right
+    }
+    [\orN,orNode
+     [\deadN, deadNode,edge=dashed]
+      [\andN, andNode,edge label={node[midway,right] {$\sigma_1$}}
+        [\orN,orNode
+          [\deadN, deadNode,edge=dashed]
+          [\deadN, deadNode,edge=dashed]
+          [\okN,okNode,edge label={node[midway,right] {$\sigma_4$}}]
+          [{{!}},edge label={node[midway,right] {$\sigma_5$}}]
+        ]
+        [\orN,orNode,edge label={node[midway,right] {$R_1$}}
+          [\deadN, deadNode,edge=dashed]
+          [\okN,okNode,edge label={node[midway,right] {$\sigma_6$}}]
+        ]
+        [{{!}},name=cut,edge label={node[midway,right] {$R_2$}}]
+      ]
+      [\andN,andNode,edge label={node[midway,right] {$\sigma_2$}}
+        [{{f D E}}]
+        [{{f E F}},edge label={node[midway,right] {$R_3$}}]
+      ]
+    ]
+    \curnodeNE{cut};
+    \end{forest}%
+    }
     \caption{\step on \cref{tree-ex4}}
-    \label{tree-ex5} 
+    \label{tree-ex5}
   \end{subfigure}~~
   \begin{subfigure}{0.44\textwidth}
-    \includegraphics[width=\textwidth, keepaspectratio]{./src/exec_example1/step7.pdf}
+    \resizebox{0.8\textwidth}{!}{%
+    \begin{forest}
+    for tree={
+      l sep=1.5em, s sep=1.5em,
+      align=right
+    }
+    [\orN,orNode
+     [\deadN, deadNode,edge=dashed]
+      [\andN, andNode,edge label={node[midway,right] {$\sigma_1$}}
+        [\orN,orNode,name=s1
+          [\deadN, deadNode,edge=dashed]
+          [\deadN, deadNode,edge=dashed]
+          [\okN,okNode,edge label={node[midway,right] {$\sigma_4$}}]
+          [\koN, koNode,edge label={node[midway,right] {$\sigma_5$}}]
+        ]
+        [\orN,orNode,name=s3
+          [\deadN, deadNode,edge=dashed]
+          [\okN,okNode,edge label={node[midway,right] {$\sigma_6$}}]
+        ]
+        [\okN,okNode,name=cut]
+      ]
+      [\koN, koNode,name=s2,edge label={node[midway,right] {$\sigma_2$}}]
+    ]
+    \path [thick, red, ->] (cut) edge[bend right=30] node[below]{\cutl} (s1);
+    \path [thick, red, ->] (cut) edge[bend right=30] node[below]{\cutl} (s3);
+    \path [thick, red, ->] (cut) edge[bend right=30] node[right]{\cutr} (s2);
+    \curnodeNE{cut};
+    \end{forest}%
+    }
     \caption{\step on \cref{tree-ex5}}
-    \label{tree-ex6} 
+    \label{tree-ex6}
   \end{subfigure}
   ~\\
 \caption{Execution in the tree semantics.
