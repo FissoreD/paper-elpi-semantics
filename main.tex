@@ -626,11 +626,10 @@ also present in the Warren Abstract Machine
 \cite{warren1983abstract,1991ait-wam}.
 
 The execution state is a stack of alternatives.
-
+%
 $$\mathrm{alts} := \mathrm{list}\ (\Sigma \times \mathrm{goals})  \qquad \mathrm{goals} := \mathrm{list}\ (\ATOM \times \mathrm{alts})$$
 
-Each alternative is a list of goals. Intuitively it amounts to
-a disjunctive normal form: each stack item is a self contained
+Intuitively each stack item is a self contained
 computation, coupling a substitution with all the goals to be
 solved.
 
@@ -662,7 +661,7 @@ predicates.
 % ~\ensuremath{\qquad\qquad}~ with      goals := nilG | consG of (Atom * alts) & goals 
 % \end{coqcode}
 % \end{center}
-
+%
 $$\mathrm{\runS} : \vec{\FV} \to \mathrm{alts} \to \mathrm{option}\ (\Sigma \times \mathrm{alts}) \to \cI{Prop}$$
 
 \noindent
