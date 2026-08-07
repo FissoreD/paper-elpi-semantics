@@ -1120,7 +1120,7 @@ the next alternative and continues from there, if one exists.
 % \cref{fig:getend-aux}.
 % We have pointed by a black arraw the \pathend of 
 
-\begin{figure*}[p]
+\begin{figure*}
   \begin{subfigure}{0.99\textwidth}
     \centering
     \includegraphics[width=0.05\textwidth, keepaspectratio]{./src/exec_example1/step1.pdf}
@@ -1618,7 +1618,7 @@ rules for disjunction.
 \begin{lemma}[or\_elim1]\label{th:orelim1}$\forall\ p\ v\ v'\ \sigma\ \sigma'\ \sigma_1\ A\ A'\ B\ B' ,$
 \begin{multline*}
 	\mathrm{runT}\ p\ v\ \sigma\ ( A \lor B\ \phantom{!}_{\!\!\!\!\sigma_1} )\ ( \mathrm{Many}\ \sigma'\ ( A' \lor B'\ \phantom{!}_{\!\!\!\!\sigma_1} ) )\ \mathrm{false}\ v' \to \\
-	\exists\ b ,\ \mathrm{runT}\ p\ v\ \sigma\ A\ ( \mathrm{Many}\ \sigma'\ A' )\ b\ v' \land B' = \mathrm{if}\ b\ \mathrm{then}\ \bot\ \mathrm{else}\ B 
+	\exists\ b ,\ \mathrm{runT}\ p\ v\ \sigma\ A\ ( \mathrm{Many}\ \sigma'\ A' )\ b\ v' \land\ B' = \mathrm{if}\ b\ \mathrm{then}\ \bot\ \mathrm{else}\ B 
 \end{multline*}
 \end{lemma}
 
@@ -1628,7 +1628,7 @@ rules for disjunction.
 \begin{multline*}
 	\mathrm{runT}\ p\ v\ \sigma\ ( A \lor B\ \phantom{!}_{\!\!\!\!\sigma_1} )\ ( \mathrm{Many}\ \sigma'\ ( \square\ \lor B'\ \phantom{!}_{\!\!\!\!\sigma_1} ) )\ \mathrm{false}\ v' \to \\
 	( \mathrm{runT}\ p\ v\ \sigma\ A\ ( \mathrm{One}\ \sigma' )\ \mathrm{false}\ v' )\ \lor \\
-	( \exists\ v_2\ b ,\ \mathrm{runT}\ p\ v\ \sigma\ A\ \mathrm{Zero}\ \mathrm{false}\ v_2 \land \mathrm{runT}\ p\ v_2\ \sigma_1\ B\ ( \mathrm{Many}\ \sigma'\ B' )\ b\ v' ) 
+	( \exists\ v_2\ b ,\ \mathrm{runT}\ p\ v\ \sigma\ A\ \mathrm{Zero}\ \mathrm{false}\ v_2 \land\ \mathrm{runT}\ p\ v_2\ \sigma_1\ B\ ( \mathrm{Many}\ \sigma'\ B' )\ b\ v' ) 
 \end{multline*}
 \end{lemma}
 
@@ -2007,7 +2007,7 @@ translates to the unexplored stack.
     \mathrm{runT'}\ p\ v\ \sigma\ t\ \mathrm{Zero}             & \mathrm{if}\ r = \mathrm{None} \\
     \mathrm{runT'}\ p\ v\ \sigma\ t\ ( \mathrm{One}\ \sigma' ) & \mathrm{if}\ r = \mathrm{Some}\ ( \sigma' ,\ \mnil ) \\
     \exists\ t' ,\ \mathrm{runT'}\ p\ v\ \sigma\ t\ ( \mathrm{Many}\ \sigma'\ t' ) 
-    \land \mathrm{tree\_to\_stack}\ t'\ \sigma\ \mnil = a'     & \mathrm{if}\ r =  \mathrm{Some}\ ( \sigma' ,\ a' ) \\
+    \land\ \mathrm{tree\_to\_stack}\ t'\ \sigma\ \mnil = a'     & \mathrm{if}\ r =  \mathrm{Some}\ ( \sigma' ,\ a' ) \\
   \end{cases}
 \end{multline*}
 \end{theorem}
@@ -2081,9 +2081,11 @@ The first notion to provide is the application of an acyclic substitution:
 
 \begin{definition}[deref]
   $$
-  \begin{array}{rlrlr}
-    \sigma\ (\mathrm{Symb}\ n) &= \mathrm{Symb}\ n & \qquad\sigma\ (\mathrm{Var}\ n) &= t &\mathrm{if}\ (n,t) \in \sigma\\
-    \sigma\ (\mathrm{Pred}\ n) &= \mathrm{Pred}\ n & \qquad\sigma\ (\mathrm{Var}\ n) &= \mathrm{Var}\ n& \mathrm{otherwise}\\
+  \begin{array}{rlr}
+    \sigma\ (\mathrm{Var}\ n) &= t &\mathrm{if}\ (n,t) \in \sigma\\
+    \sigma\ (\mathrm{Var}\ n) &= \mathrm{Var}\ n& \mathrm{otherwise}\\
+    \sigma\ (\mathrm{Symb}\ n) &= \mathrm{Symb}\ n \\
+    \sigma\ (\mathrm{Pred}\ n) &= \mathrm{Pred}\ n \\
     \sigma\ (\mathrm{App}\ t_1\ t_2) &= \mathrm{App}\ (\sigma\ t_1)\ (\sigma\ t_2)
   \end{array}
   $$
@@ -2103,13 +2105,13 @@ are acyclic in this sense.
 % \input{tex_code/unif_correct.tex}
 
 \begin{lemma}[unify\_correct]\label{th:unifycorrect}%
-$$\forall\ t_1\ t_2\ s\ s' ,\ \mathrm{acyclic\_sigma}\ s \to \mathrm{unify}\ t_1\ t_2\ s = \mathrm{Some}\ s' \to s'\ t_1 = s'\ t_2 $$
+$$\forall\ t_1\ t_2\ s\ s' ,\ \mathrm{acyclic}\ s \to \mathrm{unify}\ t_1\ t_2\ s = \mathrm{Some}\ s' \to s'\ t_1 = s'\ t_2 $$
 \end{lemma}
 
 % \input{tex_code/unify_complete.tex}
-\begin{lemma}[unify\_complete]\label{th:unifycomplete} $\forall\ t_1\ t_2\ s ,\ \mathrm{acyclic\_sigma}\ s \to$
+\begin{lemma}[unify\_complete]\label{th:unifycomplete} $\forall\ t_1\ t_2\ s ,\ \mathrm{acyclic}\ s \to$
 % \begin{multline*}
-$$( \exists\ s' ,\ \mathrm{acyclic\_sigma}\ s' \land s'\ ( s\ t_1 ) = s'\ ( s\ t_2 ) ) \to \exists\ s'' ,\ \mathrm{unify}\ t_1\ t_2\ s = \mathrm{Some}\ s''$$
+$$( \exists\ s' ,\ \mathrm{acyclic}\ s' \land\ s'\ ( s\ t_1 ) = s'\ ( s\ t_2 ) ) \to \exists\ s'' ,\ \mathrm{unify}\ t_1\ t_2\ s = \mathrm{Some}\ s''$$
 \end{lemma}
 
 The \elpiP language adopts a
@@ -2127,15 +2129,15 @@ procedure so that it takes a set of frozen variables, i.e. variables that
 cannot be assigned. The function \matching has the following property:
 
 % \input{tex_code/matchdisj.tex}
-\begin{lemma}[matching\_disj]\label{um}\label{th:matchingdisj}
-  $$\forall t_1\ t_2\ \sigma\ \sigma', \mathrm{acyclic}\ \sigma \to \mathrm{matching}\ t_1\ t_2\ \sigma = \mathrm{Some}\ \sigma' \to \sigma'\ t_1 = \sigma\ t_2$$
+\begin{lemma}[matching\_disj]\label{um}\label{th:matchingdisj} $\forall t_1\ t_2\ \sigma\ \sigma',$\\
+  $\phantom{xxx} \mathrm{acyclic}\ \sigma \to \mathrm{matching}\ t_1\ t_2\ \sigma = \mathrm{Some}\ \sigma' \to \sigma'\ t_1 = \sigma\ t_2$
 \end{lemma}
 
 In particular, we can see how the returned substitution $\sigma'$, differently
 from \cref{th:unifycorrect}, does not affect variables in $\sigma\ t_2$.
 
-\begin{corollary}[matching\_same]\label{umm}\label{th:matchingsame}
-  $$\forall t\ q\ \sigma\ \sigma', \mathrm{acyclic}\ \sigma \to \mathrm{matching}\ t\ q\ \sigma = \mathrm{Some}\ \sigma' \to \sigma'\ q = \sigma\ q$$
+\begin{corollary}[matching\_same]\label{umm}\label{th:matchingsame} $\forall t\ q\ \sigma\ \sigma',$\\
+  $\phantom{xxx} \mathrm{acyclic}\ \sigma \to \mathrm{matching}\ t\ q\ \sigma = \mathrm{Some}\ \sigma' \to \sigma'\ q = \sigma\ q$
 \end{corollary}
 
 
@@ -2216,15 +2218,18 @@ $\alpha$-equivalent terms.
 % The refreshing performed at runtime ensures that 
 
 \begin{definition}[$=_\alpha$]
-  $\lambda t_1\ t_2. \exists (r:\mathrm{renaming\_for}\ t_2), t_1 = \mathrm{rename}\ r\ t_2$
+  $\lambda t_1\ t_2.$ \\
+  $\phantom{xxx}
+  \exists (r:\mathrm{renaming\_for}\ t_2), t_1 = \mathrm{rename}\ r\ t_2$
 \end{definition}
 
 % \input{tex_code/unif_ren.tex}
 \begin{lemma}[unif\_ren\_ac]\label{th:unifren}
-  $\forall\ t_1\ t_2\ t_1'\ t_2', t_1 =_\alpha t_1' \land t_2 =_\alpha t_2' \to$
-  \vspace{.8em}\\
-  $\phantom{xxxxA}
-  t_1 \cap t_2 = \varnothing \land t_1' \cap t_2' = \varnothing \to
+  $\forall\ t_1\ t_2\ t_1'\ t_2', t_1 =_\alpha t_1' \land\ t_2 =_\alpha t_2' \to$
+  % \vspace{.8em}
+  \\
+  $\phantom{xxx}
+  t_1 \cap t_2 = \varnothing \land\ t_1' \cap t_2' = \varnothing \to
   \mathrm{unify}\ t_1\ t_2\ \varepsilon \to \mathrm{unify}\ t_1'\ t_2'\ \varepsilon
   $
 \end{lemma}
@@ -2252,8 +2257,8 @@ either fails or succeeds with no alternatives left to explore.
 
 
 % \input{tex_code/is_det.tex}
-\begin{definition}[is\_det]\label{th:isdet}%
-	$$\lambda\ p\ \sigma\ v\ t .\ \forall\ r ,\ \mathrm{runT'}\ p\ v\ \sigma\ t\ r \to r = \mathrm{Zero} \lor \exists\ \sigma ,\ r = ( \mathrm{One}\ \sigma ) $$
+\begin{definition}[is\_det]\label{th:isdet} $\lambda\ p\ \sigma\ v\ t .$\\
+  $\phantom{xxx}\forall\ r ,\ \mathrm{runT'}\ p\ v\ \sigma\ t\ r \to r = \mathrm{Zero} \lor \exists\ \sigma ,\ r = ( \mathrm{One}\ \sigma ) $
 \end{definition}
 
 \begin{definition}[tm\_is\_det]\label{def:tmisdet}
@@ -2265,12 +2270,12 @@ either fails or succeeds with no alternatives left to explore.
 The theorem we want to prove is the following one:
 
 % \input{tex_code/det_check_call.tex}
-\begin{theorem}[det\_check\_call]\label{th:detcheckcall}$\forall\ p\ \sigma\ t\ v ,$
-  \vspace{.8em}\\
-	$\phantom{xxxxx} \mathrm{check\_program}\ p \to \mathrm{tm\_is\_det}\ p\ t \to \mathrm{is\_det}\ p\ \sigma\ v\ ( \mathrm{Unexplored}\ ( \mathrm{call}\ t ) ) $
+\begin{theorem}[det\_check\_call]\label{th:detcheckcall}$\forall\ p\ \sigma\ t\ v , \mathrm{detchecked}\ p \to$\\
+  % \vspace{.8em}\\
+	$\phantom{xxx}  \mathrm{tm\_is\_det}\ p\ t \to \mathrm{is\_det}\ p\ \sigma\ v\ ( \mathrm{Unexplored}\ ( \mathrm{call}\ t ) ) $
 \end{theorem}
 
-Here, check\_program denotes the function that checks the program
+Here, detchecked denotes the function that checks the program
 with respect to mutual exclusion and rule checking. %, and \emph{tm\_is\_det}
 % denotes the function that tests whether the head of the term refers to a rigid
 % constant with a deterministic type.
@@ -2340,20 +2345,20 @@ operations \step and \na.
 
 %\input{tex_code/det_tree_step.tex}
 \begin{lemma}[det\_tree\_step]\label{th:dettreestep}
-  $\forall\ \mathrm{p}\ v\ \sigma_1\ A\ r ,\ \mathrm{check\_program}\ \mathrm{p} \to$\\
-	$\phantom{xxxxx} \mathrm{step}\ u\ \mathrm{p}\ v\ \sigma_1\ A = r \to \mathrm{det\_tree}\ \mathrm{pr}\ (\mathrm{snd}\ r) $
+  $\forall\ \mathrm{p}\ v\ \sigma_1\ A\ r ,\ \mathrm{detchecked}\ \mathrm{p} \to$\\
+	$\phantom{xxx} \mathrm{step}\ u\ \mathrm{p}\ v\ \sigma_1\ A = r \to \mathrm{det\_tree}\ \mathrm{pr}\ (\mathrm{snd}\ r) $
 \end{lemma}
 
 % \input{tex_code/det_tree_prune.tex}
-\begin{lemma}[det\_tree\_prune]\label{th:dettreeprune}%
-	$$\forall\ p\ A\ B\ b ,\ \mathrm{det\_tree}\ p\ A \to \mathrm{prune}\ b\ A = \mathrm{Some}\ B \to \mathrm{det\_tree}\ p\ B $$
+\begin{lemma}[det\_tree\_prune]\label{th:dettreeprune} $\forall\ p\ A\ B\ b ,$\\
+  $\phantom{xxx} \mathrm{det\_tree}\ p\ A \to \mathrm{prune}\ b\ A = \mathrm{Some}\ B \to \mathrm{det\_tree}\ p\ B $
 \end{lemma}
 
-\noindent Finally, we can prove the following lemma that entails det\_check\_call:
+\noindent Finally, the following lemma entails det\_check\_call:
 
 % \input{tex_code/det_check_tree.tex}
-\begin{lemma}[det\_check\_tree]\label{th:detchecktree}%
-	$$\forall\ \sigma\ v\ p\ t ,\ \mathrm{check\_program}\ p \to \mathrm{det\_tree}\ p\ t \to \mathrm{is\_det}\ p\ \sigma\ v\ t $$
+\begin{lemma}[det\_check\_tree]\label{th:detchecktree} $\forall\ \sigma\ v\ p\ t ,$\\
+  $\phantom{xxx} \mathrm{detchecked}\ p \to \mathrm{det\_tree}\ p\ t \to \mathrm{is\_det}\ p\ \sigma\ v\ t $
 \end{lemma}
 
 

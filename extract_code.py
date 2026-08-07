@@ -65,6 +65,7 @@ def clean_line_global(l,escape):
     l = re.sub(r"\bOK\b", "Top", l)
     l = re.sub(r"\bKO\b", "Bot", l)
     l = re.sub(r"\bpath_atom\b", "incomplete", l)
+    l = re.sub(r"\bacyclic_sigma\b", "acyclic", l)
     l = re.sub(r"\bget_subst\b", "next_subst", l)
     l = re.sub(r"\bpath_end\b", "next_tree", l)
     l = re.sub(r"\bget_end\b", "next", l)
