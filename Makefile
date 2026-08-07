@@ -31,10 +31,12 @@ update_submodule:
 	git submodule update --remote
 
 docker:
-	-docker create --name latex dfissore/latex2025:latest
+	#docker create --name latex dfissore/latex2025:latest
 	docker cp ./ latex:/data/ && docker ps -a && \
 	docker start -i latex && docker cp latex:/data/main.pdf . && \
-	mkdir -p pdf && mv main.pdf pdf
+	docker cp latex:/data/main.log . && \
+	mkdir -p pdf && mv main.pdf pdf;
+	cat main.log
 
 
 ci:

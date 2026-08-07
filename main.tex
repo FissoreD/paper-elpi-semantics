@@ -12,6 +12,8 @@
 \usepackage{mathtools}
 \usepackage{stackengine} % For bussproof multiline
 \usepackage{wrapfig}
+\usepackage{tikz}
+\usetikzlibrary{matrix,calc,positioning}
 
 \usepackage{cleveref}
 \usepackage{macro}
@@ -700,40 +702,266 @@ stack.
 \subsection{Example of execution}
 
 We propose an example of the execution of \nur in \cref{ex-elpi}. The
-arrows in the images represent the cut-to pointers. 
+arrows in the images represent the cut-to pointers.
 
+\newsavebox{\elpibox}
 \begin{figure*}[!htb]
   \centering
-  \begin{subfigure}{0.2\textwidth}
+  \begin{subfigure}{0.48\textwidth}
     \centering
-    \includegraphics[width=0.35\textwidth, keepaspectratio]{./src/exec_example1E/elpi0.pdf}
+    \begin{lrbox}{\elpibox}
+    \begin{tikzpicture}[baseline]
+    \matrix (outer) [matrix of nodes,
+                     nodes={draw, minimum width=0.5cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex, anchor=center},
+                     column sep=0.3cm, row sep=0.3cm] {
+    g 0 R\\
+    };
+\end{tikzpicture}
+\end{lrbox}
+\resizebox{0.35\textwidth}{!}{\usebox{\elpibox}}
     \caption{Initial query}
     \label{ex-elpi0}
   \end{subfigure}
   \begin{subfigure}{0.4\textwidth}
-    \includegraphics[width=\textwidth, keepaspectratio]{./src/exec_example1E/elpi1.pdf}
+    \begin{lrbox}{\elpibox}
+    \begin{tikzpicture}[baseline]
+    \matrix (outer) [matrix of nodes,
+                     nodes={draw, minimum width=0.5cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex, anchor=center},
+                     column sep=0.3cm, row sep=0.3cm] {
+    \phantom{AAAAAAAAAAAAAA} & \phantom{AAAAAAAAAAA} &  \node[draw=none] (A) {\phantom{!}};\\
+    };
+    \matrix (inner) [matrix of nodes,
+                     nodes={minimum width=0.6cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex},
+                     column sep=0.1cm, row sep=0.1cm] at (outer-1-1.center) {
+    r A B, & f B C, & ! \\
+    };
+    \matrix (inner1) [matrix of nodes,
+                     nodes={minimum width=0.6cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex},
+                     column sep=0.1cm, row sep=0.1cm] at (outer-1-2.center) {
+    f D E, & f E F \\
+    };
+    \matrix (inner2) [matrix of nodes,
+                     nodes={minimum width=0.6cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex},
+                     column sep=0.1cm, row sep=0.1cm] at (A.center) {
+    \phantom{x} \\
+    };
+    \draw[->, thick]
+      ($(inner-1-3.north)+(0,0.3)$) -- ++(0,0.4)
+      -- ($(inner2-1-1.north)+(0,0.7)$)
+      -- ($(inner2-1-1.north)+(0,0.3)$);
+    \node at ($(outer-1-1.north west)+(-0,0.2)$) {$\sigma_1$};
+    \node at ($(outer-1-2.north west)+(-0,0.2)$) {$\sigma_2$};
+\end{tikzpicture}
+\end{lrbox}
+\resizebox{\textwidth}{!}{\usebox{\elpibox}}
     \caption{Stack after call to \eI{g 0 R}}
     \label{ex-elpi1}
   \end{subfigure}
   ~\\~\\
   \begin{subfigure}{0.5\textwidth}
-    \includegraphics[width=\textwidth, keepaspectratio]{./src/exec_example1E/elpi2.pdf}
+    \begin{lrbox}{\elpibox}
+    \begin{tikzpicture}[baseline]
+    \matrix (outer) [matrix of nodes,
+                     nodes={draw, minimum width=0.5cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex, anchor=center},
+                     column sep=0.3cm, row sep=0.3cm] {
+    \phantom{AAAAAAAA} & \phantom{AAAAAAAA} & \phantom{AAAAAAAAAAA} & \phantom{AAAAAAAAA} &  \node[draw=none] (A) {\phantom{xx}};\\
+    };
+    \matrix (inner1) [matrix of nodes,
+                     nodes={minimum width=0.6cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex},
+                     column sep=0.1cm, row sep=0.1cm] at (outer-1-1.center) {
+    f B C, & ! \\
+    };
+    \matrix (inner2) [matrix of nodes,
+                     nodes={minimum width=0.6cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex},
+                     column sep=0.1cm, row sep=0.1cm] at (outer-1-2.center) {
+    f B C, & ! \\
+    };
+    \matrix (inner3) [matrix of nodes,
+                     nodes={minimum width=0.6cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex},
+                     column sep=0.1cm, row sep=0.1cm] at (outer-1-3.center) {
+    !, & f B C, & ! \\
+    };
+    \matrix (inner4) [matrix of nodes,
+                     nodes={minimum width=0.6cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex},
+                     column sep=0.1cm, row sep=0.1cm] at (outer-1-4.center) {
+    f D E, & f E F \\
+    };
+    \matrix (innerL) [matrix of nodes,
+                     nodes={minimum width=0.6cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex},
+                     column sep=0.1cm, row sep=0.1cm] at (A.center) {
+    \phantom{x} \\
+    };
+    \draw[->, thick]
+      ($(inner1-1-2.north)+(0,0.3)$) -- ++(0,0.6)
+      -- ($(innerL-1-1.north)+(0,0.9)$)
+      -- ($(innerL-1-1.north)+(0,0.3)$);
+    \draw[->, thick]
+      ($(inner2-1-2.north)+(0,0.3)$) -- ++(0,0.5)
+      -- ($(innerL-1-1.north)+(0,0.8)$)
+      -- ($(innerL-1-1.north)+(0,0.3)$);
+    \draw[->, thick]
+      ($(inner3-1-3.north)+(0,0.3)$) -- ++(0,0.4)
+      -- ($(innerL-1-1.north)+(0,0.7)$)
+      -- ($(innerL-1-1.north)+(0,0.3)$);
+    \draw[->, thick]
+      ($(inner3-1-1.south)-(0,0.3)$) -- ++(0,-0.4)
+      -- ($(inner4-1-1.south)-(0,0.7)$)
+      -- ($(inner4-1-1.south)-(0,0.3)$);
+    \node at ($(outer-1-1.north west)+(-0,0.2)$) {$\sigma_3$};
+    \node at ($(outer-1-2.north west)+(-0,0.2)$) {$\sigma_4$};
+    \node at ($(outer-1-3.north west)+(-0,0.2)$) {$\sigma_5$};
+    \node at ($(outer-1-4.north west)+(-0,0.2)$) {$\sigma_2$};
+\end{tikzpicture}
+\end{lrbox}
+\resizebox{\textwidth}{!}{\usebox{\elpibox}}
     \caption{Stack after evaluating \cref{ex-elpi1}}
     \label{ex-elpi2}
   \end{subfigure}
   \begin{subfigure}{0.48\textwidth}
-    \includegraphics[width=\textwidth, keepaspectratio]{./src/exec_example1E/elpi3.pdf}
+    \begin{lrbox}{\elpibox}
+    \begin{tikzpicture}[baseline]
+    \matrix (outer) [matrix of nodes,
+                     nodes={draw, minimum width=0.5cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex, anchor=center},
+                     column sep=0.3cm, row sep=0.3cm] {
+    \phantom{AAAAAAAA} & \phantom{AAAAAAAAAA} & \phantom{AAAAAAAAAA} &  \node[draw=none] (A) {\phantom{xx}};\\
+    };
+    \matrix (inner1) [matrix of nodes,
+                     nodes={minimum width=0.6cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex},
+                     column sep=0.1cm, row sep=0.1cm] at (outer-1-1.center) {
+    f B C, & ! \\
+    };
+    \matrix (inner2) [matrix of nodes,
+                     nodes={minimum width=0.6cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex},
+                     column sep=0.1cm, row sep=0.1cm] at (outer-1-2.center) {
+    ! & f B C, & ! \\
+    };
+    \matrix (inner3) [matrix of nodes,
+                     nodes={minimum width=0.6cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex},
+                     column sep=0.1cm, row sep=0.1cm] at (outer-1-3.center) {
+    f D E, & f E F \\
+    };
+    \matrix (innerL) [matrix of nodes,
+                     nodes={minimum width=0.6cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex},
+                     column sep=0.1cm, row sep=0.1cm] at (A.center) {
+    \phantom{x} \\
+    };
+    \draw[->, thick]
+      ($(inner1-1-2.north)+(0,0.3)$) -- ++(0,0.5)
+      -- ($(innerL-1-1.north)+(0,0.8)$)
+      -- ($(innerL-1-1.north)+(0,0.3)$);
+    \draw[->, thick]
+      ($(inner2-1-3.north)+(0,0.3)$) -- ++(0,0.4)
+      -- ($(innerL-1-1.north)+(0,0.7)$)
+      -- ($(innerL-1-1.north)+(0,0.3)$);
+    \draw[->, thick]
+      ($(inner2-1-1.south)-(0,0.3)$) -- ++(0,-0.4)
+      -- ($(inner3-1-1.south)-(0,0.7)$)
+      -- ($(inner3-1-1.south)-(0,0.3)$);
+    \node at ($(outer-1-1.north west)+(-0,0.2)$) {$\sigma_4$};
+    \node at ($(outer-1-2.north west)+(-0,0.2)$) {$\sigma_5$};
+    \node at ($(outer-1-3.north west)+(-0,0.2)$) {$\sigma_2$};
+\end{tikzpicture}
+\end{lrbox}
+\resizebox{\textwidth}{!}{\usebox{\elpibox}}
     \caption{Stack after evaluating \cref{ex-elpi2}}
     \label{ex-elpi3}
   \end{subfigure}
   ~\\~\\
   \begin{subfigure}{0.48\textwidth}
-    \includegraphics[width=\textwidth, keepaspectratio]{./src/exec_example1E/elpi4.pdf}
+    \begin{lrbox}{\elpibox}
+    \begin{tikzpicture}[baseline]
+    \matrix (outer) [matrix of nodes,
+                     nodes={draw, minimum width=0.5cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex, anchor=center},
+                     column sep=0.3cm, row sep=0.3cm] {
+    \phantom{AAAAAAAA} & \phantom{AAAAAAAAAA} & \phantom{AAAAAAAAAA} &  \node[draw=none] (A) {\phantom{xx}};\\
+    };
+    \matrix (inner1) [matrix of nodes,
+                     nodes={minimum width=0.6cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex},
+                     column sep=0.1cm, row sep=0.1cm] at (outer-1-1.center) {
+    f B C, & ! \\
+    };
+    \matrix (inner2) [matrix of nodes,
+                     nodes={minimum width=0.6cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex},
+                     column sep=0.1cm, row sep=0.1cm] at (outer-1-2.center) {
+    !, & f B C, & ! \\
+    };
+    \matrix (inner3) [matrix of nodes,
+                     nodes={minimum width=0.6cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex},
+                     column sep=0.1cm, row sep=0.1cm] at (outer-1-3.center) {
+    f D E, & f E F \\
+    };
+    \matrix (innerL) [matrix of nodes,
+                     nodes={minimum width=0.6cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex},
+                     column sep=0.1cm, row sep=0.1cm] at (A.center) {
+    \phantom{x} \\
+    };
+    \draw[->, thick]
+      ($(inner1-1-2.north)+(0,0.3)$) -- ++(0,0.5)
+      -- ($(innerL-1-1.north)+(0,0.8)$)
+      -- ($(innerL-1-1.north)+(0,0.3)$);
+    \draw[->, thick]
+      ($(inner2-1-3.north)+(0,0.3)$) -- ++(0,0.4)
+      -- ($(innerL-1-1.north)+(0,0.7)$)
+      -- ($(innerL-1-1.north)+(0,0.3)$);
+    \draw[->, thick]
+      ($(inner2-1-1.south)-(0,0.3)$) -- ++(0,-0.4)
+      -- ($(inner3-1-1.south)-(0,0.7)$)
+      -- ($(inner3-1-1.south)-(0,0.3)$);
+    \node at ($(outer-1-1.north west)+(-0,0.2)$) {$\sigma_6$};
+    \node at ($(outer-1-2.north west)+(-0,0.2)$) {$\sigma_5$};
+    \node at ($(outer-1-3.north west)+(-0,0.2)$) {$\sigma_2$};
+\end{tikzpicture}
+\end{lrbox}
+\resizebox{\textwidth}{!}{\usebox{\elpibox}}
     \caption{Stack after evaluating \cref{ex-elpi3}}
     \label{ex-elpi4}
   \end{subfigure}
   \begin{subfigure}{0.45\textwidth}
-    \includegraphics[width=\textwidth, keepaspectratio]{./src/exec_example1E/elpi5.pdf}
+    \begin{lrbox}{\elpibox}
+    \begin{tikzpicture}[baseline]
+    \matrix (outer) [matrix of nodes,
+                     nodes={draw, minimum width=0.5cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex, anchor=center},
+                     column sep=0.3cm, row sep=0.3cm] {
+    \phantom{AAA} & \phantom{AAAAAAAAAA} & \phantom{AAAAAAAAAA} &  \node[draw=none] (A) {\phantom{xx}};\\
+    };
+    \matrix (inner1) [matrix of nodes,
+                     nodes={minimum width=0.6cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex},
+                     column sep=0.1cm, row sep=0.1cm] at (outer-1-1.center) {
+    ! \\
+    };
+    \matrix (inner2) [matrix of nodes,
+                     nodes={minimum width=0.6cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex},
+                     column sep=0.1cm, row sep=0.1cm] at (outer-1-2.center) {
+    !, & f B C, & ! \\
+    };
+    \matrix (inner3) [matrix of nodes,
+                     nodes={minimum width=0.6cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex},
+                     column sep=0.1cm, row sep=0.1cm] at (outer-1-3.center) {
+    f D E, & f E F \\
+    };
+    \matrix (innerL) [matrix of nodes,
+                     nodes={minimum width=0.6cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex},
+                     column sep=0.1cm, row sep=0.1cm] at (A.center) {
+    \phantom{x} \\
+    };
+    \draw[->, thick]
+      ($(inner1-1-1.north)+(0,0.3)$) -- ++(0,0.5)
+      -- ($(innerL-1-1.north)+(0,0.8)$)
+      -- ($(innerL-1-1.north)+(0,0.3)$);
+    \draw[->, thick]
+      ($(inner2-1-3.north)+(0,0.3)$) -- ++(0,0.4)
+      -- ($(innerL-1-1.north)+(0,0.7)$)
+      -- ($(innerL-1-1.north)+(0,0.3)$);
+    \draw[->, thick]
+      ($(inner2-1-1.south)-(0,0.3)$) -- ++(0,-0.4)
+      -- ($(inner3-1-1.south)-(0,0.7)$)
+      -- ($(inner3-1-1.south)-(0,0.3)$);
+    \node at ($(outer-1-1.north west)+(-0,0.2)$) {$\sigma_6$};
+    \node at ($(outer-1-2.north west)+(-0,0.2)$) {$\sigma_5$};
+    \node at ($(outer-1-3.north west)+(-0,0.2)$) {$\sigma_2$};
+\end{tikzpicture}
+\end{lrbox}
+\resizebox{\textwidth}{!}{\usebox{\elpibox}}
     \caption{Stack after evaluating \cref{ex-elpi4}}
     \label{ex-elpi5}
   \end{subfigure}
