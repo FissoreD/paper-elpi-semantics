@@ -1483,16 +1483,21 @@ solutions.
 
 \begingroup
 \small
+\begin{prooftree}
+	\AxiomC{$\text{\ding{51}\ t} \quad \mathrm{next\_subst}\ \sigma\ t \arr \sigma'  \qquad \mathrm{prune}\ \mathrm{true}\ t \arr \mathrm{None} $}
+  \RightLabel{$\rulelabel{StopOT} $}
+  \UnaryInfC{$\mathrm{runT}\ \prog\ v\ \sigma\ t \arr (\mathrm{One}\ \sigma', \mathrm{false}, v)$}
+\end{prooftree}
 \begin{bprooftree}
   \AxiomC{
     \ensuremath{
   %{\mathrm{success}\ t} \quad
   {\text{\ding{51}}\ t} \quad
   {\mathrm{next\_subst}\ \sigma\ t \arr \sigma' } \quad
-  {\mathrm{prune}\ \mathrm{true}\ t \arr t' }
+  {\mathrm{prune}\ \mathrm{true}\ t \arr \mathrm{Some}\ t' }
   }}
   \RightLabel{\rulelabel{\stopt}}
-  \UnaryInfC{\ensuremath{\mathrm{\runT}\ \prog\ v\ \sigma\ t \arr (\mathrm{Some}\ (\sigma', t'), \mathrm{false}, v)}}
+  \UnaryInfC{\ensuremath{\mathrm{\runT}\ \prog\ v\ \sigma\ t \arr (\mathrm{Many}\ (\sigma', t'), \mathrm{false}, v)}}
 \end{bprooftree}
 \begin{bprooftree}
   \AxiomC{\ensuremath{
