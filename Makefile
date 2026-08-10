@@ -9,7 +9,7 @@ all: tex_code aux
 
 TEXFILES := $(shell find src -type f -name '*.tex')
 PDFFILES := $(TEXFILES:.tex=.pdf)
-MINFILES := $(shell find elpi-formalization -type f -name '*.v')
+MINFILES := $(shell find elpi-formalization/theories -type f -name '*.v')
 IGNFILES := $(MINFILES:.v=.ign)
 
 aux: $(PDFFILES)
