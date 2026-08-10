@@ -32,6 +32,15 @@
       ],
       "env": {}
     },
+        {
+      "name": "docker",
+      "command": "make",
+      "args": [
+        "docker"
+      ],
+      "env": {}
+    },
+
   ],
   "latex-workshop.latex.recipes": [
     // {
@@ -40,7 +49,7 @@
     // },
     {
       "name": "base",
-      "tools": [ "pdflatex", "pdflatex" ]
+      "tools": [ "docker" ]
     },
   ]
 }

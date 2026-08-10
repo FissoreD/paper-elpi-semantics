@@ -34,10 +34,13 @@ docker:
 	#docker create --name latex dfissore/latex2025:latest
 	docker cp ./ latex:/data/ && docker ps -a && \
 	docker start -i latex && docker cp latex:/data/main.pdf . && \
+	docker cp latex:/data/main.synctex.gz . && \
 	docker cp latex:/data/main.log . && \
-	mkdir -p pdf && mv main.pdf pdf;
-	cat main.log
-
+	docker cp latex:/data/main.blg . && \
+	docker cp latex:/data/main.bbl . && \
+	docker cp latex:/data/main.aux . && \
+	docker cp latex:/data/main.out . && \
+	mkdir -p pdf && cp main.pdf pdf
 
 ci:
 	$(MAKE) update_submodule && \

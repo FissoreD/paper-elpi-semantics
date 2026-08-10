@@ -348,22 +348,30 @@ In the concrete syntax, variables are written with capital letters, and
 predicate application follows the $\lambda$-calculus style (no
 parentheses).
 
-The description of a program is given by a pair $\PROG := (\mathrm{list}\ \mathbb{R} \times \mathrm{sigT})$
-and is shared by both semantics. A program consists of a list of
-rules together with a signature environment $\mathrm{sig}$.
+The description of a program $\PROG$ is shared by both semantics
+and consists of a list of
+rules together with a signature environment.
 We delay the discussion of signatures to \cref{sec:determinacy} where we
-describe the static analysis that concerns them.
+describe the static analysis that concerns them and we now focus
+on the rules.
+% is given by a pair $\PROG := (\mathrm{list}\ \mathbb{R} \times \mathrm{sigT})$
+% and is shared by both semantics. A program consists of a list of
+% rules together with a signature environment $\mathrm{sig}$.
+% We delay the discussion of signatures to \cref{sec:determinacy} where we
+% describe the static analysis that concerns them.
 
-A rule is a pair $\RULE := (\TERM \times \mathrm{list}\ \ATOM)$, where
-the first element represents its head and the second its list of premises. Each
-premise is an atom, i.e. either the cut operator or a term
-call. Terms include predicate symbols, data symbols, variables, and term application.
-The concrete definition of these two algebraic types is given below:
+A rule $\RULE$ is a pair $\TERM \times \mathrm{list}\ \ATOM$, where
+the first element, a term, represents the rule's head and the second,
+a list of atoms, represents the rule's premises.
+
 %
 \begin{align*}
   \TERM & := \mathrm{Symb}\ \mathbb{N} \mid \mathrm{Pred}\ \mathbb{N} \mid \mathrm{Var}\ \mathbb{N} \mid \mathrm{App}\ \TERM\ \TERM\\
   \ATOM & := \mathrm{cut} \mid \mathrm{call}\ \TERM
 \end{align*}
+
+An atom is either the cut operator or a call to a term.
+Terms include predicate symbols, data symbols, variables, and term application.
 
 The syntax tree allows variables to be applied and predicates to be mixed with data.
 These higher-order features play no role in the current paper that focuses on
@@ -379,8 +387,9 @@ The empty substitution is written $\epsilon$,
 while the composition of two substitutions $\sigma_1$ and $\sigma_2$ with
 disjoint supports as $\sigma_1 + \sigma_2$. %\marginpar{usiamo + ?}
  
-The backchaining operation applies all rules to a query term; it is
-central to both semantics and it has the following type:
+The backchaining operation,
+central to both semantics,
+applies all rules to a query term:
 %\input{tex_code/bc_type.tex}
 %
 $$\mathrm{backchain} : \mathbb{P} \to \FV \to \TERM \to \Sigma \to (\FV \times \mathrm{list}\ (\Sigma \times \mathrm{list}\ \ATOM)) $$
@@ -393,11 +402,10 @@ set of variable names together with the list of alternatives, i.e. the
 rules that apply. More precisely, for each applicable rule it returns the
 rule premises together with an updated substitution obtained by unifying
 the rule head with the query term.
-
-The function \emph{unify} takes two terms $t_1$ and $t_2$, together with a
+The unification function takes two terms $t_1$ and $t_2$, together with a
 substitution $\sigma$, as input, and optionally returns a substitution
-$\sigma'$ that extends $\sigma$. Therefore, if $t_1$ and $t_2$ unify
-under $\sigma$, then $\sigma'~t_1 = \sigma'~t_2$, where
+$\sigma'$ that extends $\sigma$. If $t_1$ and $t_2$ unify
+starting from $\sigma$, then $\sigma'~t_1 = \sigma'~t_2$, where
 $\sigma~t$ denotes substitution application and $=$ denotes 
 syntactic equality.
 
@@ -618,11 +626,11 @@ applied to the pair \cI{x}.
 
 The stack-based semantics we present is very close to what is
 implemented by the \elpiP interpreter. This semantics is 
-similar to the one proposed by Pusch in
+similar to the one mechanized by Pusch in Isabelle/HOL
 \cite{10.1007/BFb0105415}, which is in turn closely related to the
 semantics given by Debray and Mishra in
 \cite[Section~4.3]{Debray1988}. Pusch mechanized this
-semantics in Isabelle/HOL, together with several optimizations that are
+semantics together with several optimizations that are
 also present in the Warren Abstract Machine
 \cite{warren1983abstract,1991ait-wam}.
 
@@ -633,7 +641,7 @@ $$\mathrm{alts} := \mathrm{list}\ (\Sigma \times \mathrm{goals})  \qquad \mathrm
 Intuitively each stack item is a self-contained
 computation, coupling a substitution with all the goals to be
 solved.
-
+%
 The datatypes of goals and alternatives are mutually recursive since
 a goal pairs an atom with a list of the \emph{cut-to} alternatives. 
 Still, these alternatives have a very different role: they have to be understood
@@ -663,7 +671,7 @@ predicates.
 % \end{coqcode}
 % \end{center}
 %
-$$\mathrm{\runS} : \vec{\FV} \to \mathrm{alts} \to \mathrm{option}\ (\Sigma \times \mathrm{alts}) \to \cI{Prop}$$
+$$\mathrm{\runS} : \FV \to \mathrm{alts} \to \mathrm{option}\ (\Sigma \times \mathrm{alts}) \to \cI{Prop}$$
 
 \noindent
 The \nur predicates relates a set of variables and a
@@ -671,7 +679,7 @@ list of alternatives to optional result. None stands for failure,
 i.e., no solution, whereas Some $(\sigma, a)$ represents success with $\sigma$
 being the solution and $a$ as the list of not-yet-explored
 alternatives.
-\begin{figure}
+\begin{figure}[b]
    \begin{align*}
   \backchainS\ p\ v\ t\ & \sigma\ a\ g =\ 
   \mathrm{let}\ (v', rs) := \mathrm{backchain}\ p\ v\ t\ \sigma\ \mathrm{in}\\
@@ -706,11 +714,6 @@ alternatives, and prepends the obtained goals to the tail of $h$.
 Note that if backchain returns the empty list, the second
 premise of rule \calls amounts to exploring the next item in the current
 stack.
-
-\subsection{Example of execution}
-
-We propose an example of the execution of \nur in \cref{ex-elpi}. The
-arrows in the images represent the cut-to pointers.
 
 \newsavebox{\elpibox}
 \begin{figure*}[!htb]
@@ -939,6 +942,10 @@ arrows in the images represent the cut-to pointers.
   \caption{Example of execution}
   \label{ex-elpi}
 \end{figure*}
+\subsection{Example of execution}
+
+We propose an example of the execution of \nur in \cref{ex-elpi}. The
+arrows in the images represent the cut-to pointers.
 
 We have not drawn arrows coming out of call atoms since the interpreter
 ignores the cut-alternatives in this case. 
@@ -1057,8 +1064,9 @@ list.
 The tree is constructed incrementally by two recursive
 functions, \step and \na. Both traverse the tree depth-first, left-to-right.
 The node to be explored in a tree is retrieved thanks to \pathend (in~\cref{fig:getend}).
-When this node is \okC we say the entire tree is a \emph{success}, when it
-is \koC we say the tree \emph{failed}, otherwise the tree is \emph{incomplete}.
+When this node is \okC we say the entire tree is a \emph{success} (short \ding{51}),
+is \koC we say the tree \emph{failed} (short \ding{55}), otherwise the tree is
+\emph{incomplete} (short $\circlearrowright$).
 In \cref{tree-ex} we mark with a black arrow the result of \pathend.
 The type of these two functions is given below.
 %
@@ -1366,13 +1374,14 @@ indicates the interpretation of a superficial cut: \step was called on an
 And-layer and its \pathend is the cut atom. Finally, Expanded
 accounts for the interpretation of predicate calls and non-superficial cuts.
 
-The \step procedure evaluates atoms. In particular, it leaves the tree
+The \step procedure evaluates atoms: it leaves the tree
 unchanged when the tree is \emph{success} or \emph{failed}.
-
-\input{tex_code/success_step.tex}
-\input{tex_code/failed_step.tex}
-
-The \step procedure expands Unexplored nodes by calling backchain, which returns a list
+% 
+% \input{tex_code/success_step.tex}
+% \input{tex_code/failed_step.tex}
+% 
+while it %The \step procedure 
+expands Unexplored nodes by calling backchain, which returns a list
 $l$ of alternatives. If $l$ is empty, then the current call atom is replaced by
 \koC. Otherwise, it is replaced by a right-skewed tree of \orC nodes, where
 each leaf corresponds to a list of atoms $e \in l$. If $e$ is empty, the leaf
@@ -1509,8 +1518,8 @@ None, since there are no alternatives in the tree after the success.
 % Therefore, if we need to backtrack in the lhs, we need to reset the
 % rhs.
 
-Some interesting properties of \na are shown below; they illustrate how \na
-complements \step with respect to failed, successful, and incomplete trees.
+% Some interesting properties of \na are shown below; they illustrate how \na
+% complements \step with respect to failed, successful, and incomplete trees.
 
 % \mvspace{}
 % \begin{lemma}[incomplete\_prune\_id]\label{th:incompletepruneid}
@@ -1527,9 +1536,9 @@ complements \step with respect to failed, successful, and incomplete trees.
 % \end{lemma}
 
 
-\input{tex_code/incpl_prune.tex}
-\input{tex_code/na_failed.tex}
-\input{tex_code/naNfail.tex}
+% \input{tex_code/incpl_prune.tex}
+% \input{tex_code/na_failed.tex}
+% \input{tex_code/naNfail.tex}
 % \mvspace{}
 
 
@@ -1552,7 +1561,7 @@ complements \step with respect to failed, successful, and incomplete trees.
 
 The inductive relation \runT has the following type:
 %
-$$\mathrm{\runT} : \mathbb{P} \to \vec{\FV} \to \Sigma \to \mathbb{T} \to \mathrm{sol} \to \mathbb{B} \to \vec{\FV} \to \cI{Prop}$$
+$$\mathrm{\runT} : \mathbb{P} \to \FV \to \Sigma \to \mathbb{T} \to \mathrm{sol} \to \mathbb{B} \to \FV \to \cI{Prop}$$
 
 It associates a program, a set of variables, an initial substitution $\sigma$, and a
 tree $t$ with a solution $r$, a boolean $b$, and an updated set of variable
@@ -1572,27 +1581,8 @@ remaining unexplored alternatives.
 The boolean $b$ records whether a superficial cut was evaluated during execution,
 and $v'$ is the updated set of variables tracking freshly generated names.
 
-The \run predicate has five cases, depicted as inference rules in \cref{fig:run-rules}
-where we shorten \success to \ding{51},
-\failed to \ding{55} and \incomplete to $\circlearrowright$. 
 
-% where we separate the first four arguments and the last one with a squiggle arrow,
-% evocative of the fact that the given set of rules is deterministic (\cref{th:runTdet}).
-
-
-Rules \stopot and \stopt say that if the tree $t$ is success, then the substitution
-$\sigma'$ is extracted from $t$ (starting from $\sigma$), depending
-on the result of \na true $t$ -- aiming to clean the tree from its successful
-path -- we return One or Many, if there exist alternatives
-to be explored. Rule \stept applies when \pathend\ $t$ is an atom,
-then \step is invoked to evaluate $t$, and \run is called recursively on the
-updated tree. When \pathend\ $t$ is a failure, rule \backt calls \na
-to clear the failed path; if the resulting cleaned tree exists, \run is
-called recursively on it. Finally, rule \failt accounts for trees with no
-solutions.
-
-
-\begin{figure*}
+\begin{figure*}[!hbt]
 
 \begingroup
 \small
@@ -1664,19 +1654,37 @@ solutions.
   \label{fig:run-rules}
 \end{figure*}
 
+The \run predicate has five cases, depicted as inference rules in \cref{fig:run-rules}.
+
+% where we separate the first four arguments and the last one with a squiggle arrow,
+% evocative of the fact that the given set of rules is deterministic (\cref{th:runTdet}).
+
+
+Rules \stopot and \stopt say that if the tree $t$ is success, then the substitution
+$\sigma'$ is extracted from $t$ (starting from $\sigma$), depending
+on the result of \na true $t$ -- aiming to clean the tree from its successful
+path -- we return One or Many, if there exist alternatives
+to be explored. Rule \stept applies when \pathend\ $t$ is an atom,
+then \step is invoked to evaluate $t$, and \run is called recursively on the
+updated tree. When \pathend\ $t$ is a failure, rule \backt calls \na
+to clear the failed path; if the resulting cleaned tree exists, \run is
+called recursively on it. Finally, rule \failt accounts for trees with no
+solutions.
+
+
 % \subsubsection{Properties of \run}
 \label{sec:run-prop}
 
 
-\input{tex_code/runT_det.tex}
+% \input{tex_code/runT_det.tex}
 
-The proof is by induction on the first \run derivation and is immediate,
-because the rules are selected based on \pathend\ $t$. In particular, the
-hypotheses \success $t$, \incomplete $t$, and \failed $t$ are
-mutually exclusive. Moreover, by \cref{th:pruneNone}, the hypothesis of
-\failt implies that $t$ \emph{failed}; hence \failt is exclusive
-with \stopot, \stopt and \stept, and it is also exclusive with
-\backt since they impose different requirements on the output of \na.
+% The proof is by induction on the first \run derivation and is immediate,
+% because the rules are selected based on \pathend\ $t$. In particular, the
+% hypotheses \success $t$, \incomplete $t$, and \failed $t$ are
+% mutually exclusive. Moreover, by \cref{th:pruneNone}, the hypothesis of
+% \failt implies that $t$ \emph{failed}; hence \failt is exclusive
+% with \stopot, \stopt and \stept, and it is also exclusive with
+% \backt since they impose different requirements on the output of \na.
 
 The boolean output of \run allows us to state interesting properties about the
 \orC node in the presence of cut. Below, we report only a selection of the
@@ -1686,8 +1694,22 @@ we write the symbol $\square$. Otherwise, the notation $A \lor B_\sigma$
 implicitly denotes $(\mathrm{Some}\ A) \lor B_\sigma$.
 
 \input{tex_code/runSST_or.tex}
-\input{tex_code/runNT_or.tex}
-\input{tex_code/runNF_or.tex}
+% \input{tex_code/runNT_or.tex}
+\begin{lemma}[or\_intro\_right]\label{th:orintroright}%
+  $\forall\ p\ v\ v'\ \sigma\ A\ \sigma_1\ B ,$
+\begin{multline*}
+  \mathrm{runT}\ p\ v\ \sigma\ A\ \mathrm{Zero}\ \mathrm{true}\ v' \to \\
+	\mathrm{runT}\ p\ v\ \sigma\ ( A \lor B\ \phantom{!}_{\!\!\!\!\sigma_1} )\ \mathrm{Zero}\ \mathrm{false}\ v' 
+\end{multline*}
+\end{lemma}
+% \input{tex_code/runNF_or.tex}
+\begin{lemma}[or\_intro\_right2]\label{th:orintroright2}%
+	$\forall\ p\ v_0\ v_1\ v_2\ \sigma\ A\ \sigma_1\ \sigma_2\ B\ b ,$
+\begin{multline*}
+	\mathrm{runT}\ p\ v_0\ \sigma\ A\ \mathrm{Zero}\ \mathrm{false}\ v_1 \to \mathrm{runT}\ p\ v_1\ \sigma_1\ B\ ( \mathrm{One}\ \sigma_2 )\ b\ v_2 \to \\
+	\mathrm{runT}\ p\ v_0\ \sigma\ ( A \lor B\ \phantom{!}_{\!\!\!\!\sigma_1} )\ ( \mathrm{One}\ \sigma_2 )\ \mathrm{false}\ v_2 
+\end{multline*}
+\end{lemma}
 % $$$$
 
 \Cref{th:orintroleft,th:orintroright,th:orintroright2} correspond to the introduction rules
