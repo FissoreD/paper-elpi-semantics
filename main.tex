@@ -2522,7 +2522,7 @@ The theorem we want to prove is the following one:
 % \input{tex_code/det_check_call.tex}
 \begin{theorem}[det\_check\_call]\label{th:detcheckcall}$\forall\ p\ \sigma\ t\ v , \mathrm{detchecked}\ p \to$\\
   % \vspace{.8em}\\
-	$\phantom{xxx}  \mathrm{tm\_is\_det}\ p\ t \to \mathrm{is\_det}\ p\ \sigma\ v\ ( \mathrm{Unexplored}\ ( \mathrm{call}\ t ) ) $
+	$\phantom{xxx}  \mathrm{tm\_is\_det}\ p\ t \to \mathrm{is\_det}\ p\ \sigma\ v\ t $
 \end{theorem}
 
 Here, detchecked denotes the function that checks the program
