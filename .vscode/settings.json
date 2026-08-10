@@ -43,10 +43,10 @@
 
   ],
   "latex-workshop.latex.recipes": [
-    // {
-    //   "name": "pdflatex",
-    //   "tools": [ "pdflatex", "bibtex", "pdflatex", "pdflatex" ]
-    // },
+    {
+      "name": "pdflatex",
+      "tools": [ "pdflatex", "bibtex", "pdflatex", "pdflatex" ]
+    },
     {
       "name": "base",
       "tools": [ "docker" ]
