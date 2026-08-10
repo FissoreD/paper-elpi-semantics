@@ -1927,26 +1927,149 @@ tree.
 
 
 
+
+\newsavebox{\elpiboxx}
+
+\begin{figure*}[!htb]
+    \begin{lrbox}{\elpiboxx}
+
+    % \includegraphics[width=0.8\textwidth, keepaspectratio]{src/t2lex.pdf}
+    \begin{minipage}[t][][t]{9cm}
+\begin{forest}
+for tree={
+  % minimum height=5em,
+  l sep=1.5em, s sep=1.5em,
+  align=right
+}
+[\orN,orNode
+  [\deadN, deadNode,edge=dashed]
+  [\andN, andNode,edge label={node[midway,right] {$\sigma_1$}}
+    [\orN,orNode, name=s1
+      [\deadN, deadNode,edge=dashed]
+      [\subnode{ss1}{\okN},okNode,edge label={node[midway,right] {$\sigma_3$}}]
+      [\subnode{ss2}{\okN},okNode,edge label={node[midway,below] {$\sigma_4$}}]
+      [\subnode{ss3}{!},edge label={node[midway,right] {$\sigma_5$}}]
+    ]
+    [{{f B C}},name=cur,edge label={node[midway,right] {$R_1$}}]
+    [{{!}},edge label={node[midway,right] {$R_2$}}]
+  ]
+  [\andN,name=X,andNode,edge label={node[midway,right] {$\sigma_2$}}
+    [{{f D E}},name=Y]
+    [{{f E F}},edge label={node[midway,right] {$R_3$}},name=Z]
+  ]
+] 
+\curnodeNE{cur};
+\node[draw,red,fit=(X)(Y)(Z)]{\subnode{ss4}{}};
+\end{forest}
+\end{minipage}
+%
+\begin{minipage}[t][7.5cm][t]{12cm}
+  \vspace{60pt}
+\begin{tikzpicture}[baseline]
+
+\matrix (outer) [matrix of nodes,
+                 nodes={draw, minimum width=0.5cm, minimum height=1cm, anchor=center},
+                 column sep=0.3cm, row sep=0.3cm] {
+\phantom{AAAAAAAA} & \phantom{AAAAAAAA} & \phantom{AAAAAAAAAAA} & \phantom{AAAAAAAAA} &  \node[draw=none] (A) {\phantom{xx}};\\
+};
+
+\matrix (inner1) [matrix of nodes,
+                 nodes={minimum size=0.6cm},
+                 column sep=0.1cm, row sep=0.1cm] at (outer-1-1.center) {
+\subnode{ss11}{f B C}, & ! \\
+};
+
+\matrix (inner2) [matrix of nodes,
+                 nodes={minimum size=0.6cm},
+                 column sep=0.1cm, row sep=0.1cm] at (outer-1-2.center) {
+\subnode{ss22}{f B C}, & ! \\
+};
+
+\matrix (inner3) [matrix of nodes,
+                 nodes={minimum size=0.6cm},
+                 column sep=0.1cm, row sep=0.1cm] at (outer-1-3.center) {
+\subnode{ss33}{!}, & f B C, & ! \\
+};
+
+\matrix (inner4) [matrix of nodes,
+                 nodes={minimum size=0.6cm},
+                 column sep=0.1cm, row sep=0.1cm] at (outer-1-4.center) {
+\subnode{ss44}{f D E}, & f E F \\
+};
+
+
+\matrix (innerL) [matrix of nodes,
+                 nodes={minimum size=0.6cm},
+                 column sep=0.1cm, row sep=0.1cm] at (A.center) {
+\phantom{x} \\
+};
+
+\draw[->, thick]
+  ($(inner1-1-2.north)+(0,0.3)$) -- ++(0,0.6)  
+  -- ($(innerL-1-1.north)+(0,0.9)$)            
+  -- ($(innerL-1-1.north)+(0,0.3)$);           
+
+\draw[->, thick]
+  ($(inner2-1-2.north)+(0,0.3)$) -- ++(0,0.5)  
+  -- ($(innerL-1-1.north)+(0,0.8)$)            
+  -- ($(innerL-1-1.north)+(0,0.3)$);           
+
+\draw[->, thick]
+  ($(inner3-1-3.north)+(0,0.3)$) -- ++(0,0.4)  
+  -- ($(innerL-1-1.north)+(0,0.7)$)            
+  -- ($(innerL-1-1.north)+(0,0.3)$);           
+
+\draw[->, thick]
+  ($(inner3-1-1.south)-(0,0.3)$) -- ++(0,-0.4)  
+  -- ($(inner4-1-1.south)-(0,0.7)$)            
+  -- ($(inner4-1-1.south)-(0,0.3)$);           
+
+\node at ($(outer-1-1.north west)+(-0,0.2)$) {$\sigma_3$};
+\node at ($(outer-1-2.north west)+(-0,0.2)$) {$\sigma_4$};
+\node at ($(outer-1-3.north west)+(-0,0.2)$) {$\sigma_5$};
+\node at ($(outer-1-4.north west)+(-0,0.2)$) {$\sigma_2$};
+\end{tikzpicture}
+\end{minipage}%
+
+\newcommand{\marr}[3]{\draw[->, red, dashed, line width=1pt] ($(#1)+(0,-0.5+#3)$) to[in=270, out=270] ($(#2)+(-0.4,-0.7)$)}
+
+\begin{tikzpicture}[overlay,remember picture]
+\marr{ss1}{ss11}{0};
+\marr{ss2}{ss22}{0};
+\marr{ss3}{ss33}{0};
+\marr{ss4}{ss44}{-0.9};
+\end{tikzpicture}
+
+    \end{lrbox}
+
+  \begin{center}
+    \resizebox{.8\textwidth}{!}{\usebox{\elpiboxx}}
+  \end{center}
+\caption{Example of \ttl execution\label{fig:cc}}
+\end{figure*}
 \section{Equivalence of the two semantics}
 
 Before going into the proof of the two semantics' equivalence, we need
-to relate trees to stacks. In the following subsection we define the
-function \ttl, which is in charge of translating trees to
-stacks.
+to relate trees to stacks. 
+% In the following subsection we define the
+% function \ttl, which is in charge of translating trees to
+% stacks.
 
 \subsection{From trees to stacks}\label{sec:t2l}
 
 % \marginpar{t2l should be t2s or t2s}
 
-The \ttl recursive function translates a tree to a stack.
-$$
-\mathrm{\ttl} : \TREE \to \Sigma \to \mathrm{alts} \to \mathrm{alts}
-$$
+% The \ttl recursive function translates a tree to a stack.
 % we give junst the implementation of the
 % base cases, the full implementation is available at \href{https://github.com/FissoreD/elpi-formalization/blob/ho-check-ffun/theories/t2l.v}{\emph{this}} link.
 
 The function \ttl takes as input the tree $t_0$, a substitution
 $\sigma$ for the input tree, and an auxiliary list of choice points $cp$.
+%
+$$
+\mathrm{\ttl} : \TREE \to \Sigma \to \mathrm{alts} \to \mathrm{alts}
+$$
+
 These choice points
 represent alternatives that appear at the same level of the current
 tree, such as, for example, the right siblings of an \orC{} node. 
@@ -1989,6 +2112,7 @@ proving the equivalence between the two semantics, we must take into account
 that \run may perform more iterations than \nur before returning a solution or
 reporting a failure. We illustrate this non-injective behavior with a concrete
 example below.
+
 
 \subsubsection{Example of \ttl execution} 
 The translations of the trees in \cref{tree-ex} are shown in \cref{ex-elpi}.
@@ -2120,7 +2244,7 @@ and sketch here the proofs underpinning the corollaries above.
 
 \begin{wrapfigure}{r}{.15\textwidth}
   \centering
-  \resizebox{\linewidth}{!}{%
+  \resizebox{1.2\linewidth}{!}{%
   \begin{tikzpicture}[]
       \node (t1) at (0,0) {$t$};
       \node (t2) [right=2cm of t1]  {$t'$};
@@ -2314,125 +2438,6 @@ are preserved by calls to \step and \na.
   $$\mathrm{sld\_tree}\ A \to \run\ u\ p\ v\ \sigma\ A\ ( \mathrm{Many}\ \sigma'\ B )\ b\ v' \to \mathrm{sld\_tree}\ B $$
 \end{theorem}
 
-\newsavebox{\elpiboxx}
-
-\begin{figure*}[!htb]
-    \begin{lrbox}{\elpiboxx}
-
-    % \includegraphics[width=0.8\textwidth, keepaspectratio]{src/t2lex.pdf}
-    \begin{minipage}[t][][t]{9cm}
-\begin{forest}
-for tree={
-  % minimum height=5em,
-  l sep=1.5em, s sep=1.5em,
-  align=right
-}
-[\orN,orNode
-  [\deadN, deadNode,edge=dashed]
-  [\andN, andNode,edge label={node[midway,right] {$\sigma_1$}}
-    [\orN,orNode, name=s1
-      [\deadN, deadNode,edge=dashed]
-      [\subnode{ss1}{\okN},okNode,edge label={node[midway,right] {$\sigma_3$}}]
-      [\subnode{ss2}{\okN},okNode,edge label={node[midway,below] {$\sigma_4$}}]
-      [\subnode{ss3}{!},edge label={node[midway,right] {$\sigma_5$}}]
-    ]
-    [{{f B C}},name=cur,edge label={node[midway,right] {$R_1$}}]
-    [{{!}},edge label={node[midway,right] {$R_2$}}]
-  ]
-  [\andN,name=X,andNode,edge label={node[midway,right] {$\sigma_2$}}
-    [{{f D E}},name=Y]
-    [{{f E F}},edge label={node[midway,right] {$R_3$}},name=Z]
-  ]
-] 
-\curnodeNE{cur};
-\node[draw,red,fit=(X)(Y)(Z)]{\subnode{ss4}{}};
-\end{forest}
-\end{minipage}
-%
-\begin{minipage}[t][7.5cm][t]{12cm}
-  \vspace{60pt}
-\begin{tikzpicture}[baseline]
-
-\matrix (outer) [matrix of nodes,
-                 nodes={draw, minimum width=0.5cm, minimum height=1cm, anchor=center},
-                 column sep=0.3cm, row sep=0.3cm] {
-\phantom{AAAAAAAA} & \phantom{AAAAAAAA} & \phantom{AAAAAAAAAAA} & \phantom{AAAAAAAAA} &  \node[draw=none] (A) {\phantom{xx}};\\
-};
-
-\matrix (inner1) [matrix of nodes,
-                 nodes={minimum size=0.6cm},
-                 column sep=0.1cm, row sep=0.1cm] at (outer-1-1.center) {
-\subnode{ss11}{f B C}, & ! \\
-};
-
-\matrix (inner2) [matrix of nodes,
-                 nodes={minimum size=0.6cm},
-                 column sep=0.1cm, row sep=0.1cm] at (outer-1-2.center) {
-\subnode{ss22}{f B C}, & ! \\
-};
-
-\matrix (inner3) [matrix of nodes,
-                 nodes={minimum size=0.6cm},
-                 column sep=0.1cm, row sep=0.1cm] at (outer-1-3.center) {
-\subnode{ss33}{!}, & f B C, & ! \\
-};
-
-\matrix (inner4) [matrix of nodes,
-                 nodes={minimum size=0.6cm},
-                 column sep=0.1cm, row sep=0.1cm] at (outer-1-4.center) {
-\subnode{ss44}{f D E}, & f E F \\
-};
-
-
-\matrix (innerL) [matrix of nodes,
-                 nodes={minimum size=0.6cm},
-                 column sep=0.1cm, row sep=0.1cm] at (A.center) {
-\phantom{x} \\
-};
-
-\draw[->, thick]
-  ($(inner1-1-2.north)+(0,0.3)$) -- ++(0,0.6)  
-  -- ($(innerL-1-1.north)+(0,0.9)$)            
-  -- ($(innerL-1-1.north)+(0,0.3)$);           
-
-\draw[->, thick]
-  ($(inner2-1-2.north)+(0,0.3)$) -- ++(0,0.5)  
-  -- ($(innerL-1-1.north)+(0,0.8)$)            
-  -- ($(innerL-1-1.north)+(0,0.3)$);           
-
-\draw[->, thick]
-  ($(inner3-1-3.north)+(0,0.3)$) -- ++(0,0.4)  
-  -- ($(innerL-1-1.north)+(0,0.7)$)            
-  -- ($(innerL-1-1.north)+(0,0.3)$);           
-
-\draw[->, thick]
-  ($(inner3-1-1.south)-(0,0.3)$) -- ++(0,-0.4)  
-  -- ($(inner4-1-1.south)-(0,0.7)$)            
-  -- ($(inner4-1-1.south)-(0,0.3)$);           
-
-\node at ($(outer-1-1.north west)+(-0,0.2)$) {$\sigma_3$};
-\node at ($(outer-1-2.north west)+(-0,0.2)$) {$\sigma_4$};
-\node at ($(outer-1-3.north west)+(-0,0.2)$) {$\sigma_5$};
-\node at ($(outer-1-4.north west)+(-0,0.2)$) {$\sigma_2$};
-\end{tikzpicture}
-\end{minipage}%
-
-\newcommand{\marr}[3]{\draw[->, red, dashed, line width=1pt] ($(#1)+(0,-0.5+#3)$) to[in=270, out=270] ($(#2)+(-0.4,-0.7)$)}
-
-\begin{tikzpicture}[overlay,remember picture]
-\marr{ss1}{ss11}{0};
-\marr{ss2}{ss22}{0};
-\marr{ss3}{ss33}{0};
-\marr{ss4}{ss44}{-0.9};
-\end{tikzpicture}
-
-    \end{lrbox}
-
-  \begin{center}
-    \resizebox{\textwidth}{!}{\usebox{\elpiboxx}}
-  \end{center}
-\caption{Example of \ttl execution\label{fig:cc}}
-\end{figure*}
 %
 
 
@@ -2722,12 +2727,12 @@ cannot be assigned. The function \matching has the following property:
   $\phantom{xxx} \mathrm{acyclic}\ \sigma \to \mathrm{matching}\ t_1\ t_2\ \sigma = \mathrm{Some}\ \sigma' \to \sigma'\ t_1 = \sigma\ t_2$
 \end{lemma}
 
-In particular, we can see how the returned substitution $\sigma'$, differently
-from \cref{th:unifycorrect}, does not affect variables in $\sigma\ t_2$.
+% In particular, we can see how the returned substitution $\sigma'$, differently
+% from \cref{th:unifycorrect}, does not affect variables in $\sigma\ t_2$.
 
-\begin{corollary}[\logo{}matching\_same]\label{umm}\label{th:matchingsame} $\forall t\ q\ \sigma\ \sigma',$\\
-  $\phantom{xxx} \mathrm{acyclic}\ \sigma \to \mathrm{matching}\ t\ q\ \sigma = \mathrm{Some}\ \sigma' \to \sigma'\ q = \sigma\ q$
-\end{corollary}
+% \begin{corollary}[\logo{}matching\_same]\label{umm}\label{th:matchingsame} $\forall t\ q\ \sigma\ \sigma',$\\
+%   $\phantom{xxx} \mathrm{acyclic}\ \sigma \to \mathrm{matching}\ t\ q\ \sigma = \mathrm{Some}\ \sigma' \to \sigma'\ q = \sigma\ q$
+% \end{corollary}
 
 
 % \marginpar{The statement abouve does not say that $\sigma'\ t_2 = t_2$. Did you prove it?}
@@ -3087,11 +3092,11 @@ changes to the conditions for mutual exclusion.
 
 \bibliography{bib}
 
-% \newpage
+ \newpage
 
 \begin{appendix}
 
-\section{The step procedure}
+\section{The step procedure (file tree.v, line 200)}
 
 \begin{coqcode}
 Fixpoint step p v s A :=
@@ -3120,7 +3125,7 @@ Fixpoint step p v s A :=
   end.
 \end{coqcode}
 
-\section{The prune procedure}
+\section{The prune procedure (file tree.v, line 243)}
 
   \begin{coqcode}
   Definition omap f o := match o with Some b => Some (f b) | _ => o end.
