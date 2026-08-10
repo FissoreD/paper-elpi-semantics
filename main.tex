@@ -1925,6 +1925,96 @@ tree.
 
 \section{Equivalence of the two semantics}
 
+Before going into the proof of the two semantics equivalence, we need
+to relate trees to stacks. In the following section we provide an implementation
+of a function call \eI{t2l} which is charged of translating trees to
+stacks.
+
+\subsection{From trees to stacks}\label{sec:t2l}
+
+% \marginpar{t2l should be t2s or t2s}
+
+The \ttl recursive function translates a tree to a stack.
+$$
+\mathrm{\ttl} : \TREE \to \Sigma \to \mathrm{alts} \to \mathrm{alts}
+$$
+% we give junst the implementation of the
+% base cases, the full implementation is available at \href{https://github.com/FissoreD/elpi-formalization/blob/ho-check-ffun/theories/t2l.v}{\emph{this}} link.
+
+The function \ttl takes as input the tree $t_0$, a substitution
+$\sigma$ for the input tree, and an auxiliary list of choice points $cp$.
+These choice points
+represent alternatives that appear at the same level of the current
+tree, such as, for example, the right siblings of an \orC{} node. 
+
+The \okC node represents one successful alternative; therefore it is translated
+into a singleton list whose only element has an empty list of goals. The \koC
+node represents failure, hence it is mapped to the empty list of alternatives.
+Finally, atoms are mapped to a singleton list containing one alternative whose
+only goal is that atom, with an empty cut-to list.
+At this stage, the cut-to list cannot point to $cp$: atoms are not
+right-uncle subtrees, whereas $cp$ represents alternatives that will actually
+be discarded if the atom turns out to be a cut. The correct cut-to list is
+therefore determined later, once the trees corresponding to sibling subtrees
+have been inspected.
+
+The translation of $A \lor B_\sigma$ creates two list of alternatives,
+one for the $A$ and the other for $B$. The alternatives of $B$ are valid
+choice points for $A$ and should be passed to the translation of $A$.
+The two lists of alternatives can then be concatenated. Moreover, every atom
+occurring one level below $cp$ (i.e. in $A$ or $B$) should add $cp$ as its
+cut-to alternatives.
+
+The translation of $A \land_{B_0} B$ starts with the translation of $A$. If the
+translation of $A$ is an empty list we return the empty list of
+alternatives without even touching $B$ nor $B_0$, since an empty
+translation for $A$ indicates failure and this in turn implies the
+failure of the entire conjunction. When the translation of $A$ is
+a list $(\sigma_0, g) :: a$, the $B$ node represents the continuation of the
+first alternative $g$, whereas $B_0$ is the continuation for each alternative
+in $a$.
+% While performing these translation, we need to carefully update the cut-atlernatives.
+
+The function s2l is not injective: distinct trees can be translated into the
+same stack. In particular, a transition from a tree $t_1$ to a tree $t_2$
+performed by \run may result in both trees being translated into the same
+stack. We refer to such a transition as a \emph{silent transition}.
+
+Notably, the stack semantics has no notion of a failed stack. Therefore, when
+proving the equivalence between the two semantics, we must take into account
+that \run may perform more iterations than \nur before returning a solution or
+reporting a failure. We illustrate this non-injective behavior with a concrete
+example below.
+
+\subsubsection{Example of \ttl execution} 
+The translations of the trees in \cref{tree-ex} are shown in \cref{ex-elpi}.
+The letters in the figures relate each tree to the corresponding stack.
+For example, \ref{tree-ex1} is translated into \ref{ex-elpi1}. We also
+note that \ref{tree-ex3} and \ref{tree-ex4} are both translated into
+\ref{ex-elpi3}, showing that \ttl is not injective: different trees can map to
+the same stack. Consequently, there are transitions in \run that are not visible
+in \nur.
+%
+As an example of a call to \ttl, we take the tree and the stack in~\cref{fig:cc},
+which are respectively taken from \cref{tree-ex2,ex-elpi2}. The red arrows
+point from the head of an alternative in the tree to the head of the
+corresponding cell in the stack.
+We focus on the deepest \orC{} node in the tree. This subtree
+is a disjunction with four children. The first is ignored, since it
+is None. The success node below $\sigma_3$ has \eI{f B C} and the cut
+operator as continuation, corresponding to the first cell in the stack. 
+We note that the cut operator points outside the
+stack, since the scope of this cut eliminates its right uncle. The
+success node below $\sigma_4$ has $R_1$ as continuation, where $R_1$ is
+the list of goals \eI{f B C, !}; this is translated into the second cell
+of the stack. Finally, the cut operator under
+$\sigma_5$ also has $R_1$ as continuation. It corresponds to the third
+alternative. We can see that the first cut points to
+the translation of the subtree under $\sigma_2$, since it is one
+\orC-layer above its right uncles.
+
+\subsection{Equivalence}
+
 The equivalence we are interested in states that a query produces the
 same substitution and alternatives under both semantics.
 
@@ -2102,8 +2192,10 @@ the mapping from stacks to trees.
   $
 \end{theorem}
 
-\begin{proof} Induction on $\nur$. One needs to take care of
-silent transitions in runT XXX DAVIDE XXX
+\begin{proof} 
+Induction on $\nur$. Moreover, in order to prove this lemma, we need an
+auxiliary lemma to align the iterations in $\nur$ with the corresponding
+iterations in \run by accounting for silent transitions.
 \end{proof}
 
 % The proof is based on the idea explained in~\cite[Section
@@ -2338,78 +2430,6 @@ for tree={
 \caption{Example of \ttl execution\label{fig:cc}}
 \end{figure*}
 %
-
-\subsection{From trees to stacks}\label{sec:t2l}
-
-% \marginpar{t2l should be t2s or t2s}
-
-The \ttl recursive function translates a tree to a stack.
-$$
-\mathrm{\ttl} : \TREE \to \Sigma \to \mathrm{alts} \to \mathrm{alts}
-$$
-% we give junst the implementation of the
-% base cases, the full implementation is available at \href{https://github.com/FissoreD/elpi-formalization/blob/ho-check-ffun/theories/t2l.v}{\emph{this}} link.
-
-The function \ttl takes as input the tree $t_0$, a substitution
-$\sigma$ for the input tree, and an auxiliary list of choice points $cp$.
-These choice points
-represent alternatives that appear at the same level of the current
-tree, such as, for example, the right siblings of an \orC{} node. 
-
-The \okC node represents one successful alternative; therefore it is translated
-into a singleton list whose only element has an empty list of goals. The \koC
-node represents failure, hence it is mapped to the empty list of alternatives.
-Finally, atoms are mapped to a singleton list containing one alternative whose
-only goal is that atom, with an empty cut-to list.
-At this stage, the cut-to list cannot point to $cp$: atoms are not
-right-uncle subtrees, whereas $cp$ represents alternatives that will actually
-be discarded if the atom turns out to be a cut. The correct cut-to list is
-therefore determined later, once the trees corresponding to sibling subtrees
-have been inspected.
-
-The translation of $A \lor B_\sigma$ creates two list of alternatives,
-one for the $A$ and the other for $B$. The alternatives of $B$ are valid
-choice points for $A$ and should be passed to the translation of $A$.
-The two lists of alternatives can then be concatenated. Moreover, every atom
-occurring one level below $cp$ (i.e. in $A$ or $B$) should add $cp$ as its
-cut-to alternatives.
-
-The translation of $A \land_{B_0} B$ starts with the translation of $A$. If the
-translation of $A$ is an empty list we return the empty list of
-alternatives without even touching $B$ nor $B_0$, since an empty
-translation for $A$ indicates failure and this in turn implies the
-failure of the entire conjunction. When the translation of $A$ is
-a list $(\sigma_0, g) :: a$, the $B$ node represents the continuation of the
-first alternative $g$, whereas $B_0$ is the continuation for each alternative
-in $a$.
-% While performing these translation, we need to carefully update the cut-atlernatives.
-
-\subsubsection{Example of \ttl execution} 
-The translations of the trees in \cref{tree-ex} are shown in \cref{ex-elpi}.
-The letters in the figures relate each tree to the corresponding stack.
-For example, \ref{tree-ex1} is translated into \ref{ex-elpi1}. We also
-note that \ref{tree-ex3} and \ref{tree-ex4} are both translated into
-\ref{ex-elpi3}, showing that \ttl is not injective: different trees can map to
-the same stack. Consequently, there are transitions in \run that are not visible
-in \nur.
-%
-As an example of a call to \ttl, we take the tree and the stack in~\cref{fig:cc},
-which are respectively taken from \cref{tree-ex2,ex-elpi2}. The red arrows
-point from the head of an alternative in the tree to the head of the
-corresponding cell in the stack.
-We focus on the deepest \orC{} node in the tree. This subtree
-is a disjunction with four children. The first is ignored, since it
-is None. The success node below $\sigma_3$ has \eI{f B C} and the cut
-operator as continuation, corresponding to the first cell in the stack. 
-We note that the cut operator points outside the
-stack, since the scope of this cut eliminates its right uncle. The
-success node below $\sigma_4$ has $R_1$ as continuation, where $R_1$ is
-the list of goals \eI{f B C, !}; this is translated into the second cell
-of the stack. Finally, the cut operator under
-$\sigma_5$ also has $R_1$ as continuation. It corresponds to the third
-alternative. We can see that the first cut points to
-the translation of the subtree under $\sigma_2$, since it is one
-\orC-layer above its right uncles.
 
 
 % \begin{figure}  
