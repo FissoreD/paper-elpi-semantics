@@ -2043,6 +2043,12 @@ the translation of the subtree under $\sigma_2$, since it is one
 
 The equivalence betwen the two semantics aims to guarantee that two queries
 produce the same substitution and alternatives in both semantics.
+
+The tree-based semantics exposes more information than needed, hence
+we hide it behind existentials.
+
+\input{tex_code/runt1.tex}
+
 The theorem we prove are the following.
 
 % \input{tex_code/runS_to_runTCZero.tex}
@@ -2066,6 +2072,15 @@ The theorem we prove are the following.
 % \input{tex_code/runS_to_runTCMany1.tex}
 \begin{theorem}[runS\_to\_runTM1]\label{th:runStorunTM1}%
 \begin{multline*}
+	\forall\ p\ t\ \sigma\ \sigma'\ t' ,\ \mathrm{let}\ v\ \mathrm{:=}\ \mathrm{vars\_tm}\ t\ \cup\ \mathrm{vars\_sigma}\ \sigma\ \mathrm{in} \\
+	\mathrm{runT'}\ p\ v\ \sigma\ ( \mathrm{Unexplored}\ ( \mathrm{call}\ t ) )\ ( \mathrm{Many}\ \sigma'\ t' ) \to \\
+	\mathrm{runS}\ p\ v\ [\sigma ,\ [\mathrm{call}\ t,\ \mnil]]\ ( \mathrm{Some}\ ( \sigma' ,\ \mathrm{tree\_to\_stack}\ t'\ \sigma\ \mnil ) ) 
+\end{multline*}
+\end{theorem}
+
+% \input{tex_code/runS_to_runTCMany2.tex}
+\begin{theorem}[runS\_to\_runTM2]\label{th:runStorunTM2}%
+\begin{multline*}
 	\forall\ p\ t\ \sigma\ \sigma'\ x\ \mathrm{xs} ,\ \mathrm{let}\ v\ \mathrm{:=}\ \mathrm{vars\_tm}\ t\ \cup\ \mathrm{vars\_sigma}\ \sigma\ \mathrm{in} \\
 	\mathrm{runS}\ p\ v\ [\sigma ,\ [\mathrm{call}\ t,\ \mnil]]\ ( \mathrm{Some}\ ( \sigma' ,\ x\ \mathrm{::}\ \mathrm{xs} ) ) \to \\
 	\exists\ t' ,\ \mathrm{runT'}\ p\ v\ \sigma\ ( \mathrm{Unexplored}\ ( \mathrm{call}\ t ) )\ ( \mathrm{Many}\ \sigma'\ t' ) \land \\
@@ -2073,19 +2088,21 @@ The theorem we prove are the following.
 \end{multline*}
 \end{theorem}
 
-% \input{tex_code/runS_to_runTCMany2.tex}
-\begin{theorem}[runS\_to\_runTM2]\label{th:runStorunTM2}%
-\begin{multline*}
-	\forall\ p\ t\ \sigma\ \sigma'\ t' ,\ \mathrm{let}\ v\ \mathrm{:=}\ \mathrm{vars\_tm}\ t\ \cup\ \mathrm{vars\_sigma}\ \sigma\ \mathrm{in} \\
-	\mathrm{runT'}\ p\ v\ \sigma\ ( \mathrm{Unexplored}\ ( \mathrm{call}\ t ) )\ ( \mathrm{Many}\ \sigma'\ t' ) \to \\
-	\mathrm{runS}\ p\ v\ [\sigma ,\ [\mathrm{call}\ t,\ \mnil]]\ ( \mathrm{Some}\ ( \sigma' ,\ \mathrm{tree\_to\_stack}\ t'\ \sigma\ \mnil ) ) 
-\end{multline*}
-\end{theorem}
 
+\Cref{th:runStorunTZ,th:runStorunTO} are double implication theorems and relates
+interpretations producing failures, or success with no alternatives. The more
+interesting theorems are the two following, that is
+\cref{th:runStorunTM1,th:runStorunTM2}, where we do not have a double
+implication, but we claim that they complete the equivalence we need. The former
+theorem claims that the interpratation of runT' on $t$ returns alternatives
+$t'$, in the conclusion of the lemma, we cerify that these alternatives are
+returned by runS, in paricular by asserting that $\mathrm{tree\_to\_stack}\ t'\
+\sigma\ \mnil$ is the alternative list.
+In the converse direction of the implication, runS launched on the tree $t$
+return the alternative list $x :: xs$, since we have no function converting
+a stack to a tree, we postulate the existence of a tree $t'$ and prove that
+the conversion of $t'$ to a stack produces exactly the list $x::xs$.
 
-
-The tree-based semantics exposes more information than needed, hence
-we hide it behind existentials.
 
 % Thanks to the two functions \vast and \ttl, we are able to finally state the
 % equivalence theorems between the semantics. The proof we are giving are on a
@@ -2099,7 +2116,6 @@ we hide it behind existentials.
 %   $\mathrm{runT'}\ \prog\ v\ \sigma\ t\ r := \exists\ b\ v',\ \mathrm{runT}\ \prog\ v\ \sigma\ t\ r\ b\ v'$
 % \end{definition}
 
-\input{tex_code/runt1.tex}
 
 From \cref{tree-ex,ex-elpi}, we observe that, upon backtracking, \run may perform
 more steps than \nur before returning a solution or a failure.
