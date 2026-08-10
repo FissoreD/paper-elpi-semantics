@@ -33,6 +33,7 @@
 \newtheorem{axiom}{Axiom}
 \newcommand{\mphant}{\phantom{x}}
 
+\newcommand{\logo}{{\raisebox{-0.3em}{\includegraphics[height=1em]{rocq-logo.png}}\hspace{.2em}}}
 
 \Crefname{figure}{Fig.}{Figs.}
 
@@ -455,23 +456,23 @@ the particular implementation chosen for that algorithm.
 % carries a term~(see \cref{fig:tm-type}). A term (Tm) is either a predicate,
 % a datum, a variable or the binary application of two terms.
 
-% \begin{definition}[Atoms]
+% \begin{definition}[\logo{}Atoms]
 %   \input{tex_code/atom_type.tex}
 %   \label{type:atom}
 % \end{definition}
-% \begin{definition}[Rule]
+% \begin{definition}[\logo{}Rule]
 %   \input{tex_code/R_type.tex}
 %   \label{type:r}
 % \end{definition}
-% \begin{definition}[Program]
+% \begin{definition}[\logo{}Program]
 %   \input{tex_code/program_type.tex}
 %   \label{type:prog}
 % \end{definition}
-% \begin{definition}[Substitution]
+% \begin{definition}[\logo{}Substitution]
 %   \input{tex_code/sigma_type.tex}
 %   \label{type:sigma}
 % \end{definition}
-% \begin{definition}[Backchaining]
+% \begin{definition}[\logo{}Backchaining]
 %   \leavevmode\\
 %   \phantom{AAAA}\input{tex_code/bc_type.tex}
 %   \label{type:backchain}
@@ -1426,14 +1427,14 @@ precisely, (ii) prunes the left siblings of the \cutC node (in the same
 And-layer, denoted \cutl) and prunes the right uncles of \cutC (in the
 one-level-up Or-layer, denoted \cutr).
 
-% \begin{definition}[Left-siblings (resp. right-sibling) and Right-uncles]
+% \begin{definition}[\logo{}Left-siblings (resp. right-sibling) and Right-uncles]
 %   Given a node $A$, the left-siblings (resp. right-sibling) of $A$
 %   are the list of subtrees sharing the same parent of $A$ and that appear
 %   on its left (resp. right). The right-uncles of $A$ are the list 
 %   of right-sibling of the father of $A$.
 % \end{definition}
 
-% \begin{definition}[Hard-kill, \cutr and Soft-kill, \cutl]
+% \begin{definition}[\logo{}Hard-kill, \cutr and Soft-kill, \cutl]
 %   Given a tree $t$, hard-kill replaces the given subtree with the \koC node.
 %   If $t$ is a success-tree, then soft-kill replaces with \koC all subtrees
 %   that are not part of the path in $t$ leading to the \okC node.
@@ -1536,16 +1537,16 @@ None, since there are no alternatives in the tree after the success.
 % complements \step with respect to failed, successful, and incomplete trees.
 
 % \mvspace{}
-% \begin{lemma}[incomplete\_prune\_id]\label{th:incompletepruneid}
+% \begin{lemma}[\logo{}incomplete\_prune\_id]\label{th:incompletepruneid}
 %   $\forall b\ t, \mathrm{incomplete}\ t \to \mathrm{prune}\ b\ t = t$
 %   % \mathrm{~\}nsuremath{\forall}~ ~\ensuremath{b}~ ~\ensuremath{t}~, incomplete ~\ensuremath{t}~ ~\ensuremath{\to}~ prune ~\ensuremath{b}~ ~\ensuremath{t}~ = ~\msome~~\ensuremath{t}~.}
 % \end{lemma}
 
-% \begin{lemma}[prune\_Some]\label{th:pruneSome}
+% \begin{lemma}[\logo{}prune\_Some]\label{th:pruneSome}
 %   $\forall b\ t\ t', \mathrm{prune}\ b\ t = t \to \mathrm{failed}\ t' = \bot$
 % \end{lemma}
 
-% \begin{lemma}[prune\_None]\label{th:pruneNone}
+% \begin{lemma}[\logo{}prune\_None]\label{th:pruneNone}
 %   $\forall t\ t', \mathrm{prune}\ \bot\ t = \bot \to \mathrm{failed}\ t' = \top$
 % \end{lemma}
 
@@ -1759,7 +1760,7 @@ we write the symbol $\square$. Otherwise, the notation $A \lor B_\sigma$
 implicitly denotes $(\mathrm{Some}\ A) \lor B_\sigma$.
 
 % \input{tex_code/runSST_or.tex}
-\begin{theorem}[or\_intro\_left]\label{th:orintroleft}%
+\begin{theorem}[\logo{}or\_intro\_left]\label{th:orintroleft}%
 	$\forall\ p\ v\ v'\ \sigma\ \sigma'\ A\ A'\ \sigma_1\ B ,$\\
   $\mphant
   \run\ p\ v\ \sigma\ A\ ( \mathrm{Many}\ \sigma'\ A' )\ \mathrm{true}\ v' \to
@@ -1769,7 +1770,7 @@ implicitly denotes $(\mathrm{Some}\ A) \lor B_\sigma$.
   $
 \end{theorem}
 % \input{tex_code/runNT_or.tex}
-\begin{theorem}[or\_intro\_right]\label{th:orintroright}%
+\begin{theorem}[\logo{}or\_intro\_right]\label{th:orintroright}%
   $\forall\ p\ v\ v'\ \sigma\ A\ \sigma_1\ B ,$\\
 $ 
  \mphant
@@ -1778,7 +1779,7 @@ $
 $
 \end{theorem}
 % \input{tex_code/runNF_or.tex}
-\begin{theorem}[or\_intro\_right2]\label{th:orintroright2}%
+\begin{theorem}[\logo{}or\_intro\_right2]\label{th:orintroright2}%
 	$\forall\ p\ v_0\ v_1\ v_2\ \sigma\ A\ \sigma_1\ \sigma_2\ B\ b ,$\\
 $\mphant
 	\run\ p\ v_0\ \sigma\ A\ \mathrm{Zero}\ \mathrm{false}\ v_1 \land 
@@ -1828,7 +1829,7 @@ Depicted as rules:
 rules for disjunction. 
 
 % \input{tex_code/run_orSST.tex}
-\begin{theorem}[or\_elim1]\label{th:orelim1}$\forall\ p\ v\ v'\ \sigma\ \sigma'\ \sigma_1\ A\ A'\ B\ B' ,$\\
+\begin{theorem}[\logo{}or\_elim1]\label{th:orelim1}$\forall\ p\ v\ v'\ \sigma\ \sigma'\ \sigma_1\ A\ A'\ B\ B' ,$\\
 $
 	\phantom{xx}\run\ p\ v\ \sigma\ ( A \lor B\ \phantom{!}_{\!\!\!\!\sigma_1} )\ ( \mathrm{Many}\ \sigma'\ ( A' \lor B'\ \phantom{!}_{\!\!\!\!\sigma_1} ) )\ \mathrm{false}\ v' \to
 $\\
@@ -1838,7 +1839,7 @@ $
 \end{theorem}
 
 %\input{tex_code/run_orSNT.tex}
-\begin{theorem}[or\_elim2]\label{th:orelim2}
+\begin{theorem}[\logo{}or\_elim2]\label{th:orelim2}
   $\forall\ p\ v\ v'\ \sigma\ \sigma'\ \sigma_1\ A\ B\ B' ,$\\
 $\phantom{xx}
 	\run\ p\ v\ \sigma\ ( A \lor B\ \phantom{!}_{\!\!\!\!\sigma_1} )\ ( \mathrm{Many}\ \sigma'\ ( \square\ \lor B'\ \phantom{!}_{\!\!\!\!\sigma_1} ) )\ \mathrm{false}\ v' \to
@@ -2021,7 +2022,7 @@ same substitution and alternatives under both semantics.
 The tree-based semantics exposes more information than is needed for
 this comparison, so we hide the surplus behind existential quantifiers.
 
-\begin{definition}[\runo]\label{th:runo}%
+\begin{definition}[\logo{}\runo]\label{th:runo}%
 	$\lambda\ p\ v\ \sigma\ t\ r .$\\
   $\phantom{xx}\exists\ b\ v' ,\ \run\ p\ v\ \sigma\ (\mathrm{Unexplored}\ t)\ r\ b\ v' $
 \end{definition}
@@ -2029,7 +2030,7 @@ this comparison, so we hide the surplus behind existential quantifiers.
 For each possible outcome, we prove the equivalence of the two semantics.
 
 % \input{tex_code/runS_to_runTCZero.tex}
-\begin{corollary}[equiv\_zero]\label{th:runStorunTZ}%
+\begin{corollary}[\logo{}equiv\_zero]\label{th:runStorunTZ}%
 	$\forall\ p\ t\ (v\ \mathrm{:=}\ \mathrm{vars}\ t),$\\
   $
 	\phantom{xx}
@@ -2042,7 +2043,7 @@ For each possible outcome, we prove the equivalence of the two semantics.
 \end{corollary}
 
 % \input{tex_code/runS_to_runTCOne.tex}
-\begin{corollary}[equiv\_one]\label{th:runStorunTO}%
+\begin{corollary}[\logo{}equiv\_one]\label{th:runStorunTO}%
 	$\forall\ p\ t\ \sigma'\ (v\ \mathrm{:=}\ \mathrm{vars}\ t),$\\
   $\phantom{xx}
 	\nur\ p\ v\ [\varepsilon ,\ [\mathrm{call}\ t,\ \mnil]]\ ( \mathrm{Some}\ ( \sigma' ,\ \mnil ) ) \leftrightarrow
@@ -2053,7 +2054,7 @@ For each possible outcome, we prove the equivalence of the two semantics.
 \end{corollary}
 
 % \input{tex_code/runS_to_runTCMany1.tex}
-\begin{corollary}[sound\_many]\label{th:runStorunTM1}%
+\begin{corollary}[\logo{}sound\_many]\label{th:runStorunTM1}%
 	$\forall\ p\ t \sigma'\ t'\ (v\ \mathrm{:=}\ \mathrm{vars}\ t),$\\
   $\phantom{xx}
 	\mathrm{\runo}\ p\ v\ \varepsilon\ ( \mathrm{call}\ t  )\ ( \mathrm{Many}\ \sigma'\ t' ) \to
@@ -2064,7 +2065,7 @@ For each possible outcome, we prove the equivalence of the two semantics.
 \end{corollary}
 
 % \input{tex_code/runS_to_runTCMany2.tex}
-\begin{corollary}[complete\_many]\label{th:runStorunTM2}%
+\begin{corollary}[\logo{}complete\_many]\label{th:runStorunTM2}%
 	$\forall\ p\ t\ \sigma'\ x\ \mathrm{xs}\ (v\ \mathrm{:=}\ \mathrm{vars}\ t),$\\
   $\phantom{xx}
   \nur\ p\ v\ [\varepsilon ,\ [\mathrm{call}\ t,\ \mnil]]\ ( \mathrm{Some}\ ( \sigma' ,\ x\ \mathrm{::}\ \mathrm{xs} ) ) \to
@@ -2148,7 +2149,7 @@ from the initial state, it is important to identify the subset of valid
 trees. We defer the exact definition of sld\_tree to \cref{sec:validtree}.
 
 % \input{tex_code/tree_to_elpi.tex}
-\begin{theorem}[runT2S]\label{th:runTtorunS}%
+\begin{theorem}[\logo{}runT2S]\label{th:runTtorunS}%
 	$\forall\ p\ t\ \sigma\ r\ (v\ \mathrm{:=}\ \mathrm{vars}\ t\ \cup\ \mathrm{vars}\ \sigma) ,$\\ 
   $\phantom{xx}
 	\mathrm{sld\_tree}\ t \land (\exists\ b\ v',\ \run\ p\ v\ \sigma\ t\ r\ b\ v') \to \\
@@ -2175,7 +2176,7 @@ inhabiting the existential in a constructive logic, we implicitly obtain
 the mapping from stacks to trees.
 
 % \input{tex_code/elpi_to_tree.tex}
-\begin{theorem}[runS2T]\label{th:runStorunT}%
+\begin{theorem}[\logo{}runS2T]\label{th:runStorunT}%
 	$\forall\ p\ v\ a\ r ,$\\
   $\phantom{xx}\nur\ p\ v\ a\ r \to
 	\forall\ \sigma\ t ,\ \mathrm{sld\_tree}\ t \to \mathrm{t2s}\ t\ \sigma\ \mnil = a \to \exists \ b\ v',
@@ -2293,19 +2294,19 @@ We point out the two main invariants stating that valid SLD trees
 are preserved by calls to \step and \na.
 
 % \input{tex_code/valid_tree_step.tex}
-\begin{lemma}[sld\_tree\_step]\label{th:validtreestep}%
+\begin{lemma}[\logo{}sld\_tree\_step]\label{th:validtreestep}%
 	$$\forall\ \sigma\ v\ A\ r ,\ \mathrm{sld\_tree}\ A \to \mathrm{step}\ u\ p\ v\ \sigma\ A = r \to \mathrm{sld\_tree}\ (\mathrm{snd}\ r)$$
 \end{lemma}
 
 % \input{tex_code/valid_tree_prune.tex}
-\begin{lemma}[sld\_tree\_prune]\label{th:validtreeprune}%
+\begin{lemma}[\logo{}sld\_tree\_prune]\label{th:validtreeprune}%
 	$$\forall\ A\ B\ b ,\ \mathrm{sld\_tree}\ A \to \mathrm{prune}\ b\ A = \mathrm{Some}\ B \to \mathrm{sld\_tree}\ B $$
 \end{lemma}
 
 % We can therefore derive how valid trees are preserved by the stack interpreter.
 
 % \input{tex_code/valid_tree_run.tex}
-\begin{theorem}[sld\_tree\_run]\label{th:validtreerun}%
+\begin{theorem}[\logo{}sld\_tree\_run]\label{th:validtreerun}%
 	$\forall\ b\ \sigma\ \sigma'\ v\ v'\ A\ B,$
   $$\mathrm{sld\_tree}\ A \to \run\ u\ p\ v\ \sigma\ A\ ( \mathrm{Many}\ \sigma'\ B )\ b\ v' \to \mathrm{sld\_tree}\ B $$
 \end{theorem}
@@ -2510,7 +2511,7 @@ for tree={
 % when proving the equivalence between the two semantics. Therefore, we
 % prove the following lemma.
 
-% \begin{lemma}[pruneF\_t2s]\label{th:pruneFtreetostack}%
+% \begin{lemma}[\logo{}pruneF\_t2s]\label{th:pruneFtreetostack}%
 % \begin{multline*}
 % 	\forall\ t\ t'\ b ,\ \mathrm{sld\_tree}\ t \to \mathrm{failed}\ t \to \mathrm{prune}\ b\ t = \mathrm{Some}\ t' \to \\
 % 	\forall\ l\ \sigma ,\ \mathrm{t2s}\ t\ \sigma\ l = \mathrm{t2s}\ t'\ \sigma\ l 
@@ -2664,7 +2665,7 @@ terms do not share any variables.
 
 The first notion to provide is the application of an acyclic substitution:
 
-% \begin{definition}[deref]
+% \begin{definition}[\logo{}deref]
 %   $$
 %   \begin{array}{rlr}
 %     \sigma\ (\mathrm{Var}\ n) &= t &\mathrm{if}\ (n,t) \in \sigma\\
@@ -2676,7 +2677,7 @@ The first notion to provide is the application of an acyclic substitution:
 %   $$
 % \end{definition}
 
-\begin{definition}[acyclic]
+\begin{definition}[\logo{}acyclic]
   $\lambda \sigma. \mathrm{dom}\ \sigma \cap \mathrm{codom}\ \sigma = \varnothing$
 \end{definition}
 
@@ -2689,12 +2690,12 @@ are acyclic in this sense.
 
 % \input{tex_code/unif_correct.tex}
 
-\begin{lemma}[unify\_correct]\label{th:unifycorrect}%
+\begin{lemma}[\logo{}unify\_correct]\label{th:unifycorrect}%
 $$\forall\ t_1\ t_2\ s\ s' ,\ \mathrm{acyclic}\ s \to \mathrm{unify}\ t_1\ t_2\ s = \mathrm{Some}\ s' \to s'\ t_1 = s'\ t_2 $$
 \end{lemma}
 
 % \input{tex_code/unify_complete.tex}
-\begin{lemma}[unify\_complete]\label{th:unifycomplete} $\forall\ t_1\ t_2\ s ,\ \mathrm{acyclic}\ s \to$
+\begin{lemma}[\logo{}unify\_complete]\label{th:unifycomplete} $\forall\ t_1\ t_2\ s ,\ \mathrm{acyclic}\ s \to$
 % \begin{multline*}
 $$( \exists\ s' ,\ \mathrm{acyclic}\ s' \land\ s'\ ( s\ t_1 ) = s'\ ( s\ t_2 ) ) \to \exists\ s'' ,\ \mathrm{unify}\ t_1\ t_2\ s = \mathrm{Some}\ s''$$
 \end{lemma}
@@ -2714,14 +2715,14 @@ procedure so that it takes a set of frozen variables, i.e. variables that
 cannot be assigned. The function \matching has the following property:
 
 % \input{tex_code/matchdisj.tex}
-\begin{lemma}[matching\_disj]\label{um}\label{th:matchingdisj} $\forall t_1\ t_2\ \sigma\ \sigma',$\\
+\begin{lemma}[\logo{}matching\_disj]\label{um}\label{th:matchingdisj} $\forall t_1\ t_2\ \sigma\ \sigma',$\\
   $\phantom{xxx} \mathrm{acyclic}\ \sigma \to \mathrm{matching}\ t_1\ t_2\ \sigma = \mathrm{Some}\ \sigma' \to \sigma'\ t_1 = \sigma\ t_2$
 \end{lemma}
 
 In particular, we can see how the returned substitution $\sigma'$, differently
 from \cref{th:unifycorrect}, does not affect variables in $\sigma\ t_2$.
 
-\begin{corollary}[matching\_same]\label{umm}\label{th:matchingsame} $\forall t\ q\ \sigma\ \sigma',$\\
+\begin{corollary}[\logo{}matching\_same]\label{umm}\label{th:matchingsame} $\forall t\ q\ \sigma\ \sigma',$\\
   $\phantom{xxx} \mathrm{acyclic}\ \sigma \to \mathrm{matching}\ t\ q\ \sigma = \mathrm{Some}\ \sigma' \to \sigma'\ q = \sigma\ q$
 \end{corollary}
 
@@ -2754,7 +2755,7 @@ query, if both heads match the query $q$, then the two heads must unify.
 
 % \input{tex_code/matching_unify_transP.tex}
 
-\begin{lemma}[matching\_unify\_transP]\label{th:matchingunifytransP}%
+\begin{lemma}[\logo{}matching\_unify\_transP]\label{th:matchingunifytransP}%
 \begin{multline*}
 	\forall\ h_1\ h_2\ q .\ h_1 \cap h_2 = \varnothing \to h_1 \cap q = \varnothing \to h_2 \cap q = \varnothing \to \\
 	\mathrm{matching}\ h_1\ q\ \varnothing \to \mathrm{matching}\ h_2\ q\ \varnothing \to \mathrm{unify}\ h_1\ h_2\ \varnothing 
@@ -2802,14 +2803,14 @@ $\alpha$-equivalent terms.
 
 % The refreshing performed at runtime ensures that 
 
-\begin{definition}[$=_\alpha$]
+\begin{definition}[\logo{}$=_\alpha$]
   $\lambda t_1\ t_2.$ \\
   $\phantom{xxx}
   \exists (r:\mathrm{renaming\_for}\ t_2), t_1 = \mathrm{rename}\ r\ t_2$
 \end{definition}
 
 % \input{tex_code/unif_ren.tex}
-\begin{lemma}[unif\_ren\_ac]\label{th:unifren}
+\begin{lemma}[\logo{}unif\_ren\_ac]\label{th:unifren}
   $\forall\ t_1\ t_2\ t_1'\ t_2', t_1 =_\alpha t_1' \land\ t_2 =_\alpha t_2' \to$
   % \vspace{.8em}
   \\
@@ -2842,11 +2843,11 @@ either fails or succeeds with no alternatives left to explore.
 
 
 % \input{tex_code/is_det.tex}
-\begin{definition}[is\_det]\label{th:isdet} $\lambda\ p\ \sigma\ v\ t .$\\
+\begin{definition}[\logo{}is\_det]\label{th:isdet} $\lambda\ p\ \sigma\ v\ t .$\\
   $\phantom{xxx}\forall\ r ,\ \mathrm{\runo}\ p\ v\ \sigma\ (\mathrm{call}\ t)\ r \to r = \mathrm{Zero} \lor \exists\ \sigma ,\ r = ( \mathrm{One}\ \sigma ) $
 \end{definition}
 
-\begin{definition}[tm\_is\_det]\label{def:tmisdet}
+\begin{definition}[\logo{}tm\_is\_det]\label{def:tmisdet}
   Given a program $p$ and a term $t$,
   we say that $t$ is deterministic if its head is a predicate $f$
   which is declared as deterministic in $p$.
@@ -2855,7 +2856,7 @@ either fails or succeeds with no alternatives left to explore.
 The theorem we want to prove is the following one:
 
 % \input{tex_code/det_check_call.tex}
-\begin{theorem}[det\_check\_call]\label{th:detcheckcall}$\forall\ p\ \sigma\ t\ v , \mathrm{det\_checked}\ p \to$\\
+\begin{theorem}[\logo{}det\_check\_call]\label{th:detcheckcall}$\forall\ p\ \sigma\ t\ v , \mathrm{det\_checked}\ p \to$\\
   % \vspace{.8em}\\
 	$\phantom{xxx}  \mathrm{tm\_is\_det}\ p\ t \to \mathrm{is\_det}\ p\ \sigma\ v\ t $
 \end{theorem}
@@ -2929,20 +2930,20 @@ The following lemmas show that deterministic trees are preserved by the
 operations \step and \na.
 
 %\input{tex_code/det_tree_step.tex}
-\begin{lemma}[det\_tree\_step]\label{th:dettreestep}
+\begin{lemma}[\logo{}det\_tree\_step]\label{th:dettreestep}
   $\forall\ \mathrm{p}\ v\ \sigma_1\ t\ r ,\ \mathrm{det\_checked}\ \mathrm{p} \to$\\
 	$\phantom{xxx} \mathrm{step}\ u\ \mathrm{p}\ v\ \sigma_1\ t = r \to \mathrm{det\_tree}\ \mathrm{p}\ (\mathrm{snd}\ r) $
 \end{lemma}
 
 % \input{tex_code/det_tree_prune.tex}
-\begin{lemma}[det\_tree\_prune]\label{th:dettreeprune} $\forall\ p\ t\ t'\ b ,$\\
+\begin{lemma}[\logo{}det\_tree\_prune]\label{th:dettreeprune} $\forall\ p\ t\ t'\ b ,$\\
   $\phantom{xxx} \mathrm{det\_tree}\ p\ t \to \mathrm{prune}\ b\ t = \mathrm{Some}\ t' \to \mathrm{det\_tree}\ p\ t' $
 \end{lemma}
 
 \noindent Finally, the following lemma entails det\_check\_call:
 
 % \input{tex_code/det_check_tree.tex}
-\begin{lemma}[det\_check\_tree]\label{th:detchecktree} $\forall\ \sigma\ v\ p\ t ,$\\
+\begin{lemma}[\logo{}det\_check\_tree]\label{th:detchecktree} $\forall\ \sigma\ v\ p\ t ,$\\
   $\phantom{xxx} \mathrm{det\_checked}\ p \to \mathrm{det\_tree}\ p\ t \to \mathrm{is\_det}\ p\ \sigma\ v\ t $
 \end{lemma}
 
