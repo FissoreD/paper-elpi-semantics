@@ -130,7 +130,7 @@ and its application to determinacy analysis} % of \elpiP programs}
 We mechanize two operational semantics for \prologP with cut and prove their
 equivalence in the \rocqP{} prover.
 
-The first semantics is closely related to the one introduced by Debray and
+The first semantics is the one introduced by Debray and
 Mishra~\cite{Debray1988} for studying the optimizations employed by
 \prologP abstract machines~\cite{warren1983abstract,10.1007/BFb0105415}.
 This semantics is based on a stack of alternatives, where the cut operator is
@@ -3021,14 +3021,17 @@ under that assumption, unification and matching coincide.
 
 \section{Conclusion}
 
-This paper describes two operational semantics for \prologP with cut. The first
-semantics is based on And--Or trees: it is well suited both to graphical
-illustrations of the scope of cut and to proving lemmas about the effect of
-cut evaluation when reasoning about disjunctions. The second semantics is
+This paper describes two operational semantics for \prologP with cut. 
+The first semantics is
 based on a stack of alternatives: it is closer to actual \prologP
 implementations, including the first-order fragment of \elpiP, but it loses
 the explicit structure of the tree-based semantics and is therefore less
-convenient for reasoning about cut. We show how to translate trees into
+convenient for reasoning about cut. 
+The second
+semantics is based on And--Or trees: it is well suited both to graphical
+illustrations of the scope of cut and to proving lemmas about the effect of
+cut evaluation when reasoning about disjunctions. 
+We show how to translate trees into
 stacks and prove the two semantics equivalent. Using the tree-based
 semantics, we mechanize a soundness proof of the first-order fragment of the
 determinacy checker of~\cite{fissore2026}, namely that a call to a
@@ -3064,7 +3067,7 @@ prove that the algorithm produces most-general unifiers.
 To fully model the \elpiP language and mechanize~\cite{fissore2026} entirely,
 we would need to account for higher-order variables, that is, variables that
 represent predicates. This extension is ongoing and largely orthogonal to
-the present paper, since cut and higher-order variables do not interact. 
+the present paper. %, since cut and higher-order variables do not interact. 
 The main difficulty is that substitutions may contain
 predicates, and these predicates must have signatures compatible with those
 assumed statically, in the sense of the $\subseteq$ relation defined
