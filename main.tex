@@ -17,6 +17,7 @@
 \usepackage{stackengine} % For bussproof multiline
 \usepackage{wrapfig}
 \usepackage{tikz}
+\usetikzlibrary{tikzmark}
 \usetikzlibrary{matrix,calc,positioning}
 
 \usepackage{cleveref}
@@ -1929,7 +1930,10 @@ produces the same substitution and alternatives in both semantics.
 The tree-based semantics exposes more information than needed, hence
 we hide it behind existentials.
 
-\input{tex_code/runt1.tex}
+\begin{definition}[runT']\label{th:runT'}%
+	$\lambda\ p\ v\ \sigma\ t\ r .$\\
+  $\phantom{x}\exists\ b\ v' ,\ \mathrm{runT}\ p\ v\ \sigma\ (\mathrm{Unexplored}\ t)\ r\ b\ v' $
+\end{definition}
 
 For each possible outcome we prove the equivalence of the two semantics.
 
@@ -1938,11 +1942,11 @@ For each possible outcome we prove the equivalence of the two semantics.
 	$\forall\ p\ t\ (v\ \mathrm{:=}\ \mathrm{vars}\ t),$\\
   $
 	\phantom{xx}
-	\mathrm{runS}\ p\ v\ [\emptyset ,\ [\mathrm{call}\ t,\ \mnil]]\ \mathrm{None} \leftrightarrow
+	\mathrm{runS}\ p\ v\ [\varepsilon ,\ [\mathrm{call}\ t,\ \mnil]]\ \mathrm{None} \leftrightarrow
   $\\
   $
 	\phantom{xx}
-  \mathrm{runT'}\ p\ v\ \emptyset\ ( \mathrm{Unexplored}\ ( \mathrm{call}\ t ) )\ \mathrm{Zero} 
+  \mathrm{runT'}\ p\ v\ \varepsilon\ ( \mathrm{call}\ t  )\ \mathrm{Zero} 
   $
 \end{corollary}
 
@@ -1950,10 +1954,10 @@ For each possible outcome we prove the equivalence of the two semantics.
 \begin{corollary}[runS\_to\_runTO]\label{th:runStorunTO}%
 	$\forall\ p\ t\ \sigma' (v\ \mathrm{:=}\ \mathrm{vars}\ t),$\\
   $\phantom{xx}
-	\mathrm{runS}\ p\ v\ [\emptyset ,\ [\mathrm{call}\ t,\ \mnil]]\ ( \mathrm{Some}\ ( \sigma' ,\ \mnil ) ) \leftrightarrow
+	\mathrm{runS}\ p\ v\ [\varepsilon ,\ [\mathrm{call}\ t,\ \mnil]]\ ( \mathrm{Some}\ ( \sigma' ,\ \mnil ) ) \leftrightarrow
   $\\
 	$\phantom{xx}
-  \mathrm{runT'}\ p\ v\ \emptyset\ ( \mathrm{Unexplored}\ ( \mathrm{call}\ t ) )\ ( \mathrm{One}\ \sigma' ) 
+  \mathrm{runT'}\ p\ v\ \varepsilon\ ( \mathrm{call}\ t  )\ ( \mathrm{One}\ \sigma' ) 
   $
 \end{corollary}
 
@@ -1961,10 +1965,10 @@ For each possible outcome we prove the equivalence of the two semantics.
 \begin{corollary}[runS\_to\_runTM1]\label{th:runStorunTM1}%
 	$\forall\ p\ t \sigma'\ t' (v\ \mathrm{:=}\ \mathrm{vars}\ t),$\\
   $\phantom{xx}
-	\mathrm{runT'}\ p\ v\ \emptyset\ ( \mathrm{Unexplored}\ ( \mathrm{call}\ t ) )\ ( \mathrm{Many}\ \sigma'\ t' ) \to
+	\mathrm{runT'}\ p\ v\ \varepsilon\ ( \mathrm{call}\ t  )\ ( \mathrm{Many}\ \sigma'\ t' ) \to
   $\\
   $\phantom{xx}
-	\mathrm{runS}\ p\ v\ [\emptyset ,\ [\mathrm{call}\ t,\ \mnil]]\ ( \mathrm{Some}\ ( \sigma' ,\ \mathrm{t2s}\ t'\ \sigma\ \mnil ) )
+	\mathrm{runS}\ p\ v\ [\varepsilon ,\ [\mathrm{call}\ t,\ \mnil]]\ ( \mathrm{Some}\ ( \sigma' ,\ \mathrm{t2s}\ t'\ \sigma\ \mnil ) )
   $ 
 \end{corollary}
 
@@ -1972,13 +1976,11 @@ For each possible outcome we prove the equivalence of the two semantics.
 \begin{corollary}[runS\_to\_runTM2]\label{th:runStorunTM2}%
 	$\forall\ p\ t\ \sigma'\ x\ \mathrm{xs} (v\ \mathrm{:=}\ \mathrm{vars}\ t),$\\
   $\phantom{xx}
-  \mathrm{runS}\ p\ v\ [\emptyset ,\ [\mathrm{call}\ t,\ \mnil]]\ ( \mathrm{Some}\ ( \sigma' ,\ x\ \mathrm{::}\ \mathrm{xs} ) ) \to
+  \mathrm{runS}\ p\ v\ [\varepsilon ,\ [\mathrm{call}\ t,\ \mnil]]\ ( \mathrm{Some}\ ( \sigma' ,\ x\ \mathrm{::}\ \mathrm{xs} ) ) \to
   $\\
 	$\phantom{xx}
-  \exists\ t' ,\ \mathrm{runT'}\ p\ v\ \emptyset\ ( \mathrm{Unexplored}\ ( \mathrm{call}\ t ) )\ ( \mathrm{Many}\ \sigma'\ t' ) \land
-  $\\
-  $\phantom{xx}\phantom{xx}\phantom{xx}
-  \mathrm{t2s}\ t'\ \emptyset\ \mnil = x\ \mathrm{::}\ \mathrm{xs}
+  \exists\ t' ,\ \mathrm{runT'}\ p\ v\ \varepsilon\ ( \mathrm{call}\ t  )\ ( \mathrm{Many}\ \sigma'\ t' ) \land
+  \mathrm{t2s}\ t'\ \varepsilon\ \mnil = x\ \mathrm{::}\ \mathrm{xs}
   $
 \end{corollary}
 
@@ -2045,16 +2047,20 @@ corollaries above.
   }
 \end{wrapfigure}
 
-Explain that the main theorems induce on the execution in one semantic (top or bottom horizontal arrow) 
-to prove the other arrow. Since not all trees and stack can be produced by
-either semantics starting from the initial state, it is important to specify that.
+Explain that the main theorems induce on the execution in one semantic
+(top or bottom horizontal arrow)  to prove the other arrow. We start from top
+to bottom.
+
+Since not all trees and stack can be produced by
+either semantics starting from the initial state, it is important to identify the
+subset of valid trees.
 We defer to \cref{sec:validtree} the exact definition of sld\_tree.
 
 % \input{tex_code/tree_to_elpi.tex}
-\begin{theorem}[runT\_to\_runS]\label{th:runTtorunS}%
+\begin{theorem}[runT2S]\label{th:runTtorunS}%
 	$\forall\ p\ t\ \sigma\ r\ (v\ \mathrm{:=}\ \mathrm{vars}\ t\ \cup\ \mathrm{vars}\ \sigma) ,$\\ 
   $\phantom{xx}
-	\mathrm{sld\_tree}\ t \land \mathrm{runT'}\ p\ v\ \sigma\ t\ r \to \\
+	\mathrm{sld\_tree}\ t \land (\exists\ b\ v',\ \mathrm{runT}\ p\ v\ \sigma\ t\ r\ b\ v') \to \\
   $
   $
 	\begin{cases}
@@ -2065,39 +2071,38 @@ We defer to \cref{sec:validtree} the exact definition of sld\_tree.
   $
 \end{theorem}
 
-% \begin{proof}
-% We proceed by induction on the execution of \run'. There are five cases
-% to consider. The first (similar) cases arises from \stopot and \stopt; they deal with
-% successful trees. A successful tree corresponds to a stack that
-% start with an empty list, in both cases
-% we conclude using \stops. The case for \stept
-% requires treating two subcases: \step evaluates either a cut or a call.
-% Accordingly, we apply \cuts or \calls, followed by the
-% induction hypothesis. The case for \backt is silent: it represents
-% the non-injective behavior of \ttl; however, thanks to
-% \cref{th:pruneFtreetostack} and the induction hypothesis, the conclusion is
-% proved. The last case arises from the derivation \failt. It is
-% easily proved using \fails and the fact that if \na returns
-% None when trying to erase failure in $t$, then \ttl applied to $t$
-% returns the empty list.
-% \end{proof}
+\begin{proof} Induction on $\mathrm{runT}$. \end{proof}
+
+We could prove the other direction in a symmetric way, i.e. defining the mapping
+from stacks to trees as well as a predicate to identify valid stacks (that
+the semantics can generate from the initial one). 
+The backard simulation technique~\cite{yves-equiv} we follow
+makes these two definition unnecessary by using the exitential quantifier
+(on $t'$ in the third case). We recover that a is a valid stack because
+it comes from a sld\_tree, and by inhabiting the existential in a constructive logic,
+we implicilty give the mapping from stacks to trees.
 
 % \input{tex_code/elpi_to_tree.tex}
-\begin{theorem}[runS\_to\_runT]\label{th:runStorunT}%
-\begin{multline*}
-	\forall\ p\ v\ a\ r ,\ \mathrm{runS}\ p\ v\ a\ r \to
-	\forall\ \sigma\ t ,\ \mathrm{sld\_tree}\ t \to \mathrm{t2s}\ t\ \sigma\ \mnil = a \to \\
+\begin{theorem}[runS2T]\label{th:runStorunT}%
+	$\forall\ p\ v\ a\ r ,$\\
+  $\phantom{xx}\mathrm{runS}\ p\ v\ a\ r \to
+	\forall\ \sigma\ t ,\ \mathrm{sld\_tree}\ t \to \mathrm{t2s}\ t\ \sigma\ \mnil = a \to \exists \ b\ v',
+  $\\
 	% \mathrm{match}\ r\ \mathrm{with} \\
+  $
   \begin{cases}
-    \mathrm{runT'}\ p\ v\ \sigma\ t\ \mathrm{Zero}             & \mathrm{if}\ r = \mathrm{None} \\
-    \mathrm{runT'}\ p\ v\ \sigma\ t\ ( \mathrm{One}\ \sigma' ) & \mathrm{if}\ r = \mathrm{Some}\ ( \sigma' ,\ \mnil ) \\
-    \exists\ t' ,\ \mathrm{runT'}\ p\ v\ \sigma\ t\ ( \mathrm{Many}\ \sigma'\ t' ) 
-    \land\ \mathrm{t2s}\ t'\ \sigma\ \mnil = a'     & \mathrm{if}\ r =  \mathrm{Some}\ ( \sigma' ,\ a' ) \\
+    \mathrm{runT}\ p\ v\ \sigma\ t\ \mathrm{Zero}\ b\ v'             & \mathrm{if}\ r = \mathrm{None} \\
+    \mathrm{runT}\ p\ v\ \sigma\ t\ ( \mathrm{One}\ \sigma' )\ b\ v' & \mathrm{if}\ r = \mathrm{Some}\ ( \sigma' ,\ \mnil ) \\
+    \exists\ t',\ \mathrm{runT}\ p\ v\ \sigma\ t\ ( \mathrm{Many}\ \sigma'\ t' )\ b\ v' 
+        & \mathrm{if}\ r =  \mathrm{Some}\ ( \sigma' ,\ a' ) \\
+    \phantom{xxxx}\land\ \mathrm{t2s}\ t'\ \sigma\ \mnil = a'     &  \\
   \end{cases}
-\end{multline*}
+  $
 \end{theorem}
 
-
+\begin{proof} Induction on $\mathrm{runS}$. One needs to take care of
+silent transitions in runT XXX DAVIDE XXX
+\end{proof}
 
 % The proof is based on the idea explained in~\cite[Section
 % 3.5.1]{yves-equiv} and depicted in the figure on the right:
@@ -2118,13 +2123,13 @@ We defer to \cref{sec:validtree} the exact definition of sld\_tree.
 %   $\mathrm{runT'}\ \prog\ v\ \sigma\ t\ r := \exists\ b\ v',\ \mathrm{runT}\ \prog\ v\ \sigma\ t\ r\ b\ v'$
 % \end{definition}
 
-Proving the four theorems above as their are claimed is not possible in Rocq,
-since the induction principle would be too strong. We need therefore to prove a
-more generic main theorem talking about the interpretation of generic trees and
-stacks, related via t2s, instead of call to term. Morever, in order
-to make this proof work, the trees we take into account must be satisfy the
-sld\_tree predicate which restrict the theorem only to those valid trees that
-by invariant are generated during the evaluation of the runT' inductive.
+% Proving the four theorems above as their are claimed is not possible in Rocq,
+% since the induction principle would be too strong. We need therefore to prove a
+% more generic main theorem talking about the interpretation of generic trees and
+% stacks, related via t2s, instead of call to term. Morever, in order
+% to make this proof work, the trees we take into account must be satisfy the
+% sld\_tree predicate which restrict the theorem only to those valid trees that
+% by invariant are generated during the evaluation of the runT' inductive.
 
 
 
@@ -2141,12 +2146,12 @@ by invariant are generated during the evaluation of the runT' inductive.
 
 
 
-Before describing the translation of trees to stacks (in~\cref{sec:t2l})
-we need to define the notion of \emph{valid SLD tree}. The {tree}
-datatype indeed contains trees that cannot be generated
-by {runT} via {step} or {prune}, for example
-all the trees that do not correspond to a depth-first left-to-right
-tree construction strategy. 
+% Before describing the translation of trees to stacks (in~\cref{sec:t2l})
+% we need to define the notion of \emph{valid SLD tree}. The {tree}
+% datatype indeed contains trees that cannot be generated
+% by {runT} via {step} or {prune}, for example
+% all the trees that do not correspond to a depth-first left-to-right
+% tree construction strategy. 
 
 
 % In the previous section we have introduces the two semantics, they are 
@@ -2215,7 +2220,113 @@ are preserved by calls to \step and \na.
 \begin{figure*}[!htb]
   \begin{center}
     
-    \includegraphics[width=0.8\textwidth, keepaspectratio]{src/t2lex.pdf}
+    % \includegraphics[width=0.8\textwidth, keepaspectratio]{src/t2lex.pdf}
+    \begin{minipage}[t][][t]{.55\textwidth}
+\begin{forest}
+for tree={
+  % minimum height=5em,
+  l sep=1.5em, s sep=1.5em,
+  align=right
+}
+[\orN,orNode
+  [\deadN, deadNode,edge=dashed]
+  [\andN, andNode,edge label={node[midway,right] {$\sigma_1$}}
+    [\orN,orNode, name=s1
+      [\deadN, deadNode,edge=dashed]
+      [\subnode{ss1}{\okN},okNode,edge label={node[midway,right] {$\sigma_3$}}]
+      [\subnode{ss2}{\okN},okNode,edge label={node[midway,below] {$\sigma_4$}}]
+      [\subnode{ss3}{!},edge label={node[midway,right] {$\sigma_5$}}]
+    ]
+    [{{f B C}},name=cur,edge label={node[midway,right] {$R_1$}}]
+    [{{!}},edge label={node[midway,right] {$R_2$}}]
+  ]
+  [\andN,name=X,andNode,edge label={node[midway,right] {$\sigma_2$}}
+    [{{f D E}},name=Y]
+    [{{f E F}},edge label={node[midway,right] {$R_3$}},name=Z]
+  ]
+] 
+\curnodeNE{cur};
+\node[draw,red,fit=(X)(Y)(Z)]{\subnode{ss4}{}};
+\end{forest}
+\end{minipage}
+%
+\begin{minipage}[t][7.5cm][t]{.40\textwidth}
+  \vspace{60pt}
+\begin{tikzpicture}[baseline]
+
+\matrix (outer) [matrix of nodes,
+                 nodes={draw, minimum width=0.5cm, minimum height=1cm, anchor=center},
+                 column sep=0.3cm, row sep=0.3cm] {
+\phantom{AAAAAAAA} & \phantom{AAAAAAAA} & \phantom{AAAAAAAAAAA} & \phantom{AAAAAAAAA} &  \node[draw=none] (A) {\phantom{xx}};\\
+};
+
+\matrix (inner1) [matrix of nodes,
+                 nodes={minimum size=0.6cm},
+                 column sep=0.1cm, row sep=0.1cm] at (outer-1-1.center) {
+\subnode{ss11}{f B C}, & ! \\
+};
+
+\matrix (inner2) [matrix of nodes,
+                 nodes={minimum size=0.6cm},
+                 column sep=0.1cm, row sep=0.1cm] at (outer-1-2.center) {
+\subnode{ss22}{f B C}, & ! \\
+};
+
+\matrix (inner3) [matrix of nodes,
+                 nodes={minimum size=0.6cm},
+                 column sep=0.1cm, row sep=0.1cm] at (outer-1-3.center) {
+\subnode{ss33}{!}, & f B C, & ! \\
+};
+
+\matrix (inner4) [matrix of nodes,
+                 nodes={minimum size=0.6cm},
+                 column sep=0.1cm, row sep=0.1cm] at (outer-1-4.center) {
+\subnode{ss44}{f D E}, & f E F \\
+};
+
+
+\matrix (innerL) [matrix of nodes,
+                 nodes={minimum size=0.6cm},
+                 column sep=0.1cm, row sep=0.1cm] at (A.center) {
+\phantom{x} \\
+};
+
+\draw[->, thick]
+  ($(inner1-1-2.north)+(0,0.3)$) -- ++(0,0.6)  
+  -- ($(innerL-1-1.north)+(0,0.9)$)            
+  -- ($(innerL-1-1.north)+(0,0.3)$);           
+
+\draw[->, thick]
+  ($(inner2-1-2.north)+(0,0.3)$) -- ++(0,0.5)  
+  -- ($(innerL-1-1.north)+(0,0.8)$)            
+  -- ($(innerL-1-1.north)+(0,0.3)$);           
+
+\draw[->, thick]
+  ($(inner3-1-3.north)+(0,0.3)$) -- ++(0,0.4)  
+  -- ($(innerL-1-1.north)+(0,0.7)$)            
+  -- ($(innerL-1-1.north)+(0,0.3)$);           
+
+\draw[->, thick]
+  ($(inner3-1-1.south)-(0,0.3)$) -- ++(0,-0.4)  
+  -- ($(inner4-1-1.south)-(0,0.7)$)            
+  -- ($(inner4-1-1.south)-(0,0.3)$);           
+
+\node at ($(outer-1-1.north west)+(-0,0.2)$) {$\sigma_3$};
+\node at ($(outer-1-2.north west)+(-0,0.2)$) {$\sigma_4$};
+\node at ($(outer-1-3.north west)+(-0,0.2)$) {$\sigma_5$};
+\node at ($(outer-1-4.north west)+(-0,0.2)$) {$\sigma_2$};
+\end{tikzpicture}
+\end{minipage}
+
+\newcommand{\marr}[3]{\draw[->, red, dashed, line width=1pt] ($(#1)+(0,-0.5+#3)$) to[in=270, out=270] ($(#2)+(-0.4,-0.7)$)}
+
+\begin{tikzpicture}[overlay,remember picture]
+\marr{ss1}{ss11}{0};
+\marr{ss2}{ss22}{0};
+\marr{ss3}{ss33}{0};
+\marr{ss4}{ss44}{-0.9};
+\end{tikzpicture}
+
   \end{center}
 \caption{Example of \ttl execution\label{fig:cc}}
 \end{figure*}
@@ -2705,7 +2816,7 @@ either fails or succeeds with no alternatives left to explore.
 
 % \input{tex_code/is_det.tex}
 \begin{definition}[is\_det]\label{th:isdet} $\lambda\ p\ \sigma\ v\ t .$\\
-  $\phantom{xxx}\forall\ r ,\ \mathrm{runT'}\ p\ v\ \sigma\ t\ r \to r = \mathrm{Zero} \lor \exists\ \sigma ,\ r = ( \mathrm{One}\ \sigma ) $
+  $\phantom{xxx}\forall\ r ,\ \mathrm{runT'}\ p\ v\ \sigma\ (\mathrm{call}\ t)\ r \to r = \mathrm{Zero} \lor \exists\ \sigma ,\ r = ( \mathrm{One}\ \sigma ) $
 \end{definition}
 
 \begin{definition}[tm\_is\_det]\label{def:tmisdet}
