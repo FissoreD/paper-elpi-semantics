@@ -2443,20 +2443,22 @@ are preserved by calls to \step and \na.
 
 % \input{tex_code/valid_tree_step.tex}
 \begin{lemma}[\logo{}sld\_tree\_step]\label{th:validtreestep}%
-	$$\forall\ \sigma\ v\ A\ r ,\ \mathrm{sld\_tree}\ A \to \mathrm{step}\ u\ p\ v\ \sigma\ A = r \to \mathrm{sld\_tree}\ (\mathrm{snd}\ r)$$
+	$\forall\ \sigma\ v\ A\ r ,$\\
+  $\phantom{xx}\mathrm{sld\_tree}\ A \to \mathrm{step}\ u\ p\ v\ \sigma\ A = r \to \mathrm{sld\_tree}\ (\mathrm{snd}\ r)$
 \end{lemma}
 
 % \input{tex_code/valid_tree_prune.tex}
 \begin{lemma}[\logo{}sld\_tree\_prune]\label{th:validtreeprune}%
-	$$\forall\ A\ B\ b ,\ \mathrm{sld\_tree}\ A \to \mathrm{prune}\ b\ A = \mathrm{Some}\ B \to \mathrm{sld\_tree}\ B $$
+	$\forall\ A\ B\ b ,$\\
+  $\phantom{xx}\mathrm{sld\_tree}\ A \to \mathrm{prune}\ b\ A = \mathrm{Some}\ B \to \mathrm{sld\_tree}\ B $
 \end{lemma}
 
 % We can therefore derive how valid trees are preserved by the stack interpreter.
 
 % \input{tex_code/valid_tree_run.tex}
 \begin{theorem}[\logo{}sld\_tree\_run]\label{th:validtreerun}%
-	$\forall\ b\ \sigma\ \sigma'\ v\ v'\ A\ B,$
-  $$\mathrm{sld\_tree}\ A \to \run\ u\ p\ v\ \sigma\ A\ ( \mathrm{Many}\ \sigma'\ B )\ b\ v' \to \mathrm{sld\_tree}\ B $$
+	$\forall\ b\ \sigma\ \sigma'\ v\ v'\ A\ B,$\\
+  $\phantom{xx}\mathrm{sld\_tree}\ A \to \run\ u\ p\ v\ \sigma\ A\ ( \mathrm{Many}\ \sigma'\ B )\ b\ v' \to \mathrm{sld\_tree}\ B $
 \end{theorem}
 
 %
@@ -2720,13 +2722,15 @@ are acyclic in this sense.
 % \input{tex_code/unif_correct.tex}
 
 \begin{lemma}[\logo{}unify\_correct]\label{th:unifycorrect}%
-$$\forall\ t_1\ t_2\ s\ s' ,\ \mathrm{acyclic}\ s \to \mathrm{unify}\ t_1\ t_2\ s = \mathrm{Some}\ s' \to s'\ t_1 = s'\ t_2 $$
+$\forall\ t_1\ t_2\ s\ s' ,$\\
+$\phantom{xx}\mathrm{acyclic}\ s \to \mathrm{unify}\ t_1\ t_2\ s = \mathrm{Some}\ s' \to s'\ t_1 = s'\ t_2 $
 \end{lemma}
 
 % \input{tex_code/unify_complete.tex}
-\begin{lemma}[\logo{}unify\_complete]\label{th:unifycomplete} $\forall\ t_1\ t_2\ s ,\ \mathrm{acyclic}\ s \to$
+\begin{lemma}[\logo{}unify\_complete]\label{th:unifycomplete} $\forall\ t_1\ t_2\ s ,\ \mathrm{acyclic}\ s \to$\\
 % \begin{multline*}
-$$( \exists\ s' ,\ \mathrm{acyclic}\ s' \land\ s'\ ( s\ t_1 ) = s'\ ( s\ t_2 ) ) \to \exists\ s'' ,\ \mathrm{unify}\ t_1\ t_2\ s = \mathrm{Some}\ s''$$
+$\phantom{xx}( \exists\ s' ,\ \mathrm{acyclic}\ s' \land\ s'\ ( s\ t_1 ) = s'\ ( s\ t_2 ) ) \to$\\
+$\phantom{xx}\phantom{xx}\exists\ s'' ,\ \mathrm{unify}\ t_1\ t_2\ s = \mathrm{Some}\ s''$
 \end{lemma}
 
 The \elpiP language adopts a
@@ -2785,10 +2789,9 @@ query, if both heads match the query $q$, then the two heads must unify.
 % \input{tex_code/matching_unify_transP.tex}
 
 \begin{lemma}[\logo{}matching\_unify\_transP]\label{th:matchingunifytransP}%
-\begin{multline*}
-	\forall\ h_1\ h_2\ q .\ h_1 \cap h_2 = \varnothing \to h_1 \cap q = \varnothing \to h_2 \cap q = \varnothing \to \\
-	\mathrm{matching}\ h_1\ q\ \varnothing \to \mathrm{matching}\ h_2\ q\ \varnothing \to \mathrm{unify}\ h_1\ h_2\ \varnothing 
-\end{multline*}
+	$\forall\ h_1\ h_2\ q,$\\
+  $\phantom{xx}h_1 \cap h_2 = \varnothing \land h_1 \cap q = \varnothing \land h_2 \cap q = \varnothing \to$ \\
+	$\phantom{xx}\phantom{xx}\mathrm{matching}\ h_1\ q\ \varnothing \land \mathrm{matching}\ h_2\ q\ \varnothing \to \mathrm{unify}\ h_1\ h_2\ \varnothing $
 \end{lemma}
 
 \begin{proof}
@@ -2840,11 +2843,9 @@ $\alpha$-equivalent terms.
 
 % \input{tex_code/unif_ren.tex}
 \begin{lemma}[\logo{}unif\_ren\_ac]\label{th:unifren}
-  $\forall\ t_1\ t_2\ t_1'\ t_2', t_1 =_\alpha t_1' \land\ t_2 =_\alpha t_2' \to$
-  % \vspace{.8em}
-  \\
-  $\phantom{xxx}
-  t_1 \cap t_2 = \varnothing \land\ t_1' \cap t_2' = \varnothing \to
+  $\forall\ t_1\ t_2\ t_1'\ t_2',$\\
+  $\phantom{xx}t_1 =_\alpha t_1' \land\ t_2 =_\alpha t_2' \land t_1 \cap t_2 = \varnothing \land\ t_1' \cap t_2' = \varnothing \to$\\
+  $\phantom{xx}\phantom{xx}
   \mathrm{unify}\ t_1\ t_2\ \varepsilon \to \mathrm{unify}\ t_1'\ t_2'\ \varepsilon
   $
 \end{lemma}
@@ -2885,9 +2886,9 @@ either fails or succeeds with no alternatives left to explore.
 The theorem we want to prove is the following one:
 
 % \input{tex_code/det_check_call.tex}
-\begin{theorem}[\logo{}det\_check\_call]\label{th:detcheckcall}$\forall\ p\ \sigma\ t\ v , \mathrm{det\_checked}\ p \to$\\
+\begin{theorem}[\logo{}det\_check\_call]\label{th:detcheckcall}$\forall\ p\ \sigma\ t\ v , $\\
   % \vspace{.8em}\\
-	$\phantom{xxx}  \mathrm{tm\_is\_det}\ p\ t \to \mathrm{is\_det}\ p\ \sigma\ v\ t $
+	$\phantom{xxx} \mathrm{det\_checked}\ p \to \mathrm{tm\_is\_det}\ p\ t \to \mathrm{is\_det}\ p\ \sigma\ v\ t $
 \end{theorem}
 
 Here, det\_checked denotes the function that checks the program
@@ -2962,8 +2963,8 @@ operations \step and \na.
 
 %\input{tex_code/det_tree_step.tex}
 \begin{lemma}[\logo{}det\_tree\_step]\label{th:dettreestep}
-  $\forall\ \mathrm{p}\ v\ \sigma_1\ t\ r ,\ \mathrm{det\_checked}\ \mathrm{p} \to$\\
-	$\phantom{xxx} \mathrm{step}\ u\ \mathrm{p}\ v\ \sigma_1\ t = r \to \mathrm{det\_tree}\ \mathrm{p}\ (\mathrm{snd}\ r) $
+  $\forall\ \mathrm{p}\ v\ \sigma_1\ t\ r ,$\\
+	$\phantom{xxx} \mathrm{det\_checked}\ \mathrm{p} \to\mathrm{step}\ u\ \mathrm{p}\ v\ \sigma_1\ t = r \to \mathrm{det\_tree}\ \mathrm{p}\ (\mathrm{snd}\ r) $
 \end{lemma}
 
 % \input{tex_code/det_tree_prune.tex}
