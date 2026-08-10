@@ -1874,62 +1874,6 @@ tree construction strategy.
 % generated from a call. Secondly, we need to translate trees into elpi
 % states. In the next to subsection we propose the two functions \vast and \ttl.
 
-\subsection{Valid SLD trees}\label{sec:validtree}
-\begin{figure}[b]
-    \input{tex_code/valid_tree.tex}
-    \caption{Valid SLD tree \label{fig:vt} }
-\end{figure}
-
-
-The class of valid SLD trees is captured by the \vast
-function shown in Figure~\ref{fig:vt}.
-While all base cases of {tree} are valid, we need to analyze the \orC and
-\andC constructors more carefully.
-% \marginpar{TODO: explain better valid tree as requested by reviewr, maybe make a few examples}
-
-For the \orC constructor, we distinguish two cases depending on whether the
-left-hand side is present. If it is not, then the right-hand side must be a
-valid SLD tree. Otherwise, the left-hand side must be a valid SLD tree, and the
-right-hand side must either be the \koC tree or be unexplored. The former case
-occurs when the right-hand side is cut away by the evaluation of a superficial
-cut in the left-hand side.
-In the latter case we use the \emph{base\_or} predicate
-to check that $B$ is the right-skewed tree formed by a disjunction of
-conjunctions, generated after a successful backchain for a call.
-
-For the \andC constructor, the left hand side is required to be a valid SLD tree.
-The shape of the right hand side depends on whether the left hand side is a
-success. If it is not successful, then the right hand side must not be
-explored, i.e. $B$ must be
-the right-skewed tree containing conjunctions of premise atoms.
-This is enforced using the \emph{big\_and} procedure, which generates a tree
-from the reset point $B_0$ (the same procedure used to
-transform each alternative output by backchain into the And-layer
-of the resulting tree).
-When the left hand side is successful, then the right hand side
-may have been explored, and consequently must be a valid SLD tree.
-
-We point out the two main invariants stating that valid SLD trees
-are preserved by calls to \step and \na.
-
-% \input{tex_code/valid_tree_step.tex}
-\begin{lemma}[sld\_tree\_step]\label{th:validtreestep}%
-	$$\forall\ \sigma\ v\ A\ r ,\ \mathrm{sld\_tree}\ A \to \mathrm{step}\ u\ p\ v\ \sigma\ A = r \to \mathrm{sld\_tree}\ (\mathrm{snd}\ r)$$
-\end{lemma}
-
-% \input{tex_code/valid_tree_prune.tex}
-\begin{lemma}[sld\_tree\_prune]\label{th:validtreeprune}%
-	$$\forall\ A\ B\ b ,\ \mathrm{sld\_tree}\ A \to \mathrm{prune}\ b\ A = \mathrm{Some}\ B \to \mathrm{sld\_tree}\ B $$
-\end{lemma}
-
-% We can therefore derive how valid trees are preserved by the stack interpreter.
-
-% \input{tex_code/valid_tree_run.tex}
-\begin{theorem}[sld\_tree\_run]\label{th:validtreerun}%
-	$\forall\ b\ \sigma\ \sigma'\ v\ v'\ A\ B,$
-  $$\mathrm{sld\_tree}\ A \to \mathrm{runT}\ u\ p\ v\ \sigma\ A\ ( \mathrm{Many}\ \sigma'\ B )\ b\ v' \to \mathrm{sld\_tree}\ B $$
-\end{theorem}
-
 % \begin{figure}  
 %     \begin{coqcode}
 %       Fixpoint t2l ~$t$~ ~$\sigma$~ (cp: alts) : alts ~$\coloneq$~
@@ -2165,11 +2109,67 @@ $x :: xs$.
 
 Proving the four theorems above as their are claimed is not possible in Rocq,
 since the induction principle would be too strong. We need therefore to prove a
-more generic main theorem talking about the interpretation of generic trees and
+more generic main theorem talking about the interpretation of trees and
 stacks, related via tree\_to\_stack, instead of call to term. Morever, in order
-to make this proof work, the trees we take into account must be satisfy the
-sld\_tree predicate which restrict the theorem only to those valid trees that
-by invariant are generated during the evaluation of the runT' inductive.
+to make this proof work, the trees we take into account is the class of trees 
+that can be generated via the SLD search algorithm used by step and prune.
+We briefly defined this definition of valid trees in the following section.
+
+\subsection{Valid SLD trees}\label{sec:validtree}
+\begin{figure}[b]
+    \input{tex_code/valid_tree.tex}
+    \caption{Valid SLD tree \label{fig:vt} }
+\end{figure}
+
+
+The class of valid SLD trees is captured by the \vast
+function shown in Figure~\ref{fig:vt}.
+While all base cases of {tree} are valid, we need to analyze the \orC and
+\andC constructors more carefully.
+% \marginpar{TODO: explain better valid tree as requested by reviewr, maybe make a few examples}
+
+For the \orC constructor, we distinguish two cases depending on whether the
+left-hand side is present. If it is not, then the right-hand side must be a
+valid SLD tree. Otherwise, the left-hand side must be a valid SLD tree, and the
+right-hand side must either be the \koC tree or be unexplored. The former case
+occurs when the right-hand side is cut away by the evaluation of a superficial
+cut in the left-hand side.
+In the latter case we use the \emph{base\_or} predicate
+to check that $B$ is the right-skewed tree formed by a disjunction of
+conjunctions, generated after a successful backchain for a call.
+
+For the \andC constructor, the left hand side is required to be a valid SLD tree.
+The shape of the right hand side depends on whether the left hand side is a
+success. If it is not successful, then the right hand side must not be
+explored, i.e. $B$ must be
+the right-skewed tree containing conjunctions of premise atoms.
+This is enforced using the \emph{big\_and} procedure, which generates a tree
+from the reset point $B_0$ (the same procedure used to
+transform each alternative output by backchain into the And-layer
+of the resulting tree).
+When the left hand side is successful, then the right hand side
+may have been explored, and consequently must be a valid SLD tree.
+
+We point out the two main invariants stating that valid SLD trees
+are preserved by calls to \step and \na.
+
+% \input{tex_code/valid_tree_step.tex}
+\begin{lemma}[sld\_tree\_step]\label{th:validtreestep}%
+	$$\forall\ \sigma\ v\ A\ r ,\ \mathrm{sld\_tree}\ A \to \mathrm{step}\ u\ p\ v\ \sigma\ A = r \to \mathrm{sld\_tree}\ (\mathrm{snd}\ r)$$
+\end{lemma}
+
+% \input{tex_code/valid_tree_prune.tex}
+\begin{lemma}[sld\_tree\_prune]\label{th:validtreeprune}%
+	$$\forall\ A\ B\ b ,\ \mathrm{sld\_tree}\ A \to \mathrm{prune}\ b\ A = \mathrm{Some}\ B \to \mathrm{sld\_tree}\ B $$
+\end{lemma}
+
+% We can therefore derive how valid trees are preserved by the stack interpreter.
+
+% \input{tex_code/valid_tree_run.tex}
+\begin{theorem}[sld\_tree\_run]\label{th:validtreerun}%
+	$\forall\ b\ \sigma\ \sigma'\ v\ v'\ A\ B,$
+  $$\mathrm{sld\_tree}\ A \to \mathrm{runT}\ u\ p\ v\ \sigma\ A\ ( \mathrm{Many}\ \sigma'\ B )\ b\ v' \to \mathrm{sld\_tree}\ B $$
+\end{theorem}
 
 % From \cref{tree-ex,ex-elpi}, we observe that, upon backtracking, \run may perform
 % more steps than \nur before returning a solution or a failure.
