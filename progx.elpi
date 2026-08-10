@@ -3,5 +3,5 @@ f 1 2.                % The two rules have non-verlapping
 f 2 3.                %  heads, i.e. 1 != 2
 
 func g int -> int.         % g is deterministic.
-g A C :- r A B, f B C, !.  % If the firstrule succeeds, the second and
+g A C :- r A B, f B C, !.  % If the firs trule succeeds, the second and
 g D F :- f D E, f E F.     % the choice points left by r are cut.

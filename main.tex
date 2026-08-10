@@ -30,6 +30,8 @@
 \newcommand{\mappend}{\ensuremath{\mathbin{+\!\!+}}\xspace}
 \newcommand{\mnil}{\ensuremath{[]}\xspace}
 \newtheorem{axiom}{Axiom}
+\newcommand{\mphant}{\phantom{x}}
+
 
 \Crefname{figure}{Fig.}{Figs.}
 
@@ -748,7 +750,7 @@ stack.
     \matrix (inner1c) [matrix of nodes,
                      nodes={minimum width=0.6cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex, font=\fontsize{8pt}{9.6pt}\selectfont},
                      column sep=0.1cm, row sep=0.1cm] at (A1.center) {
-    \phantom{x} \\
+    \mphant \\
     };
     \draw[->, thick]
       ($(inner1a-1-3.north)+(0,0.3)$) -- ++(0,0.4)
@@ -785,7 +787,7 @@ stack.
     \matrix (inner2L) [matrix of nodes,
                      nodes={minimum width=0.6cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex, font=\fontsize{8pt}{9.6pt}\selectfont},
                      column sep=0.1cm, row sep=0.1cm] at (A2.center) {
-    \phantom{x} \\
+    \mphant \\
     };
     \draw[->, thick]
       ($(inner2a-1-2.north)+(0,0.3)$) -- ++(0,0.6)
@@ -831,7 +833,7 @@ stack.
     \matrix (inner3L) [matrix of nodes,
                      nodes={minimum width=0.6cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex, font=\fontsize{8pt}{9.6pt}\selectfont},
                      column sep=0.1cm, row sep=0.1cm] at (A3.center) {
-    \phantom{x} \\
+    \mphant \\
     };
     \draw[->, thick]
       ($(inner3a-1-2.north)+(0,0.3)$) -- ++(0,0.5)
@@ -872,7 +874,7 @@ stack.
     \matrix (inner4L) [matrix of nodes,
                      nodes={minimum width=0.6cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex, font=\fontsize{8pt}{9.6pt}\selectfont},
                      column sep=0.1cm, row sep=0.1cm] at (A4.center) {
-    \phantom{x} \\
+    \mphant \\
     };
     \draw[->, thick]
       ($(inner4a-1-2.north)+(0,0.3)$) -- ++(0,0.5)
@@ -913,7 +915,7 @@ stack.
     \matrix (inner5L) [matrix of nodes,
                      nodes={minimum width=0.6cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex, font=\fontsize{8pt}{9.6pt}\selectfont},
                      column sep=0.1cm, row sep=0.1cm] at (A5.center) {
-    \phantom{x} \\
+    \mphant \\
     };
     \draw[->, thick]
       ($(inner5a-1-1.north)+(0,0.3)$) -- ++(0,0.5)
@@ -1066,7 +1068,7 @@ list.
 % \newcommand{\dingv}{\ensuremath{\square\!\!\!\text{\ding{51}}\;}}
 \newcommand{\dingv}{\makebox[0pt][l]{\ensuremath{\square}}\raisebox{.15ex}{\hspace{0.1em}\ensuremath{\checkmark}}}
 % \newcommand{\dingx}{\ensuremath{\square\!\!\!\text{\ding{55}}\;}}
-\newcommand{\dingx}{\makebox[0pt][l]{\ensuremath{\square}}\raisebox{.0ex}{\hspace{0.05em}x}}
+\newcommand{\dingx}{\makebox[0pt][l]{\ensuremath{\square}}\raisebox{.0ex}{\hspace{0.01em}\ensuremath{\times}}}
 \newcommand{\dings}{\ensuremath{\square\!\!\!\!\cdot\;}}
 % \newcommand{\dings}{\makebox[0pt][l]{\ensuremath{\square}}\raisebox{.15ex}{\hspace{0.1em}?}}
 % \newcommand{\dings}{{\setlength{\fboxsep}{1pt}\fbox{{\footnotesize ?}}}}
@@ -1757,10 +1759,10 @@ implicitly denotes $(\mathrm{Some}\ A) \lor B_\sigma$.
 % \input{tex_code/runSST_or.tex}
 \begin{theorem}[or\_intro\_left]\label{th:orintroleft}%
 	$\forall\ p\ v\ v'\ \sigma\ \sigma'\ A\ A'\ \sigma_1\ B ,$\\
-  $\phantom{x}
+  $\mphant
   \mathrm{runT}\ p\ v\ \sigma\ A\ ( \mathrm{Many}\ \sigma'\ A' )\ \mathrm{true}\ v' \to
   $\\
-	$\phantom{x}\phantom{x}
+	$\mphant\mphant
   \mathrm{runT}\ p\ v\ \sigma\ ( A \lor B\ \phantom{!}_{\!\!\!\!\sigma_1} )\ ( \mathrm{Many}\ \sigma'\ ( A' \lor \mathrm{KO}\ \phantom{!}_{\!\!\!\!\sigma_1} ) )\ \mathrm{false}\ v'
   $
 \end{theorem}
@@ -1768,7 +1770,7 @@ implicitly denotes $(\mathrm{Some}\ A) \lor B_\sigma$.
 \begin{theorem}[or\_intro\_right]\label{th:orintroright}%
   $\forall\ p\ v\ v'\ \sigma\ A\ \sigma_1\ B ,$\\
 $ 
- \phantom{x}
+ \mphant
  \mathrm{runT}\ p\ v\ \sigma\ A\ \mathrm{Zero}\ \mathrm{true}\ v' \to 
  \mathrm{runT}\ p\ v\ \sigma\ ( A \lor B\ \phantom{!}_{\!\!\!\!\sigma_1} )\ \mathrm{Zero}\ \mathrm{false}\ v'
 $
@@ -1776,11 +1778,11 @@ $
 % \input{tex_code/runNF_or.tex}
 \begin{theorem}[or\_intro\_right2]\label{th:orintroright2}%
 	$\forall\ p\ v_0\ v_1\ v_2\ \sigma\ A\ \sigma_1\ \sigma_2\ B\ b ,$\\
-$\phantom{x}
+$\mphant
 	\mathrm{runT}\ p\ v_0\ \sigma\ A\ \mathrm{Zero}\ \mathrm{false}\ v_1 \land 
   \mathrm{runT}\ p\ v_1\ \sigma_1\ B\ ( \mathrm{One}\ \sigma_2 )\ b\ v_2 \to
 $\\
-$\phantom{x}\phantom{x}
+$\mphant\mphant
 	\mathrm{runT}\ p\ v_0\ \sigma\ ( A \lor B\ \phantom{!}_{\!\!\!\!\sigma_1} )\ ( \mathrm{One}\ \sigma_2 )\ \mathrm{false}\ v_2 
 $
 \end{theorem}
@@ -2542,7 +2544,7 @@ The first notion to provide is the application of an acyclic substitution:
 
 Note that this definition of acyclicity entails that the substitution is
 necessarily self applied, i.e. $\sigma \coloneq \{ X \mapsto f~Y, Y \mapsto a\}$
-is not acyclic, whereas the equivalent $\sigma' \coloneq \{ X \mapsto f~a\}$
+is not acyclic, whereas the equivalent $\sigma' \coloneq \{ X \mapsto f~a, Y \mapsto a\}$
 is.
 The algorithm by Martelli and Montanari generates substitutions that
 are acyclic in this sense.
@@ -2622,7 +2624,7 @@ query, if both heads match the query $q$, then the two heads must unify.
 \end{lemma}
 
 \begin{proof}
-  By \cref{um}, we now that the matching of $h_1$ (resp. $h_2$) and $q$ gives a
+  By \cref{um}, we know that the matching of $h_1$ (resp. $h_2$) and $q$ gives a
   substitution $\sigma_1$ (resp. $\sigma_2$) where the variables in $q$ are not
   assigned, i.e. its domain only contains variables in $h_1$ (resp $h_2$). Using
   \cref{th:unifycomplete} we need to prove that it exists a
@@ -2715,12 +2717,12 @@ either fails or succeeds with no alternatives left to explore.
 The theorem we want to prove is the following one:
 
 % \input{tex_code/det_check_call.tex}
-\begin{theorem}[det\_check\_call]\label{th:detcheckcall}$\forall\ p\ \sigma\ t\ v , \mathrm{detchecked}\ p \to$\\
+\begin{theorem}[det\_check\_call]\label{th:detcheckcall}$\forall\ p\ \sigma\ t\ v , \mathrm{det\_checked}\ p \to$\\
   % \vspace{.8em}\\
-	$\phantom{xxx}  \mathrm{tm\_is\_det}\ p\ t \to \mathrm{is\_det}\ p\ \sigma\ v\ ( \mathrm{Unexplored}\ ( \mathrm{call}\ t ) ) $
+	$\phantom{xxx}  \mathrm{tm\_is\_det}\ p\ t \to \mathrm{is\_det}\ p\ \sigma\ v\ t $
 \end{theorem}
 
-Here, detchecked denotes the function that checks the program
+Here, det\_checked denotes the function that checks the program
 with respect to mutual exclusion and rule checking. %, and \emph{tm\_is\_det}
 % denotes the function that tests whether the head of the term refers to a rigid
 % constant with a deterministic type.
@@ -2790,20 +2792,20 @@ operations \step and \na.
 
 %\input{tex_code/det_tree_step.tex}
 \begin{lemma}[det\_tree\_step]\label{th:dettreestep}
-  $\forall\ \mathrm{p}\ v\ \sigma_1\ A\ r ,\ \mathrm{detchecked}\ \mathrm{p} \to$\\
-	$\phantom{xxx} \mathrm{step}\ u\ \mathrm{p}\ v\ \sigma_1\ A = r \to \mathrm{det\_tree}\ \mathrm{pr}\ (\mathrm{snd}\ r) $
+  $\forall\ \mathrm{p}\ v\ \sigma_1\ t\ r ,\ \mathrm{det\_checked}\ \mathrm{p} \to$\\
+	$\phantom{xxx} \mathrm{step}\ u\ \mathrm{p}\ v\ \sigma_1\ t = r \to \mathrm{det\_tree}\ \mathrm{p}\ (\mathrm{snd}\ r) $
 \end{lemma}
 
 % \input{tex_code/det_tree_prune.tex}
-\begin{lemma}[det\_tree\_prune]\label{th:dettreeprune} $\forall\ p\ A\ B\ b ,$\\
-  $\phantom{xxx} \mathrm{det\_tree}\ p\ A \to \mathrm{prune}\ b\ A = \mathrm{Some}\ B \to \mathrm{det\_tree}\ p\ B $
+\begin{lemma}[det\_tree\_prune]\label{th:dettreeprune} $\forall\ p\ t\ t'\ b ,$\\
+  $\phantom{xxx} \mathrm{det\_tree}\ p\ t \to \mathrm{prune}\ b\ t = \mathrm{Some}\ t' \to \mathrm{det\_tree}\ p\ t' $
 \end{lemma}
 
 \noindent Finally, the following lemma entails det\_check\_call:
 
 % \input{tex_code/det_check_tree.tex}
 \begin{lemma}[det\_check\_tree]\label{th:detchecktree} $\forall\ \sigma\ v\ p\ t ,$\\
-  $\phantom{xxx} \mathrm{detchecked}\ p \to \mathrm{det\_tree}\ p\ t \to \mathrm{is\_det}\ p\ \sigma\ v\ t $
+  $\phantom{xxx} \mathrm{det\_checked}\ p \to \mathrm{det\_tree}\ p\ t \to \mathrm{is\_det}\ p\ \sigma\ v\ t $
 \end{lemma}
 
 
@@ -2943,43 +2945,41 @@ changes to the conditions for mutual exclusion.
 
 \bibliography{bib}
 
-\newpage
+% \newpage
 
 \begin{appendix}
 
-\section{The step and prune procedures}
+\section{The step procedure}
 
-\begin{figure}
-  \begin{coqcode}
-  Fixpoint step p v s A :=
-    match A with
-    | Top                 => (v, Success, Top)
-    | Bot                 => (v, Failed, A)
-    | Unexplored cut      => (v, CutBrothers, Bot)
-    | Unexplored (call t) => 
-        let: (v, l) := backchain u p v t s in
-        (v, Expanded,
-        if l is ((s, r) :: xs) then Or None s (big_or r xs) else Bot)
-    | Or A sB B =>
-        if A is Some A then 
-          let: (v, tA, rA) := step p v s A in
-          (v, if is_cb tA then Expanded else tA, 
-           Or (Some rA) sB (if is_cb tA then Bot else B))
-        else
-          let: (v, tB, rB) := step p v sB B in
-          (v, if is_cb tB then Expanded else tB, Or A sB rB)
-    | And A B0 B =>
-        if success A then 
-          let: (v, tB, rB) := step p v (next_subst s A) B in
-          (v, tB, And (if is_cb tB then cutl A else A) B0 rB)
-        else
-          let: (v, tA, rA) := step p v s A in (v, tA, And rA B0 B)
-    end.
-  \end{coqcode}
-  \caption{The \step procedure}
-\end{figure}
+\begin{coqcode}
+Fixpoint step p v s A :=
+  match A with
+  | Top                 => (v, Success, Top)
+  | Bot                 => (v, Failed, A)
+  | Unexplored cut      => (v, CutBrothers, Bot)
+  | Unexplored (call t) => 
+      let: (v, l) := backchain u p v t s in
+      (v, Expanded,
+      if l is ((s, r) :: xs) then Or None s (big_or r xs) else Bot)
+  | Or A sB B =>
+      if A is Some A then 
+        let: (v, tA, rA) := step p v s A in
+        (v, if is_cb tA then Expanded else tA, 
+          Or (Some rA) sB (if is_cb tA then Bot else B))
+      else
+        let: (v, tB, rB) := step p v sB B in
+        (v, if is_cb tB then Expanded else tB, Or A sB rB)
+  | And A B0 B =>
+      if success A then 
+        let: (v, tB, rB) := step p v (next_subst s A) B in
+        (v, tB, And (if is_cb tB then cutl A else A) B0 rB)
+      else
+        let: (v, tA, rA) := step p v s A in (v, tA, And rA B0 B)
+  end.
+\end{coqcode}
 
-\begin{figure}
+\section{The prune procedure}
+
   \begin{coqcode}
   Definition omap f o := match o with Some b => Some (f b) | _ => o end.
   Fixpoint prune b A : option tree :=
@@ -3000,9 +3000,6 @@ changes to the conditions for mutual exclusion.
         else omap (~$\lambda$~x. Or None sB x) (prune false B)
   end.
   \end{coqcode}
-  \caption{The \na function}
-\end{figure}
-
 
 
 \end{appendix}
