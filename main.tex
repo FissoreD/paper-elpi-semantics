@@ -2089,19 +2089,23 @@ The theorem we prove are the following.
 \end{theorem}
 
 
-\Cref{th:runStorunTZ,th:runStorunTO} are double implication theorems and relates
-interpretations producing failures, or success with no alternatives. The more
-interesting theorems are the two following, that is
-\cref{th:runStorunTM1,th:runStorunTM2}, where we do not have a double
-implication, but we claim that they complete the equivalence we need. The former
-theorem claims that the interpratation of runT' on $t$ returns alternatives
-$t'$, in the conclusion of the lemma, we cerify that these alternatives are
-returned by runS, in paricular by asserting that $\mathrm{tree\_to\_stack}\ t'\
-\sigma\ \mnil$ is the alternative list.
-In the converse direction of the implication, runS launched on the tree $t$
-return the alternative list $x :: xs$, since we have no function converting
-a stack to a tree, we postulate the existence of a tree $t'$ and prove that
-the conversion of $t'$ to a stack produces exactly the list $x::xs$.
+\Cref{th:runStorunTZ,th:runStorunTO} are double-implication theorems relating
+interpretations that produce failures or succeed without alternatives. The two
+following theorems, \cref{th:runStorunTM1,th:runStorunTM2}, are more
+interesting. Although they do not provide a double implication, we claim that
+together they complete the equivalence we need.
+
+The former theorem states that the interpretation of $\mathrm{runT'}$ on $t$
+returns alternatives $t'$. In the conclusion of the theorem, we certify the
+stack returned by runS is exactly the translation $t'$ to a stack (via the
+tree\_to\_stack function). 
+
+In the converse direction, $\mathrm{runS}$ launched on the tree $t$ returns the
+stack $x :: xs$. Since we have no function for converting a stack back into a
+tree, we postulate the existence of a tree $t'$, which the result of running
+runT' on t, and prove that converting $t'$ to a stack produces exactly the list
+$x :: xs$.
+
 
 
 % Thanks to the two functions \vast and \ttl, we are able to finally state the
