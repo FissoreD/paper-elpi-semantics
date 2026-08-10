@@ -2045,10 +2045,42 @@ The equivalence betwen the two semantics aims to guarantee that two queries
 produce the same substitution and alternatives in both semantics.
 The theorem we prove are the following.
 
-\input{tex_code/runS_to_runTCZero.tex}
-\input{tex_code/runS_to_runTCOne.tex}
-\input{tex_code/runS_to_runTCMany1.tex}
-\input{tex_code/runS_to_runTCMany2.tex}
+% \input{tex_code/runS_to_runTCZero.tex}
+\begin{theorem}[runS\_to\_runTZ]\label{th:runStorunTZ}%
+\begin{multline*}
+	\forall\ p\ t\ \sigma ,\ \mathrm{let}\ v\ \mathrm{:=}\ \mathrm{vars\_tm}\ t\ \cup\ \mathrm{vars\_sigma}\ \sigma\ \mathrm{in} \\
+	\mathrm{runS}\ p\ v\ [\sigma ,\ [\mathrm{call}\ t,\ \mnil]]\ \mathrm{None} \leftrightarrow \\
+	\mathrm{runT'}\ p\ v\ \sigma\ ( \mathrm{Unexplored}\ ( \mathrm{call}\ t ) )\ \mathrm{Zero} 
+\end{multline*}
+\end{theorem}
+
+% \input{tex_code/runS_to_runTCOne.tex}
+\begin{theorem}[runS\_to\_runTO]\label{th:runStorunTO}%
+\begin{multline*}
+	\forall\ p\ t\ \sigma\ \sigma' ,\ \mathrm{let}\ v\ \mathrm{:=}\ \mathrm{vars\_tm}\ t\ \cup\ \mathrm{vars\_sigma}\ \sigma\ \mathrm{in} \\
+	\mathrm{runS}\ p\ v\ [\sigma ,\ [\mathrm{call}\ t,\ \mnil]]\ ( \mathrm{Some}\ ( \sigma' ,\ \mnil ) ) \leftrightarrow \\
+	\mathrm{runT'}\ p\ v\ \sigma\ ( \mathrm{Unexplored}\ ( \mathrm{call}\ t ) )\ ( \mathrm{One}\ \sigma' ) 
+\end{multline*}
+\end{theorem}
+
+% \input{tex_code/runS_to_runTCMany1.tex}
+\begin{theorem}[runS\_to\_runTM1]\label{th:runStorunTM1}%
+\begin{multline*}
+	\forall\ p\ t\ \sigma\ \sigma'\ x\ \mathrm{xs} ,\ \mathrm{let}\ v\ \mathrm{:=}\ \mathrm{vars\_tm}\ t\ \cup\ \mathrm{vars\_sigma}\ \sigma\ \mathrm{in} \\
+	\mathrm{runS}\ p\ v\ [\sigma ,\ [\mathrm{call}\ t,\ \mnil]]\ ( \mathrm{Some}\ ( \sigma' ,\ x\ \mathrm{::}\ \mathrm{xs} ) ) \to \\
+	\exists\ t' ,\ \mathrm{runT'}\ p\ v\ \sigma\ ( \mathrm{Unexplored}\ ( \mathrm{call}\ t ) )\ ( \mathrm{Many}\ \sigma'\ t' ) \land \\
+  \mathrm{tree\_to\_stack}\ t'\ \sigma\ \mnil = x\ \mathrm{::}\ \mathrm{xs} 
+\end{multline*}
+\end{theorem}
+
+% \input{tex_code/runS_to_runTCMany2.tex}
+\begin{theorem}[runS\_to\_runTM2]\label{th:runStorunTM2}%
+\begin{multline*}
+	\forall\ p\ t\ \sigma\ \sigma'\ t' ,\ \mathrm{let}\ v\ \mathrm{:=}\ \mathrm{vars\_tm}\ t\ \cup\ \mathrm{vars\_sigma}\ \sigma\ \mathrm{in} \\
+	\mathrm{runT'}\ p\ v\ \sigma\ ( \mathrm{Unexplored}\ ( \mathrm{call}\ t ) )\ ( \mathrm{Many}\ \sigma'\ t' ) \to \\
+	\mathrm{runS}\ p\ v\ [\sigma ,\ [\mathrm{call}\ t,\ \mnil]]\ ( \mathrm{Some}\ ( \sigma' ,\ \mathrm{tree\_to\_stack}\ t'\ \sigma\ \mnil ) ) 
+\end{multline*}
+\end{theorem}
 
 
 
