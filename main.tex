@@ -5,6 +5,8 @@
 
 % \usepackage{caption}
 \usepackage{subcaption}
+\DeclareCaptionLabelFormat{xxbracket}{Figure 6#2.}
+
 \usepackage{comment}
 \usepackage{pifont}
 
@@ -1591,8 +1593,9 @@ and $v'$ is the updated set of variables tracking freshly generated names.
 
 
 \begin{figure*}[!hbt]
-
-\begingroup
+\begin{subfigure}{\textwidth}
+\captionsetup{labelformat=xxbracket}
+\begin{center}
 \small
 \begin{prooftree}
 	\AxiomC{$\text{\dingv\ t} \quad \mathrm{next\_subst}\ \sigma\ t \arr \sigma'  \qquad \mathrm{prune}\ \mathrm{true}\ t \arr \mathrm{None} $}
@@ -1634,7 +1637,7 @@ and $v'$ is the updated set of variables tracking freshly generated names.
   \RightLabel{\rulelabel{\failt}}
   \UnaryInfC{\ensuremath{\mathrm{\runT}\ \prog\ v\ \sigma\ t \arr (\mathrm{None}, \mathrm{false}, v)}}
 \end{bprooftree}
-\endgroup
+\end{center}
 
 % \begin{prooftree}
   %   \AxiomC{$\success\ A$}
@@ -1660,6 +1663,56 @@ and $v'$ is the updated set of variables tracking freshly generated names.
 
   \caption{Rule system for \run}
   \label{fig:run-rules}
+\end{subfigure}
+~\\\vspace{1em}
+\begin{subfigure}{\textwidth}
+\captionsetup{labelformat=xxbracket}
+\begin{center}
+\small
+\begin{bprooftree}
+  \AxiomC{$A \quad (A ~\mathrm{cuts})$}
+  \RightLabel{$(\lor_{il})$}
+  \UnaryInfC{$A \lor B $}
+\end{bprooftree}
+%
+\begin{bprooftree}
+  \AxiomC{$\lnot A \quad (A ~\mathrm{cuts})$}
+  \RightLabel{$(\lor_{ir1})$}
+  \UnaryInfC{$\lnot (A \lor B) $}
+\end{bprooftree}
+%
+\begin{bprooftree}
+  \AxiomC{$\lnot A$}
+  \AxiomC{$B \quad (A ~\mathrm{does~not~cut})$}
+  \RightLabel{$(\lor_{ir2})$}
+  \BinaryInfC{$A \lor B$}
+\end{bprooftree}
+\\
+\begin{bprooftree}
+  \AxiomC{$A \lor B$}
+  \AxiomC{[A]}
+  \noLine
+  \UnaryInfC{$C$}
+  \AxiomC{$(A ~\mathrm{cuts})$}
+  \RightLabel{$(\lor_{e1})$}
+  \TrinaryInfC{$C$}
+\end{bprooftree}
+%
+\begin{bprooftree}
+  \AxiomC{$A \lor B$}
+  \AxiomC{[A] }
+  \noLine
+  \UnaryInfC{$C$}
+  \AxiomC{$[\lnot A, B] \phantom{\quad (A ~\mathrm{does~not~cut})}$}
+  \noLine
+  \UnaryInfC{$C \quad (A ~\mathrm{does~not~cut})$} 
+  \RightLabel{$(\lor_{e2})$}
+  \TrinaryInfC{C}
+\end{bprooftree}
+\end{center}
+\caption{Introduction and elimination rules for disjuction ( \Cref{th:orintroleft,th:orintroright,th:orintroright2,th:orelim1,th:orelim2} )\label{fig:logic}}
+\end{subfigure}
+
 \end{figure*}
 
 The \run predicate has five cases, depicted as inference rules in \cref{fig:run-rules}.
@@ -1680,7 +1733,7 @@ called recursively on it. Finally, rule \failt accounts for trees with no
 solutions.
 
 
-% \subsubsection{Properties of \run}
+\subsubsection{Properties of \run}
 \label{sec:run-prop}
 
 
@@ -1695,14 +1748,14 @@ solutions.
 % \backt since they impose different requirements on the output of \na.
 
 The boolean output of \run allows us to state interesting properties about the
-\orC node in the presence of cut. Below, we report only a selection of the
-lemmas that were proved. To simplify their presentation, we introduce the
+\orC node in the presence of cut (\cref{fig:logic}).
+To simplify their presentation, we introduce the
 following notation for \orC nodes. When the left-hand side is $\mathrm{None}$,
 we write the symbol $\square$. Otherwise, the notation $A \lor B_\sigma$
 implicitly denotes $(\mathrm{Some}\ A) \lor B_\sigma$.
 
 % \input{tex_code/runSST_or.tex}
-\begin{lemma}[or\_intro\_left]\label{th:orintroleft}%
+\begin{theorem}[or\_intro\_left]\label{th:orintroleft}%
 	$\forall\ p\ v\ v'\ \sigma\ \sigma'\ A\ A'\ \sigma_1\ B ,$\\
   $\phantom{x}
   \mathrm{runT}\ p\ v\ \sigma\ A\ ( \mathrm{Many}\ \sigma'\ A' )\ \mathrm{true}\ v' \to
@@ -1710,18 +1763,18 @@ implicitly denotes $(\mathrm{Some}\ A) \lor B_\sigma$.
 	$\phantom{x}\phantom{x}
   \mathrm{runT}\ p\ v\ \sigma\ ( A \lor B\ \phantom{!}_{\!\!\!\!\sigma_1} )\ ( \mathrm{Many}\ \sigma'\ ( A' \lor \mathrm{KO}\ \phantom{!}_{\!\!\!\!\sigma_1} ) )\ \mathrm{false}\ v'
   $
-\end{lemma}
+\end{theorem}
 % \input{tex_code/runNT_or.tex}
-\begin{lemma}[or\_intro\_right]\label{th:orintroright}%
+\begin{theorem}[or\_intro\_right]\label{th:orintroright}%
   $\forall\ p\ v\ v'\ \sigma\ A\ \sigma_1\ B ,$\\
 $ 
  \phantom{x}
  \mathrm{runT}\ p\ v\ \sigma\ A\ \mathrm{Zero}\ \mathrm{true}\ v' \to 
  \mathrm{runT}\ p\ v\ \sigma\ ( A \lor B\ \phantom{!}_{\!\!\!\!\sigma_1} )\ \mathrm{Zero}\ \mathrm{false}\ v'
 $
-\end{lemma}
+\end{theorem}
 % \input{tex_code/runNF_or.tex}
-\begin{lemma}[or\_intro\_right2]\label{th:orintroright2}%
+\begin{theorem}[or\_intro\_right2]\label{th:orintroright2}%
 	$\forall\ p\ v_0\ v_1\ v_2\ \sigma\ A\ \sigma_1\ \sigma_2\ B\ b ,$\\
 $\phantom{x}
 	\mathrm{runT}\ p\ v_0\ \sigma\ A\ \mathrm{Zero}\ \mathrm{false}\ v_1 \land 
@@ -1730,7 +1783,7 @@ $\\
 $\phantom{x}\phantom{x}
 	\mathrm{runT}\ p\ v_0\ \sigma\ ( A \lor B\ \phantom{!}_{\!\!\!\!\sigma_1} )\ ( \mathrm{One}\ \sigma_2 )\ \mathrm{false}\ v_2 
 $
-\end{lemma}
+\end{theorem}
 % $$$$
 
 \Cref{th:orintroleft,th:orintroright,th:orintroright2} correspond to the introduction rules
@@ -1742,51 +1795,60 @@ lemma is connected to the depth-first exploration of the tree: proving a
 disjunction from its right-hand side can only occur after the left-hand side
 has been disproved.
 Depicted as rules:
-%
-\begin{center}  
+% %
+% \begin{center}  
 
-\begin{bprooftree}
-  \AxiomC{$A \quad (A ~\mathrm{cuts})$}
-  \RightLabel{$(\lor_{il})$}
-  \UnaryInfC{$A \lor B $}
-\end{bprooftree}
-\begin{bprooftree}
-  \AxiomC{$\lnot A \quad (A ~\mathrm{cuts})$}
-  \RightLabel{$(\lor_{ir1})$}
-  \UnaryInfC{$\lnot (A \lor B) $}
-\end{bprooftree}
+% \begin{bprooftree}
+%   \AxiomC{$A \quad (A ~\mathrm{cuts})$}
+%   \RightLabel{$(\lor_{il})$}
+%   \UnaryInfC{$A \lor B $}
+% \end{bprooftree}
+% \begin{bprooftree}
+%   \AxiomC{$\lnot A \quad (A ~\mathrm{cuts})$}
+%   \RightLabel{$(\lor_{ir1})$}
+%   \UnaryInfC{$\lnot (A \lor B) $}
+% \end{bprooftree}
 
-\vspace{18pt}
+% \vspace{18pt}
 
-\begin{bprooftree}
-  \AxiomC{$\lnot A$}
-  \AxiomC{$B \quad (A ~\mathrm{does~not~cut})$}
-  \RightLabel{$(\lor_{ir2})$}
-  \BinaryInfC{$A \lor B$}
-\end{bprooftree}
-\end{center}
+% \begin{bprooftree}
+%   \AxiomC{$\lnot A$}
+%   \AxiomC{$B \quad (A ~\mathrm{does~not~cut})$}
+%   \RightLabel{$(\lor_{ir2})$}
+%   \BinaryInfC{$A \lor B$}
+% \end{bprooftree}
 
+% \end{center}
 
 \Cref{th:orelim1,th:orelim2} are elimination
 rules for disjunction. 
 
 % \input{tex_code/run_orSST.tex}
-\begin{lemma}[or\_elim1]\label{th:orelim1}$\forall\ p\ v\ v'\ \sigma\ \sigma'\ \sigma_1\ A\ A'\ B\ B' ,$
-\begin{multline*}
-	\mathrm{runT}\ p\ v\ \sigma\ ( A \lor B\ \phantom{!}_{\!\!\!\!\sigma_1} )\ ( \mathrm{Many}\ \sigma'\ ( A' \lor B'\ \phantom{!}_{\!\!\!\!\sigma_1} ) )\ \mathrm{false}\ v' \to \\
-	\exists\ b ,\ \mathrm{runT}\ p\ v\ \sigma\ A\ ( \mathrm{Many}\ \sigma'\ A' )\ b\ v' \land\ B' = \mathrm{if}\ b\ \mathrm{then}\ \bot\ \mathrm{else}\ B 
-\end{multline*}
-\end{lemma}
+\begin{theorem}[or\_elim1]\label{th:orelim1}$\forall\ p\ v\ v'\ \sigma\ \sigma'\ \sigma_1\ A\ A'\ B\ B' ,$\\
+$
+	\phantom{xx}\mathrm{runT}\ p\ v\ \sigma\ ( A \lor B\ \phantom{!}_{\!\!\!\!\sigma_1} )\ ( \mathrm{Many}\ \sigma'\ ( A' \lor B'\ \phantom{!}_{\!\!\!\!\sigma_1} ) )\ \mathrm{false}\ v' \to
+$\\
+$ \phantom{xx}\phantom{xx}
+	\exists\ b ,\ \mathrm{runT}\ p\ v\ \sigma\ A\ ( \mathrm{Many}\ \sigma'\ A' )\ b\ v' \land\ B' = \mathrm{if}\ b\ \mathrm{then}\ \bot\ \mathrm{else}\ B
+$
+\end{theorem}
 
 %\input{tex_code/run_orSNT.tex}
-\begin{lemma}[or\_elim2]\label{th:orelim2}
-  $\forall\ p\ v\ v'\ \sigma\ \sigma'\ \sigma_1\ A\ B\ B' ,$
-\begin{multline*}
-	\mathrm{runT}\ p\ v\ \sigma\ ( A \lor B\ \phantom{!}_{\!\!\!\!\sigma_1} )\ ( \mathrm{Many}\ \sigma'\ ( \square\ \lor B'\ \phantom{!}_{\!\!\!\!\sigma_1} ) )\ \mathrm{false}\ v' \to \\
-	( \mathrm{runT}\ p\ v\ \sigma\ A\ ( \mathrm{One}\ \sigma' )\ \mathrm{false}\ v' )\ \lor \\
-	( \exists\ v_2\ b ,\ \mathrm{runT}\ p\ v\ \sigma\ A\ \mathrm{Zero}\ \mathrm{false}\ v_2 \land\ \mathrm{runT}\ p\ v_2\ \sigma_1\ B\ ( \mathrm{Many}\ \sigma'\ B' )\ b\ v' ) 
-\end{multline*}
-\end{lemma}
+\begin{theorem}[or\_elim2]\label{th:orelim2}
+  $\forall\ p\ v\ v'\ \sigma\ \sigma'\ \sigma_1\ A\ B\ B' ,$\\
+$\phantom{xx}
+	\mathrm{runT}\ p\ v\ \sigma\ ( A \lor B\ \phantom{!}_{\!\!\!\!\sigma_1} )\ ( \mathrm{Many}\ \sigma'\ ( \square\ \lor B'\ \phantom{!}_{\!\!\!\!\sigma_1} ) )\ \mathrm{false}\ v' \to
+$
+$\phantom{xx}\phantom{xx}
+	( \mathrm{runT}\ p\ v\ \sigma\ A\ ( \mathrm{One}\ \sigma' )\ \mathrm{false}\ v' )\ \lor
+$\\
+$\phantom{xx}\phantom{xx}
+	( \exists\ v_2\ b ,\ \mathrm{runT}\ p\ v\ \sigma\ A\ \mathrm{Zero}\ \mathrm{false}\ v_2 \land
+$\\
+$\phantom{xx}\phantom{xx}\phantom{xx}\phantom{xx}
+  \mathrm{runT}\ p\ v_2\ \sigma_1\ B\ ( \mathrm{Many}\ \sigma'\ B' )\ b\ v' ) 
+$
+\end{theorem}
 
 
 
@@ -1800,32 +1862,32 @@ with the additional constraint that whenever $B$ holds, $A$ must have failed.
 This again reflects the depth-first traversal of the proof tree.
 
 % $$
-\begin{center}  
-\begin{bprooftree}
-  \AxiomC{$A \lor B$}
-  \AxiomC{[A]}
-  \noLine
-  \UnaryInfC{$C$}
-  \AxiomC{$(A ~\mathrm{cuts})$}
-  \RightLabel{$(\lor_{e1})$}
-  \TrinaryInfC{$C$}
-\end{bprooftree}
+% \begin{center}  
+% \begin{bprooftree}
+%   \AxiomC{$A \lor B$}
+%   \AxiomC{[A]}
+%   \noLine
+%   \UnaryInfC{$C$}
+%   \AxiomC{$(A ~\mathrm{cuts})$}
+%   \RightLabel{$(\lor_{e1})$}
+%   \TrinaryInfC{$C$}
+% \end{bprooftree}
 
-\vspace{18pt}
+% \vspace{18pt}
 
-\begin{bprooftree}
-  \AxiomC{$A \lor B$}
-  \AxiomC{[A] }
-  \noLine
-  \UnaryInfC{$C$}
-  \AxiomC{$[\lnot A, B] \phantom{\quad (A ~\mathrm{does~not~cut})}$}
-  \noLine
-  \UnaryInfC{$C \quad (A ~\mathrm{does~not~cut})$} 
-  \RightLabel{$(\lor_{e2})$}
-  \TrinaryInfC{C}
-\end{bprooftree}
-% $$
-\end{center}
+% \begin{bprooftree}
+%   \AxiomC{$A \lor B$}
+%   \AxiomC{[A] }
+%   \noLine
+%   \UnaryInfC{$C$}
+%   \AxiomC{$[\lnot A, B] \phantom{\quad (A ~\mathrm{does~not~cut})}$}
+%   \noLine
+%   \UnaryInfC{$C \quad (A ~\mathrm{does~not~cut})$} 
+%   \RightLabel{$(\lor_{e2})$}
+%   \TrinaryInfC{C}
+% \end{bprooftree}
+% % $$
+% \end{center}
 
 It is worth recalling that the ``$A$ cuts'' side-condition in the rules above is
 precisely the boolean result returned by \run. Without this information, it is
@@ -1836,6 +1898,9 @@ Indeed, an atom preceding the cut may fail, so the cut is never reached.
 
 As anticipated in the introduction, these lemmas contradict the commutativity of
 disjunction.
+
+
+
 
 \subsection{Inadequacy of the stack-based semantics for formal reasoning}
 
