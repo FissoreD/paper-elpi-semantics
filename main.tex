@@ -216,7 +216,7 @@ away by $q_1$.
 
 Finally, we use the tree-based semantics to prove the correctness of the
 determinacy analysis from~\cite{fissore2026}. In Rocq, we prove that any
-terminating call to a predicate identified as deterministic introduces no
+terminating execution of a predicate identified as deterministic introduces no
 additional Or-branches into the tree. Combined with the equivalence
 between the two semantics, this result implies that any call to a
 deterministic predicate leaves no choice points on the stack used by
@@ -816,7 +816,7 @@ arrows in the images represent the cut-to pointers.
     \matrix (inner3b) [matrix of nodes,
                      nodes={minimum width=0.6cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex, font=\fontsize{8pt}{9.6pt}\selectfont},
                      column sep=0.1cm, row sep=0.1cm] at (outer3-1-2.center) {
-    ! & f B C, & ! \\
+    !, & f B C, & ! \\
     };
     \matrix (inner3c) [matrix of nodes,
                      nodes={minimum width=0.6cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex, font=\fontsize{8pt}{9.6pt}\selectfont},
