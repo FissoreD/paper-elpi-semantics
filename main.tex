@@ -219,7 +219,7 @@ away by $q_1$.
 Finally, we use the tree-based semantics to prove the correctness of the
 determinacy analysis from~\cite{fissore2026}. In Rocq, we prove that any
 terminating execution of a predicate identified as deterministic introduces no
-additional Or-branches into the tree. Combined with the equivalence
+additional choice points. Combined with the equivalence
 between the two semantics, this result implies that any call to a
 deterministic predicate leaves no choice points on the stack used by
 actual \prologP implementations, including the
@@ -1921,10 +1921,224 @@ tree.
 
 \section{Equivalence of the two semantics}
 
-In order to relate the two semantics we have to relate the computations states,
-i.e., the And-Or tree and the stack of alternatives. We define a translation from trees to stacks, called \ttl, but
-we do not explicitly provide the converse translation, an economy
-allowed by the proof technique we employ, inspired by~\cite{yves-equiv}.
+The kind of equivalence we are interested in is that a query
+produces the same substitution and alternatives in both semantics.
+
+The tree-based semantics exposes more information than needed, hence
+we hide it behind existentials.
+
+\input{tex_code/runt1.tex}
+
+For each possible outcome we prove the equivalence of the two semantics.
+
+% \input{tex_code/runS_to_runTCZero.tex}
+\begin{corollary}[runS\_to\_runTZ]\label{th:runStorunTZ}%
+	$\forall\ p\ t\ (v\ \mathrm{:=}\ \mathrm{vars}\ t),$\\
+  $
+	\phantom{xx}
+	\mathrm{runS}\ p\ v\ [\emptyset ,\ [\mathrm{call}\ t,\ \mnil]]\ \mathrm{None} \leftrightarrow
+  $\\
+  $
+	\phantom{xx}
+  \mathrm{runT'}\ p\ v\ \emptyset\ ( \mathrm{Unexplored}\ ( \mathrm{call}\ t ) )\ \mathrm{Zero} 
+  $
+\end{corollary}
+
+% \input{tex_code/runS_to_runTCOne.tex}
+\begin{corollary}[runS\_to\_runTO]\label{th:runStorunTO}%
+	$\forall\ p\ t\ \sigma' (v\ \mathrm{:=}\ \mathrm{vars}\ t),$\\
+  $\phantom{xx}
+	\mathrm{runS}\ p\ v\ [\emptyset ,\ [\mathrm{call}\ t,\ \mnil]]\ ( \mathrm{Some}\ ( \sigma' ,\ \mnil ) ) \leftrightarrow
+  $\\
+	$\phantom{xx}
+  \mathrm{runT'}\ p\ v\ \emptyset\ ( \mathrm{Unexplored}\ ( \mathrm{call}\ t ) )\ ( \mathrm{One}\ \sigma' ) 
+  $
+\end{corollary}
+
+% \input{tex_code/runS_to_runTCMany1.tex}
+\begin{corollary}[runS\_to\_runTM1]\label{th:runStorunTM1}%
+	$\forall\ p\ t \sigma'\ t' (v\ \mathrm{:=}\ \mathrm{vars}\ t),$\\
+  $\phantom{xx}
+	\mathrm{runT'}\ p\ v\ \emptyset\ ( \mathrm{Unexplored}\ ( \mathrm{call}\ t ) )\ ( \mathrm{Many}\ \sigma'\ t' ) \to
+  $\\
+  $\phantom{xx}
+	\mathrm{runS}\ p\ v\ [\emptyset ,\ [\mathrm{call}\ t,\ \mnil]]\ ( \mathrm{Some}\ ( \sigma' ,\ \mathrm{t2s}\ t'\ \sigma\ \mnil ) )
+  $ 
+\end{corollary}
+
+% \input{tex_code/runS_to_runTCMany2.tex}
+\begin{corollary}[runS\_to\_runTM2]\label{th:runStorunTM2}%
+	$\forall\ p\ t\ \sigma'\ x\ \mathrm{xs} (v\ \mathrm{:=}\ \mathrm{vars}\ t),$\\
+  $\phantom{xx}
+  \mathrm{runS}\ p\ v\ [\emptyset ,\ [\mathrm{call}\ t,\ \mnil]]\ ( \mathrm{Some}\ ( \sigma' ,\ x\ \mathrm{::}\ \mathrm{xs} ) ) \to
+  $\\
+	$\phantom{xx}
+  \exists\ t' ,\ \mathrm{runT'}\ p\ v\ \emptyset\ ( \mathrm{Unexplored}\ ( \mathrm{call}\ t ) )\ ( \mathrm{Many}\ \sigma'\ t' ) \land
+  $\\
+  $\phantom{xx}\phantom{xx}\phantom{xx}
+  \mathrm{t2s}\ t'\ \emptyset\ \mnil = x\ \mathrm{::}\ \mathrm{xs}
+  $
+\end{corollary}
+
+Given that both semantics rely on the same notion of substitution,
+\cref{th:runStorunTZ,th:runStorunTO} can be expressed without the need of
+relating the states, stacks and trees, the two semantics
+operate on. On the contrary in \cref{th:runStorunTM1,th:runStorunTM2}
+the execution leaves choice points and we need to relate the two states.
+
+Following the proof technique from~\cite{yves-equiv} we need to only define the
+mapping  from trees to stacks explicitly. We delay the description of this
+mapping to \cref{sec:t2l} and we sketch here the proof underpinning the
+corollaries above.
+
+
+% are more
+% interesting. Although they do not provide a double implication, we claim that
+% together they complete the equivalence we need.
+
+% The former theorem states that the interpretation of $\mathrm{runT'}$ on $t$
+% returns alternatives $t'$. In the conclusion of the theorem, we certify the
+% stack returned by runS is exactly the translation $t'$ to a stack (via the
+% t2s function). 
+
+% In the converse direction, $\mathrm{runS}$ launched on the tree $t$ returns the
+% stack $x :: xs$. Since we have no function for converting a stack back into a
+% tree, we postulate the existence of a tree $t'$, which the result of running
+% runT' on t, and prove that converting $t'$ to a stack produces exactly the list
+% $x :: xs$.
+
+
+
+
+
+% In order to relate the two semantics we have to relate the computations states,
+% i.e., the And-Or tree and the stack of alternatives. We define a translation from trees to stacks, called \ttl, but
+% we do not explicitly provide the converse translation, an economy
+% allowed by the proof technique we employ, inspired by~\cite{yves-equiv}.
+
+\subsection{Equivalence proof}
+
+
+\begin{wrapfigure}{r}{.15\textwidth}
+  \centering
+  \resizebox{\linewidth}{!}{%
+  \begin{tikzpicture}[]
+      \node (t1) at (0,0) {$t$};
+      \node (t2) [right=2cm of t1]  {$t'$};
+      \node (e1) [below=2cm of t1]  {$a$};
+      \node (e2) [right=2cm of e1]  {$a'$};
+      % letf to right arrows
+      \draw [->] (t1) -- (t2) node[midway, above]{\run'\ $t$};
+      \draw [->] (e1) -- (e2) node[midway, below]{\nur\ $a$};
+
+      % up to down arrows
+      \draw [->] (t1) -- (e1);
+      \draw [->] (t2) -- (e2);
+      \node[rotate=-90, anchor=center] at ($(t1)!0.5!(e1) + (-0.35,0)$) {t2s};
+      \node[rotate=-90, anchor=center] at ($(t2)!0.5!(e2) + (0.35,0)$) {t2s};
+
+      % diagonal arrow
+      \path[->] (e1) edge (t2);
+  \end{tikzpicture}%
+  }
+\end{wrapfigure}
+
+Explain that the main theorems induce on the execution in one semantic (top or bottom horizontal arrow) 
+to prove the other arrow. Since not all trees and stack can be produced by
+either semantics starting from the initial state, it is important to specify that.
+We defer to \cref{sec:validtree} the exact definition of sld\_tree.
+
+% \input{tex_code/tree_to_elpi.tex}
+\begin{theorem}[runT\_to\_runS]\label{th:runTtorunS}%
+	$\forall\ p\ t\ \sigma\ r\ (v\ \mathrm{:=}\ \mathrm{vars}\ t\ \cup\ \mathrm{vars}\ \sigma) ,$\\ 
+  $\phantom{xx}
+	\mathrm{sld\_tree}\ t \land \mathrm{runT'}\ p\ v\ \sigma\ t\ r \to \\
+  $
+  $
+	\begin{cases}
+	\mathrm{runS}\ p\ v\ ( \mathrm{t2s}\ t\ \sigma\ \mnil )\ \mathrm{None} & \mathrm{if}\ r = \mathrm{Zero}\\
+	\mathrm{runS}\ p\ v\ ( \mathrm{t2s}\ t\ \sigma\ \mnil )\ (\mathrm{Some}\ (\sigma', \mnil)) & \mathrm{if}\ r = \mathrm{One}\ \sigma'\\
+	\mathrm{runS}\ p\ v\ ( \mathrm{t2s}\ t\ \sigma\ \mnil )\ (\mathrm{Some}\ ( \sigma' ,\ \mathrm{t2s}\ t'\ \sigma\ \mnil)) & \mathrm{if}\ r = \mathrm{Many}\ \sigma'\ t'\\
+	\end{cases}
+  $
+\end{theorem}
+
+% \begin{proof}
+% We proceed by induction on the execution of \run'. There are five cases
+% to consider. The first (similar) cases arises from \stopot and \stopt; they deal with
+% successful trees. A successful tree corresponds to a stack that
+% start with an empty list, in both cases
+% we conclude using \stops. The case for \stept
+% requires treating two subcases: \step evaluates either a cut or a call.
+% Accordingly, we apply \cuts or \calls, followed by the
+% induction hypothesis. The case for \backt is silent: it represents
+% the non-injective behavior of \ttl; however, thanks to
+% \cref{th:pruneFtreetostack} and the induction hypothesis, the conclusion is
+% proved. The last case arises from the derivation \failt. It is
+% easily proved using \fails and the fact that if \na returns
+% None when trying to erase failure in $t$, then \ttl applied to $t$
+% returns the empty list.
+% \end{proof}
+
+% \input{tex_code/elpi_to_tree.tex}
+\begin{theorem}[runS\_to\_runT]\label{th:runStorunT}%
+\begin{multline*}
+	\forall\ p\ v\ a\ r ,\ \mathrm{runS}\ p\ v\ a\ r \to
+	\forall\ \sigma\ t ,\ \mathrm{sld\_tree}\ t \to \mathrm{t2s}\ t\ \sigma\ \mnil = a \to \\
+	% \mathrm{match}\ r\ \mathrm{with} \\
+  \begin{cases}
+    \mathrm{runT'}\ p\ v\ \sigma\ t\ \mathrm{Zero}             & \mathrm{if}\ r = \mathrm{None} \\
+    \mathrm{runT'}\ p\ v\ \sigma\ t\ ( \mathrm{One}\ \sigma' ) & \mathrm{if}\ r = \mathrm{Some}\ ( \sigma' ,\ \mnil ) \\
+    \exists\ t' ,\ \mathrm{runT'}\ p\ v\ \sigma\ t\ ( \mathrm{Many}\ \sigma'\ t' ) 
+    \land\ \mathrm{t2s}\ t'\ \sigma\ \mnil = a'     & \mathrm{if}\ r =  \mathrm{Some}\ ( \sigma' ,\ a' ) \\
+  \end{cases}
+\end{multline*}
+\end{theorem}
+
+
+
+% The proof is based on the idea explained in~\cite[Section
+% 3.5.1]{yves-equiv} and depicted in the figure on the right:
+% we have a tree $t$ whose translation is $a$, we proceed by
+% induction on the execution of \nur. This gives us not only the output $a'$ but
+% that hypothesis that it exists a tree $t'$ such that its translation to a
+% stack is $a'$.\qed %This proof strategy is indirectly providing a kind of \ltt function by combining the execution of the \nur and \ttl.
+
+% Thanks to the two functions \vast and \ttl, we are able to finally state the
+% equivalence theorems between the semantics. The proof we are giving are on a
+% slightly different definition of \run, since in the equivalence, we ignore the
+% verification for the boolean and the variable set returned by \run, these piece
+% of data are paricularly meant for the proof in \cref{sec:run-prop}.
+
+% The definition we use is the following:
+
+% \begin{definition}\label{th:runT'}
+%   $\mathrm{runT'}\ \prog\ v\ \sigma\ t\ r := \exists\ b\ v',\ \mathrm{runT}\ \prog\ v\ \sigma\ t\ r\ b\ v'$
+% \end{definition}
+
+Proving the four theorems above as their are claimed is not possible in Rocq,
+since the induction principle would be too strong. We need therefore to prove a
+more generic main theorem talking about the interpretation of generic trees and
+stacks, related via t2s, instead of call to term. Morever, in order
+to make this proof work, the trees we take into account must be satisfy the
+sld\_tree predicate which restrict the theorem only to those valid trees that
+by invariant are generated during the evaluation of the runT' inductive.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 Before describing the translation of trees to stacks (in~\cref{sec:t2l})
 we need to define the notion of \emph{valid SLD tree}. The {tree}
 datatype indeed contains trees that cannot be generated
@@ -1939,7 +2153,7 @@ tree construction strategy.
 % generated from a call. Secondly, we need to translate trees into elpi
 % states. In the next to subsection we propose the two functions \vast and \ttl.
 
-\subsection{Valid SLD trees}\label{sec:validtree}
+\subsubsection{Valid SLD trees}\label{sec:validtree}
 \begin{figure}[b]
     \input{tex_code/valid_tree.tex}
     \caption{Valid SLD tree \label{fig:vt} }
@@ -1995,21 +2209,19 @@ are preserved by calls to \step and \na.
   $$\mathrm{sld\_tree}\ A \to \mathrm{runT}\ u\ p\ v\ \sigma\ A\ ( \mathrm{Many}\ \sigma'\ B )\ b\ v' \to \mathrm{sld\_tree}\ B $$
 \end{theorem}
 
-% \begin{figure}  
-%     \begin{coqcode}
-%       Fixpoint t2l ~$t$~ ~$\sigma$~ (cp: alts) : alts ~$\coloneq$~
-%       match ~$t$~ with
-%       | Top     ~$\Rightarrow$~ [(~$\sigma$~, ~\mnil\unskip~)]
-%       | Bot     ~$\Rightarrow$~ ~\mnil~
-%       | TA a   ~$\Rightarrow$~ [(~$\sigma$~, [(a, ~\mnil\unskip~)])]
-%       ...
-%     \end{coqcode}
-%   \caption{Tree to stack \label{fig:ttl} }
-% \end{figure}
-% \marginpar{TODO: put all code}
+
+\begin{figure*}[!htb]
+  \begin{center}
+    
+    \includegraphics[width=0.8\textwidth, keepaspectratio]{src/t2lex.pdf}
+  \end{center}
+\caption{Example of \ttl execution\label{fig:cc}}
+\end{figure*}
+%
+
 \subsection{From trees to stacks}\label{sec:t2l}
 
-% \marginpar{t2l should be t2s or tree\_to\_stack}
+% \marginpar{t2l should be t2s or t2s}
 
 The \ttl recursive function translates a tree to a stack.
 $$
@@ -2061,14 +2273,6 @@ note that \ref{tree-ex3} and \ref{tree-ex4} are both translated into
 the same stack. Consequently, there are transitions in \run that are not visible
 in \nur.
 %
-\begin{figure*}[t]
-  \begin{center}
-    
-    \includegraphics[width=0.8\textwidth, keepaspectratio]{src/t2lex.pdf}
-  \end{center}
-\caption{Example of \ttl execution\label{fig:cc}}
-\end{figure*}
-%
 As an example of a call to \ttl, we take the tree and the stack in~\cref{fig:cc},
 which are respectively taken from \cref{tree-ex2,ex-elpi2}. The red arrows
 point from the head of an alternative in the tree to the head of the
@@ -2087,6 +2291,19 @@ alternative. We can see that the first cut points to
 the translation of the subtree under $\sigma_2$, since it is one
 \orC-layer above its right uncles.
 
+
+% \begin{figure}  
+%     \begin{coqcode}
+%       Fixpoint t2l ~$t$~ ~$\sigma$~ (cp: alts) : alts ~$\coloneq$~
+%       match ~$t$~ with
+%       | Top     ~$\Rightarrow$~ [(~$\sigma$~, ~\mnil\unskip~)]
+%       | Bot     ~$\Rightarrow$~ ~\mnil~
+%       | TA a   ~$\Rightarrow$~ [(~$\sigma$~, [(a, ~\mnil\unskip~)])]
+%       ...
+%     \end{coqcode}
+%   \caption{Tree to stack \label{fig:ttl} }
+% \end{figure}
+% \marginpar{TODO: put all code}
 % \begin{table}
 %   \centering
 %   \begin{tabular}{c|c|c|c|c|c|c}
@@ -2147,105 +2364,16 @@ the translation of the subtree under $\sigma_2$, since it is one
 % \newcommand{\thte}{\texttt{tree\_to\_elpi}} % theorem tree to elpi name
 % \newcommand{\thet}{\texttt{elpi\_to\_tree}} % theorem elpi to tree name
 
-\subsection{Equivalence proof}
-
-The equivalence betwen the two semantics aims to guarantee that two queries
-produce the same substitution and alternatives in both semantics.
-
-The tree-based semantics exposes more information than needed, hence
-we hide it behind existentials.
-
-\input{tex_code/runt1.tex}
-
-The theorem we prove are the following.
-
-% \input{tex_code/runS_to_runTCZero.tex}
-\begin{theorem}[runS\_to\_runTZ]\label{th:runStorunTZ}%
-\begin{multline*}
-	\forall\ p\ t\ \sigma ,\ \mathrm{let}\ v\ \mathrm{:=}\ \mathrm{vars\_tm}\ t\ \cup\ \mathrm{vars\_sigma}\ \sigma\ \mathrm{in} \\
-	\mathrm{runS}\ p\ v\ [\sigma ,\ [\mathrm{call}\ t,\ \mnil]]\ \mathrm{None} \leftrightarrow \\
-	\mathrm{runT'}\ p\ v\ \sigma\ ( \mathrm{Unexplored}\ ( \mathrm{call}\ t ) )\ \mathrm{Zero} 
-\end{multline*}
-\end{theorem}
-
-% \input{tex_code/runS_to_runTCOne.tex}
-\begin{theorem}[runS\_to\_runTO]\label{th:runStorunTO}%
-\begin{multline*}
-	\forall\ p\ t\ \sigma\ \sigma' ,\ \mathrm{let}\ v\ \mathrm{:=}\ \mathrm{vars\_tm}\ t\ \cup\ \mathrm{vars\_sigma}\ \sigma\ \mathrm{in} \\
-	\mathrm{runS}\ p\ v\ [\sigma ,\ [\mathrm{call}\ t,\ \mnil]]\ ( \mathrm{Some}\ ( \sigma' ,\ \mnil ) ) \leftrightarrow \\
-	\mathrm{runT'}\ p\ v\ \sigma\ ( \mathrm{Unexplored}\ ( \mathrm{call}\ t ) )\ ( \mathrm{One}\ \sigma' ) 
-\end{multline*}
-\end{theorem}
-
-% \input{tex_code/runS_to_runTCMany1.tex}
-\begin{theorem}[runS\_to\_runTM1]\label{th:runStorunTM1}%
-\begin{multline*}
-	\forall\ p\ t\ \sigma\ \sigma'\ t' ,\ \mathrm{let}\ v\ \mathrm{:=}\ \mathrm{vars\_tm}\ t\ \cup\ \mathrm{vars\_sigma}\ \sigma\ \mathrm{in} \\
-	\mathrm{runT'}\ p\ v\ \sigma\ ( \mathrm{Unexplored}\ ( \mathrm{call}\ t ) )\ ( \mathrm{Many}\ \sigma'\ t' ) \to \\
-	\mathrm{runS}\ p\ v\ [\sigma ,\ [\mathrm{call}\ t,\ \mnil]]\ ( \mathrm{Some}\ ( \sigma' ,\ \mathrm{tree\_to\_stack}\ t'\ \sigma\ \mnil ) ) 
-\end{multline*}
-\end{theorem}
-
-% \input{tex_code/runS_to_runTCMany2.tex}
-\begin{theorem}[runS\_to\_runTM2]\label{th:runStorunTM2}%
-\begin{multline*}
-	\forall\ p\ t\ \sigma\ \sigma'\ x\ \mathrm{xs} ,\ \mathrm{let}\ v\ \mathrm{:=}\ \mathrm{vars\_tm}\ t\ \cup\ \mathrm{vars\_sigma}\ \sigma\ \mathrm{in} \\
-	\mathrm{runS}\ p\ v\ [\sigma ,\ [\mathrm{call}\ t,\ \mnil]]\ ( \mathrm{Some}\ ( \sigma' ,\ x\ \mathrm{::}\ \mathrm{xs} ) ) \to \\
-	\exists\ t' ,\ \mathrm{runT'}\ p\ v\ \sigma\ ( \mathrm{Unexplored}\ ( \mathrm{call}\ t ) )\ ( \mathrm{Many}\ \sigma'\ t' ) \land \\
-  \mathrm{tree\_to\_stack}\ t'\ \sigma\ \mnil = x\ \mathrm{::}\ \mathrm{xs} 
-\end{multline*}
-\end{theorem}
-
-
-\Cref{th:runStorunTZ,th:runStorunTO} are double-implication theorems relating
-interpretations that produce failures or succeed without alternatives. The two
-following theorems, \cref{th:runStorunTM1,th:runStorunTM2}, are more
-interesting. Although they do not provide a double implication, we claim that
-together they complete the equivalence we need.
-
-The former theorem states that the interpretation of $\mathrm{runT'}$ on $t$
-returns alternatives $t'$. In the conclusion of the theorem, we certify the
-stack returned by runS is exactly the translation $t'$ to a stack (via the
-tree\_to\_stack function). 
-
-In the converse direction, $\mathrm{runS}$ launched on the tree $t$ returns the
-stack $x :: xs$. Since we have no function for converting a stack back into a
-tree, we postulate the existence of a tree $t'$, which the result of running
-runT' on t, and prove that converting $t'$ to a stack produces exactly the list
-$x :: xs$.
-
-
-
-% Thanks to the two functions \vast and \ttl, we are able to finally state the
-% equivalence theorems between the semantics. The proof we are giving are on a
-% slightly different definition of \run, since in the equivalence, we ignore the
-% verification for the boolean and the variable set returned by \run, these piece
-% of data are paricularly meant for the proof in \cref{sec:run-prop}.
-
-% The definition we use is the following:
-
-% \begin{definition}\label{th:runT'}
-%   $\mathrm{runT'}\ \prog\ v\ \sigma\ t\ r := \exists\ b\ v',\ \mathrm{runT}\ \prog\ v\ \sigma\ t\ r\ b\ v'$
-% \end{definition}
-
-Proving the four theorems above as their are claimed is not possible in Rocq,
-since the induction principle would be too strong. We need therefore to prove a
-more generic main theorem talking about the interpretation of generic trees and
-stacks, related via tree\_to\_stack, instead of call to term. Morever, in order
-to make this proof work, the trees we take into account must be satisfy the
-sld\_tree predicate which restrict the theorem only to those valid trees that
-by invariant are generated during the evaluation of the runT' inductive.
-
 % From \cref{tree-ex,ex-elpi}, we observe that, upon backtracking, \run may perform
 % more steps than \nur before returning a solution or a failure.
 % These silent transitions must be skipped
 % when proving the equivalence between the two semantics. Therefore, we
 % prove the following lemma.
 
-% \begin{lemma}[pruneF\_tree\_to\_stack]\label{th:pruneFtreetostack}%
+% \begin{lemma}[pruneF\_t2s]\label{th:pruneFtreetostack}%
 % \begin{multline*}
 % 	\forall\ t\ t'\ b ,\ \mathrm{sld\_tree}\ t \to \mathrm{failed}\ t \to \mathrm{prune}\ b\ t = \mathrm{Some}\ t' \to \\
-% 	\forall\ l\ \sigma ,\ \mathrm{tree\_to\_stack}\ t\ \sigma\ l = \mathrm{tree\_to\_stack}\ t'\ \sigma\ l 
+% 	\forall\ l\ \sigma ,\ \mathrm{t2s}\ t\ \sigma\ l = \mathrm{t2s}\ t'\ \sigma\ l 
 % \end{multline*}
 % \end{lemma}
 
@@ -2267,9 +2395,9 @@ by invariant are generated during the evaluation of the runT' inductive.
 % 	\forall\ p\ t\ \sigma\ r ,\ \mathrm{let}\ v\ \mathrm{:=}\ \mathrm{vars}\ t\ \cup\ \mathrm{vars}\ \sigma\ \mathrm{in}\ 
 % 	\mathrm{sld\_tree}\ t \to \mathrm{runT'}\ p\ v\ \sigma\ t\ r \to \\
 % 	\begin{cases}
-% 	\mathrm{runS}\ p\ v\ ( \mathrm{tree\_to\_stack}\ t\ \sigma\ \mnil )\ \mathrm{None} & \mathrm{if}\ r = \mathrm{Zero}\\
-% 	\mathrm{runS}\ p\ v\ ( \mathrm{tree\_to\_stack}\ t\ \sigma\ \mnil )\ (\mathrm{Some}\ (\sigma', \mnil)) & \mathrm{if}\ r = \mathrm{One}\ \sigma'\\
-% 	\mathrm{runS}\ p\ v\ ( \mathrm{tree\_to\_stack}\ t\ \sigma\ \mnil )\ (\mathrm{Some}\ ( \sigma' ,\ \mathrm{tree\_to\_stack}\ t'\ \sigma\ \mnil)) & \mathrm{if}\ r = \mathrm{Many}\ \sigma'\ t'\\
+% 	\mathrm{runS}\ p\ v\ ( \mathrm{t2s}\ t\ \sigma\ \mnil )\ \mathrm{None} & \mathrm{if}\ r = \mathrm{Zero}\\
+% 	\mathrm{runS}\ p\ v\ ( \mathrm{t2s}\ t\ \sigma\ \mnil )\ (\mathrm{Some}\ (\sigma', \mnil)) & \mathrm{if}\ r = \mathrm{One}\ \sigma'\\
+% 	\mathrm{runS}\ p\ v\ ( \mathrm{t2s}\ t\ \sigma\ \mnil )\ (\mathrm{Some}\ ( \sigma' ,\ \mathrm{t2s}\ t'\ \sigma\ \mnil)) & \mathrm{if}\ r = \mathrm{Many}\ \sigma'\ t'\\
 % 	\end{cases}
 % \end{multline*}
 % \end{theorem}
@@ -2300,13 +2428,13 @@ by invariant are generated during the evaluation of the runT' inductive.
 % \begin{theorem}[runS\_to\_runT]\label{th:runStorunT}%
 % \begin{multline*}
 % 	\forall\ p\ v\ a\ r ,\ \mathrm{runS}\ p\ v\ a\ r \to
-% 	\forall\ \sigma\ t ,\ \mathrm{sld\_tree}\ t \to \mathrm{tree\_to\_stack}\ t\ \sigma\ \mnil = a \to \\
+% 	\forall\ \sigma\ t ,\ \mathrm{sld\_tree}\ t \to \mathrm{t2s}\ t\ \sigma\ \mnil = a \to \\
 % 	% \mathrm{match}\ r\ \mathrm{with} \\
 %   \begin{cases}
 %     \mathrm{runT'}\ p\ v\ \sigma\ t\ \mathrm{Zero}             & \mathrm{if}\ r = \mathrm{None} \\
 %     \mathrm{runT'}\ p\ v\ \sigma\ t\ ( \mathrm{One}\ \sigma' ) & \mathrm{if}\ r = \mathrm{Some}\ ( \sigma' ,\ \mnil ) \\
 %     \exists\ t' ,\ \mathrm{runT'}\ p\ v\ \sigma\ t\ ( \mathrm{Many}\ \sigma'\ t' ) 
-%     \land\ \mathrm{tree\_to\_stack}\ t'\ \sigma\ \mnil = a'     & \mathrm{if}\ r =  \mathrm{Some}\ ( \sigma' ,\ a' ) \\
+%     \land\ \mathrm{t2s}\ t'\ \sigma\ \mnil = a'     & \mathrm{if}\ r =  \mathrm{Some}\ ( \sigma' ,\ a' ) \\
 %   \end{cases}
 % \end{multline*}
 % \end{theorem}
@@ -2328,8 +2456,8 @@ by invariant are generated during the evaluation of the runT' inductive.
 %       % up to down arrows
 %       \draw [->] (t1) -- (e1);
 %       \draw [->] (t2) -- (e2);
-%       \node[rotate=-90, anchor=center] at ($(t1)!0.5!(e1) + (-0.35,0)$) {tree\_to\_stack};
-%       \node[rotate=-90, anchor=center] at ($(t2)!0.5!(e2) + (0.35,0)$) {tree\_to\_stack};
+%       \node[rotate=-90, anchor=center] at ($(t1)!0.5!(e1) + (-0.35,0)$) {t2s};
+%       \node[rotate=-90, anchor=center] at ($(t2)!0.5!(e2) + (0.35,0)$) {t2s};
 
 %       % diagonal arrow
 %       \path[->] (e1) edge (t2);
