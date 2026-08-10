@@ -2041,6 +2041,17 @@ the translation of the subtree under $\sigma_2$, since it is one
 
 \subsection{Equivalence proof}
 
+The equivalence betwen the two semantics aims to guarantee that two queries
+produce the same substitution and alternatives in both semantics.
+The theorem we prove are the following.
+
+\input{tex_code/runS_to_runTCZero.tex}
+\input{tex_code/runS_to_runTCOne.tex}
+\input{tex_code/runS_to_runTCMany1.tex}
+\input{tex_code/runS_to_runTCMany2.tex}
+
+
+
 The tree-based semantics exposes more information than needed, hence
 we hide it behind existentials.
 
@@ -2075,6 +2086,8 @@ prove the following lemma.
 
 \begin{proof}By induction on the tree $t$. %\marginpar{dire di $v$}
 \end{proof}
+
+
 
 The first direction of the equivalence states that the execution of a
 valid SLD tree is matched by the execution of the stack obtained by
