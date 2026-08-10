@@ -1134,7 +1134,7 @@ the next alternative and continues from there, if one exists.
     % \vspace{20pt}
       % \caption{Functions from \getend}
       % \label{fig:geten/d-aux}
-  \caption{\getend routine and derived functions}
+  \caption{The \getend routine and derived functions}
   \label{fig:getend}
 \end{figure}
 
@@ -2895,10 +2895,12 @@ shown in~\cref{fig:dettree}.
     | And A B0 B =>
         det_tree p B &&
         ((prune (success A) A == None) ||
-         ((det_tree p A || (has_cut B && has_cuts B0)) && det_trees p B0))
+         ((det_tree p A || (has_cut B && has_cuts B0)) &&
+          det_trees p B0))
     | Or None _ B => det_tree p B
     | Or (Some A) _ B =>
-        det_tree p A && if has_cut A then det_tree p B else (B == Bot)
+        det_tree p A &&
+        if has_cut A then det_tree p B else (B == Bot)
     end.
 \end{coqcode}
 \caption{The \emph{det\_tree} predicate\label{fig:dettree}}
