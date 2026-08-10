@@ -2120,125 +2120,132 @@ $x :: xs$.
 %   $\mathrm{runT'}\ \prog\ v\ \sigma\ t\ r := \exists\ b\ v',\ \mathrm{runT}\ \prog\ v\ \sigma\ t\ r\ b\ v'$
 % \end{definition}
 
+Proving the four theorems above as their are claimed is not possible in Rocq,
+since the induction principle would be too strong. We need therefore to prove a
+more generic main theorem talking about the interpretation of generic trees and
+stacks, related via tree\_to\_stack, instead of call to term. Morever, in order
+to make this proof work, the trees we take into account must be satisfy the
+sld\_tree predicate which restrict the theorem only to those valid trees that
+by invariant are generated during the evaluation of the runT' inductive.
 
-From \cref{tree-ex,ex-elpi}, we observe that, upon backtracking, \run may perform
-more steps than \nur before returning a solution or a failure.
-These silent transitions must be skipped
-when proving the equivalence between the two semantics. Therefore, we
-prove the following lemma.
+% From \cref{tree-ex,ex-elpi}, we observe that, upon backtracking, \run may perform
+% more steps than \nur before returning a solution or a failure.
+% These silent transitions must be skipped
+% when proving the equivalence between the two semantics. Therefore, we
+% prove the following lemma.
 
-\begin{lemma}[pruneF\_tree\_to\_stack]\label{th:pruneFtreetostack}%
-\begin{multline*}
-	\forall\ t\ t'\ b ,\ \mathrm{sld\_tree}\ t \to \mathrm{failed}\ t \to \mathrm{prune}\ b\ t = \mathrm{Some}\ t' \to \\
-	\forall\ l\ \sigma ,\ \mathrm{tree\_to\_stack}\ t\ \sigma\ l = \mathrm{tree\_to\_stack}\ t'\ \sigma\ l 
-\end{multline*}
-\end{lemma}
+% \begin{lemma}[pruneF\_tree\_to\_stack]\label{th:pruneFtreetostack}%
+% \begin{multline*}
+% 	\forall\ t\ t'\ b ,\ \mathrm{sld\_tree}\ t \to \mathrm{failed}\ t \to \mathrm{prune}\ b\ t = \mathrm{Some}\ t' \to \\
+% 	\forall\ l\ \sigma ,\ \mathrm{tree\_to\_stack}\ t\ \sigma\ l = \mathrm{tree\_to\_stack}\ t'\ \sigma\ l 
+% \end{multline*}
+% \end{lemma}
 
-% \input{tex_code/pruneF_tree_to_stack.tex}
+% % \input{tex_code/pruneF_tree_to_stack.tex}
 
-\begin{proof}By induction on the tree $t$. %\marginpar{dire di $v$}
-\end{proof}
-
-
-
-The first direction of the equivalence states that the execution of a
-valid SLD tree is matched by the execution of the stack obtained by
-translating the tree. Moreover, the unexplored alternatives returned as
-a tree correspond to those returned as a stack.
-
-% \input{tex_code/tree_to_elpi.tex}
-\begin{theorem}[runT\_to\_runS]\label{th:runTtorunS}%
-\begin{multline*}
-	\forall\ p\ t\ \sigma\ r ,\ \mathrm{let}\ v\ \mathrm{:=}\ \mathrm{vars}\ t\ \cup\ \mathrm{vars}\ \sigma\ \mathrm{in}\ 
-	\mathrm{sld\_tree}\ t \to \mathrm{runT'}\ p\ v\ \sigma\ t\ r \to \\
-	\begin{cases}
-	\mathrm{runS}\ p\ v\ ( \mathrm{tree\_to\_stack}\ t\ \sigma\ \mnil )\ \mathrm{None} & \mathrm{if}\ r = \mathrm{Zero}\\
-	\mathrm{runS}\ p\ v\ ( \mathrm{tree\_to\_stack}\ t\ \sigma\ \mnil )\ (\mathrm{Some}\ (\sigma', \mnil)) & \mathrm{if}\ r = \mathrm{One}\ \sigma'\\
-	\mathrm{runS}\ p\ v\ ( \mathrm{tree\_to\_stack}\ t\ \sigma\ \mnil )\ (\mathrm{Some}\ ( \sigma' ,\ \mathrm{tree\_to\_stack}\ t'\ \sigma\ \mnil)) & \mathrm{if}\ r = \mathrm{Many}\ \sigma'\ t'\\
-	\end{cases}
-\end{multline*}
-\end{theorem}
-
-% \begin{proof}
-% We proceed by induction on the execution of \run'. There are five cases
-% to consider. The first (similar) cases arises from \stopot and \stopt; they deal with
-% successful trees. A successful tree corresponds to a stack that
-% start with an empty list, in both cases
-% we conclude using \stops. The case for \stept
-% requires treating two subcases: \step evaluates either a cut or a call.
-% Accordingly, we apply \cuts or \calls, followed by the
-% induction hypothesis. The case for \backt is silent: it represents
-% the non-injective behavior of \ttl; however, thanks to
-% \cref{th:pruneFtreetostack} and the induction hypothesis, the conclusion is
-% proved. The last case arises from the derivation \failt. It is
-% easily proved using \fails and the fact that if \na returns
-% None when trying to erase failure in $t$, then \ttl applied to $t$
-% returns the empty list.
+% \begin{proof}By induction on the tree $t$. %\marginpar{dire di $v$}
 % \end{proof}
 
-The converse direction is stated following~\cite{yves-equiv}: instead of
-using a function to translate a stack into a tree it states that any
-tree that translates to the given stack has an equivalent execution,
-i.e. gives the same solution and returns an unexplored tree that
-translates to the unexplored stack.
-% \input{tex_code/elpi_to_tree.tex}
-\begin{theorem}[runS\_to\_runT]\label{th:runStorunT}%
-\begin{multline*}
-	\forall\ p\ v\ a\ r ,\ \mathrm{runS}\ p\ v\ a\ r \to
-	\forall\ \sigma\ t ,\ \mathrm{sld\_tree}\ t \to \mathrm{tree\_to\_stack}\ t\ \sigma\ \mnil = a \to \\
-	% \mathrm{match}\ r\ \mathrm{with} \\
-  \begin{cases}
-    \mathrm{runT'}\ p\ v\ \sigma\ t\ \mathrm{Zero}             & \mathrm{if}\ r = \mathrm{None} \\
-    \mathrm{runT'}\ p\ v\ \sigma\ t\ ( \mathrm{One}\ \sigma' ) & \mathrm{if}\ r = \mathrm{Some}\ ( \sigma' ,\ \mnil ) \\
-    \exists\ t' ,\ \mathrm{runT'}\ p\ v\ \sigma\ t\ ( \mathrm{Many}\ \sigma'\ t' ) 
-    \land\ \mathrm{tree\_to\_stack}\ t'\ \sigma\ \mnil = a'     & \mathrm{if}\ r =  \mathrm{Some}\ ( \sigma' ,\ a' ) \\
-  \end{cases}
-\end{multline*}
-\end{theorem}
 
-\noindent\hskip\labelsep{\itshape Proof.}\ignorespaces
 
-\begin{wrapfigure}{r}{.15\textwidth}
-  \centering
-  \resizebox{\linewidth}{!}{%
-  \begin{tikzpicture}[]
-      \node (t1) at (0,0) {$t$};
-      \node (t2) [right=2cm of t1]  {$t'$};
-      \node (e1) [below=2cm of t1]  {$a$};
-      \node (e2) [right=2cm of e1]  {$a'$};
-      % letf to right arrows
-      \draw [->] (t1) -- (t2) node[midway, above]{\run'\ $t$};
-      \draw [->] (e1) -- (e2) node[midway, below]{\nur\ $a$};
+% The first direction of the equivalence states that the execution of a
+% valid SLD tree is matched by the execution of the stack obtained by
+% translating the tree. Moreover, the unexplored alternatives returned as
+% a tree correspond to those returned as a stack.
 
-      % up to down arrows
-      \draw [->] (t1) -- (e1);
-      \draw [->] (t2) -- (e2);
-      \node[rotate=-90, anchor=center] at ($(t1)!0.5!(e1) + (-0.35,0)$) {tree\_to\_stack};
-      \node[rotate=-90, anchor=center] at ($(t2)!0.5!(e2) + (0.35,0)$) {tree\_to\_stack};
+% % \input{tex_code/tree_to_elpi.tex}
+% \begin{theorem}[runT\_to\_runS]\label{th:runTtorunS}%
+% \begin{multline*}
+% 	\forall\ p\ t\ \sigma\ r ,\ \mathrm{let}\ v\ \mathrm{:=}\ \mathrm{vars}\ t\ \cup\ \mathrm{vars}\ \sigma\ \mathrm{in}\ 
+% 	\mathrm{sld\_tree}\ t \to \mathrm{runT'}\ p\ v\ \sigma\ t\ r \to \\
+% 	\begin{cases}
+% 	\mathrm{runS}\ p\ v\ ( \mathrm{tree\_to\_stack}\ t\ \sigma\ \mnil )\ \mathrm{None} & \mathrm{if}\ r = \mathrm{Zero}\\
+% 	\mathrm{runS}\ p\ v\ ( \mathrm{tree\_to\_stack}\ t\ \sigma\ \mnil )\ (\mathrm{Some}\ (\sigma', \mnil)) & \mathrm{if}\ r = \mathrm{One}\ \sigma'\\
+% 	\mathrm{runS}\ p\ v\ ( \mathrm{tree\_to\_stack}\ t\ \sigma\ \mnil )\ (\mathrm{Some}\ ( \sigma' ,\ \mathrm{tree\_to\_stack}\ t'\ \sigma\ \mnil)) & \mathrm{if}\ r = \mathrm{Many}\ \sigma'\ t'\\
+% 	\end{cases}
+% \end{multline*}
+% \end{theorem}
 
-      % diagonal arrow
-      \path[->] (e1) edge (t2);
-  \end{tikzpicture}%
-  }
-\end{wrapfigure}
+% % \begin{proof}
+% % We proceed by induction on the execution of \run'. There are five cases
+% % to consider. The first (similar) cases arises from \stopot and \stopt; they deal with
+% % successful trees. A successful tree corresponds to a stack that
+% % start with an empty list, in both cases
+% % we conclude using \stops. The case for \stept
+% % requires treating two subcases: \step evaluates either a cut or a call.
+% % Accordingly, we apply \cuts or \calls, followed by the
+% % induction hypothesis. The case for \backt is silent: it represents
+% % the non-injective behavior of \ttl; however, thanks to
+% % \cref{th:pruneFtreetostack} and the induction hypothesis, the conclusion is
+% % proved. The last case arises from the derivation \failt. It is
+% % easily proved using \fails and the fact that if \na returns
+% % None when trying to erase failure in $t$, then \ttl applied to $t$
+% % returns the empty list.
+% % \end{proof}
 
-The proof is based on the idea explained in~\cite[Section
-3.5.1]{yves-equiv} and depicted in the figure on the right:
-we have a tree $t$ whose translation is $a$, we proceed by
-induction on the execution of \nur. This gives us not only the output $a'$ but
-that hypothesis that it exists a tree $t'$ such that its translation to a
-stack is $a'$.\qed %This proof strategy is indirectly providing a kind of \ltt function by combining the execution of the \nur and \ttl.
+% The converse direction is stated following~\cite{yves-equiv}: instead of
+% using a function to translate a stack into a tree it states that any
+% tree that translates to the given stack has an equivalent execution,
+% i.e. gives the same solution and returns an unexplored tree that
+% translates to the unexplored stack.
+% % \input{tex_code/elpi_to_tree.tex}
+% \begin{theorem}[runS\_to\_runT]\label{th:runStorunT}%
+% \begin{multline*}
+% 	\forall\ p\ v\ a\ r ,\ \mathrm{runS}\ p\ v\ a\ r \to
+% 	\forall\ \sigma\ t ,\ \mathrm{sld\_tree}\ t \to \mathrm{tree\_to\_stack}\ t\ \sigma\ \mnil = a \to \\
+% 	% \mathrm{match}\ r\ \mathrm{with} \\
+%   \begin{cases}
+%     \mathrm{runT'}\ p\ v\ \sigma\ t\ \mathrm{Zero}             & \mathrm{if}\ r = \mathrm{None} \\
+%     \mathrm{runT'}\ p\ v\ \sigma\ t\ ( \mathrm{One}\ \sigma' ) & \mathrm{if}\ r = \mathrm{Some}\ ( \sigma' ,\ \mnil ) \\
+%     \exists\ t' ,\ \mathrm{runT'}\ p\ v\ \sigma\ t\ ( \mathrm{Many}\ \sigma'\ t' ) 
+%     \land\ \mathrm{tree\_to\_stack}\ t'\ \sigma\ \mnil = a'     & \mathrm{if}\ r =  \mathrm{Some}\ ( \sigma' ,\ a' ) \\
+%   \end{cases}
+% \end{multline*}
+% \end{theorem}
 
-\vspace{10pt}
+% \noindent\hskip\labelsep{\itshape Proof.}\ignorespaces
 
-Stating the converse direction of \cref{th:runTtorunS} in a symmetric way
-would require a function
-\ltt transforming a stack $a$ into a tree $t$.
-Writing this function is far from trivial, since the structure of
-the tree is lost by \backchainS and \nur that
-intuitively keep the state as a big disjunction of conjunctions by
-distributing conjunctions over disjunctions. Moreover, one would need to
-define a notion of valid stack that is equally intricate.
+% \begin{wrapfigure}{r}{.15\textwidth}
+%   \centering
+%   \resizebox{\linewidth}{!}{%
+%   \begin{tikzpicture}[]
+%       \node (t1) at (0,0) {$t$};
+%       \node (t2) [right=2cm of t1]  {$t'$};
+%       \node (e1) [below=2cm of t1]  {$a$};
+%       \node (e2) [right=2cm of e1]  {$a'$};
+%       % letf to right arrows
+%       \draw [->] (t1) -- (t2) node[midway, above]{\run'\ $t$};
+%       \draw [->] (e1) -- (e2) node[midway, below]{\nur\ $a$};
+
+%       % up to down arrows
+%       \draw [->] (t1) -- (e1);
+%       \draw [->] (t2) -- (e2);
+%       \node[rotate=-90, anchor=center] at ($(t1)!0.5!(e1) + (-0.35,0)$) {tree\_to\_stack};
+%       \node[rotate=-90, anchor=center] at ($(t2)!0.5!(e2) + (0.35,0)$) {tree\_to\_stack};
+
+%       % diagonal arrow
+%       \path[->] (e1) edge (t2);
+%   \end{tikzpicture}%
+%   }
+% \end{wrapfigure}
+
+% The proof is based on the idea explained in~\cite[Section
+% 3.5.1]{yves-equiv} and depicted in the figure on the right:
+% we have a tree $t$ whose translation is $a$, we proceed by
+% induction on the execution of \nur. This gives us not only the output $a'$ but
+% that hypothesis that it exists a tree $t'$ such that its translation to a
+% stack is $a'$.\qed %This proof strategy is indirectly providing a kind of \ltt function by combining the execution of the \nur and \ttl.
+
+% \vspace{10pt}
+
+% Stating the converse direction of \cref{th:runTtorunS} in a symmetric way
+% would require a function
+% \ltt transforming a stack $a$ into a tree $t$.
+% Writing this function is far from trivial, since the structure of
+% the tree is lost by \backchainS and \nur that
+% intuitively keep the state as a big disjunction of conjunctions by
+% distributing conjunctions over disjunctions. Moreover, one would need to
+% define a notion of valid stack that is equally intricate.
 
 % The constructive nature of the logic of Rocq tells us that the proof above
 % provides an effective function translating stacks into trees. However, that
