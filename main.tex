@@ -2061,14 +2061,14 @@ in a substitution $\sigma$.
 \end{theorem}
 
 % \input{tex_code/runS_to_runTCMany1.tex}
-\begin{theorem}[runSTM1]\label{th:runStorunTM1}%
+\begin{theorem}[runTSM]\label{th:runStorunTM1}%
 $\forall\ p\ t\ \sigma\ (v\ \mathrm{:=}\ \mathrm{vars}\ t\ \cup\ \mathrm{vars}\ \sigma),$\\
 	$\mphant\mathrm{runT'}\ p\ v\ \sigma\ t\ ( \mathrm{Many}\ \sigma'\ t' ) \to$ \\
 	$\mphant\mphant\mathrm{runS}\ p\ v\ [\sigma ,\ [\mathrm{call}\ t,\ \mnil]]\ ( \mathrm{Some}\ ( \sigma' ,\ \mathrm{tree\_to\_stack}\ t'\ \sigma\ \mnil ) )$ 
 \end{theorem}
 
 % \input{tex_code/runS_to_runTCMany2.tex}
-\begin{theorem}[runSTM2]\label{th:runStorunTM2}%
+\begin{theorem}[runSTM]\label{th:runStorunTM2}%
 	$\forall\ p\ t\ \sigma\ (v\ \mathrm{:=}\ \mathrm{vars}\ t\ \cup\ \mathrm{vars}\ \sigma),$\\
 $\mphant\mathrm{runS}\ p\ v\ [\sigma ,\ [\mathrm{call}\ t,\ \mnil]]\ ( \mathrm{Some}\ ( \sigma' ,\ x\ \mathrm{::}\ \mathrm{xs} ) ) \to$ \\
 	$\mphant\mphant\exists\ t' ,\ \mathrm{runT'}\ p\ v\ \sigma\ t\ ( \mathrm{Many}\ \sigma'\ t' ) \land%
