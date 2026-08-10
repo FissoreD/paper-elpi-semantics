@@ -1924,18 +1924,18 @@ tree.
 
 \section{Equivalence of the two semantics}
 
-The kind of equivalence we are interested in is that a query
-produces the same substitution and alternatives in both semantics.
+The equivalence we are interested in states that a query produces the
+same substitution and alternatives under both semantics.
 
-The tree-based semantics exposes more information than needed, hence
-we hide it behind existentials.
+The tree-based semantics exposes more information than is needed for
+this comparison, so we hide the surplus behind existential quantifiers.
 
 \begin{definition}[runT']\label{th:runT'}%
 	$\lambda\ p\ v\ \sigma\ t\ r .$\\
   $\phantom{x}\exists\ b\ v' ,\ \mathrm{runT}\ p\ v\ \sigma\ (\mathrm{Unexplored}\ t)\ r\ b\ v' $
 \end{definition}
 
-For each possible outcome we prove the equivalence of the two semantics.
+For each possible outcome, we prove the equivalence of the two semantics.
 
 % \input{tex_code/runS_to_runTCZero.tex}
 \begin{corollary}[runS\_to\_runTZ]\label{th:runStorunTZ}%
@@ -1984,16 +1984,16 @@ For each possible outcome we prove the equivalence of the two semantics.
   $
 \end{corollary}
 
-Given that both semantics rely on the same notion of substitution,
-\cref{th:runStorunTZ,th:runStorunTO} can be expressed without the need of
-relating the states, stacks and trees, the two semantics
-operate on. On the contrary in \cref{th:runStorunTM1,th:runStorunTM2}
-the execution leaves choice points and we need to relate the two states.
+Because both semantics rely on the same notion of substitution,
+\cref{th:runStorunTZ,th:runStorunTO} can be stated without relating the
+states — the stacks and trees — on which the two semantics operate. In
+contrast, in \cref{th:runStorunTM1,th:runStorunTM2} the execution leaves
+choice points open, so we do need to relate the two kinds of states.
 
-Following the proof technique from~\cite{yves-equiv} we need to only define the
-mapping  from trees to stacks explicitly. We delay the description of this
-mapping to \cref{sec:t2l} and we sketch here the proof underpinning the
-corollaries above.
+Following the proof technique of~\cite{yves-equiv}, we only need to define
+the mapping from trees to stacks; the converse mapping is never
+constructed explicitly. We defer the description of this mapping to \cref{sec:t2l},
+and sketch here the proofs underpinning the corollaries above.
 
 
 % are more
@@ -2047,14 +2047,14 @@ corollaries above.
   }
 \end{wrapfigure}
 
-Explain that the main theorems induce on the execution in one semantic
-(top or bottom horizontal arrow)  to prove the other arrow. We start from top
-to bottom.
+The two theorems below each proceed by induction on the execution of one
+semantics — the top or the bottom horizontal arrow in the diagram — in
+order to derive the other. We begin with the top-to-bottom direction,
+from trees to stacks.
 
-Since not all trees and stack can be produced by
-either semantics starting from the initial state, it is important to identify the
-subset of valid trees.
-We defer to \cref{sec:validtree} the exact definition of sld\_tree.
+Since not every tree or stack can be produced by either semantics starting
+from the initial state, it is important to identify the subset of valid
+trees. We defer the exact definition of sld\_tree to \cref{sec:validtree}.
 
 % \input{tex_code/tree_to_elpi.tex}
 \begin{theorem}[runT2S]\label{th:runTtorunS}%
@@ -2073,14 +2073,15 @@ We defer to \cref{sec:validtree} the exact definition of sld\_tree.
 
 \begin{proof} Induction on $\mathrm{runT}$. \end{proof}
 
-We could prove the other direction in a symmetric way, i.e. defining the mapping
-from stacks to trees as well as a predicate to identify valid stacks (that
-the semantics can generate from the initial one). 
-The backard simulation technique~\cite{yves-equiv} we follow
-makes these two definition unnecessary by using the exitential quantifier
-(on $t'$ in the third case). We recover that a is a valid stack because
-it comes from a sld\_tree, and by inhabiting the existential in a constructive logic,
-we implicilty give the mapping from stacks to trees.
+The converse direction could in principle be proved symmetrically, by
+defining a mapping from stacks to trees together with a predicate
+identifying the valid stacks that the semantics can generate from the
+initial one. The backward simulation technique of~\cite{yves-equiv} that we
+follow makes both definitions unnecessary, by using an existential
+quantifier instead (on $t'$ in the third case). Validity of the stack $a$
+is recovered for free, since it is obtained from a valid SLD tree; and by
+inhabiting the existential in a constructive logic, we implicitly obtain
+the mapping from stacks to trees.
 
 % \input{tex_code/elpi_to_tree.tex}
 \begin{theorem}[runS2T]\label{th:runStorunT}%
