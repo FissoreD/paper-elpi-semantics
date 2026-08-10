@@ -214,13 +214,16 @@ class snip(C):
 
 def clean_line_math_mode(l:str):
     #AD HOC:
+    l = l.replace("vars_tm", "vars")
+    l = l.replace("TA", "Unexplored")
+    l = l.replace("vars_sigma", "vars")
     l = l.replace("%G", "")
     l = l.replace("++", "\\mappend")
     l = l.replace("\square", "\\square\ ")
     l = re.sub(" _[A-Za-z0-9]*", " _", l)
     l = l.replace("stepE", "\\backchainS")
-    l = l.replace("&", "\\land")
     l = l.replace("[::]", "\\mnil")
+    l = l.replace("&", "\\land")
     # l = l.replace('==', '=_b')
 
 

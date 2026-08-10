@@ -49,7 +49,14 @@
     },
     {
       "name": "base",
-      "tools": [ "docker" ]
+      "tools": [
+        "docker"
+      ]
+    },
+    {
+      "name": "base1",
+      "tools": [ "pdflatex", "pdflatex"
+      ]
     },
   ]
 }

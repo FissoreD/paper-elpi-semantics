@@ -2034,45 +2034,43 @@ produce the same substitution and alternatives in both semantics.
 The tree-based semantics exposes more information than needed, hence
 we hide it behind existentials.
 
-\input{tex_code/runt1.tex}
+% \input{tex_code/runt1.tex}
 
-The theorem we prove are the following.
+\begin{definition}[runT']\label{th:runT'}%
+	$\lambda\ p\ v\ \sigma\ t\ r .$\\
+  $\phantom{x}\exists\ b\ v' ,\ \mathrm{runT}\ p\ v\ \sigma\ (\mathrm{Unexplored}\ (\mathrm{call}\ t))\ r\ b\ v' $
+\end{definition}
+
+The theorem we prove are the following, the function vars aims
+to return the set of variables used in a term $t$ and the set of variables
+in a substitution $\sigma$.
 
 % \input{tex_code/runS_to_runTCZero.tex}
-\begin{theorem}[runS\_to\_runTZ]\label{th:runStorunTZ}%
-\begin{multline*}
-	\forall\ p\ t\ \sigma ,\ \mathrm{let}\ v\ \mathrm{:=}\ \mathrm{vars\_tm}\ t\ \cup\ \mathrm{vars\_sigma}\ \sigma\ \mathrm{in} \\
-	\mathrm{runS}\ p\ v\ [\sigma ,\ [\mathrm{call}\ t,\ \mnil]]\ \mathrm{None} \leftrightarrow \\
-	\mathrm{runT'}\ p\ v\ \sigma\ ( \mathrm{Unexplored}\ ( \mathrm{call}\ t ) )\ \mathrm{Zero} 
-\end{multline*}
+\begin{theorem}[runSTZ]\label{th:runStorunTZ}%
+	$\forall\ p\ t\ \sigma\ (v\ \mathrm{:=}\ \mathrm{vars}\ t\ \cup\ \mathrm{vars}\ \sigma),$\\
+	$\phantom{x}\mathrm{runS}\ p\ v\ [\sigma ,\ [\mathrm{call}\ t,\ \mnil]]\ \mathrm{None} \leftrightarrow \mathrm{runT'}\ p\ v\ \sigma\ t\ \mathrm{Zero}$
 \end{theorem}
 
 % \input{tex_code/runS_to_runTCOne.tex}
-\begin{theorem}[runS\_to\_runTO]\label{th:runStorunTO}%
-\begin{multline*}
-	\forall\ p\ t\ \sigma\ \sigma' ,\ \mathrm{let}\ v\ \mathrm{:=}\ \mathrm{vars\_tm}\ t\ \cup\ \mathrm{vars\_sigma}\ \sigma\ \mathrm{in} \\
-	\mathrm{runS}\ p\ v\ [\sigma ,\ [\mathrm{call}\ t,\ \mnil]]\ ( \mathrm{Some}\ ( \sigma' ,\ \mnil ) ) \leftrightarrow \\
-	\mathrm{runT'}\ p\ v\ \sigma\ ( \mathrm{Unexplored}\ ( \mathrm{call}\ t ) )\ ( \mathrm{One}\ \sigma' ) 
-\end{multline*}
+\begin{theorem}[runSTO]\label{th:runStorunTO}%
+	$\forall\ p\ t\ \sigma\ (v\ \mathrm{:=}\ \mathrm{vars}\ t\ \cup\ \mathrm{vars}\ \sigma),$\\
+	$\phantom{x}\mathrm{runS}\ p\ v\ [\sigma ,\ [\mathrm{call}\ t,\ \mnil]]\ ( \mathrm{Some}\ ( \sigma' ,\ \mnil ) ) \leftrightarrow
+	\mathrm{runT'}\ p\ v\ \sigma\ t\ ( \mathrm{One}\ \sigma' )$
 \end{theorem}
 
 % \input{tex_code/runS_to_runTCMany1.tex}
-\begin{theorem}[runS\_to\_runTM1]\label{th:runStorunTM1}%
-\begin{multline*}
-	\forall\ p\ t\ \sigma\ \sigma'\ t' ,\ \mathrm{let}\ v\ \mathrm{:=}\ \mathrm{vars\_tm}\ t\ \cup\ \mathrm{vars\_sigma}\ \sigma\ \mathrm{in} \\
-	\mathrm{runT'}\ p\ v\ \sigma\ ( \mathrm{Unexplored}\ ( \mathrm{call}\ t ) )\ ( \mathrm{Many}\ \sigma'\ t' ) \to \\
-	\mathrm{runS}\ p\ v\ [\sigma ,\ [\mathrm{call}\ t,\ \mnil]]\ ( \mathrm{Some}\ ( \sigma' ,\ \mathrm{tree\_to\_stack}\ t'\ \sigma\ \mnil ) ) 
-\end{multline*}
+\begin{theorem}[runSTM1]\label{th:runStorunTM1}%
+$\forall\ p\ t\ \sigma\ (v\ \mathrm{:=}\ \mathrm{vars}\ t\ \cup\ \mathrm{vars}\ \sigma),$\\
+	$\phantom{x}\mathrm{runT'}\ p\ v\ \sigma\ t\ ( \mathrm{Many}\ \sigma'\ t' ) \to$ \\
+	$\phantom{x}\phantom{x}\mathrm{runS}\ p\ v\ [\sigma ,\ [\mathrm{call}\ t,\ \mnil]]\ ( \mathrm{Some}\ ( \sigma' ,\ \mathrm{tree\_to\_stack}\ t'\ \sigma\ \mnil ) )$ 
 \end{theorem}
 
 % \input{tex_code/runS_to_runTCMany2.tex}
-\begin{theorem}[runS\_to\_runTM2]\label{th:runStorunTM2}%
-\begin{multline*}
-	\forall\ p\ t\ \sigma\ \sigma'\ x\ \mathrm{xs} ,\ \mathrm{let}\ v\ \mathrm{:=}\ \mathrm{vars\_tm}\ t\ \cup\ \mathrm{vars\_sigma}\ \sigma\ \mathrm{in} \\
-	\mathrm{runS}\ p\ v\ [\sigma ,\ [\mathrm{call}\ t,\ \mnil]]\ ( \mathrm{Some}\ ( \sigma' ,\ x\ \mathrm{::}\ \mathrm{xs} ) ) \to \\
-	\exists\ t' ,\ \mathrm{runT'}\ p\ v\ \sigma\ ( \mathrm{Unexplored}\ ( \mathrm{call}\ t ) )\ ( \mathrm{Many}\ \sigma'\ t' ) \land \\
-  \mathrm{tree\_to\_stack}\ t'\ \sigma\ \mnil = x\ \mathrm{::}\ \mathrm{xs} 
-\end{multline*}
+\begin{theorem}[runSTM2]\label{th:runStorunTM2}%
+	$\forall\ p\ t\ \sigma\ (v\ \mathrm{:=}\ \mathrm{vars}\ t\ \cup\ \mathrm{vars}\ \sigma),$\\
+$\phantom{x}\mathrm{runS}\ p\ v\ [\sigma ,\ [\mathrm{call}\ t,\ \mnil]]\ ( \mathrm{Some}\ ( \sigma' ,\ x\ \mathrm{::}\ \mathrm{xs} ) ) \to$ \\
+	$\phantom{x}\phantom{x}\exists\ t' ,\ \mathrm{runT'}\ p\ v\ \sigma\ t\ ( \mathrm{Many}\ \sigma'\ t' ) \land%
+  \mathrm{tree\_to\_stack}\ t'\ \sigma\ \mnil = x\ \mathrm{::}\ \mathrm{xs}$
 \end{theorem}
 
 
