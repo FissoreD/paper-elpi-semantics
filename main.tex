@@ -2520,12 +2520,12 @@ either fails or succeeds with no alternatives left to explore.
 The theorem we want to prove is the following one:
 
 % \input{tex_code/det_check_call.tex}
-\begin{theorem}[det\_check\_call]\label{th:detcheckcall}$\forall\ p\ \sigma\ t\ v , \mathrm{detchecked}\ p \to$\\
+\begin{theorem}[det\_check\_call]\label{th:detcheckcall}$\forall\ p\ \sigma\ t\ v , \mathrm{det\_checked}\ p \to$\\
   % \vspace{.8em}\\
 	$\phantom{xxx}  \mathrm{tm\_is\_det}\ p\ t \to \mathrm{is\_det}\ p\ \sigma\ v\ t $
 \end{theorem}
 
-Here, detchecked denotes the function that checks the program
+Here, det\_checked denotes the function that checks the program
 with respect to mutual exclusion and rule checking. %, and \emph{tm\_is\_det}
 % denotes the function that tests whether the head of the term refers to a rigid
 % constant with a deterministic type.
@@ -2595,7 +2595,7 @@ operations \step and \na.
 
 %\input{tex_code/det_tree_step.tex}
 \begin{lemma}[det\_tree\_step]\label{th:dettreestep}
-  $\forall\ \mathrm{p}\ v\ \sigma_1\ A\ r ,\ \mathrm{detchecked}\ \mathrm{p} \to$\\
+  $\forall\ \mathrm{p}\ v\ \sigma_1\ A\ r ,\ \mathrm{det\_checked}\ \mathrm{p} \to$\\
 	$\phantom{xxx} \mathrm{step}\ u\ \mathrm{p}\ v\ \sigma_1\ A = r \to \mathrm{det\_tree}\ \mathrm{pr}\ (\mathrm{snd}\ r) $
 \end{lemma}
 
@@ -2608,7 +2608,7 @@ operations \step and \na.
 
 % \input{tex_code/det_check_tree.tex}
 \begin{lemma}[det\_check\_tree]\label{th:detchecktree} $\forall\ \sigma\ v\ p\ t ,$\\
-  $\phantom{xxx} \mathrm{detchecked}\ p \to \mathrm{det\_tree}\ p\ t \to \mathrm{is\_det}\ p\ \sigma\ v\ t $
+  $\phantom{xxx} \mathrm{det\_checked}\ p \to \mathrm{det\_tree}\ p\ t \to \mathrm{is\_det}\ p\ \sigma\ v\ t $
 \end{lemma}
 
 
