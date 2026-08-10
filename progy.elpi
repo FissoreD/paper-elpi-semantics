@@ -1,0 +1,7 @@
+pred r int -> int.    % r is a non-deterministic predicate.
+r 0 0.                % The heads overlap: the query for 0
+r 0 1.                % has three applicable rules.
+r 0 2 :- !.
+~$ $~
+~$ $~
+~$ $~
