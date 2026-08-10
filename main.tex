@@ -2064,7 +2064,15 @@ These silent transitions must be skipped
 when proving the equivalence between the two semantics. Therefore, we
 prove the following lemma.
 
-\input{tex_code/pruneF_tree_to_stack.tex}
+\begin{lemma}[pruneF\_tree\_to\_stack]\label{th:pruneFtreetostack}%
+\begin{multline*}
+	\forall\ t\ t'\ b ,\ \mathrm{sld\_tree}\ t \to \mathrm{failed}\ t \to \mathrm{prune}\ b\ t = \mathrm{Some}\ t' \to \\
+	\forall\ l\ \sigma ,\ \mathrm{tree\_to\_stack}\ t\ \sigma\ l = \mathrm{tree\_to\_stack}\ t'\ \sigma\ l 
+\end{multline*}
+\end{lemma}
+
+% \input{tex_code/pruneF_tree_to_stack.tex}
+
 \begin{proof}By induction on the tree $t$. %\marginpar{dire di $v$}
 \end{proof}
 
