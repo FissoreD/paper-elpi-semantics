@@ -28,6 +28,8 @@
 \newcommand{\mappend}{\ensuremath{\mathbin{+\!\!+}}\xspace}
 \newcommand{\mnil}{\ensuremath{[]}\xspace}
 \newtheorem{axiom}{Axiom}
+\newcommand{\mphant}{\phantom{x}}
+
 
 \Crefname{figure}{Fig.}{Figs.}
 
@@ -746,7 +748,7 @@ stack.
     \matrix (inner1c) [matrix of nodes,
                      nodes={minimum width=0.6cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex, font=\fontsize{8pt}{9.6pt}\selectfont},
                      column sep=0.1cm, row sep=0.1cm] at (A1.center) {
-    \phantom{x} \\
+    \mphant \\
     };
     \draw[->, thick]
       ($(inner1a-1-3.north)+(0,0.3)$) -- ++(0,0.4)
@@ -783,7 +785,7 @@ stack.
     \matrix (inner2L) [matrix of nodes,
                      nodes={minimum width=0.6cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex, font=\fontsize{8pt}{9.6pt}\selectfont},
                      column sep=0.1cm, row sep=0.1cm] at (A2.center) {
-    \phantom{x} \\
+    \mphant \\
     };
     \draw[->, thick]
       ($(inner2a-1-2.north)+(0,0.3)$) -- ++(0,0.6)
@@ -829,7 +831,7 @@ stack.
     \matrix (inner3L) [matrix of nodes,
                      nodes={minimum width=0.6cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex, font=\fontsize{8pt}{9.6pt}\selectfont},
                      column sep=0.1cm, row sep=0.1cm] at (A3.center) {
-    \phantom{x} \\
+    \mphant \\
     };
     \draw[->, thick]
       ($(inner3a-1-2.north)+(0,0.3)$) -- ++(0,0.5)
@@ -870,7 +872,7 @@ stack.
     \matrix (inner4L) [matrix of nodes,
                      nodes={minimum width=0.6cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex, font=\fontsize{8pt}{9.6pt}\selectfont},
                      column sep=0.1cm, row sep=0.1cm] at (A4.center) {
-    \phantom{x} \\
+    \mphant \\
     };
     \draw[->, thick]
       ($(inner4a-1-2.north)+(0,0.3)$) -- ++(0,0.5)
@@ -911,7 +913,7 @@ stack.
     \matrix (inner5L) [matrix of nodes,
                      nodes={minimum width=0.6cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex, font=\fontsize{8pt}{9.6pt}\selectfont},
                      column sep=0.1cm, row sep=0.1cm] at (A5.center) {
-    \phantom{x} \\
+    \mphant \\
     };
     \draw[->, thick]
       ($(inner5a-1-1.north)+(0,0.3)$) -- ++(0,0.5)
@@ -1704,10 +1706,10 @@ implicitly denotes $(\mathrm{Some}\ A) \lor B_\sigma$.
 % \input{tex_code/runSST_or.tex}
 \begin{lemma}[or\_intro\_left]\label{th:orintroleft}%
 	$\forall\ p\ v\ v'\ \sigma\ \sigma'\ A\ A'\ \sigma_1\ B ,$\\
-  $\phantom{x}
+  $\mphant
   \mathrm{runT}\ p\ v\ \sigma\ A\ ( \mathrm{Many}\ \sigma'\ A' )\ \mathrm{true}\ v' \to
   $\\
-	$\phantom{x}\phantom{x}
+	$\mphant\mphant
   \mathrm{runT}\ p\ v\ \sigma\ ( A \lor B\ \phantom{!}_{\!\!\!\!\sigma_1} )\ ( \mathrm{Many}\ \sigma'\ ( A' \lor \mathrm{KO}\ \phantom{!}_{\!\!\!\!\sigma_1} ) )\ \mathrm{false}\ v'
   $
 \end{lemma}
@@ -1715,7 +1717,7 @@ implicitly denotes $(\mathrm{Some}\ A) \lor B_\sigma$.
 \begin{lemma}[or\_intro\_right]\label{th:orintroright}%
   $\forall\ p\ v\ v'\ \sigma\ A\ \sigma_1\ B ,$\\
 $ 
- \phantom{x}
+ \mphant
  \mathrm{runT}\ p\ v\ \sigma\ A\ \mathrm{Zero}\ \mathrm{true}\ v' \to 
  \mathrm{runT}\ p\ v\ \sigma\ ( A \lor B\ \phantom{!}_{\!\!\!\!\sigma_1} )\ \mathrm{Zero}\ \mathrm{false}\ v'
 $
@@ -1723,11 +1725,11 @@ $
 % \input{tex_code/runNF_or.tex}
 \begin{lemma}[or\_intro\_right2]\label{th:orintroright2}%
 	$\forall\ p\ v_0\ v_1\ v_2\ \sigma\ A\ \sigma_1\ \sigma_2\ B\ b ,$\\
-$\phantom{x}
+$\mphant
 	\mathrm{runT}\ p\ v_0\ \sigma\ A\ \mathrm{Zero}\ \mathrm{false}\ v_1 \land 
   \mathrm{runT}\ p\ v_1\ \sigma_1\ B\ ( \mathrm{One}\ \sigma_2 )\ b\ v_2 \to
 $\\
-$\phantom{x}\phantom{x}
+$\mphant\mphant
 	\mathrm{runT}\ p\ v_0\ \sigma\ ( A \lor B\ \phantom{!}_{\!\!\!\!\sigma_1} )\ ( \mathrm{One}\ \sigma_2 )\ \mathrm{false}\ v_2 
 $
 \end{lemma}
@@ -2038,7 +2040,7 @@ we hide it behind existentials.
 
 \begin{definition}[runT']\label{th:runT'}%
 	$\lambda\ p\ v\ \sigma\ t\ r .$\\
-  $\phantom{x}\exists\ b\ v' ,\ \mathrm{runT}\ p\ v\ \sigma\ (\mathrm{Unexplored}\ (\mathrm{call}\ t))\ r\ b\ v' $
+  $\mphant\exists\ b\ v' ,\ \mathrm{runT}\ p\ v\ \sigma\ (\mathrm{Unexplored}\ (\mathrm{call}\ t))\ r\ b\ v' $
 \end{definition}
 
 The theorem we prove are the following, the function vars aims
@@ -2048,28 +2050,28 @@ in a substitution $\sigma$.
 % \input{tex_code/runS_to_runTCZero.tex}
 \begin{theorem}[runSTZ]\label{th:runStorunTZ}%
 	$\forall\ p\ t\ \sigma\ (v\ \mathrm{:=}\ \mathrm{vars}\ t\ \cup\ \mathrm{vars}\ \sigma),$\\
-	$\phantom{x}\mathrm{runS}\ p\ v\ [\sigma ,\ [\mathrm{call}\ t,\ \mnil]]\ \mathrm{None} \leftrightarrow \mathrm{runT'}\ p\ v\ \sigma\ t\ \mathrm{Zero}$
+	$\mphant\mathrm{runS}\ p\ v\ [\sigma ,\ [\mathrm{call}\ t,\ \mnil]]\ \mathrm{None} \leftrightarrow \mathrm{runT'}\ p\ v\ \sigma\ t\ \mathrm{Zero}$
 \end{theorem}
 
 % \input{tex_code/runS_to_runTCOne.tex}
 \begin{theorem}[runSTO]\label{th:runStorunTO}%
 	$\forall\ p\ t\ \sigma\ (v\ \mathrm{:=}\ \mathrm{vars}\ t\ \cup\ \mathrm{vars}\ \sigma),$\\
-	$\phantom{x}\mathrm{runS}\ p\ v\ [\sigma ,\ [\mathrm{call}\ t,\ \mnil]]\ ( \mathrm{Some}\ ( \sigma' ,\ \mnil ) ) \leftrightarrow
+	$\mphant\mathrm{runS}\ p\ v\ [\sigma ,\ [\mathrm{call}\ t,\ \mnil]]\ ( \mathrm{Some}\ ( \sigma' ,\ \mnil ) ) \leftrightarrow
 	\mathrm{runT'}\ p\ v\ \sigma\ t\ ( \mathrm{One}\ \sigma' )$
 \end{theorem}
 
 % \input{tex_code/runS_to_runTCMany1.tex}
 \begin{theorem}[runSTM1]\label{th:runStorunTM1}%
 $\forall\ p\ t\ \sigma\ (v\ \mathrm{:=}\ \mathrm{vars}\ t\ \cup\ \mathrm{vars}\ \sigma),$\\
-	$\phantom{x}\mathrm{runT'}\ p\ v\ \sigma\ t\ ( \mathrm{Many}\ \sigma'\ t' ) \to$ \\
-	$\phantom{x}\phantom{x}\mathrm{runS}\ p\ v\ [\sigma ,\ [\mathrm{call}\ t,\ \mnil]]\ ( \mathrm{Some}\ ( \sigma' ,\ \mathrm{tree\_to\_stack}\ t'\ \sigma\ \mnil ) )$ 
+	$\mphant\mathrm{runT'}\ p\ v\ \sigma\ t\ ( \mathrm{Many}\ \sigma'\ t' ) \to$ \\
+	$\mphant\mphant\mathrm{runS}\ p\ v\ [\sigma ,\ [\mathrm{call}\ t,\ \mnil]]\ ( \mathrm{Some}\ ( \sigma' ,\ \mathrm{tree\_to\_stack}\ t'\ \sigma\ \mnil ) )$ 
 \end{theorem}
 
 % \input{tex_code/runS_to_runTCMany2.tex}
 \begin{theorem}[runSTM2]\label{th:runStorunTM2}%
 	$\forall\ p\ t\ \sigma\ (v\ \mathrm{:=}\ \mathrm{vars}\ t\ \cup\ \mathrm{vars}\ \sigma),$\\
-$\phantom{x}\mathrm{runS}\ p\ v\ [\sigma ,\ [\mathrm{call}\ t,\ \mnil]]\ ( \mathrm{Some}\ ( \sigma' ,\ x\ \mathrm{::}\ \mathrm{xs} ) ) \to$ \\
-	$\phantom{x}\phantom{x}\exists\ t' ,\ \mathrm{runT'}\ p\ v\ \sigma\ t\ ( \mathrm{Many}\ \sigma'\ t' ) \land%
+$\mphant\mathrm{runS}\ p\ v\ [\sigma ,\ [\mathrm{call}\ t,\ \mnil]]\ ( \mathrm{Some}\ ( \sigma' ,\ x\ \mathrm{::}\ \mathrm{xs} ) ) \to$ \\
+	$\mphant\mphant\exists\ t' ,\ \mathrm{runT'}\ p\ v\ \sigma\ t\ ( \mathrm{Many}\ \sigma'\ t' ) \land%
   \mathrm{tree\_to\_stack}\ t'\ \sigma\ \mnil = x\ \mathrm{::}\ \mathrm{xs}$
 \end{theorem}
 
