@@ -702,8 +702,28 @@ alternatives.
   \bigg]\bigg)
   \end{align*}\vspace{.5em}
 
-  \input{tex_code/nurbp.tex}
+  % \input{tex_code/nurbp.tex}
 
+\begin{prooftree}
+	\AxiomC{$~$}
+  \RightLabel{$\stops $}
+  \UnaryInfC{$\nur\ v\ ( ( \sigma ,\ \mnil )\ \mathrm{::}\ a )\ ( \mathrm{Some}\ ( \sigma ,\ a ) ) $}
+\end{prooftree}
+\begin{prooftree}
+	\AxiomC{$\nur\ v\ ( ( \sigma ,\ g )\ \mathrm{::}\ \mathrm{ca} )\ r $}
+  \RightLabel{$\cuts $}
+  \UnaryInfC{$\nur\ v\ ( ( \sigma ,\ ( \mathrm{cut} ,\ \mathrm{ca} )\ \mathrm{::}\ g )\ \mathrm{::}\ \_ )\ r $}
+\end{prooftree}
+\begin{prooftree}
+	\AxiomC{$\backchainS\ p\ v\ t\ \sigma\ a\ g = ( v' ,\ \mathrm{bs} )  \qquad \nur\ v'\ ( \mathrm{bs}\ \mappend\ a )\ r $}
+  \RightLabel{$\calls $}
+  \UnaryInfC{$\nur\ v\ ( ( \sigma ,\ ( \mathrm{call}\ t ,\ \_ )\ \mathrm{::}\ g )\ \mathrm{::}\ a )\ r $}
+\end{prooftree}
+\begin{prooftree}
+	\AxiomC{$~$}
+  \RightLabel{$\fails $}
+  \UnaryInfC{$\nur\ \_\ \mnil\ \mathrm{None} $}
+\end{prooftree}
   \caption{Rule system for \nur}
   \label{fig:nur-rules}
 \end{figure}
@@ -1076,6 +1096,7 @@ list.
 % \newcommand{\dingx}{\ensuremath{\square\!\!\!\text{\ding{55}}\;}}
 \newcommand{\dingx}{\makebox[0pt][l]{\ensuremath{\square}}\raisebox{.0ex}{\hspace{0.01em}\ensuremath{\times}}}
 \newcommand{\dings}{\ensuremath{\square\!\!\!\!\cdot\;}}
+\newcommand{\dingss}{\ensuremath{\square\!\!\!\cdot\;}}
 % \newcommand{\dings}{\makebox[0pt][l]{\ensuremath{\square}}\raisebox{.15ex}{\hspace{0.1em}?}}
 % \newcommand{\dings}{{\setlength{\fboxsep}{1pt}\fbox{{\footnotesize ?}}}}
 
@@ -1084,7 +1105,7 @@ functions, \step and \na. Both traverse the tree depth-first, left-to-right.
 The node to be explored in a tree is retrieved thanks to \pathend (in~\cref{fig:getend}).
 When this node is \okC we say the entire tree is a \emph{success} (short \dingv);
 when it is \koC we say the tree \emph{failed} (short \dingx); otherwise the tree is
-\emph{incomplete} (short \dings).
+\emph{incomplete} (short \dingss).
 In \cref{tree-ex} we mark with a black arrow the result of \pathend.
 The type of these two functions is given below.
 %
@@ -1607,7 +1628,7 @@ and $v'$ is the updated set of variables tracking freshly generated names.
 \small
 \begin{prooftree}
 	\AxiomC{$\text{\dingv\ t} \quad \mathrm{next\_subst}\ \sigma\ t \arr \sigma'  \qquad \mathrm{prune}\ \mathrm{true}\ t \arr \mathrm{None} $}
-  \RightLabel{$\rulelabel{StopOT} $}
+  \RightLabel{$\rulelabel{\stopot} $}
   \UnaryInfC{$\run\ \prog\ v\ \sigma\ t \arr (\mathrm{One}\ \sigma', \mathrm{false}, v)$}
 \end{prooftree}
 \begin{bprooftree}
@@ -1678,16 +1699,16 @@ and $v'$ is the updated set of variables tracking freshly generated names.
 \begin{center}
 \small
 \begin{bprooftree}
-  \AxiomC{$A \quad (A ~\mathrm{cuts})$}
+  \AxiomC{$A \quad (A ~\cuts)$}
   \RightLabel{$(\lor_{il})$}
   \UnaryInfC{$A \lor B $}
-\end{bprooftree}
+\end{bprooftree}\hspace{1em}
 %
 \begin{bprooftree}
-  \AxiomC{$\lnot A \quad (A ~\mathrm{cuts})$}
+  \AxiomC{$\lnot A \quad (A ~\cuts)$}
   \RightLabel{$(\lor_{ir1})$}
   \UnaryInfC{$\lnot (A \lor B) $}
-\end{bprooftree}
+\end{bprooftree}\hspace{1em}
 %
 \begin{bprooftree}
   \AxiomC{$\lnot A$}
@@ -1701,10 +1722,10 @@ and $v'$ is the updated set of variables tracking freshly generated names.
   \AxiomC{[A]}
   \noLine
   \UnaryInfC{$C$}
-  \AxiomC{$(A ~\mathrm{cuts})$}
+  \AxiomC{$(A ~\cuts)$}
   \RightLabel{$(\lor_{e1})$}
   \TrinaryInfC{$C$}
-\end{bprooftree}
+\end{bprooftree}\hspace{1em}
 %
 \begin{bprooftree}
   \AxiomC{$A \lor B$}
@@ -1807,12 +1828,12 @@ Depicted as rules:
 % \begin{center}  
 
 % \begin{bprooftree}
-%   \AxiomC{$A \quad (A ~\mathrm{cuts})$}
+%   \AxiomC{$A \quad (A ~\cuts)$}
 %   \RightLabel{$(\lor_{il})$}
 %   \UnaryInfC{$A \lor B $}
 % \end{bprooftree}
 % \begin{bprooftree}
-%   \AxiomC{$\lnot A \quad (A ~\mathrm{cuts})$}
+%   \AxiomC{$\lnot A \quad (A ~\cuts)$}
 %   \RightLabel{$(\lor_{ir1})$}
 %   \UnaryInfC{$\lnot (A \lor B) $}
 % \end{bprooftree}
@@ -1876,7 +1897,7 @@ This again reflects the depth-first traversal of the proof tree.
 %   \AxiomC{[A]}
 %   \noLine
 %   \UnaryInfC{$C$}
-%   \AxiomC{$(A ~\mathrm{cuts})$}
+%   \AxiomC{$(A ~\cuts)$}
 %   \RightLabel{$(\lor_{e1})$}
 %   \TrinaryInfC{$C$}
 % \end{bprooftree}

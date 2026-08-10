@@ -1,7 +1,7 @@
 func f int -> int.    % f is a deterministic predicate.
 f 1 2.                % The two rules have non-verlapping
-f 2 3.                %  heads, i.e. 1 != 2
+f 2 3.                % heads, i.e. 1 != 2
 
-func g int -> int.         % g is deterministic.
-g A C :- r A B, f B C, !.  % If the firs trule succeeds, the second and
-g D F :- f D E, f E F.     % the choice points left by r are cut.
+func g int -> int.         % g is a deterministic predicate.
+g A C :- r A B, f B C, !.  % If the first rule succeeds, the second rule and the choice points left by r are cut
+g D F :- f D E, f E F.     % The second rule is the last one and only calls functions
