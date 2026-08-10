@@ -58,5 +58,6 @@
       "tools": [ "pdflatex", "pdflatex"
       ]
     },
-  ]
+  ],
+  "latex-workshop.latex.recipe.default": "lastUsed"
 }
