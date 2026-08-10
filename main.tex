@@ -128,7 +128,7 @@ and its application to determinacy analysis} % of \elpiP programs}
 %TODO mandatory: add short abstract of the document
 \begin{abstract}
 We mechanize two operational semantics for \prologP with cut and prove their
-equivalence in the Rocq prover.
+equivalence in the \rocqP{} prover.
 
 The first semantics is closely related to the one introduced by Debray and
 Mishra~\cite{Debray1988} for studying the optimizations employed by
@@ -166,7 +166,9 @@ analysis~\cite{1989Warren,1996Somogy,1996henderson,2011king,lopez2004determinacy
 that identify logic programs that are deterministic, i.e., that compute
 functions rather than relations: they commit to their first solution and
 leave no \emph{choice points} (places where backtracking could resume). A
-choice point corresponds to a suspended \emph{alternative} computation.
+choice point corresponds to a suspended \emph{alternative} computation; in
+the following, we use \emph{choice point} and \emph{alternative}
+interchangeably.
 The control operator \emph{cut} allows the programmer to discard
 choice points and is therefore pervasively used to write deterministic code,
 but it is also well known to make the semantics of the programming language
@@ -188,19 +190,20 @@ relations, in which case any choice points left by the call are discarded.
 
 Most papers in the literature only provide paper proofs for the soundness
 of their analysis, with the exception of Kriener and King~\cite{2011king}.
-They mechanize in the Rocq prover (formerly the Coq proof assistant) a
+They mechanize in the \rocqP{} prover (formerly the \coqP{} proof assistant) a
 denotational semantics for \prologP with cut and use it to prove the
 soundness of an abstract-interpretation-based determinacy inference
-algorithm. This mechanization has two shortcomings, in addition to the Rocq
-code being unavailable. First, the analysis does not scale to dynamic
-predicates (see \cite[Sec.~8]{fissore2026}), so it cannot be applied to
-$\lambda$\prologP~\cite{1991miller-pf,Miller_Nadathur_2012}. Second, there is
+algorithm. In addition to their \rocqP{} code being unavailable, this
+mechanization has two further shortcomings. First, the analysis does not
+scale to dynamic predicates (see \cite[Sec.~8]{fissore2026}), so it cannot be
+applied to
+\lprologP~\cite{1991miller-pf,Miller_Nadathur_2012}. Second, there is
 no mechanized link between their denotational semantics and the operational
 semantics of Debray and Mishra~\cite{Debray1988}, which underlie standard
 \prologP abstract machines~\cite{warren1983abstract,1991ait-wam,10.1007/BFb0105415}.
 
 \paragraph{Contributions}
-In this paper we mechanize in Rocq two operational semantics for
+In this paper we mechanize in \rocqP{} two operational semantics for
 \prologP with cut. The first is the stack-based semantics given by Debray
 and Mishra. This semantics is closely related to actual \prologP
 implementations, but it makes reasoning about the scope of cut difficult:
@@ -220,23 +223,23 @@ which, as expected, differ from those of classical logic. For example,
 $q_1 \lor q_2$ is not equivalent to $q_2 \lor q_1$, since $q_2$ may be cut
 away by $q_1$.
 
-Finally, we use the tree-based semantics to prove the correctness of the
-determinacy analysis from~\cite{fissore2026}. In Rocq, we prove that any
+Finally, we use the tree-based semantics to prove the soundness of the
+determinacy analysis from~\cite{fissore2026}. In \rocqP{}, we prove that any
 terminating execution of a predicate identified as deterministic introduces no
 additional choice points. Combined with the equivalence
 between the two semantics, this result implies that any call to a
 deterministic predicate leaves no choice points on the stack used by
 actual \prologP implementations, including the
-\elpiP~\cite{dunchev15lpar} $\lambda$\prologP interpreter, for which the
+\elpiP~\cite{dunchev15lpar} \lprologP{} interpreter, for which the
 static analysis of~\cite{fissore2026} was originally developed. \elpiP
-serves as an extension language for the \rocqP prover and has become an
-important component of the Rocq ecosystem~\cite{krebbers25,Trakt,Maas2024,fissore2023,fissore2024,cohen_et_al:LIPIcs.FSCD.2020.34,Trocq,TrocqJ,tassi2018,tassi2019,tassi2023};
+serves as an extension language for the \rocqP{} prover and has become an
+important component of the \rocqP{} ecosystem~\cite{krebbers25,Trakt,Maas2024,fissore2023,fissore2024,cohen_et_al:LIPIcs.FSCD.2020.34,Trocq,TrocqJ,tassi2018,tassi2019,tassi2023};
 our result therefore further strengthens confidence in its
 implementation.
 
 Our mechanization is axiom-free and is available at\\
 % \url{https://github.com/FissoreD/elpi-formalization}.
-\url{ANONYMEZED} (joined as supplementary material).
+\url{ANONYMIZED} (included as supplementary material).
 
 \begin{comment}
 \section{Introduction}
@@ -380,9 +383,9 @@ An atom is either the cut operator or a call to a term.
 Terms include predicate symbols, data symbols, variables, and term application.
 
 The syntax tree allows variables to be applied and predicates to be mixed with data.
-These higher-order features play no role in the current paper that focuses on
-first order logic programming, but allows future extensions to full $\lambda$\prologP
-to be based on the same mechanization.
+These higher-order features play no role in the current paper, which focuses
+on first-order logic programming, but they allow future extensions to full
+\lprologP{} to be based on the same mechanization.
 
 
 Variables, predicates and data symbols
@@ -391,7 +394,7 @@ are identified by natural numbers. We represent substitutions
 finmap library~\cite{finmap}.
 The empty substitution is written $\epsilon$,
 while the composition of two substitutions $\sigma_1$ and $\sigma_2$ with
-disjoint supports as $\sigma_1 + \sigma_2$. %\marginpar{usiamo + ?}
+disjoint supports is written $\sigma_1 + \sigma_2$. %\marginpar{usiamo + ?}
  
 The backchaining operation,
 central to both semantics,
@@ -631,8 +634,8 @@ applied to the pair \cI{x}.
 \label{stack-sem}
 
 The stack-based semantics we present is very close to what is
-implemented by the \elpiP interpreter. This semantics is 
-similar to the one mechanized by Pusch in Isabelle/HOL
+implemented by the \elpiP interpreter. This semantics is
+similar to the one mechanized by Pusch in \isabelleP{}
 \cite{10.1007/BFb0105415}, which is in turn closely related to the
 semantics given by Debray and Mishra in
 \cite[Section~4.3]{Debray1988}. Pusch mechanized this
@@ -664,7 +667,7 @@ They are used to implement the cut, i.e. to prune the stack of alternatives.
 % directly in the cutE terminal.
 %\noindent
 The stack-based semantics is described by the \nur inductive
-predicates.
+predicate.
 % %
 % % \mvspace{}
 % % \deftypes[type:nur]{tex_code/nur_type.tex}
@@ -680,8 +683,8 @@ predicates.
 $$\nur : \FV \to \mathrm{alts} \to \mathrm{option}\ (\Sigma \times \mathrm{alts}) \to \cI{Prop}$$
 
 \noindent
-The \nur predicates relates a set of variables and a
-list of alternatives to optional result. None stands for failure,
+The \nur predicate relates a set of variables and a
+list of alternatives to an optional result. None stands for failure,
 i.e., no solution, whereas Some $(\sigma, a)$ represents success with $\sigma$
 being the solution and $a$ as the list of not-yet-explored
 alternatives.
@@ -706,15 +709,15 @@ alternatives.
 \end{figure}
 
 
-The rule system for \nur is given in \cref{fig:nur-rules} and is made by $4$
+The rule system for \nur is given in \cref{fig:nur-rules} and consists of four
 cases. We distinguish two main cases. If we run out of alternatives
-we fail: rule \fails stops the execution and return None.
+we fail: rule \fails stops the execution and returns None.
 If the list of alternatives is $(\sigma_0, h) :: a$, then
 we look at the list of goals $h$ (under the substitution $\sigma_0$). If $h$ is empty, rule \stops stops the execution with a success $\sigma_0$
 leaving $a$ as the unexplored alternatives.
 If $h$ is not empty we look at its head goal $(t, ca)$ where $t$ is the atom and $ca$ is its
 cut-to alternatives. If $t$ is a cut, rule
-\cuts continues to evaluate the tail of $h$ under with alternatives $ca$. Finally, when $t$ is a call, rule \calls backchains:
+\cuts continues to evaluate the tail of $h$ with alternatives $ca$. Finally, when $t$ is a call, rule \calls backchains:
 for each rule it pairs each premise with the current stack of
 alternatives, and prepends the obtained goals to the tail of $h$.
 Note that if backchain returns the empty list, the second
@@ -954,7 +957,7 @@ We propose an example of the execution of \nur in \cref{ex-elpi}. The
 arrows in the images represent the cut-to pointers.
 
 We have not drawn arrows coming out of call atoms since the interpreter
-ignores the cut-alternatives in this case. 
+ignores the cut-to alternatives in this case.
 The evolution
 of the stack in \cref{ex-elpi} mirrors the example in \cref{sec:cut-op}:
 we evaluate the first goal of the first alternative. 
@@ -1005,13 +1008,13 @@ corresponding And-layer.
 % \vast predicate.
 
 
-The tree is built incrementally. The \emph{Unexplored} node
+The tree is built incrementally. The \taC{} node
 represents an unexplored branch (an atom). When the atom is a
 call, we use the backchaining procedure from
 \cref{sec:preliminaries} to compute the two layers to attach to the tree:
 alternatives form the Or-layer, and the premises of each applicable rule form
 the corresponding And-layer. This expansion step is performed by the
-\emph{step} procedure described in \cref{sec:step}.
+\step{} procedure described in \cref{sec:step}.
 
 In
 addition to the Unexplored node we have two distinguished nodes, \koC and
@@ -1079,8 +1082,8 @@ list.
 The tree is constructed incrementally by two recursive
 functions, \step and \na. Both traverse the tree depth-first, left-to-right.
 The node to be explored in a tree is retrieved thanks to \pathend (in~\cref{fig:getend}).
-When this node is \okC we say the entire tree is a \emph{success} (short \dingv),
-is \koC we say the tree \emph{failed} (short \dingx), otherwise the tree is
+When this node is \okC we say the entire tree is a \emph{success} (short \dingv);
+when it is \koC we say the tree \emph{failed} (short \dingx); otherwise the tree is
 \emph{incomplete} (short \dings).
 In \cref{tree-ex} we mark with a black arrow the result of \pathend.
 The type of these two functions is given below.
@@ -1095,7 +1098,7 @@ The type of these two functions is given below.
 The step routine, among its outputs, also returns a \emph{tag}, whose definition
 is described in the very following section.
 
-To avoid the constraint that all functions must terminate in Rocq, we define the transitive closure
+To avoid the constraint that all functions must terminate in \rocqP{}, we define the transitive closure
 of \step and \na as the inductive relation \run.
 More precisely \run iterates calls to \step on incomplete trees to expand
 Unexplored nodes. When a tree fails it calls \na to find
@@ -1395,8 +1398,8 @@ unchanged when the tree is \emph{success} or \emph{failed}.
 % \input{tex_code/success_step.tex}
 % \input{tex_code/failed_step.tex}
 % 
-while it %The \step procedure 
-expands Unexplored nodes by calling backchain, which returns a list
+while it %The \step procedure
+expands \taC{} nodes by calling backchain, which returns a list
 $l$ of alternatives. If $l$ is empty, then the current call atom is replaced by
 \koC. Otherwise, it is replaced by a right-skewed tree of \orC nodes, where
 each leaf corresponds to a list of atoms $e \in l$. If $e$ is empty, the leaf
@@ -1715,7 +1718,7 @@ and $v'$ is the updated set of variables tracking freshly generated names.
   \TrinaryInfC{C}
 \end{bprooftree}
 \end{center}
-\caption{Introduction and elimination rules for disjuction ( \Cref{th:orintroleft,th:orintroright,th:orintroright2,th:orelim1,th:orelim2} )\label{fig:logic}}
+\caption{Introduction and elimination rules for disjunction ( \Cref{th:orintroleft,th:orintroright,th:orintroright2,th:orelim1,th:orelim2} )\label{fig:logic}}
 \end{subfigure}
 
 \end{figure*}
@@ -1726,10 +1729,10 @@ The \run predicate has five cases, depicted as inference rules in \cref{fig:run-
 % evocative of the fact that the given set of rules is deterministic (\cref{th:runTdet}).
 
 
-Rules \stopot and \stopt say that if the tree $t$ is success, then the substitution
-$\sigma'$ is extracted from $t$ (starting from $\sigma$), depending
-on the result of \na true $t$ -- aiming to clean the tree from its successful
-path -- we return One or Many, if there exist alternatives
+Rules \stopot and \stopt say that when the tree $t$ is a success, the
+substitution $\sigma'$ is extracted from $t$ (starting from $\sigma$); depending
+on the result of \na true $t$ -- which cleans the tree of its successful
+path -- we return One or Many, according to whether alternatives remain
 to be explored. Rule \stept applies when \pathend\ $t$ is an atom,
 then \step is invoked to evaluate $t$, and \run is called recursively on the
 updated tree. When \pathend\ $t$ is a failure, rule \backt calls \na
@@ -1926,9 +1929,9 @@ tree.
 
 \section{Equivalence of the two semantics}
 
-Before going into the proof of the two semantics equivalence, we need
-to relate trees to stacks. In the following section we provide an implementation
-of a function call \eI{t2l} which is charged of translating trees to
+Before going into the proof of the two semantics' equivalence, we need
+to relate trees to stacks. In the following subsection we define the
+function \ttl, which is in charge of translating trees to
 stacks.
 
 \subsection{From trees to stacks}\label{sec:t2l}
@@ -1959,8 +1962,8 @@ be discarded if the atom turns out to be a cut. The correct cut-to list is
 therefore determined later, once the trees corresponding to sibling subtrees
 have been inspected.
 
-The translation of $A \lor B_\sigma$ creates two list of alternatives,
-one for the $A$ and the other for $B$. The alternatives of $B$ are valid
+The translation of $A \lor B_\sigma$ creates two lists of alternatives,
+one for $A$ and the other for $B$. The alternatives of $B$ are valid
 choice points for $A$ and should be passed to the translation of $A$.
 The two lists of alternatives can then be concatenated. Moreover, every atom
 occurring one level below $cp$ (i.e. in $A$ or $B$) should add $cp$ as its
@@ -1968,7 +1971,7 @@ cut-to alternatives.
 
 The translation of $A \land_{B_0} B$ starts with the translation of $A$. If the
 translation of $A$ is an empty list we return the empty list of
-alternatives without even touching $B$ nor $B_0$, since an empty
+alternatives without even touching $B$ or $B_0$, since an empty
 translation for $A$ indicates failure and this in turn implies the
 failure of the entire conjunction. When the translation of $A$ is
 a list $(\sigma_0, g) :: a$, the $B$ node represents the continuation of the
@@ -1976,7 +1979,7 @@ first alternative $g$, whereas $B_0$ is the continuation for each alternative
 in $a$.
 % While performing these translation, we need to carefully update the cut-atlernatives.
 
-The function s2l is not injective: distinct trees can be translated into the
+The function \ttl is not injective: distinct trees can be translated into the
 same stack. In particular, a transition from a tree $t_1$ to a tree $t_2$
 performed by \run may result in both trees being translated into the same
 stack. We refer to such a transition as a \emph{silent transition}.
@@ -2146,7 +2149,7 @@ from trees to stacks.
 
 Since not every tree or stack can be produced by either semantics starting
 from the initial state, it is important to identify the subset of valid
-trees. We defer the exact definition of sld\_tree to \cref{sec:validtree}.
+trees. We defer the exact definition of \vast{} to \cref{sec:validtree}.
 
 % \input{tex_code/tree_to_elpi.tex}
 \begin{theorem}[\logo{}runT2S]\label{th:runTtorunS}%
@@ -2263,8 +2266,8 @@ iterations in \run by accounting for silent transitions.
 
 
 The class of valid SLD trees is captured by the \vast
-function shown in Figure~\ref{fig:vt}.
-While all base cases of {tree} are valid, we need to analyze the \orC and
+function shown in \cref{fig:vt}.
+While all base cases of \tree{} are valid, we need to analyze the \orC and
 \andC constructors more carefully.
 % \marginpar{TODO: explain better valid tree as requested by reviewr, maybe make a few examples}
 
@@ -2641,7 +2644,7 @@ verification, the user can better control unexpected backtracking.
 
 A predicate behaves deterministically if two conditions are
 satisfied: \emph{mutual exclusion} guarantees that at most one rule can
-be successfully applied to any given query, whereas \emph{rule body checking}
+be successfully applied to any given query, whereas \emph{rule-body checking}
 ensures that each rule does not create choice points, for example by
 calling non-deterministic predicates.
 
@@ -2654,9 +2657,9 @@ calling non-deterministic predicates.
 % each recursive call is performed with ground inputs.
 
 Our mechanization implements the unification algorithm by
-Martelli and Montanari~\cite{10.1145/357162.357169}, which we prove
-terminating using the standard lexicographic ordering,
-correct and complete.
+Martelli and Montanari~\cite{10.1145/357162.357169}; we prove it
+terminating (using the standard lexicographic ordering), correct, and
+complete.
 
 In the following definitions and lemmas, we use the notation $x \cap y =
 \varnothing$ to denote that the two sets $x$ and $y$ are disjoint. When the
@@ -2770,9 +2773,9 @@ query, if both heads match the query $q$, then the two heads must unify.
   substitution $\sigma'$ such that $\sigma'\ h_1 = \sigma'\ h_2$. This
   substitution is the composition of $\sigma_1$ and $\sigma_2$, that is
   $\sigma' = \lambda x. \sigma_1 (\sigma_2\ x)$. Since $h_1$ and
-  $h_2$ are disjoint, also are the domain of $\sigma_1$ and $\sigma_2$, therefore
+  $h_2$ are disjoint, so are the domains of $\sigma_1$ and $\sigma_2$, therefore
   $\sigma' h_1 = \sigma_2 (\sigma_1\ h_1)$ and $\sigma' h_2 = \sigma_2 (\sigma_1\ h_2)$.
-  We can know conclude the proof: $\sigma'\ h_1 = \sigma_2 (\sigma_1\ h_1) = \sigma_2\ q = q = \sigma_2\ h_2 = \sigma' h_2$.
+  We can now conclude the proof: $\sigma'\ h_1 = \sigma_2 (\sigma_1\ h_1) = \sigma_2\ q = q = \sigma_2\ h_2 = \sigma' h_2$.
 \end{proof}
 
 
@@ -2862,7 +2865,7 @@ The theorem we want to prove is the following one:
 \end{theorem}
 
 Here, det\_checked denotes the function that checks the program
-with respect to mutual exclusion and rule checking. %, and \emph{tm\_is\_det}
+with respect to mutual exclusion and rule-body checking. %, and \emph{tm\_is\_det}
 % denotes the function that tests whether the head of the term refers to a rigid
 % constant with a deterministic type.
 
@@ -2914,8 +2917,8 @@ In this case, either $A$ is deterministic, or both $B$ and the reset
 point contain a cut that prevents the non-deterministic behaviour arising
 from the evaluation of $A$.
 
-For \orC trees, the interesting case is when the left-hand side contains
-an tree. In this case, $A$ must be deterministic. If $A$
+For \orC trees, the interesting case is when the left-hand side is
+present. In this case, $A$ must be deterministic. If $A$
 contains a superficial cut, then $B$ must also be deterministic. Indeed,
 if $A$ succeeds, the cut discards $B$; otherwise, if $A$ fails before
 reaching the cut, then no solution is produced by $A$ and $B$ is evaluated.
@@ -2970,14 +2973,14 @@ complementary: taken together, they suggest that the tree-based
 semantics is equivalent to an optimized stack-based one.
 
 Another relevant work is due to Kriener and King~\cite{2011king}, but
-we could not find their Rocq source code. Their semantics is
+we could not find their \rocqP{} source code. Their semantics is
 denotational and cannot easily account for all the features covered
 in~\cite{fissore2026}, although it would have been sufficient for the
 first-order fragment considered in this paper.
 
 Hanus and Prott~\cite{hanus2025} formalize a determinacy checker for
 the logic-functional Curry language. In this language choice points
-are eplicitly denoted by the \cI{?} node in the syntax of expressions.
+are explicitly denoted by the \cI{?} node in the syntax of expressions.
 In this setting the mutual exclusion of rules does not need to be
 ensured resorting to unification: the overlap of rules is explicit in the
 syntax. Similarly the operator to absorb choice points, \cI{allValues},
@@ -3044,7 +3047,7 @@ disjoint substitutions.
 
 To obtain an axiom-free mechanization, we had to provide an implementation
 of the first-order unification algorithm, since we could not find an
-existing Rocq mechanization. Describing this development in detail is out of
+existing \rocqP{} mechanization. Describing this development in detail is out of
 scope for this paper. It amounts to about 1,700 lines of ssreflect code,
 including 200 lines for the termination proof based on a lexicographic
 ordering and 800 lines for correctness and completeness. Because of the
@@ -3067,7 +3070,7 @@ changes to the conditions for mutual exclusion.
 % to the higher-order case
 
 \begin{acks}
-  TODO: hidden for review
+  Acknowledgments withheld for double-blind review.
 % We thank
 % Yves Bertot and Laurent Thery for insightful
 % discussions on how to prove the quivalence of the
