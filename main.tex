@@ -2746,19 +2746,15 @@ $\phantom{xx}( \exists\ \sigma' ,\ \mathrm{acyclic}\ \sigma' \land\ \sigma'\ ( \
 $\phantom{xx}\phantom{xx}\exists\ \sigma'' ,\ \mathrm{unify}\ t_1\ t_2\ \sigma = \mathrm{Some}\ \sigma''$
 \end{lemma}
 
-The \elpiP language adopts a
-restricted unification routine for input arguments, called
-\matching~\cite{1991ait-wam,zhou2012}. Similarly to \unify, \matching takes the
-query term $t_1$ and the pattern $t_2$ and returns an optional substitution
-$\sigma'$ that does not assign any variable in the query arguments that
-are in input position.
-% The query-term is the argument in input mode taken from a dynamic
-% call and the pattern is the corresponding input argument in the chosen
-% rule-head.
+The \elpiP language adopts a restricted unification routine for input arguments,
+called \matching~\cite{1991ait-wam,zhou2012}. Like \unify, \matching takes a
+query term $t_1$ and a pattern $t_2$, but it also takes a set of frozen
+variables $v$ and returns an optional substitution $\sigma'$ that does not
+assign any variable in $v$.
 
 To address this need, we extend the Martelli-Montanari unification
-procedure so that it takes a set of frozen variables, i.e. variables that
-cannot be assigned. The function \matching has the following property:
+procedure so that it takes a set of frozen variables.
+The function \matching has the following property:
 
 % \input{tex_code/matching_disj.tex}
 \begin{lemma}[\logo{}matching\_disj]\label{um}\label{th:matchingdisj} $\forall\ v\ t_1\ t_2\ \sigma\ \sigma', \to \mathrm{vars}\ ( \sigma\ t_2 )\ \subseteq\ {v}$\\
