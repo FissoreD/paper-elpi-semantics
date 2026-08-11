@@ -2982,8 +2982,7 @@ superficial cut and $B$ is not $\bot$, then $B$ could still
 produce a successful branch, leading to non-deterministic behaviour.
 
 \Cref{th:detchecktree} is proved by showing that deterministic trees are
-preserved by the operations \step and \na, and are used to prove
-\cref{th:detchecktree}.
+preserved by the operations \step and \na.
 
 %\input{tex_code/det_tree_step.tex}
 % \begin{lemma}[\logo{}det\_tree\_step]\label{th:dettreestep}
@@ -2996,11 +2995,11 @@ preserved by the operations \step and \na, and are used to prove
 %   $\phantom{xxx} \mathrm{det\_tree}\ p\ t \to \mathrm{prune}\ b\ t = \mathrm{Some}\ t' \to \mathrm{det\_tree}\ p\ t' $
 % \end{lemma}
 
-Finally, the proof for \cref{th:detcheckcall} is as follows: from
-\cref{th:detchecktree},  conclude that a call to a deterministic predicate
-behaves deterministically on trees, then, thanks to \cref{th:runStorunTM1}, we derive
-the proof that a call to a detemrinistic predicate behaves deterministically
-when run in \nur.
+Finally, the proof of \cref{th:detcheckcall} is as follows. From
+\cref{th:detchecktree}, we conclude that a call to a deterministic predicate
+behaves deterministically on trees. Then, using \cref{th:runStorunTM1}, we
+derive that a deterministic call in \run behaves deterministically also in \nur.
+
 
 % \noindent Finally, the following lemma entails det\_check\_call:
 
