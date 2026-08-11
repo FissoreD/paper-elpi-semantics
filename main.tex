@@ -2318,7 +2318,7 @@ trees. We defer the exact definition of \vast{} to \cref{sec:validtree}.
   $\phantom{xx}
 	\mathrm{sld\_tree}\ t \land (\exists\ b\ v',\ \run\ p\ v\ \sigma\ t\ r\ b\ v') \to \\
   $
-  $
+  $\phantom{xx}
 	\begin{cases}
 	\nur\ p\ v\ ( \mathrm{t2s}\ t\ \sigma\ \mnil )\ \mathrm{None} & \mathrm{if}\ r = \mathrm{Zero}\\
 	\nur\ p\ v\ ( \mathrm{t2s}\ t\ \sigma\ \mnil )\ (\mathrm{Some}\ (\sigma', \mnil)) & \mathrm{if}\ r = \mathrm{One}\ \sigma'\\
@@ -2342,12 +2342,13 @@ the mapping from stacks to trees.
 
 % \input{tex_code/elpi_to_tree.tex}
 \begin{theorem}[\logo{}runS2T]\label{th:runStorunT}%
+  \begingroup\small
 	$\forall\ p\ v\ a\ r ,$\\
   $\phantom{xx}\nur\ p\ v\ a\ r \to
 	\forall\ \sigma\ t ,\ \mathrm{sld\_tree}\ t \to \mathrm{t2s}\ t\ \sigma\ \mnil = a \to \exists \ b\ v',
   $\\
 	% \mathrm{match}\ r\ \mathrm{with} \\
-  $
+  $\phantom{xx}
   \begin{cases}
     \run\ p\ v\ \sigma\ t\ \mathrm{Zero}\ b\ v'             & \mathrm{if}\ r = \mathrm{None} \\
     \run\ p\ v\ \sigma\ t\ ( \mathrm{One}\ \sigma' )\ b\ v' & \mathrm{if}\ r = \mathrm{Some}\ ( \sigma' ,\ \mnil ) \\
@@ -2356,6 +2357,7 @@ the mapping from stacks to trees.
     \phantom{xxxx}\land\ \mathrm{t2s}\ t'\ \sigma\ \mnil = a'     &  \\
   \end{cases}
   $
+  \endgroup
 \end{theorem}
 
 \begin{proof} 
