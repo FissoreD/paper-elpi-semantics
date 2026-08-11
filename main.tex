@@ -2727,10 +2727,10 @@ $\phantom{xx}\mathrm{acyclic}\ \sigma \to \mathrm{unify}\ t_1\ t_2\ \sigma = \ma
 \end{lemma}
 
 % \input{tex_code/unify_complete.tex}
-\begin{lemma}[\logo{}unify\_complete]\label{th:unifycomplete} $\forall\ t_1\ t_2\ s ,\ \mathrm{acyclic}\ s \to$\\
+\begin{lemma}[\logo{}unify\_complete]\label{th:unifycomplete} $\forall\ t_1\ t_2\ \sigma ,\ \mathrm{acyclic}\ \sigma \to$\\
 % \begin{multline*}
-$\phantom{xx}( \exists\ s' ,\ \mathrm{acyclic}\ s' \land\ s'\ ( s\ t_1 ) = s'\ ( s\ t_2 ) ) \to$\\
-$\phantom{xx}\phantom{xx}\exists\ s'' ,\ \mathrm{unify}\ t_1\ t_2\ s = \mathrm{Some}\ s''$
+$\phantom{xx}( \exists\ \sigma' ,\ \mathrm{acyclic}\ \sigma' \land\ \sigma'\ ( \sigma\ t_1 ) = \sigma'\ ( \sigma\ t_2 ) ) \to$\\
+$\phantom{xx}\phantom{xx}\exists\ \sigma'' ,\ \mathrm{unify}\ t_1\ t_2\ \sigma = \mathrm{Some}\ \sigma''$
 \end{lemma}
 
 The \elpiP language adopts a
