@@ -3044,7 +3044,7 @@ semantics to an operational semantics of the kind underlying standard
 provides.
 
 Hanus and Prott~\cite{hanus2025} formalize in \rocqP{} a determinacy
-checker for the logic-functional language Curry. In this language,
+checker for the logic-functional language \curryP. In this language,
 choice points are explicitly denoted by the \cI{?} node in the syntax
 of expressions, so mutual exclusion of rules need not be established
 through unification: the overlap between rules is already explicit in
@@ -3070,7 +3070,7 @@ proof of \cref{th:runStorunT}.
 For the static analysis of determinacy, we use a semantics in which
 input arguments are \emph{matched}, rather than unified, against rule
 heads. This choice agrees with the \elpiP interpreter, which is in
-turn inspired by B-\prologP's ``matching clauses''~\cite{1991ait-wam,zhou2012}.
+turn inspired by \bprologP's ``matching clauses''~\cite{1991ait-wam,zhou2012}.
 Our results can nonetheless be applied to a semantics based entirely
 on unification, by adding two assumptions to
 \cref{th:detcheckcall}: the initial query must have ground inputs, and
@@ -3084,7 +3084,7 @@ assumption, under which unification and matching coincide.
 \section{Conclusion}
 
 This paper presents two mechanized operational semantics for \prologP
-with cut, together with a proof of their equivalence. The first
+with cut, together with a proof of their equivalence in \rocqP. The first
 semantics, due to Debray and Mishra, is based on a stack of
 alternatives: it is close to actual \prologP implementations,
 including the first-order fragment of \elpiP, but it leaves the scope
