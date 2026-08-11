@@ -626,6 +626,16 @@ In the following section we note $\mathbb{B}$ for the boolean type.
 Following the Mathematical Components library~\cite{assia_mahboubi_2022_7118596}, on which we depend,
 we use \cI{x.1} and \cI{x.2} to denote the first and second projection
 applied to the pair \cI{x}.
+We use the notation $x \cap y =\varnothing$ 
+to denote that the two sets $x$ and $y$ are disjoint. When the
+arguments are terms, as in $t_1 \cap t_2 = \varnothing$, we mean that the two
+terms do not share any variables. Similarly $t \subseteq v$ means that
+the set of variables occurring in $t$ is included in the set $v$;
+$\sigma \subseteq v$ means that $v$ includes the domain of $\sigma$ and the
+all variables occurring in its codomain.
+
+
+
 % List concatenation is the infix \mappend,
 % while mapping a function \cI{f} on a list \cI{l} is written
 % \cI{[seq f x | x <- l]}.
@@ -660,18 +670,20 @@ a goal pairs an atom with a list of the \emph{cut-to} alternatives.
 Still, these alternatives have a very different role: they have to be understood
 as pointers to lower levels of the stack itself.
 They are used to implement the cut, i.e. to prune the stack of alternatives.
-
+The \nur inductive
+predicate describes
+the stack-based semantics.
+%
 \newcommand{\backchainS}{
   \ensuremath{\mathcal{B}_S}
 }
-
+%
 % We are completely loosing the tree structure. There are no clean reset
 % points. The backtracking operation is simpler: it is the tail function.
 % The cutr and cutl operations disappears: the alternatives are stored 
 % directly in the cutE terminal.
 %\noindent
-The stack-based semantics is described by the \nur inductive
-predicate.
+%
 % %
 % % \mvspace{}
 % % \deftypes[type:nur]{tex_code/nur_type.tex}
@@ -2195,7 +2207,7 @@ For each possible outcome, we prove the equivalence of the two semantics.
 
 % \input{tex_code/runS_to_runTCZero.tex}
 \begin{corollary}[\logo{}equiv\_zero]\label{th:runStorunTZ}%
-	$\forall\ p\ t\ (v\ \mathrm{:=}\ \mathrm{vars}\ t),$\\
+	$\forall\ p\ t\ v,\ t \subseteq v \to$\\
   $
 	\phantom{xx}
 	\nur\ p\ v\ [\varepsilon ,\ [\mathrm{call}\ t,\ \mnil]]\ \mathrm{None} \leftrightarrow
@@ -2208,7 +2220,7 @@ For each possible outcome, we prove the equivalence of the two semantics.
 
 % \input{tex_code/runS_to_runTCOne.tex}
 \begin{corollary}[\logo{}equiv\_one]\label{th:runStorunTO}%
-	$\forall\ p\ t\ \sigma'\ (v\ \mathrm{:=}\ \mathrm{vars}\ t),$\\
+	$\forall\ p\ t\ \sigma'\ v,\ t \subseteq v \to$\\
   $\phantom{xx}
 	\nur\ p\ v\ [\varepsilon ,\ [\mathrm{call}\ t,\ \mnil]]\ ( \mathrm{Some}\ ( \sigma' ,\ \mnil ) ) \leftrightarrow
   $\\
@@ -2219,7 +2231,7 @@ For each possible outcome, we prove the equivalence of the two semantics.
 
 % \input{tex_code/runS_to_runTCMany1.tex}
 \begin{corollary}[\logo{}sound\_many]\label{th:runStorunTM1}%
-	$\forall\ p\ t \sigma'\ t'\ (v\ \mathrm{:=}\ \mathrm{vars}\ t),$\\
+	$\forall\ p\ t \sigma'\ t'\ v,\ t \subseteq v \to$\\
   $\phantom{xx}
 	\mathrm{\runo}\ p\ v\ \varepsilon\ ( \mathrm{call}\ t  )\ ( \mathrm{Many}\ \sigma'\ t' ) \to
   $\\
@@ -2230,7 +2242,7 @@ For each possible outcome, we prove the equivalence of the two semantics.
 
 % \input{tex_code/runS_to_runTCMany2.tex}
 \begin{corollary}[\logo{}complete\_many]\label{th:runStorunTM2}%
-	$\forall\ p\ t\ \sigma'\ x\ \mathrm{xs}\ (v\ \mathrm{:=}\ \mathrm{vars}\ t),$\\
+	$\forall\ p\ t\ \sigma'\ x\ \mathrm{xs}\ v,\ t \subseteq v \to$\\
   $\phantom{xx}
   \nur\ p\ v\ [\varepsilon ,\ [\mathrm{call}\ t,\ \mnil]]\ ( \mathrm{Some}\ ( \sigma' ,\ x\ \mathrm{::}\ \mathrm{xs} ) ) \to
   $\\
@@ -2288,7 +2300,7 @@ the two theorems proved in \cref{sec:eqproof}.
       \node (e1) [below=1.5cm of t1]  {$a$};
       \node (e2) [right=1.5cm of e1]  {$a'$};
       % letf to right arrows
-      \draw [->] (t1) -- (t2) node[midway, above]{\run'\ $t$};
+      \draw [->] (t1) -- (t2) node[midway, above]{\run\ $t$};
       \draw [->] (e1) -- (e2) node[midway, below]{\nur\ $a$};
 
       % up to down arrows
@@ -2315,7 +2327,7 @@ trees. We defer the exact definition of \vast{} to \cref{sec:validtree}.
 % \input{tex_code/tree_to_elpi.tex}
 \begin{theorem}[\logo{}runT2S]\label{th:runTtorunS}%
   \begingroup\small
-	$\forall\ p\ t\ \sigma\ r\ (v\ \mathrm{:=}\ \mathrm{vars}\ t\ \cup\ \mathrm{vars}\ \sigma) ,$\\ 
+	$\forall\ p\ t\ \sigma\ r\ v,\ t\ \cup\ \sigma \subseteq v \to$\\
   $\phantom{xx}
 	\mathrm{sld\_tree}\ t \land (\exists\ b\ v',\ \run\ p\ v\ \sigma\ t\ r\ b\ v') \to \\
   $
@@ -2344,9 +2356,9 @@ the mapping from stacks to trees.
 % \input{tex_code/elpi_to_tree.tex}
 \begin{theorem}[\logo{}runS2T]\label{th:runStorunT}%
   \begingroup\small
-	$\forall\ p\ v\ a\ r ,$\\
+	$\forall\ p\ v\ a\ r\ v\ \sigma\ t,\ t\ \cup\ \sigma \subseteq v \to$\\
   $\phantom{xx}\nur\ p\ v\ a\ r \to
-	\forall\ \sigma\ t ,\ \mathrm{sld\_tree}\ t \to \mathrm{t2s}\ t\ \sigma\ \mnil = a \to \exists \ b\ v',
+	\ \mathrm{sld\_tree}\ t \to \mathrm{t2s}\ t\ \sigma\ \mnil = a \to \exists \ b\ v',
   $\\
 	% \mathrm{match}\ r\ \mathrm{with} \\
   $\phantom{xx}
@@ -2456,7 +2468,7 @@ of the resulting tree).
 When the left-hand side has succeeded, the right-hand side
 may have been explored, and must therefore be a valid SLD tree.
 
-We conclude by show that \vast is preserved by both
+In the mechanization we show that \vast is preserved by both
 \step and \na.
 % out the two main invariants stating that valid SLD trees
 % are preserved by calls to \step and \na.
@@ -2704,16 +2716,12 @@ calling non-deterministic predicates.
 % need a mode checker that statically ensures that, in a query with ground inputs,
 % each recursive call is performed with ground inputs.
 
+\subsection{Unification and matching}
+
 Our mechanization implements the unification algorithm by
 Martelli and Montanari~\cite{10.1145/357162.357169}; we prove it
 terminating (using the standard lexicographic ordering), correct, and
 complete.
-
-In the following definitions and lemmas, we use the notation $x \cap y =
-\varnothing$ to denote that the two sets $x$ and $y$ are disjoint. When the
-arguments are terms, as in $t_1 \cap t_2 = \varnothing$, we mean that the two
-terms do not share any variables. Similarly $t \subseteq v$ means that
-the set of variables occurring in $t$ is included in the set $v$.
 
 % The first notion to provide is the application of an acyclic substitution:
 
@@ -2808,7 +2816,7 @@ query, if both heads match the query $q$, then the two heads must unify.
 % \input{tex_code/matching_unify_transP.tex}
 \begin{lemma}[\logo{}matching\_unify\_trans]\label{th:matchingunifytransP}%
 	$\forall\ v\ h_1\ h_2\ q,$\\
-  $\phantom{xx}h_1 \cap h_2 = \varnothing \land h_1 \cap q = \varnothing \land h_2 \cap q = \varnothing \land \mathrm{vars}\ q \subseteq v \to$ \\
+  $\phantom{xx}h_1 \cap h_2 = \varnothing \land h_1 \cap q = \varnothing \land h_2 \cap q = \varnothing \land q \subseteq v \to$ \\
 	$\phantom{xx}\phantom{xx}\mathrm{matching}\ v\ h_1\ q\ \varnothing \land \mathrm{matching}\ v\ h_2\ q\ \varnothing \to \mathrm{unify}\ h_1\ h_2\ \varnothing $
 \end{lemma}
 
@@ -2868,6 +2876,8 @@ $\alpha$-equivalent terms.
   $
 \end{lemma}
 
+\subsection{Soundness of determinacy checking}
+
 In \cref{fig:progx}, the rules of the program are equipped with three
 signatures, one per predicate. Besides the arity of each predicate, a
 signature specifies which arguments are inputs and which are outputs,
@@ -2890,7 +2900,7 @@ either fails or succeeds with no alternatives left to explore.
 % Below, we define \texttt{is\_det}.
 
 % \input{tex_code/is_detS.tex}
-\begin{definition}[\logo{}is\_det]\label{th:isdetS} $\lambda\ p\ \sigma\ t,\ \forall\ r\ (v := \mathrm{vars}\ t \cup \mathrm{vars}\ \sigma),$\\
+\begin{definition}[\logo{}is\_det]\label{th:isdetS} $\lambda\ p\ \sigma\ t,\ \forall\ r\ v,\ t \cup \sigma \subseteq v \to$\\
   $\phantom{xxx} \nur\ p\ v\ [\sigma,\ [t , []]]\ r \to r = \mathrm{None} \lor \exists\ \sigma ,\ r = \mathrm{Some}\ ( \sigma ,\ \mnil ) $
 \end{definition}
 
@@ -2969,23 +2979,23 @@ produce a successful branch, leading to non-deterministic behaviour.
 
 \begin{definition}[\logo{}det\_checked]\label{def:detchecked}
   A program is det\_checked if all its rules satisfy
-mutual exclusion and rule-body checking. %, and \emph{tm\_is\_det}
+mutual exclusion and rule-body checking as per~\cite{fissore2026}. %, and \emph{tm\_is\_det}
 \end{definition}
 
 % \input{tex_code/det_tree_step.tex}
 \begin{lemma}[\logo{}det\_tree\_step]\label{th:dettreestep}
-  $\forall\ \mathrm{p}\ v\ \sigma\ t\ r ,$\\
-	$\phantom{xxx} \mathrm{det\_checked}\ \mathrm{p} \to\mathrm{step}\ u\ \mathrm{p}\ v\ \sigma\ t = r \to \mathrm{det\_tree}\ \mathrm{p}\ (\mathrm{snd}\ r) $
+  $\forall\ \mathrm{p}\ v\ \sigma\ t\ r,\ t\ \cup\ \sigma \subseteq v \to$\\
+	$\phantom{xxx} \mathrm{det\_checked}\ \mathrm{p} \land \mathrm{step}\ u\ \mathrm{p}\ v\ \sigma\ t = r \to \mathrm{det\_tree}\ \mathrm{p}\ (\mathrm{snd}\ r) $
 \end{lemma}
 
 % \input{tex_code/det_tree_prune.tex}
 \begin{lemma}[\logo{}det\_tree\_prune]\label{th:dettreeprune} $\forall\ p\ t\ t'\ b ,$\\
-  $\phantom{xxx} \mathrm{det\_tree}\ p\ t \to \mathrm{prune}\ b\ t = \mathrm{Some}\ t' \to \mathrm{det\_tree}\ p\ t' $
+  $\phantom{xxx} \mathrm{det\_tree}\ p\ t \land \mathrm{prune}\ b\ t = \mathrm{Some}\ t' \to \mathrm{det\_tree}\ p\ t' $
 \end{lemma}
 
 % \input{tex_code/det_check_tree.tex}
 \begin{lemma}[\logo{}det\_check\_tree]\label{th:detchecktree} $\forall\ \sigma\ v\ p\ t\ r\ b\ v',$\\
-  $\phantom{xxx} \mathrm{det\_checked}\ p \to \mathrm{det\_tree}\ p\ t \to$\\
+  $\phantom{xxx} t\ \cup\ \sigma \subseteq v \land \mathrm{det\_checked}\ p \land \mathrm{det\_tree}\ p\ t \to$\\
 	$\phantom{xxx}\phantom{xxx}\run\ p\ v\ \sigma\ t\ r\ b\ v' \to r = \mathrm{Zero} \lor \exists\ \sigma ,\ r = ( \mathrm{One}\ \sigma )$
 \end{lemma}
 \begin{proof}
@@ -3002,12 +3012,12 @@ preserve det\_tree~\cref{th:dettreestep,th:dettreeprune}.
 % \input{tex_code/det_check_callS.tex}
 \begin{theorem}[\logo{}det\_check\_call]\label{th:detcheckcall}$\forall\ p\ \sigma\ t, $\\
   % \vspace{.8em}\\
-	$\phantom{xxx} \mathrm{det\_checked}\ p \to \mathrm{tm\_is\_det}\ p\ t \to \mathrm{is\_det}\ p\ \sigma\ (\mathrm{call}\ t)$
+	$\phantom{xxx} \mathrm{det\_checked}\ p \land \mathrm{tm\_is\_det}\ p\ t \to \mathrm{is\_det}\ p\ \sigma\ (\mathrm{call}\ t)$
 \end{theorem}
 \begin{proof}
 From \cref{th:detchecktree} we conclude that a call to a deterministic predicate
 behaves deterministically on trees; then, thanks to \cref{th:runStorunTM1}, we derive
-that it also behaves deterministically when run in \nur.
+that it also behaves deterministically when executed in \nur.
 \end{proof}
 
 % \noindent Finally, the following lemma entails det\_check\_call:
@@ -3035,9 +3045,11 @@ semantics is equivalent to an optimized stack-based one.
 
 Another relevant work is due to Kriener and King~\cite{2011king},
 although we could not find their \rocqP{} source code. Their
-semantics is denotational, which would have sufficed for the
+semantics operates on programs in super-homogeneous form, 
+which would have sufficed for the
 first-order fragment considered in this paper but cannot easily
-accommodate all of the features covered in~\cite{fissore2026}. More
+accommodate all of the features covered in~\cite{fissore2026},
+in particular dynamic predicates. More
 importantly, their mechanization does not relate the denotational
 semantics to an operational semantics of the kind underlying standard
 \prologP abstract machines, a link that our equivalence proof
@@ -3046,9 +3058,9 @@ provides.
 Hanus and Prott~\cite{hanus2025} formalize in \rocqP{} a determinacy
 checker for the logic-functional language \curryP. In this language,
 choice points are explicitly denoted by the \cI{?} node in the syntax
-of expressions, so mutual exclusion of rules need not be established
-through unification: the overlap between rules is already explicit in
-the syntax. Similarly, the operator that absorbs choice points,
+of expressions: the overlap between rules is made explicit in
+the syntax via a program transformation~\cite{progr_transformation}.
+Similarly, the operator that absorbs choice points,
 \cI{allValues}, explicitly takes as an argument the expression whose
 choice points it discards, which makes the scope of this control
 operator trivial to determine. Cut, by contrast, has no such syntactic
