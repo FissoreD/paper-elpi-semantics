@@ -2877,7 +2877,7 @@ the program and are encoded as described in
 are classified as deterministic or non-deterministic.
 
 A program execution behaves deterministically if, given a program, a
-substitution, and an input tree for the \run\ inductive, the execution
+substitution, and a term call for the \nur\ inductive, the execution
 either fails or succeeds with no alternatives left to explore.
 % Below, we define \texttt{is\_det}.
 
@@ -2974,19 +2974,20 @@ condition is essential. Otherwise, if $A$ succeeds without a
 superficial cut and $B$ is not $\bot$, then $B$ could still
 produce a successful branch, leading to non-deterministic behaviour.
 
-The following auxiliary lemmas show that deterministic trees are preserved by the
-operations \step and \na, and are used to prove \cref{th:detchecktree}.
+\Cref{th:detchecktree} is proved by showing that deterministic trees are
+preserved by the operations \step and \na, and are used to prove
+\cref{th:detchecktree}.
 
 %\input{tex_code/det_tree_step.tex}
-\begin{lemma}[\logo{}det\_tree\_step]\label{th:dettreestep}
-  $\forall\ \mathrm{p}\ v\ \sigma\ t\ r ,$\\
-	$\phantom{xxx} \mathrm{det\_checked}\ \mathrm{p} \to\mathrm{step}\ u\ \mathrm{p}\ v\ \sigma\ t = r \to \mathrm{det\_tree}\ \mathrm{p}\ (\mathrm{snd}\ r) $
-\end{lemma}
+% \begin{lemma}[\logo{}det\_tree\_step]\label{th:dettreestep}
+%   $\forall\ \mathrm{p}\ v\ \sigma\ t\ r ,$\\
+% 	$\phantom{xxx} \mathrm{det\_checked}\ \mathrm{p} \to\mathrm{step}\ u\ \mathrm{p}\ v\ \sigma\ t = r \to \mathrm{det\_tree}\ \mathrm{p}\ (\mathrm{snd}\ r) $
+% \end{lemma}
 
 % \input{tex_code/det_tree_prune.tex}
-\begin{lemma}[\logo{}det\_tree\_prune]\label{th:dettreeprune} $\forall\ p\ t\ t'\ b ,$\\
-  $\phantom{xxx} \mathrm{det\_tree}\ p\ t \to \mathrm{prune}\ b\ t = \mathrm{Some}\ t' \to \mathrm{det\_tree}\ p\ t' $
-\end{lemma}
+% \begin{lemma}[\logo{}det\_tree\_prune]\label{th:dettreeprune} $\forall\ p\ t\ t'\ b ,$\\
+%   $\phantom{xxx} \mathrm{det\_tree}\ p\ t \to \mathrm{prune}\ b\ t = \mathrm{Some}\ t' \to \mathrm{det\_tree}\ p\ t' $
+% \end{lemma}
 
 Finally, the proof for \cref{th:detcheckcall} is as follows: from
 \cref{th:detchecktree},  conclude that a call to a deterministic predicate
