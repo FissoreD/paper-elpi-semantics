@@ -2729,7 +2729,7 @@ the set of variables occurring in $t$ is included in the set $v$.
 \end{definition}
 
 Note that this definition of acyclicity entails that the substitution is
-necessarily self applied, i.e. $\sigma \coloneq \{ X \mapsto f~Y, Y \mapsto a\}$
+necessarily self-applied, i.e. $\sigma \coloneq \{ X \mapsto f~Y, Y \mapsto a\}$
 is not acyclic, whereas the equivalent $\sigma' \coloneq \{ X \mapsto f~a, Y \mapsto a\}$
 is.
 The algorithm by Martelli and Montanari generates substitutions that
@@ -2787,9 +2787,9 @@ depending on whether the argument is in \emph{input} or
 \emph{output} mode.
 % We assume two important properties of our unification routines.
 
-For the static checker, and in particular in order to validate rule mutual
+For the static checker, and in particular to validate rule mutual
 exclusion, we need to ensure that no two rules can be used on the same query in
-the absence of cut. We exploit the behavior of the matching over input
+the absence of cut. We exploit the behavior of matching on input
 arguments to guarantee this property: mutual exclusion ensures that every
 pair of rules for a deterministic predicate has an input term that does
 not unify.
@@ -2866,8 +2866,8 @@ $\alpha$-equivalent terms.
 In \cref{fig:progx}, the rules of the program are equipped with three
 signatures, one per predicate. Besides the arity of each predicate, a
 signature specifies which arguments are inputs and which are outputs,
-their types, and whether the predicate is deterministic. They indicate
-that \texttt{f} and \texttt{g} are expected to be functions, as specified
+their types, and whether the predicate is deterministic. The signatures
+indicate that \texttt{f} and \texttt{g} are expected to be functions, as specified
 by the \eI{~\PYG{k+kd}{func}~} keyword, whereas \eI{r} is a relation, as
 indicated by the \eI{~\PYG{k+kd}{pred}~} keyword. The
 \eI{~\PYG{k+kMode}{\PYGZhy{}\PYGZgt{}}~} symbol separates inputs from
@@ -2892,9 +2892,9 @@ either fails or succeeds with no alternatives left to explore.
 % denotes the function that tests whether the head of the term refers to a rigid
 % constant with a deterministic type.
 
-Due to the inadequacy of the stack semantics to reason about cut, we 
-state the main theorem on the tree semantics and we bring it back using
-the equivalence proof from~\cref{sec:equiv}.
+Due to the inadequacy of the stack semantics to reason about cut, we
+state the main theorem in terms of the tree semantics and transfer it back
+using the equivalence proof from~\cref{sec:equiv}.
 
 We establish
 an invariant characterizing deterministic computations.
@@ -2943,9 +2943,8 @@ is therefore deterministic.
 Otherwise, the left-hand side may introduce backtracking, potentially
 resuming the reset point, which must itself behave deterministically.
 In this case, either $A$ is deterministic, or both $B$ and the reset
-point contain a cut that prevents the non-deterministic behaviour arising
-from %the evaluation of 
-$A$.
+point contain a cut that prevents the non-deterministic behaviour of
+$A$ from arising.
 
 For \orC trees, the interesting case is when the left-hand side is
 present. In this case, $A$ must be deterministic. If $A$
@@ -2964,7 +2963,7 @@ produce a successful branch, leading to non-deterministic behaviour.
 % \cref{th:detchecktree}.
 
 \begin{definition}[\logo{}det\_checked]\label{def:detchecked}
-  A program is det\_checked if all rules validates
+  A program is det\_checked if all its rules satisfy
 mutual exclusion and rule-body checking. %, and \emph{tm\_is\_det}
 \end{definition}
 
@@ -3002,9 +3001,8 @@ preserve det\_tree~\cref{th:dettreestep,th:dettreeprune}.
 \end{theorem}
 \begin{proof}
 From \cref{th:detchecktree} we conclude that a call to a deterministic predicate
-behaves deterministically on trees, then, thanks to \cref{th:runStorunTM1}, we derive
-the proof that a call to a detemrinistic predicate behaves deterministically
-when run in \nur.
+behaves deterministically on trees; then, thanks to \cref{th:runStorunTM1}, we derive
+that it also behaves deterministically when run in \nur.
 \end{proof}
 
 % \noindent Finally, the following lemma entails det\_check\_call:
