@@ -2999,121 +2999,122 @@ operations \step and \na.
 
 \section{Related work}
 
-The only mechanization of \prologP's semantics that we could find is
-the one by Pusch in \isabelleP~\cite{10.1007/BFb0105415}, which follows,
-as we do, Debray and Mishra~\cite[Sec.~4.3]{Debray1988}.
-The work of Pusch starts from this semantics and refines it by introducing
+The only mechanization of \prologP semantics we are aware of is
+that of Pusch in \isabelleP~\cite{10.1007/BFb0105415}, which, like
+ours, follows Debray and Mishra~\cite[Sec.~4.3]{Debray1988}. Pusch
+starts from this semantics and refines it by introducing
 optimizations commonly found in the Warren abstract
 machine~\cite{warren1983abstract,1991ait-wam}. Unlike our case study,
-Pusch does not use the semantics to prove properties of program execution;
-consequently, she does not encounter the difficulty described in
-\cref{stack-sem}, which led us to develop a semantics in which the
-effect of cut is more explicit. In this sense, the two approaches are
-complementary: taken together, they suggest that the tree-based
+she does not use the semantics to prove properties of program
+execution, and therefore does not encounter the difficulty described
+in \cref{stack-sem} that led us to develop a semantics in which the
+effect of cut is more explicit. In this sense, the two developments
+are complementary: taken together, they suggest that our tree-based
 semantics is equivalent to an optimized stack-based one.
 
-Another relevant work is due to Kriener and King~\cite{2011king}, but
-we could not find their \rocqP{} source code. Their semantics is
-denotational and cannot easily account for all the features covered
-in~\cite{fissore2026}, although it would have been sufficient for the
-first-order fragment considered in this paper.
-Still, their mechanization lacks a link between the denotational semantics
-and the operational semantics which underlie standard
-\prologP abstract machines.
+Another relevant work is due to Kriener and King~\cite{2011king},
+although we could not find their \rocqP{} source code. Their
+semantics is denotational, which would have sufficed for the
+first-order fragment considered in this paper but cannot easily
+accommodate all of the features covered in~\cite{fissore2026}. More
+importantly, their mechanization does not relate the denotational
+semantics to an operational semantics of the kind underlying standard
+\prologP abstract machines, a link that our equivalence proof
+provides.
 
-Hanus and Prott~\cite{hanus2025} formalize in \rocqP{} a determinacy checker for
-the logic-functional Curry language. In this language choice points
-are explicitly denoted by the \cI{?} node in the syntax of expressions.
-In this setting the mutual exclusion of rules does not need to be
-ensured resorting to unification: the overlap of rules is explicit in the
-syntax. Similarly the operator to absorb choice points, \cI{allValues},
-explicitly receives the expression containing them as an argument making the
-scope of this control operator trivial to analyze.
+Hanus and Prott~\cite{hanus2025} formalize in \rocqP{} a determinacy
+checker for the logic-functional language Curry. In this language,
+choice points are explicitly denoted by the \cI{?} node in the syntax
+of expressions, so mutual exclusion of rules need not be established
+through unification: the overlap between rules is already explicit in
+the syntax. Similarly, the operator that absorbs choice points,
+\cI{allValues}, explicitly takes as an argument the expression whose
+choice points it discards, which makes the scope of this control
+operator trivial to determine. Cut, by contrast, has no such syntactic
+marker: its scope is implicit in the surrounding stack or tree
+structure, which is precisely why relating the two semantics is
+nontrivial in our setting.
 
 The proof technique we use to relate the two semantics is inspired
-by~\cite{yves-equiv}, where Bertot mechanizes the correctness of a
-compiler. He relates the semantics of an imperative language to that of
-its compiled assembly code and proves their equivalence. His approach
-uses the compiler as the translation function from one language to the
-other, but does not introduce a decompiler, just as we do not define a
+by Bertot's mechanization of compiler correctness~\cite{yves-equiv}.
+He relates the semantics of an imperative language to that of its
+compiled assembly code and proves their equivalence. His approach uses
+the compiler as the translation function from one language to the
+other but does not introduce a decompiler, just as we do not define a
 function from stacks to trees. To show that the assembly code behaves
-like the imperative language, he proceeds by induction on the execution
-of the assembly program. We adopt the same strategy in the proof of
-\cref{th:runStorunT}.
+like the imperative language, he proceeds by induction on the
+execution of the assembly program; we adopt the same strategy in the
+proof of \cref{th:runStorunT}.
 
 For the static analysis of determinacy, we use a semantics in which
 input arguments are \emph{matched}, rather than unified, against rule
-heads. This choice agrees with the \elpiP interpreter, which is in turn
-inspired by B-\prologP's
-``matching-clauses''~\cite{1991ait-wam,zhou2012}.
-Applying our results to a semantics based entirely on unification is
-possible by adding two extra assumptions to
-\cref{th:detcheckcall}. First, the initial query must have ground inputs. Second, the
-program must be well-moded. Well-moded predicates produce ground
-outputs when given ground inputs; hence, starting from an initial query
-with ground inputs, well-moded programs behave exactly as if input
-arguments were matched. In other words,
-\cref{th:matchingdisj} could be reformulated using unification, at the
-cost of an additional assumption that the input arguments are ground;
-under that assumption, unification and matching coincide.
+heads. This choice agrees with the \elpiP interpreter, which is in
+turn inspired by B-\prologP's ``matching clauses''~\cite{1991ait-wam,zhou2012}.
+Our results can nonetheless be applied to a semantics based entirely
+on unification, by adding two assumptions to
+\cref{th:detcheckcall}: the initial query must have ground inputs, and
+the program must be well-moded. Since well-moded predicates produce
+ground outputs from ground inputs, a well-moded program run from a
+query with ground inputs behaves exactly as if its input arguments
+were matched. In other words, \cref{th:matchingdisj} could be
+reformulated in terms of unification at the cost of this ground-input
+assumption, under which unification and matching coincide.
 
 \section{Conclusion}
 
-This paper describes two operational semantics for \prologP with cut. 
-The first semantics is by Debray and Mishra and is
-based on a stack of alternatives: it is closer to actual \prologP
-implementations, including the first-order fragment of \elpiP, but it loses
-the explicit structure of the tree-based semantics and is therefore less
-convenient for reasoning about cut. 
-The second
-semantics is novel and is based on And--Or trees: it is well suited both to graphical
-illustrations of the scope of cut and to proving lemmas about the effect of
-cut evaluation when reasoning about disjunctions. 
-We show how to translate trees into
-stacks and prove the two semantics equivalent. Using the tree-based
-semantics, we mechanize a soundness proof of the first-order fragment of the
-determinacy checker of~\cite{fissore2026}, namely that a call to a
-deterministic predicate returns at most one solution.
+This paper presents two mechanized operational semantics for \prologP
+with cut, together with a proof of their equivalence. The first
+semantics, due to Debray and Mishra, is based on a stack of
+alternatives: it is close to actual \prologP implementations,
+including the first-order fragment of \elpiP, but it leaves the scope
+of cut implicit in the shape of the stack, which makes it inconvenient
+for reasoning about cut. The second semantics is novel and is based on
+And--Or trees, in which the scope of cut is explicit in the tree
+structure; it is well suited both to graphical illustrations of the
+effect of cut and to stating introduction and elimination lemmas for
+disjunction in its presence. We show how to translate trees into
+stacks and use this translation to prove the two semantics equivalent.
+Building on the tree-based semantics, we mechanize a soundness proof
+for the first-order fragment of the determinacy checker
+of~\cite{fissore2026}: a call to a predicate identified as
+deterministic returns at most one solution.
 
-The mechanization consists of approximately 2,500 lines of
-specifications and about 5,000 lines of ssreflect proofs based on
-the Mathematical Components library~\cite{assia_mahboubi_2022_7118596}
-and its finmap~\cite{finmap} extension.
-Roughly 30\% of the code is dedicated to the tree semantics, in particular
-the proofs in \cref{sec:runT}, 15\% to the stack semantics, and 35\% to the
-equivalence proof. The remaining 20\% is devoted to the determinacy checker.
-The mechanization took us approximately $8$ months.
-We believe that the ssreflect proof language, and the proof style it
-advocates, helped us carry out the many refactorings that the mechanization
-underwent. The finmap library provides comprehensive support for reasoning
-about finite maps and finite sets over a countable domain. In particular, it
-helped us express conditions such as the disjointness between sets of
-variables and the domain of a substitution, as well as define the union of
-disjoint substitutions.
+The mechanization comprises approximately 2,500 lines of
+specifications and 5,000 lines of \ssreflect{} proofs, built on the
+Mathematical Components library~\cite{assia_mahboubi_2022_7118596} and
+its finmap~\cite{finmap} extension. Roughly 30\% of the proof code is
+devoted to the tree semantics, in particular the proofs in
+\cref{sec:runT}; 15\% to the stack semantics; 35\% to the equivalence
+proof; and the remaining 20\% to the determinacy checker. The
+mechanization took us approximately $8$ months. We believe that the
+\ssreflect{} proof language, and the proof style it encourages, made
+it easier to carry out the many refactorings the development
+underwent. The finmap library, in particular, provides comprehensive
+support for reasoning about finite maps and finite sets over a
+countable domain; it helped us express conditions such as the
+disjointness between a set of variables and the domain of a
+substitution, and to define the union of disjoint substitutions.
 
-To obtain an axiom-free mechanization, we had to provide an implementation
-of the first-order unification algorithm, since we could not find an
-existing \rocqP{} mechanization. Describing this development in detail is out of
-scope for this paper. It amounts to about 1,700 lines of SSReflect code,
-including 200 lines for the termination proof based on a lexicographic
-ordering and 800 lines for correctness and completeness. Because of the
-specific form of \cref{th:unifren,th:matchingdisj}, which deals with
-matching and unification of terms with disjoint support, we did not need to
-prove that the algorithm produces most-general unifiers.
-% \marginpar{Martelli (size, time, relation with saarland (maybe don't say ), substitutions are not finite maps, hence badly integrate with mathcomp, also the algorithm is not explicilty given)}
+To keep the mechanization axiom-free, we implemented the first-order
+unification algorithm ourselves, since we could not find an existing
+\rocqP{} mechanization; a detailed account of this development is
+beyond the scope of this paper. It amounts to about 1,700 lines of
+\ssreflect{} code, including 200 lines for a termination proof based
+on a lexicographic ordering and 800 lines for correctness and
+completeness. Because \cref{th:unifren,th:matchingdisj} only involve
+matching and unification of terms with disjoint support, we did not
+need to prove that the algorithm produces most general unifiers.
 
-To fully model the \elpiP language and mechanize~\cite{fissore2026} entirely,
-we would need to account for higher-order variables, that is, variables that
-represent predicates. This extension is ongoing and largely orthogonal to
-the present paper. %, since cut and higher-order variables do not interact. 
-The main difficulty is that substitutions may contain
-predicates, and these predicates must have signatures compatible with those
-assumed statically, in the sense of the $\subseteq$ relation defined
-in~\cite[Section~5]{fissore2026}. Dynamic predicates also require minor
-changes to the conditions for mutual exclusion.
-% Last, to keep
-% the mechanization axiom-free, one should extend the unification algorithm
-% to the higher-order case
+Fully modeling the \elpiP language, and thereby mechanizing
+\cite{fissore2026} in its entirety, requires accounting for
+higher-order variables, i.e., variables that stand for predicates.
+This extension is ongoing work, largely orthogonal to the present
+paper. Its main difficulty is that substitutions may then bind
+variables to predicates, whose signatures must remain compatible with
+those assumed statically, in the sense of the $\subseteq$ relation
+defined in~\cite[Section~5]{fissore2026}; accommodating dynamic
+predicates also requires minor changes to the mutual
+exclusion conditions.
 
 \begin{acks}
   Acknowledgments withheld for double-blind review.
