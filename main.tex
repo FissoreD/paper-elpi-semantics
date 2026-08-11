@@ -1046,7 +1046,8 @@ the corresponding And-layer. This expansion step is performed by the
 
 In
 addition to the Unexplored node we have two distinguished nodes, \koC and
-\okC, written $\bot$ and $\top$, which represent respectively the smallest failed and successful tree.
+\okC, written $\bot$ and $\top$, which represent the smallest failing and
+succeeding tree, respectively.
 
 The \orC node, written \(A \lor B_\sigma\), represents the addition of an
 alternative \(B_\sigma\) to an existing disjunction $A$. The left subtree
@@ -1426,13 +1427,13 @@ indicates the interpretation of a superficial cut: \step was called on an
 And-layer and its \pathend is the cut atom. Finally, Expanded
 accounts for the interpretation of predicate calls and non-superficial cuts.
 
-The \step procedure evaluates atoms: it leaves the tree
-unchanged when the tree is \emph{success} or \emph{failed}.
-% 
+The \step procedure leaves the tree unchanged when it is \emph{success} or
+\emph{failed},
+%
 % \input{tex_code/success_step.tex}
 % \input{tex_code/failed_step.tex}
-% 
-while it %The \step procedure
+%
+while it
 expands \taC{} nodes by calling backchain, which returns a list
 $l$ of alternatives. If $l$ is empty, then the current call atom is replaced by
 \koC. Otherwise, it is replaced by a right-skewed tree of \orC nodes, where
@@ -1767,9 +1768,8 @@ Rules \stopot and \stopt say that when the tree $t$ is a success, the
 substitution $\sigma'$ is extracted from $t$ (starting from $\sigma$); depending
 on the result of \na true $t$ -- which cleans the tree of its successful
 path -- we return One or Many, according to whether alternatives remain
-to be explored. Rule \stept applies when \pathend\ $t$ is an atom,
-then \step is invoked to evaluate $t$, and \run is called recursively on the
-updated tree. When \pathend\ $t$ is a failure, rule \backt calls \na
+to be explored. Rule \stept applies when \pathend\ $t$ is an atom: \step is invoked to
+evaluate $t$, and \run is called recursively on the updated tree. When \pathend\ $t$ is a failure, rule \backt calls \na
 to clear the failed path; if the resulting cleaned tree exists, \run is
 called recursively on it. Finally, rule \failt accounts for trees with no
 solutions.
@@ -1937,8 +1937,8 @@ contains a syntactic occurrence of cut, but whether that cut is actually
 executed during the (dis)proof of $A$ (in rules $(\lor_{ir1})$ and $(\lor_{ir2})$).
 Indeed, an atom preceding the cut may fail, so the cut is never reached.
 
-As anticipated in the introduction, these lemmas contradict the commutativity of
-disjunction.
+As anticipated in the introduction, these lemmas show that, in the presence
+of cut, disjunction is not commutative.
 
 
 
@@ -2105,7 +2105,7 @@ $$
 
 These choice points
 represent alternatives that appear at the same level of the current
-tree, such as, for example, the right siblings of an \orC{} node. 
+tree, such as the right siblings of an \orC{} node.
 
 The \okC node represents one successful alternative; therefore it is translated
 into a singleton list whose only element has an empty list of goals. The \koC
@@ -2126,9 +2126,9 @@ occurring one level below $cp$ (i.e. in $A$ or $B$) should add $cp$ as its
 cut-to alternatives.
 
 The translation of $A \land_{B_0} B$ starts with the translation of $A$. If the
-translation of $A$ is an empty list we return the empty list of
+translation of $A$ is an empty list, we return the empty list of
 alternatives without even touching $B$ or $B_0$, since an empty
-translation for $A$ indicates failure and this in turn implies the
+translation for $A$ indicates failure, which in turn implies the
 failure of the entire conjunction. When the translation of $A$ is
 a list $(\sigma_0, g) :: a$, the $B$ node represents the continuation of the
 first alternative $g$, whereas $B_0$ is the continuation for each alternative
@@ -2243,10 +2243,10 @@ states — the stacks and trees — on which the two semantics operate. In
 contrast, in \cref{th:runStorunTM1,th:runStorunTM2} the execution leaves
 choice points open, so we do need to relate the two kinds of states.
 
-Following the proof technique of~\cite{yves-equiv}, we only need to define
-the mapping from trees to stacks; the converse mapping is never
-constructed explicitly. We defer the description of this mapping to \cref{sec:t2l},
-and sketch here the proofs underpinning the corollaries above.
+Following the proof technique of~\cite{yves-equiv}, we only need the mapping
+\ttl from trees to stacks, already described in \cref{sec:t2l}; the converse
+mapping is never constructed explicitly. The corollaries above follow from
+the two theorems proved in \cref{sec:eqproof}.
 
 
 % are more
@@ -2273,7 +2273,7 @@ and sketch here the proofs underpinning the corollaries above.
 % we do not explicitly provide the converse translation, an economy
 % allowed by the proof technique we employ, inspired by~\cite{yves-equiv}.
 
-\subsection{Equivalence proof}
+\subsection{Equivalence proof}\label{sec:eqproof}
 
 
 \begin{wrapfigure}{r}{.15\textwidth}
@@ -2355,7 +2355,7 @@ the mapping from stacks to trees.
 \end{theorem}
 
 \begin{proof} 
-Induction on $\nur$. Moreover, in order to prove this lemma, we need an
+Induction on $\nur$. Moreover, in order to prove this theorem, we need an
 auxiliary lemma to align the iterations in $\nur$ with the corresponding
 iterations in \run by accounting for silent transitions.
 \end{proof}
@@ -2439,16 +2439,16 @@ In the latter case we use the \emph{base\_or} predicate
 to check that $B$ is the right-skewed tree formed by a disjunction of
 conjunctions, generated after a successful backchain for a call.
 
-For the \andC constructor, the left hand side is required to be a valid SLD tree.
-The shape of the right hand side depends on whether the left hand side is a
-success. If it is not successful, then the right hand side must not be
+For the \andC constructor, the left-hand side is required to be a valid SLD tree.
+The shape of the right-hand side depends on whether the left-hand side is a
+success. If it is not successful, then the right-hand side must not be
 explored, i.e. $B$ must be
 the right-skewed tree containing conjunctions of premise atoms.
 This is enforced using the \emph{big\_and} procedure, which generates a tree
 from the reset point $B_0$ (the same procedure used to
 transform each alternative output by backchain into the And-layer
 of the resulting tree).
-When the left hand side is successful, then the right hand side
+When the left-hand side is successful, the right-hand side
 may have been explored, and consequently must be a valid SLD tree.
 
 We point out the two main invariants stating that valid SLD trees
