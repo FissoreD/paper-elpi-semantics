@@ -2175,6 +2175,7 @@ the translation of the subtree under $\sigma_2$, since it is one
 \orC-layer above its right uncles.
 
 \subsection{Equivalence}
+\label{sec:equiv}
 
 The equivalence we are interested in states that a query produces the
 same substitution and alternatives under both semantics.
@@ -2882,10 +2883,9 @@ substitution, and an input tree for the \run\ inductive, the execution
 either fails or succeeds with no alternatives left to explore.
 % Below, we define \texttt{is\_det}.
 
-
-% \input{tex_code/is_det.tex}
-\begin{definition}[\logo{}is\_det]\label{th:isdet} $\lambda\ p\ \sigma\ v\ t .$\\
-  $\phantom{xxx}\forall\ r ,\ \mathrm{\runo}\ p\ v\ \sigma\ (\mathrm{call}\ t)\ r \to r = \mathrm{Zero} \lor \exists\ \sigma ,\ r = ( \mathrm{One}\ \sigma ) $
+% \input{tex_code/is_detS.tex}
+\begin{definition}[\logo{}is\_det]\label{th:isdetS} $\lambda\ p\ \sigma\ t,\ \forall\ r\ (v := \mathrm{vars}\ t \cup \mathrm{vars}\ \sigma),$\\
+  $\phantom{xxx} \nur\ p\ v\ [\sigma,\ [t , []]]\ r \to r = \mathrm{None} \lor \exists\ \sigma ,\ r = \mathrm{Some}\ ( \sigma ,\ \mnil ) $
 \end{definition}
 
 \begin{definition}[\logo{}tm\_is\_det]\label{def:tmisdet}
@@ -2896,10 +2896,10 @@ either fails or succeeds with no alternatives left to explore.
 
 The theorem we want to prove is the following one:
 
-% \input{tex_code/det_check_call.tex}
-\begin{theorem}[\logo{}det\_check\_call]\label{th:detcheckcall}$\forall\ p\ \sigma\ t\ v , $\\
+% \input{tex_code/det_check_callS.tex}
+\begin{theorem}[\logo{}det\_check\_call]\label{th:detcheckcall}$\forall\ p\ \sigma\ t, $\\
   % \vspace{.8em}\\
-	$\phantom{xxx} \mathrm{det\_checked}\ p \to \mathrm{tm\_is\_det}\ p\ t \to \mathrm{is\_det}\ p\ \sigma\ v\ t $
+	$\phantom{xxx} \mathrm{det\_checked}\ p \to \mathrm{tm\_is\_det}\ p\ t \to \mathrm{is\_det}\ p\ \sigma\ (\mathrm{call}\ t)$
 \end{theorem}
 
 Here, det\_checked denotes the function that checks the program
@@ -2907,14 +2907,21 @@ with respect to mutual exclusion and rule-body checking. %, and \emph{tm\_is\_de
 % denotes the function that tests whether the head of the term refers to a rigid
 % constant with a deterministic type.
 
-The proof of this lemma proceeds by induction on
-the program execution. However, without further work,
-the induction
-hypothesis is too weak since it talks about \taC trees (i.e. atoms),
-whereas we need it on any tree.
+Due to the inadequacy of the stack semantics wrt the scope of the cut, proving
+the previous lemma as it is stated is not an easy task. We need therefore to
+prove a lemma talking about determinacy declined on trees, and then reuse the
+theorems from \cref{sec:equiv} to derive a proof of determinacy for stacks.
 
-To overcome this issue, we introduce the notion of deterministic trees,
-written det\_tree. Intuitively, a deterministic tree is a tree
+The lemma we prove is the following:
+
+% \input{tex_code/det_check_tree.tex}
+\begin{lemma}[\logo{}det\_check\_tree]\label{th:detchecktree} $\forall\ \sigma\ v\ p\ t\ r\ b\ v',$\\
+  $\phantom{xxx} \mathrm{det\_checked}\ p \to \mathrm{det\_tree}\ p\ t \to$\\
+	$\phantom{xxx}\phantom{xxx}\run\ p\ v\ \sigma\ t\ r\ b\ v' \to r = \mathrm{Zero} \lor \exists\ \sigma ,\ r = ( \mathrm{One}\ \sigma )$
+\end{lemma}
+
+The notion of deterministic trees,
+written det\_tree, intuitively classifies trees
 whose interpretation does not generate choice points. The definition is
 shown in~\cref{fig:dettree}.
 
@@ -2969,13 +2976,13 @@ condition is essential. Otherwise, if $A$ succeeds without a
 superficial cut and $B$ is not $\bot$, then $B$ could still
 produce a successful branch, leading to non-deterministic behaviour.
 
-The following lemmas show that deterministic trees are preserved by the
-operations \step and \na.
+The following auxiliary lemmas show that deterministic trees are preserved by the
+operations \step and \na, and are used to prove \cref{th:detchecktree}.
 
 %\input{tex_code/det_tree_step.tex}
 \begin{lemma}[\logo{}det\_tree\_step]\label{th:dettreestep}
-  $\forall\ \mathrm{p}\ v\ \sigma_1\ t\ r ,$\\
-	$\phantom{xxx} \mathrm{det\_checked}\ \mathrm{p} \to\mathrm{step}\ u\ \mathrm{p}\ v\ \sigma_1\ t = r \to \mathrm{det\_tree}\ \mathrm{p}\ (\mathrm{snd}\ r) $
+  $\forall\ \mathrm{p}\ v\ \sigma\ t\ r ,$\\
+	$\phantom{xxx} \mathrm{det\_checked}\ \mathrm{p} \to\mathrm{step}\ u\ \mathrm{p}\ v\ \sigma\ t = r \to \mathrm{det\_tree}\ \mathrm{p}\ (\mathrm{snd}\ r) $
 \end{lemma}
 
 % \input{tex_code/det_tree_prune.tex}
@@ -2983,13 +2990,13 @@ operations \step and \na.
   $\phantom{xxx} \mathrm{det\_tree}\ p\ t \to \mathrm{prune}\ b\ t = \mathrm{Some}\ t' \to \mathrm{det\_tree}\ p\ t' $
 \end{lemma}
 
-\noindent Finally, the following lemma entails det\_check\_call:
+Finally, the proof for \cref{th:detcheckcall} is as follows: from
+\cref{th:detchecktree}, we can conclude that a call to a deterministic predicate
+behaves deterministically, then, thanks to \cref{th:runStorunTM1}, we can derive
+the proof that a clal to a detemrinistic predicate behaves deterministically
+when run in \nur.
 
-% \input{tex_code/det_check_tree.tex}
-\begin{lemma}[\logo{}det\_check\_tree]\label{th:detchecktree} $\forall\ \sigma\ v\ p\ t ,$\\
-  $\phantom{xxx} \mathrm{det\_checked}\ p \to \mathrm{det\_tree}\ p\ t \to \mathrm{is\_det}\ p\ \sigma\ v\ t $
-\end{lemma}
-
+% \noindent Finally, the following lemma entails det\_check\_call:
 
 % As an important remark, proving the same lemma with the stack semantics, it is
 % difficult to correctly define the predicate \cI{det_stack}, checking for the
