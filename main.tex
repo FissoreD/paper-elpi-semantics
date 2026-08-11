@@ -2084,8 +2084,8 @@ for tree={
 \end{figure*}
 \section{Equivalence of the two semantics}
 
-Before going into the proof of the two semantics' equivalence, we need
-to relate trees to stacks. 
+Before proving the equivalence of the two semantics, we first need
+to relate trees to stacks.
 % In the following subsection we define the
 % function \ttl, which is in charge of translating trees to
 % stacks.
@@ -2122,24 +2122,24 @@ have been inspected.
 
 The translation of $A \lor B_\sigma$ creates two lists of alternatives,
 one for $A$ and the other for $B$. The alternatives of $B$ are valid
-choice points for $A$ and should be passed to the translation of $A$.
+choice points for $A$ and are therefore passed to the translation of $A$.
 The two lists of alternatives can then be concatenated. Moreover, every atom
-occurring one level below $cp$ (i.e. in $A$ or $B$) should add $cp$ as its
+occurring one level below $cp$ (i.e. in $A$ or $B$) must add $cp$ to its
 cut-to alternatives.
 
 The translation of $A \land_{B_0} B$ starts with the translation of $A$. If the
 translation of $A$ is an empty list, we return the empty list of
-alternatives without even touching $B$ or $B_0$, since an empty
-translation for $A$ indicates failure, which in turn implies the
+alternatives without even inspecting $B$ or $B_0$, since an empty
+translation of $A$ indicates failure, which in turn implies the
 failure of the entire conjunction. When the translation of $A$ is
 a list $(\sigma_0, g) :: a$, the $B$ node represents the continuation of the
-first alternative $g$, whereas $B_0$ is the continuation for each alternative
-in $a$.
+first alternative $g$, whereas $B_0$ is the continuation for each of the
+remaining alternatives in $a$.
 % While performing these translation, we need to carefully update the cut-atlernatives.
 
-The function \ttl is not injective: distinct trees can be translated into the
+The function \ttl is not injective: distinct trees can translate to the
 same stack. In particular, a transition from a tree $t_1$ to a tree $t_2$
-performed by \run may result in both trees being translated into the same
+performed by \run may leave both trees mapped to the same
 stack. We refer to such a transition as a \emph{silent transition}.
 
 Notably, the stack semantics has no notion of a failed stack. Therefore, when
@@ -2149,31 +2149,31 @@ reporting a failure. We illustrate this non-injective behavior with a concrete
 example below.
 
 
-\subsubsection{Example of \ttl execution} 
+\subsubsection{Example of \ttl execution}
 The translations of the trees in \cref{tree-ex} are shown in \cref{ex-elpi}.
 The letters in the figures relate each tree to the corresponding stack.
 For example, \ref{tree-ex1} is translated into \ref{ex-elpi1}. We also
 note that \ref{tree-ex3} and \ref{tree-ex4} are both translated into
-\ref{ex-elpi3}, showing that \ttl is not injective: different trees can map to
-the same stack. Consequently, there are transitions in \run that are not visible
+\ref{ex-elpi3}, confirming that \ttl is not injective: different trees can map to
+the same stack. Consequently, some transitions performed by \run are not visible
 in \nur.
 %
-As an example of a call to \ttl, we take the tree and the stack in~\cref{fig:cc},
-which are respectively taken from \cref{tree-ex2,ex-elpi2}. The red arrows
+As an example of a call to \ttl, we consider the tree and the stack in~\cref{fig:cc},
+taken respectively from \cref{tree-ex2,ex-elpi2}. The red arrows
 point from the head of an alternative in the tree to the head of the
 corresponding cell in the stack.
 We focus on the deepest \orC{} node in the tree. This subtree
 is a disjunction with four children. The first is ignored, since it
 is None. The success node below $\sigma_3$ has \eI{f B C} and the cut
-operator as continuation, corresponding to the first cell in the stack. 
+operator as continuation, corresponding to the first cell in the stack.
 We note that the cut operator points outside the
 stack, since the scope of this cut eliminates its right uncle. The
 success node below $\sigma_4$ has $R_1$ as continuation, where $R_1$ is
 the list of goals \eI{f B C, !}; this is translated into the second cell
 of the stack. Finally, the cut operator under
-$\sigma_5$ also has $R_1$ as continuation. It corresponds to the third
+$\sigma_5$ also has $R_1$ as continuation; it corresponds to the third
 alternative. We can see that the first cut points to
-the translation of the subtree under $\sigma_2$, since it is one
+the translation of the subtree under $\sigma_2$, since that subtree is one
 \orC-layer above its right uncles.
 
 \subsection{Equivalence}
@@ -2182,8 +2182,8 @@ the translation of the subtree under $\sigma_2$, since it is one
 The equivalence we are interested in states that a query produces the
 same substitution and alternatives under both semantics.
 
-The tree-based semantics exposes more information than is needed for
-this comparison, so we hide the surplus behind existential quantifiers.
+The tree-based semantics exposes more information than this comparison
+requires, so we hide the surplus behind existential quantifiers.
 
 \begin{definition}[\logo{}\runo]\label{th:runo}%
 	$\lambda\ p\ v\ \sigma\ t\ r .$\\
@@ -2303,12 +2303,12 @@ the two theorems proved in \cref{sec:eqproof}.
 \end{wrapfigure}
 
 The two theorems below each proceed by induction on the execution of one
-semantics — the top or the bottom horizontal arrow in the diagram — in
-order to derive the other. We begin with the top-to-bottom direction,
+semantics — the top or the bottom horizontal arrow in the diagram — to
+derive the other. We begin with the top-to-bottom direction,
 from trees to stacks.
 
-Since not every tree or stack can be produced by either semantics starting
-from the initial state, it is important to identify the subset of valid
+Since not every tree or stack is reachable from the initial state under
+either semantics, it is important to identify the subset of valid
 trees. We defer the exact definition of \vast{} to \cref{sec:validtree}.
 
 % \input{tex_code/tree_to_elpi.tex}
@@ -2432,49 +2432,51 @@ While all base cases of \tree{} are valid, we need to analyze the \orC and
 % \marginpar{TODO: explain better valid tree as requested by reviewr, maybe make a few examples}
 
 For the \orC constructor, we distinguish two cases depending on whether the
-left-hand side is present. If it is not, then the right-hand side must be a
+left-hand side is present. If it is not, the right-hand side must be a
 valid SLD tree. Otherwise, the left-hand side must be a valid SLD tree, and the
 right-hand side must either be the \koC tree or be unexplored. The former case
-occurs when the right-hand side is cut away by the evaluation of a superficial
-cut in the left-hand side.
-In the latter case we use the \emph{base\_or} predicate
+arises when a superficial cut in the left-hand side cuts away the
+right-hand side.
+In the latter case, we use the \emph{base\_or} predicate
 to check that $B$ is the right-skewed tree formed by a disjunction of
-conjunctions, generated after a successful backchain for a call.
+conjunctions generated after a successful backchain for a call.
 
 For the \andC constructor, the left-hand side is required to be a valid SLD tree.
-The shape of the right-hand side depends on whether the left-hand side is a
-success. If it is not successful, then the right-hand side must not be
+The shape of the right-hand side depends on whether the left-hand side has
+succeeded. If it has not, the right-hand side must not be
 explored, i.e. $B$ must be
 the right-skewed tree containing conjunctions of premise atoms.
-This is enforced using the \emph{big\_and} procedure, which generates a tree
+This is enforced by the \emph{big\_and} procedure, which generates a tree
 from the reset point $B_0$ (the same procedure used to
 transform each alternative output by backchain into the And-layer
 of the resulting tree).
-When the left-hand side is successful, the right-hand side
-may have been explored, and consequently must be a valid SLD tree.
+When the left-hand side has succeeded, the right-hand side
+may have been explored, and must therefore be a valid SLD tree.
 
-We point out the two main invariants stating that valid SLD trees
-are preserved by calls to \step and \na.
+We conclude by noting that \vast is preserved by both
+\step and \na.
+% out the two main invariants stating that valid SLD trees
+% are preserved by calls to \step and \na.
 
-% \input{tex_code/valid_tree_step.tex}
-\begin{lemma}[\logo{}sld\_tree\_step]\label{th:validtreestep}%
-	$\forall\ \sigma\ v\ A\ r ,$\\
-  $\phantom{xx}\mathrm{sld\_tree}\ A \to \mathrm{step}\ u\ p\ v\ \sigma\ A = r \to \mathrm{sld\_tree}\ (\mathrm{snd}\ r)$
-\end{lemma}
+% % \input{tex_code/valid_tree_step.tex}
+% \begin{lemma}[\logo{}sld\_tree\_step]\label{th:validtreestep}%
+% 	$\forall\ \sigma\ v\ A\ r ,$\\
+%   $\phantom{xx}\mathrm{sld\_tree}\ A \to \mathrm{step}\ u\ p\ v\ \sigma\ A = r \to \mathrm{sld\_tree}\ (\mathrm{snd}\ r)$
+% \end{lemma}
 
-% \input{tex_code/valid_tree_prune.tex}
-\begin{lemma}[\logo{}sld\_tree\_prune]\label{th:validtreeprune}%
-	$\forall\ A\ B\ b ,$\\
-  $\phantom{xx}\mathrm{sld\_tree}\ A \to \mathrm{prune}\ b\ A = \mathrm{Some}\ B \to \mathrm{sld\_tree}\ B $
-\end{lemma}
+% % \input{tex_code/valid_tree_prune.tex}
+% \begin{lemma}[\logo{}sld\_tree\_prune]\label{th:validtreeprune}%
+% 	$\forall\ A\ B\ b ,$\\
+%   $\phantom{xx}\mathrm{sld\_tree}\ A \to \mathrm{prune}\ b\ A = \mathrm{Some}\ B \to \mathrm{sld\_tree}\ B $
+% \end{lemma}
 
-% We can therefore derive how valid trees are preserved by the stack interpreter.
+% % We can therefore derive how valid trees are preserved by the stack interpreter.
 
-% \input{tex_code/valid_tree_run.tex}
-\begin{theorem}[\logo{}sld\_tree\_run]\label{th:validtreerun}%
-	$\forall\ b\ \sigma\ \sigma'\ v\ v'\ A\ B,$\\
-  $\phantom{xx}\mathrm{sld\_tree}\ A \to \run\ u\ p\ v\ \sigma\ A\ ( \mathrm{Many}\ \sigma'\ B )\ b\ v' \to \mathrm{sld\_tree}\ B $
-\end{theorem}
+% % \input{tex_code/valid_tree_run.tex}
+% \begin{theorem}[\logo{}sld\_tree\_run]\label{th:validtreerun}%
+% 	$\forall\ b\ \sigma\ \sigma'\ v\ v'\ A\ B,$\\
+%   $\phantom{xx}\mathrm{sld\_tree}\ A \to \run\ u\ p\ v\ \sigma\ A\ ( \mathrm{Many}\ \sigma'\ B )\ b\ v' \to \mathrm{sld\_tree}\ B $
+% \end{theorem}
 
 %
 
@@ -2707,9 +2709,10 @@ complete.
 In the following definitions and lemmas, we use the notation $x \cap y =
 \varnothing$ to denote that the two sets $x$ and $y$ are disjoint. When the
 arguments are terms, as in $t_1 \cap t_2 = \varnothing$, we mean that the two
-terms do not share any variables.
+terms do not share any variables. Similarly $t \subseteq v$ means that
+the set of variables occurring in $t$ is included in the set $v$.
 
-The first notion to provide is the application of an acyclic substitution:
+% The first notion to provide is the application of an acyclic substitution:
 
 % \begin{definition}[\logo{}deref]
 %   $$
@@ -2759,8 +2762,10 @@ procedure so that it takes a set of frozen variables.
 The function \matching has the following property:
 
 % \input{tex_code/matching_disj.tex}
-\begin{lemma}[\logo{}matching\_disj]\label{um}\label{th:matchingdisj} $\forall\ v\ t_1\ t_2\ \sigma\ \sigma', \to \mathrm{vars}\ ( \sigma\ t_2 )\ \subseteq\ {v}$\\
-  $\phantom{xxx} \mathrm{acyclic}\ \sigma \to \mathrm{matching}\ v\ t_1\ t_2\ \sigma = \mathrm{Some}\ \sigma' \to \sigma'\ t_1 = \sigma\ t_2$
+\begin{lemma}[\logo{}matching\_disj]\label{um}\label{th:matchingdisj} $\forall\ v\ t_1\ t_2\ \sigma\ \sigma', \mathrm{acyclic}\ \sigma \to$\\
+  $\phantom{xxx} 
+  \sigma\ t_2 \ \subseteq\ {v} \to
+  \mathrm{matching}\ v\ t_1\ t_2\ \sigma = \mathrm{Some}\ \sigma' \to \sigma'\ t_1 = \sigma\ t_2$
 \end{lemma}
 
 % In particular, we can see how the returned substitution $\sigma'$, differently
@@ -2804,18 +2809,18 @@ query, if both heads match the query $q$, then the two heads must unify.
 	$\phantom{xx}\phantom{xx}\mathrm{matching}\ v\ h_1\ q\ \varnothing \land \mathrm{matching}\ v\ h_2\ q\ \varnothing \to \mathrm{unify}\ h_1\ h_2\ \varnothing $
 \end{lemma}
 
-\begin{proof}
-  By \cref{um}, we know that the matching of $h_1$ (resp. $h_2$) and $q$ gives a
-  substitution $\sigma_1$ (resp. $\sigma_2$) where the variables in $q$ are not
-  assigned, i.e. its domain only contains variables in $h_1$ (resp $h_2$). Using
-  \cref{th:unifycomplete} we need to prove that it exists a
-  substitution $\sigma'$ such that $\sigma'\ h_1 = \sigma'\ h_2$. This
-  substitution is the composition of $\sigma_1$ and $\sigma_2$, that is
-  $\sigma' = \lambda x. \sigma_1 (\sigma_2\ x)$. Since $h_1$ and
-  $h_2$ are disjoint, so are the domains of $\sigma_1$ and $\sigma_2$, therefore
-  $\sigma' h_1 = \sigma_2 (\sigma_1\ h_1)$ and $\sigma' h_2 = \sigma_2 (\sigma_1\ h_2)$.
-  We can now conclude the proof: $\sigma'\ h_1 = \sigma_2 (\sigma_1\ h_1) = \sigma_2\ q = q = \sigma_2\ h_2 = \sigma' h_2$.
-\end{proof}
+% \begin{proof}
+%   By \cref{um}, we know that the matching of $h_1$ (resp. $h_2$) and $q$ gives a
+%   substitution $\sigma_1$ (resp. $\sigma_2$) where the variables in $q$ are not
+%   assigned, i.e. its domain only contains variables in $h_1$ (resp $h_2$). Using
+%   \cref{th:unifycomplete} we need to prove that it exists a
+%   substitution $\sigma'$ such that $\sigma'\ h_1 = \sigma'\ h_2$. This
+%   substitution is the composition of $\sigma_1$ and $\sigma_2$, that is
+%   $\sigma' = \lambda x. \sigma_1 (\sigma_2\ x)$. Since $h_1$ and
+%   $h_2$ are disjoint, so are the domains of $\sigma_1$ and $\sigma_2$, therefore
+%   $\sigma' h_1 = \sigma_2 (\sigma_1\ h_1)$ and $\sigma' h_2 = \sigma_2 (\sigma_1\ h_2)$.
+%   We can now conclude the proof: $\sigma'\ h_1 = \sigma_2 (\sigma_1\ h_1) = \sigma_2\ q = q = \sigma_2\ h_2 = \sigma' h_2$.
+% \end{proof}
 
 
 % \input{tex_code/unif_trans.tex}
@@ -2905,12 +2910,13 @@ with respect to mutual exclusion and rule-body checking. %, and \emph{tm\_is\_de
 % denotes the function that tests whether the head of the term refers to a rigid
 % constant with a deterministic type.
 
-Due to the inadequacy of the stack semantics wrt the scope of the cut, proving
-the previous lemma as it is stated is not an easy task. We need therefore to
-prove a lemma talking about determinacy declined on trees, and then reuse the
-theorems from \cref{sec:equiv} to derive a proof of determinacy for stacks.
-
-The lemma we prove is the following:
+Due to the inadequacy of the stack semantics to reason about cut, we prove
+a corresponding theorem on the tree semantics and we bring it back using
+the equivalence proof from~\cref{sec:equiv}.
+% the previous lemma as it is stated is not an easy task. We need therefore to
+% prove a lemma talking about determinacy declined on trees, and then reuse the
+% theorems from \cref{sec:equiv} to derive a proof of determinacy for stacks.
+The corresponding lemma is the following one:
 
 % \input{tex_code/det_check_tree.tex}
 \begin{lemma}[\logo{}det\_check\_tree]\label{th:detchecktree} $\forall\ \sigma\ v\ p\ t\ r\ b\ v',$\\
@@ -2960,7 +2966,8 @@ Otherwise, the left-hand side may introduce backtracking, potentially
 resuming the reset point, which must itself behave deterministically.
 In this case, either $A$ is deterministic, or both $B$ and the reset
 point contain a cut that prevents the non-deterministic behaviour arising
-from the evaluation of $A$.
+from %the evaluation of 
+$A$.
 
 For \orC trees, the interesting case is when the left-hand side is
 present. In this case, $A$ must be deterministic. If $A$
@@ -3121,6 +3128,11 @@ those assumed statically, in the sense of the $\subseteq$ relation
 defined in~\cite[Section~5]{fissore2026}; accommodating dynamic
 predicates also requires minor changes to the mutual
 exclusion conditions.
+
+\section{Use of artificial intelligence}
+
+The research and the mechanization were carried out without resorting to AI
+tools. The English prose was improved with the help of free LLMs.
 
 \begin{acks}
   Acknowledgments withheld for double-blind review.
