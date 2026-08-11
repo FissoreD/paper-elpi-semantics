@@ -3174,61 +3174,61 @@ tools. The English prose was improved with the help of free LLMs.
 
  \newpage
 
-\begin{appendix}
+% \begin{appendix}
 
-\section{The step procedure (file tree.v, line 200)}
+% \section{The step procedure (file tree.v, line 200)}
 
-\begin{coqcode}
-Fixpoint step p v s A :=
-  match A with
-  | Top                 => (v, Success, Top)
-  | Bot                 => (v, Failed, A)
-  | Unexplored cut      => (v, CutBrothers, Bot)
-  | Unexplored (call t) => 
-      let: (v, l) := backchain u p v t s in
-      (v, Expanded,
-      if l is ((s, r) :: xs) then Or None s (big_or r xs) else Bot)
-  | Or A sB B =>
-      if A is Some A then 
-        let: (v, tA, rA) := step p v s A in
-        (v, if is_cb tA then Expanded else tA, 
-          Or (Some rA) sB (if is_cb tA then Bot else B))
-      else
-        let: (v, tB, rB) := step p v sB B in
-        (v, if is_cb tB then Expanded else tB, Or A sB rB)
-  | And A B0 B =>
-      if success A then 
-        let: (v, tB, rB) := step p v (next_subst s A) B in
-        (v, tB, And (if is_cb tB then cutl A else A) B0 rB)
-      else
-        let: (v, tA, rA) := step p v s A in (v, tA, And rA B0 B)
-  end.
-\end{coqcode}
+% \begin{coqcode}
+% Fixpoint step p v s A :=
+%   match A with
+%   | Top                 => (v, Success, Top)
+%   | Bot                 => (v, Failed, A)
+%   | Unexplored cut      => (v, CutBrothers, Bot)
+%   | Unexplored (call t) => 
+%       let: (v, l) := backchain u p v t s in
+%       (v, Expanded,
+%       if l is ((s, r) :: xs) then Or None s (big_or r xs) else Bot)
+%   | Or A sB B =>
+%       if A is Some A then 
+%         let: (v, tA, rA) := step p v s A in
+%         (v, if is_cb tA then Expanded else tA, 
+%           Or (Some rA) sB (if is_cb tA then Bot else B))
+%       else
+%         let: (v, tB, rB) := step p v sB B in
+%         (v, if is_cb tB then Expanded else tB, Or A sB rB)
+%   | And A B0 B =>
+%       if success A then 
+%         let: (v, tB, rB) := step p v (next_subst s A) B in
+%         (v, tB, And (if is_cb tB then cutl A else A) B0 rB)
+%       else
+%         let: (v, tA, rA) := step p v s A in (v, tA, And rA B0 B)
+%   end.
+% \end{coqcode}
 
-\section{The prune procedure (file tree.v, line 243)}
+% \section{The prune procedure (file tree.v, line 243)}
 
-  \begin{coqcode}
-  Definition omap f o := match o with Some b => Some (f b) | _ => o end.
-  Fixpoint prune b A : option tree :=
-    match A with
-    | Bot => None
-    | Top => if b then None else Some Top
-    | Unexplored _ => Some A
-    | And A B0 B =>
-        let build_B0 b := omap (~$\lambda$~x. And x B0 (big_and B0)) (prune b A) in
-        if success A then
-          if prune b B is Some B' then Some (And A B0 B')
-          else build_B0 true
-        else if failed A then build_B0 false
-        else Some (And A B0 B)
-    | Or None sB B => omap (~$\lambda$~x. Or None sB x) (prune b B)
-    | Or (Some A) sB B =>
-        if prune b A is Some A' then Some (Or (Some A') sB B)
-        else omap (~$\lambda$~x. Or None sB x) (prune false B)
-  end.
-  \end{coqcode}
+%   \begin{coqcode}
+%   Definition omap f o := match o with Some b => Some (f b) | _ => o end.
+%   Fixpoint prune b A : option tree :=
+%     match A with
+%     | Bot => None
+%     | Top => if b then None else Some Top
+%     | Unexplored _ => Some A
+%     | And A B0 B =>
+%         let build_B0 b := omap (~$\lambda$~x. And x B0 (big_and B0)) (prune b A) in
+%         if success A then
+%           if prune b B is Some B' then Some (And A B0 B')
+%           else build_B0 true
+%         else if failed A then build_B0 false
+%         else Some (And A B0 B)
+%     | Or None sB B => omap (~$\lambda$~x. Or None sB x) (prune b B)
+%     | Or (Some A) sB B =>
+%         if prune b A is Some A' then Some (Or (Some A') sB B)
+%         else omap (~$\lambda$~x. Or None sB x) (prune false B)
+%   end.
+%   \end{coqcode}
 
 
-\end{appendix}
+% \end{appendix}
 
 \end{document}
