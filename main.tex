@@ -2747,9 +2747,9 @@ To address this need, we extend the Martelli-Montanari unification
 procedure so that it takes a set of frozen variables, i.e. variables that
 cannot be assigned. The function \matching has the following property:
 
-% \input{tex_code/matchdisj.tex}
-\begin{lemma}[\logo{}matching\_disj]\label{um}\label{th:matchingdisj} $\forall t_1\ t_2\ \sigma\ \sigma',$\\
-  $\phantom{xxx} \mathrm{acyclic}\ \sigma \to \mathrm{matching}\ t_1\ t_2\ \sigma = \mathrm{Some}\ \sigma' \to \sigma'\ t_1 = \sigma\ t_2$
+% \input{tex_code/matching_disj.tex}
+\begin{lemma}[\logo{}matching\_disj]\label{um}\label{th:matchingdisj} $\forall\ v\ t_1\ t_2\ \sigma\ \sigma', \to \mathrm{vars}\ ( \sigma\ t_2 )\ \subseteq\ {v}$\\
+  $\phantom{xxx} \mathrm{acyclic}\ \sigma \to \mathrm{matching}\ v\ t_1\ t_2\ \sigma = \mathrm{Some}\ \sigma' \to \sigma'\ t_1 = \sigma\ t_2$
 \end{lemma}
 
 % In particular, we can see how the returned substitution $\sigma'$, differently
@@ -2787,11 +2787,10 @@ query, if both heads match the query $q$, then the two heads must unify.
 % This is formalized in the following lemma.
 
 % \input{tex_code/matching_unify_transP.tex}
-
 \begin{lemma}[\logo{}matching\_unify\_trans]\label{th:matchingunifytransP}%
-	$\forall\ h_1\ h_2\ q,$\\
-  $\phantom{xx}h_1 \cap h_2 = \varnothing \land h_1 \cap q = \varnothing \land h_2 \cap q = \varnothing \to$ \\
-	$\phantom{xx}\phantom{xx}\mathrm{matching}\ h_1\ q\ \varnothing \land \mathrm{matching}\ h_2\ q\ \varnothing \to \mathrm{unify}\ h_1\ h_2\ \varnothing $
+	$\forall\ v\ h_1\ h_2\ q,$\\
+  $\phantom{xx}h_1 \cap h_2 = \varnothing \land h_1 \cap q = \varnothing \land h_2 \cap q = \varnothing \land \mathrm{vars}\ q \subseteq v \to$ \\
+	$\phantom{xx}\phantom{xx}\mathrm{matching}\ v\ h_1\ q\ \varnothing \land \mathrm{matching}\ v\ h_2\ q\ \varnothing \to \mathrm{unify}\ h_1\ h_2\ \varnothing $
 \end{lemma}
 
 \begin{proof}
