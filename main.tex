@@ -136,7 +136,7 @@ Mishra~\cite{Debray1988} for studying the optimizations employed by
 This semantics is based on a stack of alternatives, where the cut operator is
 represented by a pointer to a shorter stack. 
 
-The second semantics is based on And-Or trees, in which the structure of
+The second semantics is novel and based on And-Or trees, in which the structure of
 alternative computations is made explicit and preserved throughout execution.
 This enables an explicit characterization of the cut operator as a function
 that prunes selected branches of the tree. The tree-based semantics allows
@@ -197,7 +197,7 @@ algorithm. In addition to their \rocqP{} code being unavailable, this
 mechanization has two further shortcomings. First, the analysis does not
 scale to dynamic predicates (see \cite[Sec.~8]{fissore2026}), so it cannot be
 applied to
-\lprologP~\cite{1991miller-pf,Miller_Nadathur_2012}. Second, there is
+\lprologP~\cite{1991miller-pf,Miller_Nadathur_2012} which is our long term goal. Second, there is
 no mechanized link between their denotational semantics and the operational
 semantics of Debray and Mishra~\cite{Debray1988}, which underlie standard
 \prologP abstract machines~\cite{warren1983abstract,1991ait-wam,10.1007/BFb0105415}.
@@ -621,7 +621,7 @@ in particular how alternatives are stored and how they are pruned by cut.
 \vspace{10pt}
 \textit{Notational conventions}
 In the following section we note $\mathbb{B}$ for the boolean type. 
-Following the Mathematical Components library, on which we depend,
+Following the Mathematical Components library~\cite{assia_mahboubi_2022_7118596}, on which we depend,
 we use \cI{x.1} and \cI{x.2} to denote the first and second projection
 applied to the pair \cI{x}.
 % List concatenation is the infix \mappend,
@@ -633,15 +633,17 @@ applied to the pair \cI{x}.
 \section{Stack-based semantics}
 \label{stack-sem}
 
-The stack-based semantics we present is very close to what is
-implemented by the \elpiP interpreter. This semantics is
-similar to the one mechanized by Pusch in \isabelleP{}
-\cite{10.1007/BFb0105415}, which is in turn closely related to the
-semantics given by Debray and Mishra in
-\cite[Section~4.3]{Debray1988}. Pusch mechanized this
-semantics together with several optimizations that are
-also present in the Warren Abstract Machine
-\cite{warren1983abstract,1991ait-wam}.
+The stack-based semantics we present is essentially the one 
+by Debray and Mishra in
+\cite[Section~4.3]{Debray1988}. The main difference is that we hide the search for
+applicable rules in the backchain auxiliary function.
+
+%  and our mechanization closely follows
+% the one of Pusch in \isabelleP{}
+% \cite{10.1007/BFb0105415}. Pusch mechanized this
+% semantics together with several optimizations that are
+% also present in the Warren Abstract Machine
+% \cite{warren1983abstract,1991ait-wam}.
 
 The execution state is a stack of alternatives.
 %
@@ -680,10 +682,10 @@ predicate.
 % \end{coqcode}
 % \end{center}
 %
-$$\nur : \FV \to \mathrm{alts} \to \mathrm{option}\ (\Sigma \times \mathrm{alts}) \to \cI{Prop}$$
+$$\nur : \mathbb{P} \to \FV \to \mathrm{alts} \to \mathrm{option}\ (\Sigma \times \mathrm{alts}) \to \cI{Prop}$$
 
 \noindent
-The \nur predicate relates a set of variables and a
+The \nur predicate relates a program, a set of variables and a
 list of alternatives to an optional result. None stands for failure,
 i.e., no solution, whereas Some $(\sigma, a)$ represents success with $\sigma$
 being the solution and $a$ as the list of not-yet-explored
@@ -695,7 +697,7 @@ alternatives.
   &\bigg(v', \bigg[
   \sigma',
   (
-    [(p, q, a) \mid q \in b] \mappend g
+    [(q, a) \mid q \in b] \mappend g
   )
   \ \bigg|\ 
   (\sigma', b) \in rs
@@ -707,22 +709,22 @@ alternatives.
 \begin{prooftree}
 	\AxiomC{$~$}
   \RightLabel{$\stops $}
-  \UnaryInfC{$\nur\ v\ ( ( \sigma ,\ \mnil )\ \mathrm{::}\ a )\ ( \mathrm{Some}\ ( \sigma ,\ a ) ) $}
+  \UnaryInfC{$\nur\ p\ v\ ( ( \sigma ,\ \mnil )\ \mathrm{::}\ a )\ ( \mathrm{Some}\ ( \sigma ,\ a ) ) $}
 \end{prooftree}
 \begin{prooftree}
-	\AxiomC{$\nur\ v\ ( ( \sigma ,\ g )\ \mathrm{::}\ \mathrm{ca} )\ r $}
+	\AxiomC{$\nur\ p\ v\ ( ( \sigma ,\ g )\ \mathrm{::}\ \mathrm{ca} )\ r $}
   \RightLabel{$\cuts $}
-  \UnaryInfC{$\nur\ v\ ( ( \sigma ,\ ( \mathrm{cut} ,\ \mathrm{ca} )\ \mathrm{::}\ g )\ \mathrm{::}\ \_ )\ r $}
+  \UnaryInfC{$\nur\ p\ v\ ( ( \sigma ,\ ( \mathrm{cut} ,\ \mathrm{ca} )\ \mathrm{::}\ g )\ \mathrm{::}\ \_ )\ r $}
 \end{prooftree}
 \begin{prooftree}
-	\AxiomC{$\backchainS\ p\ v\ t\ \sigma\ a\ g = ( v' ,\ \mathrm{bs} )  \qquad \nur\ v'\ ( \mathrm{bs}\ \mappend\ a )\ r $}
+	\AxiomC{$\backchainS\ p\ v\ t\ \sigma\ a\ g = ( v' ,\ \mathrm{bs} )  \qquad \nur\ p\ v'\ ( \mathrm{bs}\ \mappend\ a )\ r $}
   \RightLabel{$\calls $}
-  \UnaryInfC{$\nur\ v\ ( ( \sigma ,\ ( \mathrm{call}\ t ,\ \_ )\ \mathrm{::}\ g )\ \mathrm{::}\ a )\ r $}
+  \UnaryInfC{$\nur\ p\ v\ ( ( \sigma ,\ ( \mathrm{call}\ t ,\ \_ )\ \mathrm{::}\ g )\ \mathrm{::}\ a )\ r $}
 \end{prooftree}
 \begin{prooftree}
 	\AxiomC{$~$}
   \RightLabel{$\fails $}
-  \UnaryInfC{$\nur\ \_\ \mnil\ \mathrm{None} $}
+  \UnaryInfC{$\nur\ \_\ \_\ \mnil\ \mathrm{None} $}
 \end{prooftree}
   \caption{Rule system for \nur}
   \label{fig:nur-rules}
@@ -756,12 +758,14 @@ stack.
                      column sep=0.3cm, row sep=0.3cm] {
     g 0 R\\
     };
+    \node[font=\bfseries] at ($(outer0.west)+(-0.4,0)$) {3a)};
 
-    \matrix (outer1) at (5,0) [matrix of nodes,
+    \matrix (outer1) at (7,0) [matrix of nodes,
                      nodes={draw, minimum width=0.5cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex, anchor=center, font=\fontsize{8pt}{9.6pt}\selectfont},
                      column sep=0.3cm, row sep=0.3cm] {
     \phantom{AAAAAAAAAAAAAA} & \phantom{AAAAAAAAAAA} &  \node[draw=none] (A1) {\phantom{!}};\\
     };
+    \node[font=\bfseries] at ($(outer1.west)+(-0.4,0)$) {3b)};
     \matrix (inner1a) [matrix of nodes,
                      nodes={minimum width=0.6cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex, font=\fontsize{8pt}{9.6pt}\selectfont},
                      column sep=0.1cm, row sep=0.1cm] at (outer1-1-1.center) {
@@ -789,6 +793,7 @@ stack.
                      column sep=0.3cm, row sep=0.3cm] {
     \phantom{AAAAAAAA} & \phantom{AAAAAAAA} & \phantom{AAAAAAAAAAA} & \phantom{AAAAAAAAA} &  \node[draw=none] (A2) {\phantom{xx}};\\
     };
+    \node[font=\bfseries] at ($(outer2.west)+(-0.4,0)$) {3c)};
     \matrix (inner2a) [matrix of nodes,
                      nodes={minimum width=0.6cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex, font=\fontsize{8pt}{9.6pt}\selectfont},
                      column sep=0.1cm, row sep=0.1cm] at (outer2-1-1.center) {
@@ -840,6 +845,7 @@ stack.
                      column sep=0.3cm, row sep=0.3cm] {
     \phantom{AAAAAAAA} & \phantom{AAAAAAAAAA} & \phantom{AAAAAAAAAA} &  \node[draw=none] (A3) {\phantom{xx}};\\
     };
+    \node[font=\bfseries] at ($(outer3.west)+(-0.4,0)$) {3d)};
     \matrix (inner3a) [matrix of nodes,
                      nodes={minimum width=0.6cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex, font=\fontsize{8pt}{9.6pt}\selectfont},
                      column sep=0.1cm, row sep=0.1cm] at (outer3-1-1.center) {
@@ -881,6 +887,7 @@ stack.
                      column sep=0.3cm, row sep=0.3cm] {
     \phantom{AAAAAAAA} & \phantom{AAAAAAAAAA} & \phantom{AAAAAAAAAA} &  \node[draw=none] (A4) {\phantom{xx}};\\
     };
+    \node[font=\bfseries] at ($(outer4.west)+(-0.4,0)$) {3e)};
     \matrix (inner4a) [matrix of nodes,
                      nodes={minimum width=0.6cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex, font=\fontsize{8pt}{9.6pt}\selectfont},
                      column sep=0.1cm, row sep=0.1cm] at (outer4-1-1.center) {
@@ -922,6 +929,7 @@ stack.
                      column sep=0.3cm, row sep=0.3cm] {
     \phantom{AAA} & \phantom{AAAAAAAAAA} & \phantom{AAAAAAAAAA} &  \node[draw=none] (A5) {\phantom{xx}};\\
     };
+    \node[font=\bfseries] at ($(outer5.west)+(-0.4,0)$) {3f)};
     \matrix (inner5a) [matrix of nodes,
                      nodes={minimum width=0.6cm, minimum height=0.7cm, text height=1.5ex, text depth=.25ex, font=\fontsize{8pt}{9.6pt}\selectfont},
                      column sep=0.1cm, row sep=0.1cm] at (outer5-1-1.center) {
@@ -1053,11 +1061,6 @@ continuation for all alternatives of \(A\) except the first. That is,
 when backtracking occurs within \(A\), the subtree \(B\) is replaced by
 the atoms in \(B_0\). An example is shown in~\cref{sec:na}.
 
-A graphical representation of a tree is shown in \cref{tree-ex1}. For
-compactness, we depict \andC and \orC nodes as $n$-ary,
-with children associating to the right. The \koC node acts as the terminating
-element of an \orC list, while \okC is the terminating element of an \andC
-list.
 
 % \begin{figure}
 %   \input{tex_code/step_tag.tex}
@@ -1102,11 +1105,7 @@ list.
 
 The tree is constructed incrementally by two recursive
 functions, \step and \na. Both traverse the tree depth-first, left-to-right.
-The node to be explored in a tree is retrieved thanks to \pathend (in~\cref{fig:getend}).
-When this node is \okC we say the entire tree is a \emph{success} (short \dingv);
-when it is \koC we say the tree \emph{failed} (short \dingx); otherwise the tree is
-\emph{incomplete} (short \dingss).
-In \cref{tree-ex} we mark with a black arrow the result of \pathend.
+
 The type of these two functions is given below.
 %
 \begin{align*}
@@ -1124,6 +1123,20 @@ of \step and \na as the inductive relation \run.
 More precisely \run iterates calls to \step on incomplete trees to expand
 Unexplored nodes. When a tree fails it calls \na to find
 the next alternative and continues from there, if one exists.
+The node to be explored in a tree is retrieved thanks to \pathend (in~\cref{fig:getend}).
+When this node is \okC we say the entire tree is a \emph{success} (short \dingv);
+when it is \koC we say the tree \emph{failed} (short \dingx); otherwise the tree is
+\emph{incomplete} (short \dingss).
+
+
+A graphical representation of the execution of the running example
+on the tree-based semantics is shown in \cref{tree-ex}. For
+compactness, we depict \andC and \orC nodes as $n$-ary,
+with children associating to the right. The \koC node acts as the terminating
+element of an \orC list, while \okC is the terminating element of an \andC
+list. We mark with a black arrow the result of \pathend.
+
+
 % We detail \step, \na, and \run in \cref{sec:step,sec:next_alt,sec:runT}.
 
 
@@ -1790,7 +1803,7 @@ implicitly denotes $(\mathrm{Some}\ A) \lor B_\sigma$.
   \run\ p\ v\ \sigma\ A\ ( \mathrm{Many}\ \sigma'\ A' )\ \mathrm{true}\ v' \to
   $\\
 	$\mphant\mphant
-  \run\ p\ v\ \sigma\ ( A \lor B\ \phantom{!}_{\!\!\!\!\sigma_1} )\ ( \mathrm{Many}\ \sigma'\ ( A' \lor \mathrm{KO}\ \phantom{!}_{\!\!\!\!\sigma_1} ) )\ \mathrm{false}\ v'
+  \run\ p\ v\ \sigma\ ( A \lor B\ \phantom{!}_{\!\!\!\!\sigma_1} )\ ( \mathrm{Many}\ \sigma'\ ( A' \lor \mathrm{Bot}\ \phantom{!}_{\!\!\!\!\sigma_1} ) )\ \mathrm{false}\ v'
   $
 \end{theorem}
 % \input{tex_code/runNT_or.tex}
@@ -1823,7 +1836,6 @@ forced to be \koC; in the second one, the failure of $A$ absorbs $B$. The last
 lemma is connected to the depth-first exploration of the tree: proving a
 disjunction from its right-hand side can only occur after the left-hand side
 has been disproved.
-Depicted as rules:
 % %
 % \begin{center}  
 
@@ -1850,7 +1862,7 @@ Depicted as rules:
 % \end{center}
 
 \Cref{th:orelim1,th:orelim2} are elimination
-rules for disjunction. 
+rules for disjunction: 
 
 % \input{tex_code/run_orSST.tex}
 \begin{theorem}[\logo{}or\_elim1]\label{th:orelim1}$\forall\ p\ v\ v'\ \sigma\ \sigma'\ \sigma_1\ A\ A'\ B\ B' ,$\\
@@ -1919,7 +1931,7 @@ This again reflects the depth-first traversal of the proof tree.
 % \end{center}
 
 It is worth recalling that the ``$A$ cuts'' side-condition in the rules above is
-precisely the boolean result returned by \run. Without this information, it is
+precisely the boolean value returned by \run. Without this information, it is
 impossible to formulate these rules: it is not merely a matter of whether $A$
 contains a syntactic occurrence of cut, but whether that cut is actually
 executed during the (dis)proof of $A$ (in rules $(\lor_{ir1})$ and $(\lor_{ir2})$).
@@ -2988,13 +3000,13 @@ operations \step and \na.
 \section{Related work}
 
 The only mechanization of \prologP's semantics that we could find is
-Pusch's \isabelleP formalization~\cite{10.1007/BFb0105415}, which follows
- Debray and Mishra~\cite[Sec.~4.3]{Debray1988}.
-That work starts from this semantics and refines it by introducing
+the one by Pusch in \isabelleP~\cite{10.1007/BFb0105415}, which follows,
+as we do, Debray and Mishra~\cite[Sec.~4.3]{Debray1988}.
+The work of Pusch starts from this semantics and refines it by introducing
 optimizations commonly found in the Warren abstract
 machine~\cite{warren1983abstract,1991ait-wam}. Unlike our case study,
-it does not use the semantics to prove properties of program execution;
-consequently, it does not encounter the difficulty described in
+Pusch does not use the semantics to prove properties of program execution;
+consequently, she does not encounter the difficulty described in
 \cref{stack-sem}, which led us to develop a semantics in which the
 effect of cut is more explicit. In this sense, the two approaches are
 complementary: taken together, they suggest that the tree-based
@@ -3005,8 +3017,11 @@ we could not find their \rocqP{} source code. Their semantics is
 denotational and cannot easily account for all the features covered
 in~\cite{fissore2026}, although it would have been sufficient for the
 first-order fragment considered in this paper.
+Still, their mechanization lacks a link between the denotational semantics
+and the operational semantics which underlie standard
+\prologP abstract machines.
 
-Hanus and Prott~\cite{hanus2025} formalize a determinacy checker for
+Hanus and Prott~\cite{hanus2025} formalize in \rocqP{} a determinacy checker for
 the logic-functional Curry language. In this language choice points
 are explicitly denoted by the \cI{?} node in the syntax of expressions.
 In this setting the mutual exclusion of rules does not need to be
@@ -3045,13 +3060,13 @@ under that assumption, unification and matching coincide.
 \section{Conclusion}
 
 This paper describes two operational semantics for \prologP with cut. 
-The first semantics is
+The first semantics is by Debray and Mishra and is
 based on a stack of alternatives: it is closer to actual \prologP
 implementations, including the first-order fragment of \elpiP, but it loses
 the explicit structure of the tree-based semantics and is therefore less
 convenient for reasoning about cut. 
 The second
-semantics is based on And--Or trees: it is well suited both to graphical
+semantics is novel and is based on And--Or trees: it is well suited both to graphical
 illustrations of the scope of cut and to proving lemmas about the effect of
 cut evaluation when reasoning about disjunctions. 
 We show how to translate trees into
@@ -3079,7 +3094,7 @@ disjoint substitutions.
 To obtain an axiom-free mechanization, we had to provide an implementation
 of the first-order unification algorithm, since we could not find an
 existing \rocqP{} mechanization. Describing this development in detail is out of
-scope for this paper. It amounts to about 1,700 lines of ssreflect code,
+scope for this paper. It amounts to about 1,700 lines of SSReflect code,
 including 200 lines for the termination proof based on a lexicographic
 ordering and 800 lines for correctness and completeness. Because of the
 specific form of \cref{th:unifren,th:matchingdisj}, which deals with
