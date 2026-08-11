@@ -2313,6 +2313,7 @@ trees. We defer the exact definition of \vast{} to \cref{sec:validtree}.
 
 % \input{tex_code/tree_to_elpi.tex}
 \begin{theorem}[\logo{}runT2S]\label{th:runTtorunS}%
+  \begingroup\small
 	$\forall\ p\ t\ \sigma\ r\ (v\ \mathrm{:=}\ \mathrm{vars}\ t\ \cup\ \mathrm{vars}\ \sigma) ,$\\ 
   $\phantom{xx}
 	\mathrm{sld\_tree}\ t \land (\exists\ b\ v',\ \run\ p\ v\ \sigma\ t\ r\ b\ v') \to \\
@@ -2324,6 +2325,7 @@ trees. We defer the exact definition of \vast{} to \cref{sec:validtree}.
 	\nur\ p\ v\ ( \mathrm{t2s}\ t\ \sigma\ \mnil )\ (\mathrm{Some}\ ( \sigma' ,\ \mathrm{t2s}\ t'\ \sigma\ \mnil)) & \mathrm{if}\ r = \mathrm{Many}\ \sigma'\ t'\\
 	\end{cases}
   $
+  \endgroup
 \end{theorem}
 
 \begin{proof} By induction on $\run$. \end{proof}
