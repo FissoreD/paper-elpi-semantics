@@ -2750,16 +2750,25 @@ are acyclic in this sense.
 
 % \input{tex_code/unif_correct.tex}
 
+\begin{definition}[\logo{}renaming]
+An injective and acyclic mapping from variables to variables
+\end{definition}
+
+\begin{definition}[\logo{}mgu] $\lambda\ \sigma\ t_1\ t_2.$\\
+  $\phantom{xx}\sigma\ t_1 = \sigma\ t_2 \land (\forall \sigma', \mathrm{acyclic}\ \sigma' \land \sigma'\ t_1 = \sigma'\ t_2 \to$\\
+    $\phantom{xx}\phantom{xx}\exists r : \mathrm{renaming},
+        \forall t, r\ (\sigma'\ (\sigma\ t)) = r\ (\sigma'\ t))$
+\end{definition}
+
 \begin{lemma}[\logo{}unify\_correct]\label{th:unifycorrect}%
-$\forall\ t_1\ t_2\ \sigma\ \sigma' ,$\\
-$\phantom{xx}\mathrm{acyclic}\ \sigma \to \mathrm{unify}\ t_1\ t_2\ \sigma = \mathrm{Some}\ \sigma' \to \sigma'\ t_1 = \sigma'\ t_2 $
+$\forall\ t_1\ t_2\ \sigma,$\\
+$\phantom{xx}\mathrm{unify}\ t_1\ t_2\ \varepsilon = \mathrm{Some}\ \sigma \to \mathrm{mgu}\ \sigma\ t_1\ t_2 $
 \end{lemma}
 
 % \input{tex_code/unify_complete.tex}
-\begin{lemma}[\logo{}unify\_complete]\label{th:unifycomplete} $\forall\ t_1\ t_2\ \sigma ,\ \mathrm{acyclic}\ \sigma \to$\\
-% \begin{multline*}
-$\phantom{xx}( \exists\ \sigma' ,\ \mathrm{acyclic}\ \sigma' \land\ \sigma'\ ( \sigma\ t_1 ) = \sigma'\ ( \sigma\ t_2 ) ) \to$\\
-$\phantom{xx}\phantom{xx}\exists\ \sigma'' ,\ \mathrm{unify}\ t_1\ t_2\ \sigma = \mathrm{Some}\ \sigma''$
+\begin{lemma}[\logo{}unify\_complete]\label{th:unifycomplete} $\forall\ t_1\ t_2,$\\
+$( \exists\ \sigma ,\ \mathrm{acyclic}\ \sigma \land\ \sigma\ t_1 = \sigma\ t_2 ) \to
+  \exists\ \sigma' ,\ \mathrm{unify}\ t_1\ t_2\ \varepsilon = \mathrm{Some}\ \sigma'$
 \end{lemma}
 
 The \elpiP language adopts a restricted unification routine for input arguments,
