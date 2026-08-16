@@ -2750,14 +2750,10 @@ are acyclic in this sense.
 
 % \input{tex_code/unif_correct.tex}
 
-\begin{definition}[\logo{}renaming]
-An injective and acyclic mapping from variables to variables
-\end{definition}
-
 \begin{definition}[\logo{}mgu] $\lambda\ \sigma\ t_1\ t_2.$\\
   $\phantom{xx}\sigma\ t_1 = \sigma\ t_2 \land (\forall \sigma', \mathrm{acyclic}\ \sigma' \land \sigma'\ t_1 = \sigma'\ t_2 \to$\\
-    $\phantom{xx}\phantom{xx}\exists r : \mathrm{renaming},
-        \forall t, r\ (\sigma'\ (\sigma\ t)) = r\ (\sigma'\ t))$
+    $\phantom{xx}\phantom{xx}\exists \sigma_x, \mathrm{acyclic}\ \sigma_x \land
+        \forall t, \sigma_x (\sigma\ t) = \sigma'\ t$
 \end{definition}
 
 \begin{lemma}[\logo{}unify\_correct]\label{th:unifycorrect}%
