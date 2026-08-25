@@ -1227,7 +1227,7 @@ list. We mark with a black arrow the result of \pathend.
       align=right
     }
     [\orN,orNode
-      [\deadN, deadNode,edge=dashed]
+      % [\deadN, deadNode,edge=dashed]
       [\andN, andNode,edge label={node[midway,right] {$\sigma_1$}}
         [{{r A B}},name=cur]
         [{{f B C}},edge label={node[midway,right] {$R_1$}}]
@@ -1245,17 +1245,17 @@ list. We mark with a black arrow the result of \pathend.
     \label{tree-ex1}
   \end{subfigure}~~
   \begin{subfigure}{0.5\textwidth}
-    \resizebox{0.8\textwidth}{!}{%
+    \resizebox{0.7\textwidth}{!}{%
     \begin{forest}
     for tree={
       l sep=1.5em, s sep=1.5em,
       align=right
     }
     [\orN,orNode
-      [\deadN, deadNode,edge=dashed]
+      % [\deadN, deadNode,edge=dashed]
       [\andN, andNode,edge label={node[midway,right] {$\sigma_1$}}
         [\orN,orNode, name=s1
-          [\deadN, deadNode,edge=dashed]
+          % [\deadN, deadNode,edge=dashed]
           [\okN,okNode,edge label={node[midway,right] {$\sigma_3$}}]
           [\okN,okNode,edge label={node[midway,below] {$\sigma_4$}}]
           [{{!}},edge label={node[midway,right] {$\sigma_5$}}]
@@ -1276,17 +1276,17 @@ list. We mark with a black arrow the result of \pathend.
   \end{subfigure}
   ~\\
   \begin{subfigure}{0.49\textwidth}
-    \resizebox{0.8\textwidth}{!}{%
+    \resizebox{0.7\textwidth}{!}{%
     \begin{forest}
     for tree={
       l sep=1.5em, s sep=1.5em,
       align=right
     }
     [\orN,orNode
-     [\deadN, deadNode,edge=dashed]
+    %  [\deadN, deadNode,edge=dashed]
       [\andN, andNode,edge label={node[midway,right] {$\sigma_1$}}
         [\orN,orNode
-          [\deadN, deadNode,edge=dashed]
+          % [\deadN, deadNode,edge=dashed]
           [\okN,okNode,edge label={node[midway,right] {$\sigma_3$}}]
           [\okN,okNode,edge label={node[midway,below] {$\sigma_4$}}]
           [{{!}},edge label={node[midway,right] {$\sigma_5$}}]
@@ -1307,17 +1307,17 @@ list. We mark with a black arrow the result of \pathend.
     \label{tree-ex3}
   \end{subfigure}
   \begin{subfigure}{0.49\textwidth}
-    \resizebox{0.8\textwidth}{!}{%
+    \resizebox{0.7\textwidth}{!}{%
     \begin{forest}
     for tree={
       l sep=1.5em, s sep=1.5em,
       align=right
     }
     [\orN,orNode
-     [\deadN, deadNode,edge=dashed]
+    %  [\deadN, deadNode,edge=dashed]
       [\andN, andNode,edge label={node[midway,right] {$\sigma_1$}}
         [\orN,orNode
-          [\deadN, deadNode,edge=dashed]
+          % [\deadN, deadNode,edge=dashed]
           [\deadN, deadNode,edge=dashed]
           [\okN,okNode,edge label={node[midway,below] {$\sigma_4$}}]
           [{{!}},edge label={node[midway,right] {$\sigma_5$}}]
@@ -1340,23 +1340,23 @@ list. We mark with a black arrow the result of \pathend.
   ~\\
   \setcounter{subfigure}{4}
   \begin{subfigure}{0.54\textwidth}
-    \resizebox{0.8\textwidth}{!}{%
+    \resizebox{0.7\textwidth}{!}{%
     \begin{forest}
     for tree={
       l sep=1.5em, s sep=1.5em,
       align=right
     }
     [\orN,orNode
-     [\deadN, deadNode,edge=dashed]
+    %  [\deadN, deadNode,edge=dashed]
       [\andN, andNode,edge label={node[midway,right] {$\sigma_1$}}
         [\orN,orNode
-          [\deadN, deadNode,edge=dashed]
+          % [\deadN, deadNode,edge=dashed]
           [\deadN, deadNode,edge=dashed]
           [\okN,okNode,edge label={node[midway,below] {$\sigma_4$}}]
           [{{!}},edge label={node[midway,right] {$\sigma_5$}}]
         ]
         [\orN,orNode,edge label={node[midway,right] {$R_1$}}
-          [\deadN, deadNode,edge=dashed]
+          % [\deadN, deadNode,edge=dashed]
           [\okN,okNode,edge label={node[midway,right] {$\sigma_6$}}]
         ]
         [{{!}},name=cut,edge label={node[midway,right] {$R_2$}}]
@@ -1373,23 +1373,23 @@ list. We mark with a black arrow the result of \pathend.
     \label{tree-ex5}
   \end{subfigure}~~
   \begin{subfigure}{0.44\textwidth}
-    \resizebox{0.8\textwidth}{!}{%
+    \resizebox{0.65\textwidth}{!}{%
     \begin{forest}
     for tree={
       l sep=1.5em, s sep=1.5em,
       align=right
     }
     [\orN,orNode
-     [\deadN, deadNode,edge=dashed]
+    %  [\deadN, deadNode,edge=dashed]
       [\andN, andNode,edge label={node[midway,right] {$\sigma_1$}}
         [\orN,orNode,name=s1
-          [\deadN, deadNode,edge=dashed]
+          % [\deadN, deadNode,edge=dashed]
           [\deadN, deadNode,edge=dashed]
           [\okN,okNode,edge label={node[midway,below] {$\sigma_4$}}]
           [\koN, koNode,edge label={node[midway,right] {$\sigma_5$}}]
         ]
         [\orN,orNode,name=s3
-          [\deadN, deadNode,edge=dashed]
+          % [\deadN, deadNode,edge=dashed]
           [\okN,okNode,edge label={node[midway,right] {$\sigma_6$}}]
         ]
         [\okN,okNode,name=cut]
@@ -1990,10 +1990,10 @@ for tree={
   align=right
 }
 [\orN,orNode
-  [\deadN, deadNode,edge=dashed]
+  % [\deadN, deadNode,edge=dashed]
   [\andN, andNode,edge label={node[midway,right] {$\sigma_1$}}
     [\orN,orNode, name=s1
-      [\deadN, deadNode,edge=dashed]
+      % [\deadN, deadNode,edge=dashed]
       [\subnode{ss1}{\okN},okNode,edge label={node[midway,right] {$\sigma_3$}}]
       [\subnode{ss2}{\okN},okNode,edge label={node[midway,below] {$\sigma_4$}}]
       [\subnode{ss3}{!},edge label={node[midway,right] {$\sigma_5$}}]
