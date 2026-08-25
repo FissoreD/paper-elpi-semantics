@@ -2723,7 +2723,7 @@ Martelli and Montanari~\cite{10.1145/357162.357169}; we prove it
 terminating (using the standard lexicographic ordering), correct, and
 complete.
 
-% The first notion to provide is the application of an acyclic substitution:
+% The first notion to provide is the application of an idempotent substitution:
 
 % \begin{definition}[\logo{}deref]
 %   $$
@@ -2737,23 +2737,23 @@ complete.
 %   $$
 % \end{definition}
 
-\begin{definition}[\logo{}acyclic]
-  $\lambda \sigma. \mathrm{dom}\ \sigma \cap \mathrm{codom}\ \sigma = \varnothing$
+\begin{definition}[\logo{}idempotent~\cite{10.1007/BFb0032046}]\phantom{x}\\
+  $\phantom{xx}\lambda \sigma. \mathrm{dom}\ \sigma \cap \mathrm{codom}\ \sigma = \varnothing$
 \end{definition}
 
-Note that this definition of acyclicity entails that the substitution is
+Note that this definition of idempotent substitution entails that the substitution is
 necessarily self-applied, i.e. $\sigma \coloneq \{ X \mapsto f~Y, Y \mapsto a\}$
-is not acyclic, whereas the equivalent $\sigma' \coloneq \{ X \mapsto f~a, Y \mapsto a\}$
+is not idempotent, whereas the equivalent $\sigma' \coloneq \{ X \mapsto f~a, Y \mapsto a\}$
 is.
-The algorithm by Martelli and Montanari generates substitutions that
-are acyclic in this sense.
+We prove that the algorithm by Martelli and Montanari generates substitutions that
+are idempotent in this sense.
 
 % \input{tex_code/unif_correct.tex}
 
 \begin{definition}[\logo{}mgu] $\lambda\ \sigma\ t_1\ t_2.$\\
-  $\phantom{xx}\sigma\ t_1 = \sigma\ t_2 \land (\forall \sigma', \mathrm{acyclic}\ \sigma' \land \sigma'\ t_1 = \sigma'\ t_2 \to$\\
-    $\phantom{xx}\phantom{xx}\exists \sigma_x, \mathrm{acyclic}\ \sigma_x \land
-        \forall t, \sigma_x (\sigma\ t) = \sigma'\ t$
+  $\phantom{xx}\sigma\ t_1 = \sigma\ t_2 \land (\forall \sigma', \mathrm{idempotent}\ \sigma' \land \sigma'\ t_1 = \sigma'\ t_2 \to$\\
+    $\phantom{xx}\phantom{xx}\exists \sigma_x, \mathrm{idempotent}\ \sigma_x \land
+        \forall t, \sigma_x (\sigma\ t) = \sigma'\ t)$
 \end{definition}
 
 \begin{lemma}[\logo{}unify\_correct]\label{th:unifycorrect}%
@@ -2763,8 +2763,8 @@ $\phantom{xx}\mathrm{unify}\ t_1\ t_2\ \varepsilon = \mathrm{Some}\ \sigma \to \
 
 % \input{tex_code/unify_complete.tex}
 \begin{lemma}[\logo{}unify\_complete]\label{th:unifycomplete} $\forall\ t_1\ t_2,$\\
-$( \exists\ \sigma ,\ \mathrm{acyclic}\ \sigma \land\ \sigma\ t_1 = \sigma\ t_2 ) \to
-  \exists\ \sigma' ,\ \mathrm{unify}\ t_1\ t_2\ \varepsilon = \mathrm{Some}\ \sigma'$
+$\phantom{xx}( \exists\ \sigma ,\ \mathrm{idempotent}\ \sigma \land\ \sigma\ t_1 = \sigma\ t_2 ) \to$\\
+  $\phantom{xx}\phantom{xx}\exists\ \sigma' ,\ \mathrm{unify}\ t_1\ t_2\ \varepsilon = \mathrm{Some}\ \sigma'$
 \end{lemma}
 
 The \elpiP language adopts a restricted unification routine for input arguments,
@@ -2778,7 +2778,7 @@ procedure so that it takes a set of frozen variables.
 The function \matching has the following property:
 
 % \input{tex_code/matching_disj.tex}
-\begin{lemma}[\logo{}matching\_disj]\label{um}\label{th:matchingdisj} $\forall\ v\ t_1\ t_2\ \sigma\ \sigma', \mathrm{acyclic}\ \sigma \to$\\
+\begin{lemma}[\logo{}matching\_disj]\label{um}\label{th:matchingdisj} $\forall\ v\ t_1\ t_2\ \sigma\ \sigma', \mathrm{idempotent}\ \sigma \to$\\
   $\phantom{xxx} 
   \sigma\ t_2 \ \subseteq\ {v} \to
   \mathrm{matching}\ v\ t_1\ t_2\ \sigma = \mathrm{Some}\ \sigma' \to \sigma'\ t_1 = \sigma\ t_2$
@@ -2788,7 +2788,7 @@ The function \matching has the following property:
 % from \cref{th:unifycorrect}, does not affect variables in $\sigma\ t_2$.
 
 % \begin{corollary}[\logo{}matching\_same]\label{umm}\label{th:matchingsame} $\forall t\ q\ \sigma\ \sigma',$\\
-%   $\phantom{xxx} \mathrm{acyclic}\ \sigma \to \mathrm{matching}\ t\ q\ \sigma = \mathrm{Some}\ \sigma' \to \sigma'\ q = \sigma\ q$
+%   $\phantom{xxx} \mathrm{idempotent}\ \sigma \to \mathrm{matching}\ t\ q\ \sigma = \mathrm{Some}\ \sigma' \to \sigma'\ q = \sigma\ q$
 % \end{corollary}
 
 
