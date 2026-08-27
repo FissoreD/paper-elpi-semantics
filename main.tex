@@ -377,12 +377,12 @@ a list of atoms, represents the rule's premises.
 %
 %
 \begin{align*}
-  \TERM & := \mathrm{Symb}\ \mathbb{N} \mid \mathrm{Pred}\ \mathbb{N} \mid \mathrm{Var}\ \mathbb{N} \mid \mathrm{App}\ \TERM\ \TERM\\
+  \TERM & := \mathrm{Symb}\ \mathbb{N} \mid \mathrm{Var}\ \mathbb{N} \mid \mathrm{App}\ \TERM\ \TERM\\
   \ATOM & := \mathrm{cut} \mid \mathrm{call}\ \TERM
 \end{align*}
 
 An atom is either the cut operator or a call to a term.
-Terms include predicate symbols, data symbols, variables, and term application.
+Terms include predicate and data symbols, variables, and term application.
 
 The syntax tree allows variables to be applied and predicates to be mixed with data.
 These higher-order features play no role in the current paper, which focuses
