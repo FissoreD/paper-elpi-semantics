@@ -2818,6 +2818,14 @@ An important property we derive from the matching and unification
 procedures is the following. Given three pairwise variable-disjoint terms
 $h_1$, $h_2$, and $q$, representing two rule heads in the database and a
 query, if both heads match the query $q$, then the two heads must unify.
+
+\begin{definition}[opt2prop]\label{def:opt2prop}\phantom{xx}\\
+  $\phantom{xx}\lambda x. \mathrm{if}\ x\ \mathrm{is\ Some\ \_\ then\ True\ else\ False}$
+\end{definition}
+
+In the following 2 lemmas, we use \cref{def:opt2prop} as an implicit coercion to
+cast result of calls to matching and unify into the sort of propositions.
+
 % This is formalized in the following lemma.
 
 % \input{tex_code/matching_unify_transP.tex}
@@ -2882,10 +2890,6 @@ $\alpha$-equivalent terms.
   \mathrm{unify}\ t_1\ t_2\ \varepsilon \to \mathrm{unify}\ t_1'\ t_2'\ \varepsilon
   $
 \end{lemma}
-
-\noindent Note that the coercion
-``$\lambda x. \mathrm{if}\ x\ \mathrm{is}\ \mathrm{Some\ \_}\ \mathrm{then}\ \mathrm{True}\ \mathrm{else}\ \mathrm{False}$''
-is inserted by \rocqP{} to cast the result of $\mathrm{unify}$ into the sort of propositions.
 
 \subsection{Soundness of determinacy checking}
 
