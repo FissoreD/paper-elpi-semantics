@@ -3083,6 +3083,14 @@ marker: its scope is implicit in the surrounding stack or tree
 structure, which is precisely why relating the two semantics is
 nontrivial in our setting.
 
+In the work of Rozplokhas et al.~\cite{miniKanren}, the authors formalize the
+operational semantics of the \languages{MiniKanren} language. Their semantics
+share several similarities with our And-Or tree semantics, most notably the
+tree-like representation of conjunctions and disjunctions. However, their
+treatment of the cut operator is more involved than ours, as it requires an
+additional inner node to explicitly identify the scope of the cut. In contrast,
+in our presentation, the scope of the cut operator is immediate.
+
 The proof technique we use to relate the two semantics is inspired
 by Bertot's mechanization of compiler correctness~\cite{yves-equiv}.
 He relates the semantics of an imperative language to that of its
