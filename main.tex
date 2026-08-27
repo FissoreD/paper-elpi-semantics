@@ -2754,8 +2754,8 @@ are idempotent in this sense.
 
 \begin{definition}[\logo{}mgu] $\lambda\ \sigma\ t_1\ t_2.$\\
   $\phantom{xx}\sigma\ t_1 = \sigma\ t_2 \land (\forall \sigma', \mathrm{idempotent}\ \sigma' \land \sigma'\ t_1 = \sigma'\ t_2 \to$\\
-    $\phantom{xx}\phantom{xx}\exists \sigma_x, \mathrm{idempotent}\ \sigma_x \land
-        \forall t, \sigma_x (\sigma\ t) = \sigma'\ t)$
+    $\phantom{xx}\phantom{xx}\exists \rho, \mathrm{idempotent}\ \rho \land
+        \forall t, \rho (\sigma\ t) = \sigma'\ t)$
 \end{definition}
 
 \begin{lemma}[\logo{}unify\_correct]\label{th:unifycorrect}%
@@ -2780,9 +2780,9 @@ procedure so that it takes a set of frozen variables.
 The function \matching has the following property:
 
 % \input{tex_code/matching_disj.tex}
-\begin{lemma}[\logo{}matching\_disj]\label{um}\label{th:matchingdisj} $\forall\ v\ t_1\ t_2\ \sigma\ \sigma', \mathrm{idempotent}\ \sigma \to$\\
-  $\phantom{xxx} 
-  \sigma\ t_2 \ \subseteq\ {v} \to
+\begin{lemma}[\logo{}matching\_disj]\label{um}\label{th:matchingdisj} $\forall\ v\ t_1\ t_2\ \sigma\ \sigma',$\\
+  $\phantom{xxx} \mathrm{idempotent}\ \sigma \land \sigma\ t_2 \ \subseteq\ {v} \to$\\
+  $\phantom{xxxxxx} 
   \mathrm{matching}\ v\ t_1\ t_2\ \sigma = \mathrm{Some}\ \sigma' \to \sigma'\ t_1 = \sigma\ t_2$
 \end{lemma}
 
@@ -2846,7 +2846,7 @@ query, if both heads match the query $q$, then the two heads must unify.
 
 Finally, we also need to prove that the refreshing of variables
 performed at runtime does not affect unification.
-In particular, a refreshing renaming $f$ for a term $t$ is a function from
+In particular, a renaming $f$ for a term $t$ is a function from
 variables to variables such that: (i) $f$ is defined on all variables in
 $t$, i.e. every variable is renamed; and (ii) $f$ is injective, i.e. it
 does not identify distinct variables. Refreshing therefore produces
@@ -2882,6 +2882,10 @@ $\alpha$-equivalent terms.
   \mathrm{unify}\ t_1\ t_2\ \varepsilon \to \mathrm{unify}\ t_1'\ t_2'\ \varepsilon
   $
 \end{lemma}
+
+\noindent Note that the coercion
+``$\lambda x. \mathrm{if}\ x\ \mathrm{is}\ \mathrm{Some\ \_}\ \mathrm{then}\ \mathrm{True}\ \mathrm{else}\ \mathrm{False}$''
+is inserted by \rocqP{} to cast the result of $\mathrm{unify}$ into the sort of propositions.
 
 \subsection{Soundness of determinacy checking}
 
