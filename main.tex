@@ -3045,6 +3045,7 @@ that it also behaves deterministically when executed in \nur.
 
 \section{Related work}
 
+\textbf{Operational semantics for Prolog}
 The only mechanization of \prologP semantics we are aware of is
 that of Pusch in \isabelleP~\cite{10.1007/BFb0105415}, which, like
 ours, follows Debray and Mishra~\cite[Sec.~4.3]{Debray1988}. Pusch
@@ -3083,14 +3084,6 @@ marker: its scope is implicit in the surrounding stack or tree
 structure, which is precisely why relating the two semantics is
 nontrivial in our setting.
 
-In the work of Rozplokhas et al.~\cite{miniKanren}, the authors formalize the
-operational semantics of the \languages{MiniKanren} language. Their semantics
-share several similarities with our And-Or tree semantics, most notably the
-tree-like representation of conjunctions and disjunctions. However, their
-treatment of the cut operator is more involved than ours, as it requires an
-additional inner node to explicitly identify the scope of the cut. In contrast,
-in our presentation, the scope of the cut operator is immediate.
-
 The proof technique we use to relate the two semantics is inspired
 by Bertot's mechanization of compiler correctness~\cite{yves-equiv}.
 He relates the semantics of an imperative language to that of its
@@ -3102,6 +3095,17 @@ like the imperative language, he proceeds by induction on the
 execution of the assembly program; we adopt the same strategy in the
 proof of \cref{th:runStorunT}.
 
+\textbf{First-order unification} While mechanized first-order unification has
+been widely studied in \rocqP{}---from educational treatments~\cite{smolka2014cl}
+and term-rewriting frameworks like CoLoR~\cite{color} and CiME3~\cite{coccinelle}
+to relational engines like miniKanren~\cite{miniKanren}---our focus is not on
+unification itself. Instead, our self-contained implementation of the
+Martelli--Montanari algorithm serves as a supporting component for our
+operational semantics. Unlike general frameworks, it is lightweight, extends to
+matching against frozen variables, and includes dedicated proofs of
+idempotency, termination, and invariance under renaming ($\alpha$-equivalence).
+
+\textbf{Determinacy verification}
 For the static analysis of determinacy, we use a semantics in which
 input arguments are \emph{matched}, rather than unified, against rule
 heads. This choice agrees with the \elpiP interpreter, which is in
@@ -3152,8 +3156,7 @@ disjointness between a set of variables and the domain of a
 substitution, and to define the union of disjoint substitutions.
 
 To keep the mechanization axiom-free, we implemented the first-order
-unification algorithm ourselves, since we could not find an existing
-\rocqP{} mechanization; a detailed account of this development is
+unification algorithm ourselves; a detailed account of this development is
 beyond the scope of this paper. It amounts to about 1,700 lines of
 \ssreflect{} code, including 200 lines for a termination proof based
 on a lexicographic ordering and 800 lines for correctness and
@@ -3184,7 +3187,7 @@ tools. The English prose was improved with the help of free LLMs.
 % ~\\
 % Ce travail a bénéficié d'une aide du gouvernement
 % français, gérée par l'Agence Nationale de la Recherche au titre du Pl­an
-% d’investissement France 2030, dans le cadre du projet "UCA DS4H" portant la
+% d'investissement France 2030, dans le cadre du projet "UCA DS4H" portant la
 % référence n° ANR-17-EURE-0004.
 \end{acks}
 
