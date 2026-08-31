@@ -1461,7 +1461,7 @@ is \okC; otherwise, it is a right-skewed tree of \andC nodes.
 (\cref{sec:cut-op}) as it undergoes calls to \step and \na.
 % , we provide a graphical representation a call to \step on the query
 %\marginpar{sottolineare le sostituzioni}
-We run query \eI{q 0 R} against the program $P$ in \cref{fig:progx}. Let $c_1$ and $c_2$
+We run query \eI{g 0 R} against the program $P$ in \cref{fig:progx}. Let $c_1$ and $c_2$
 be the children of the root: by construction
 they correspond respectively to the premises of rules $r_1$ and
 $r_2$ in $P$. 
@@ -2917,7 +2917,7 @@ either fails or succeeds with no alternatives left to explore.
 
 % \input{tex_code/is_detS.tex}
 \begin{definition}[\logo{}is\_det]\label{th:isdetS} $\lambda\ p\ \sigma\ t,\ \forall\ r\ v,\ t \cup \sigma \subseteq v \to$\\
-  $\phantom{xxx} \nur\ p\ v\ [\sigma,\ [t , []]]\ r \to r = \mathrm{None} \lor \exists\ \sigma ,\ r = \mathrm{Some}\ ( \sigma ,\ \mnil ) $
+  $\phantom{xxx} \nur\ p\ v\ [\sigma,\ [t , []]]\ r \to r = \mathrm{None} \lor \exists\ \sigma' ,\ r = \mathrm{Some}\ ( \sigma' ,\ \mnil ) $
 \end{definition}
 
 % denotes the function that tests whether the head of the term refers to a rigid
@@ -3120,6 +3120,12 @@ and invariance under renaming ($\alpha$-equivalence).
 % were matched. In other words, \cref{th:matchingdisj} could be
 % reformulated in terms of unification at the cost of this ground-input
 % assumption, under which unification and matching coincide.
+
+\cite{1989Vink}
+\cite{Borger1989}
+\cite{BorgerRosenzweig1995}
+\cite{Mogensen1996}
+\cite{BorgerRosenzweigWAM1995}
 
 \section{Conclusion}
 
