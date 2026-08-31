@@ -1444,15 +1444,15 @@ indicates the interpretation of a superficial cut: \step was called on an
 And-layer and its \pathend is the cut atom. Finally, Expanded
 accounts for the interpretation of predicate calls and non-superficial cuts.
 
-The \step procedure leaves the tree unchanged when it is \emph{success} or
-\emph{failed},
+The \step procedure leaves the tree unchanged when the predicate
+success (or failed) returns true (i.e. when next\_tree is Top or Bot),
 %
 % \input{tex_code/success_step.tex}
 % \input{tex_code/failed_step.tex}
 %
 while it
 expands \taC{} nodes by calling backchain, which returns a list
-$l$ of alternatives. If $l$ is empty, then the current call atom is replaced by
+$l$ of alternatives. If $l$ is empty, then the \taC{} atom is replaced by
 \koC. Otherwise, it is replaced by a right-skewed tree of \orC nodes, where
 each leaf corresponds to a list of atoms $e \in l$. If $e$ is empty, the leaf
 is \okC; otherwise, it is a right-skewed tree of \andC nodes.
@@ -1461,9 +1461,9 @@ is \okC; otherwise, it is a right-skewed tree of \andC nodes.
 (\cref{sec:cut-op}) as it undergoes calls to \step and \na.
 % , we provide a graphical representation a call to \step on the query
 %\marginpar{sottolineare le sostituzioni}
-We run query \eI{q 0 R} against the program $P$ in \cref{fig:progx}. Let $c_0$, $c_1$, and $c_2$
-be the children of the root. By construction, $c_0$ is None, while
-$c_1$ and $c_2$ correspond respectively to the premises of rules $r_1$ and
+We run query \eI{q 0 R} against the program $P$ in \cref{fig:progx}. Let $c_1$ and $c_2$
+be the children of the root: by construction
+they correspond respectively to the premises of rules $r_1$ and
 $r_2$ in $P$. 
 % We need the initial \mnone subtree so that we can attach a substitution to $c_1$. 
 Note that $c_1$ (resp. $c_2$) is associated with
@@ -1511,7 +1511,7 @@ amounts to discarding the third rule of predicate \eI{r}.
 \subsection{The \na procedure}\label{sec:next_alt}
 \label{sec:na}
 
-When backchain returns an empty list, \step produces a tree that \emph{failed}
+When backchain returns an empty list, \step produces a tree that failed
 and the computation must backtrack. The \na procedure is
 responsible for producing the new tree from which the computation can
 continue.
@@ -1641,12 +1641,12 @@ The type of sol is defined as follows:
 %
 $$\mathrm{sol} := \mathrm{Zero} \mid \mathrm{One}\ \Sigma \mid \mathrm{Many}\ \Sigma\ \TREE$$
 
-Zero represents a failing execution. One\ $\sigma$ represents an interpretation
-producing exactly one solution, i.e. no backtracking is possible from the given
-state. It also carries the substitution $\sigma$ that makes the interpretation
-succeed. Finally, Many $\sigma\ t$ represents an execution in which the
-original state produces the solution $\sigma$, while $t$ represents the
-remaining unexplored alternatives.
+Zero represents a failing execution. One\ $\sigma$ represents an execution
+producing exactly one solution, i.e. no backtracking is possible from the resulting
+state. It also carries the substitution $\sigma$ that represents the solution.
+Finally, Many $\sigma\ t$ represents an execution in which the
+original state produces the solution $\sigma$ and leaves the alternatives
+in $t$ unexplored.
 
 The boolean $b$ records whether a superficial cut was evaluated during execution,
 and $v'$ is the updated set of variables tracking freshly generated names.
@@ -2008,7 +2008,7 @@ for tree={
     [{{f E F}},edge label={node[midway,right] {$R_3$}},name=Z]
   ]
 ] 
-\curnodeNE{cur};
+\curnodeSE{cur};
 \node[draw,red,fit=(X)(Y)(Z)]{\subnode{ss4}{}};
 \end{forest}
 \end{minipage}
