@@ -2743,12 +2743,12 @@ complete.
   $\phantom{xx}\lambda \sigma. \mathrm{dom}\ \sigma \cap \mathrm{codom}\ \sigma = \varnothing$
 \end{definition}
 
-Note that this definition of idempotent substitution entails that the substitution is
-necessarily self-applied, i.e. $\sigma \coloneq \{ X \mapsto f~Y, Y \mapsto a\}$
+Note that idempotent substitutions are necessarily self-applied (hence acyclic),
+i.e. $\sigma \coloneq \{ X \mapsto f~Y, Y \mapsto a\}$
 is not idempotent, whereas the equivalent $\sigma' \coloneq \{ X \mapsto f~a, Y \mapsto a\}$
 is.
 We prove that the algorithm by Martelli and Montanari generates substitutions that
-are idempotent in this sense.
+are idempotent.
 
 % \input{tex_code/unif_correct.tex}
 
