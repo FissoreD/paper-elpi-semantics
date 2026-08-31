@@ -3045,7 +3045,7 @@ that it also behaves deterministically when executed in \nur.
 
 \section{Related work}
 
-\textbf{Operational semantics for Prolog}
+% \textbf{Operational semantics for Prolog}
 The only mechanization of \prologP semantics we are aware of is
 that of Pusch in \isabelleP~\cite{10.1007/BFb0105415}, which, like
 ours, follows Debray and Mishra~\cite[Sec.~4.3]{Debray1988}. Pusch
@@ -3095,30 +3095,30 @@ like the imperative language, he proceeds by induction on the
 execution of the assembly program; we adopt the same strategy in the
 proof of \cref{th:runStorunT}.
 
-\textbf{First-order unification} While mechanized first-order unification has
-been widely studied in \rocqP{}---from educational treatments~\cite{smolka2014cl}
-and term-rewriting frameworks like CoLoR~\cite{color} and CiME3~\cite{coccinelle}
-to relational engines like miniKanren~\cite{miniKanren}---our focus is not on
-unification itself. Instead, our self-contained implementation of the
-Martelli--Montanari algorithm serves as a supporting component for our
-operational semantics. Unlike general frameworks, it is lightweight, extends to
-matching against frozen variables, and includes dedicated proofs of
-idempotency, termination, and invariance under renaming ($\alpha$-equivalence).
+% \paragraph{First-order unification} 
+First-order unification has already been mechanized in \rocqP{}, from
+educational treatments~\cite{smolka2014cl} and term-rewriting frameworks
+such as CoLoR~\cite{color} and CiME3~\cite{coccinelle} to relational engines
+like miniKanren~\cite{miniKanren}. With the sole aim of keeping our
+mechanization axiom-free, we give a self-contained implementation of the
+Martelli--Montanari algorithm, extend it with matching against frozen
+variables, and equip it with dedicated proofs of idempotency, termination,
+and invariance under renaming ($\alpha$-equivalence).
 
-\textbf{Determinacy verification}
-For the static analysis of determinacy, we use a semantics in which
-input arguments are \emph{matched}, rather than unified, against rule
-heads. This choice agrees with the \elpiP interpreter, which is in
-turn inspired by \bprologP's ``matching clauses''~\cite{1991ait-wam,zhou2012}.
-Our results can nonetheless be applied to a semantics based entirely
-on unification, by adding two assumptions to
-\cref{th:detcheckcall}: the initial query must have ground inputs, and
-the program must be well-moded. Since well-moded predicates produce
-ground outputs from ground inputs, a well-moded program run from a
-query with ground inputs behaves exactly as if its input arguments
-were matched. In other words, \cref{th:matchingdisj} could be
-reformulated in terms of unification at the cost of this ground-input
-assumption, under which unification and matching coincide.
+% \paragraph{Applicability of our work}
+% For the static analysis of determinacy, we use a semantics in which
+% input arguments are \emph{matched}, rather than unified, against rule
+% heads. This choice agrees with the \elpiP interpreter, which is in
+% turn inspired by \bprologP's ``matching clauses''~\cite{1991ait-wam,zhou2012}.
+% Our results can nonetheless be applied to a semantics based entirely
+% on unification, by adding two assumptions to
+% \cref{th:detcheckcall}: the initial query must have ground inputs, and
+% the program must be well-moded. Since well-moded predicates produce
+% ground outputs from ground inputs, a well-moded program run from a
+% query with ground inputs behaves exactly as if its input arguments
+% were matched. In other words, \cref{th:matchingdisj} could be
+% reformulated in terms of unification at the cost of this ground-input
+% assumption, under which unification and matching coincide.
 
 \section{Conclusion}
 
@@ -3162,6 +3162,20 @@ beyond the scope of this paper. It amounts to about 1,700 lines of
 on a lexicographic ordering and 800 lines for correctness and
 completeness.
 
+For the static analysis of determinacy, we use a semantics in which
+input arguments are \emph{matched}, rather than unified, against rule
+heads. This choice agrees with the \elpiP interpreter, which is in
+turn inspired by \bprologP's ``matching clauses''~\cite{1991ait-wam,zhou2012}.
+Our results can nonetheless be applied to a semantics based entirely
+on unification, by adding two assumptions to
+\cref{th:detcheckcall}: the initial query must have ground inputs, and
+the program must be well-moded. Since well-moded predicates produce
+ground outputs from ground inputs, a well-moded program run from a
+query with ground inputs behaves exactly as if its input arguments
+were matched. In other words, \cref{th:matchingdisj} could be
+reformulated in terms of unification at the cost of this ground-input
+assumption, under which unification and matching coincide.
+
 Fully modeling the \elpiP language, and thereby mechanizing
 \cite{fissore2026} in its entirety, requires accounting for
 higher-order variables, i.e., variables that stand for predicates.
@@ -3169,7 +3183,7 @@ This extension is ongoing work, largely orthogonal to the present
 paper. Its main difficulty is that substitutions may then bind
 variables to predicates, whose signatures must remain compatible with
 those assumed statically, in the sense of the $\subseteq$ relation
-defined in~\cite[Section~5]{fissore2026}; accommodating dynamic
+defined in~\cite[Section~5]{fissore2026}. Accommodating dynamic
 predicates also requires minor changes to the mutual
 exclusion conditions.
 
