@@ -138,12 +138,14 @@ Mishra~\cite{Debray1988} for studying the optimizations employed by
 This semantics is based on a stack of alternatives, where the cut operator is
 represented by a pointer to a shorter stack. 
 
-The second semantics is novel and based on And-Or trees, in which the structure of
-alternative computations is made explicit and preserved throughout execution.
-This enables an explicit characterization of the cut operator as a function
-that prunes selected branches of the tree. The tree-based semantics allows
-us to formulate introduction and elimination rules for disjunction in the
-presence of cut, which, as expected, differ from those of classical logic.
+The second semantics is based on And-Or trees, which make the structure of the
+alternative computations explicit and keep it available throughout execution.
+It combines the advantages of two earlier models: the tree-shaped states of
+B\"orger and Rosenzweig~\cite{BorgerRosenzweig1995} and the cut-tracking of
+Mogensen~\cite{1996mogensen}. On this structure the cut operator is characterized
+explicitly, as a function that prunes selected branches of the tree, and we can
+formulate introduction and elimination rules for disjunction in the presence of
+cut, which, as expected, differ from those of classical logic.
 
 As a case study, we use the tree-based semantics to prove the soundness of
 the determinacy analysis introduced in~\cite{fissore2026}. By exploiting the
@@ -214,23 +216,24 @@ operator is represented as a pointer to a shorter stack. The relation
 between the rules being cut and the affected stack frames is therefore not
 immediately visible.
 
-To address this limitation, we introduce a semantics based on And-Or trees,
-in which the history of the computation is represented in a structured way:
-given a goal, each applicable rule generates an Or-branch, which is in turn
-followed by an And-branch for each premise. This enables an explicit
-characterization of the cut operator as a function that prunes selected
-branches of the tree. The tree-based semantics allows us to formulate
-introduction and elimination rules for disjunction in the presence of cut,
-which, as expected, differ from those of classical logic. For example,
-$q_1 \lor q_2$ is not equivalent to $q_2 \lor q_1$, since $q_2$ may be cut
-away by $q_1$.
+For reasoning about cut we mechanize a second semantics, based on And-Or
+trees, that represents the history of the computation explicitly: for a given
+goal, each applicable rule produces an Or-branch, itself followed by an
+And-branch for each premise. The tree structure is a reconstruction, specialized
+to cut, of the computation tree of Börger and
+Rosenzweig~\cite{BorgerRosenzweig1995}. Following~\cite{1996mogensen} each execution
+additionally reports whether a cut was executed. This last piece of information
+lets us formulate introduction and elimination rules for disjunction in the
+presence of cut, which, as expected, differ from those of classical logic: for
+instance $q_1 \lor q_2$ is not equivalent to $q_2 \lor q_1$, since $q_2$ may be
+cut away by $q_1$.
 
 Finally, we use the tree-based semantics to prove the soundness of the
 determinacy analysis from~\cite{fissore2026}. In \rocqP{}, we prove that any
 terminating execution of a predicate identified as deterministic introduces no
 additional choice points. Combined with the equivalence
 between the two semantics, this result implies that any call to a
-deterministic predicate leaves no choice points on the stack used by
+deterministic predicate that terminates leaves no choice points on the stack used by
 actual \prologP implementations, including the
 \elpiP~\cite{dunchev15lpar} \lprologP{} interpreter, for which the
 static analysis of~\cite{fissore2026} was originally developed. \elpiP
@@ -2910,9 +2913,8 @@ the program and are encoded as described in
 \cite{fissore2026}: we distinguish data from predicates, and predicates
 are classified as deterministic or non-deterministic.
 
-A program execution behaves deterministically if, given a program, a
-substitution, and a term call for the \nur\ inductive, the execution
-either fails or succeeds with no alternatives left to explore.
+We say that an execution behaves deterministically when, whenever it
+terminates, it either fails or succeeds leaving no alternative to explore.
 % Below, we define \texttt{is\_det}.
 
 % \input{tex_code/is_detS.tex}
@@ -3049,11 +3051,15 @@ that it also behaves deterministically when executed in \nur.
 Representing the state of a \prologP computation as a tree is already present in
 B\"orger and Rosenzweig~\cite{BorgerRosenzweig1995}, where the state is a tree
 whose branching records the alternatives and where every goal is tagged with a \emph{cutpoint}: the
-node to which control returns when a cut is executed. Executing a cut discards
-the alternative clauses recorded between the current node and its cutpoint. Our
-\TREE{} datatype and the \cutl/\cutr pruning performed by \step{} can be read as
-a formal reconstruction of this idea, except that we recover the scope of a cut
-from the structure of the tree rather than storing a cutpoint pointer. The model
+node to which control returns when a cut is executed. 
+% Executing a cut discards the alternative clauses recorded between the current node and its cutpoint. 
+The main difference is that our
+\TREE{} datatype does not store a cutpoint pointer
+and the \cutl/\cutr pruning performed by \step{} 
+%can be read as
+%a formal reconstruction of this idea, except that we 
+recover the scope of a cut
+from the structure of the tree. The model
 of~\cite{BorgerRosenzweig1995} is defined on paper and is used as the first model
 of a refinement chain towards the Warren abstract
 machine~\cite{BorgerRosenzweigWAM1995}; that line of work targets compiler
@@ -3071,12 +3077,14 @@ machine-level semantics. %, and it is not mechanized.
 The only mechanization of an operational semantics for \prologP with cut we are
 aware of is that of Pusch in \isabelleP~\cite{10.1007/BFb0105415}. Starting from~\cite{BorgerRosenzweig1995}
 she mechanizes a chain of refinements towards the Warren abstract
-machine~\cite{warren1983abstract,1991ait-wam}, introducing its usual
-optimizations. Unlike our case study, she does not use the semantics to prove
+machine~\cite{warren1983abstract,1991ait-wam}.
+%, introducing its usual optimizations. 
+Unlike our case study, she does not use the semantics to prove
 properties of programs, and therefore does not run into the difficulty described
 in \cref{stack-sem} that led us to a semantics in which the effect of cut is
-explicit. The two developments are complementary: together they make it plausible
-that our tree-based semantics is equivalent to an optimized stack-based one.
+explicit. 
+% The two developments are complementary: together they suggest
+% that our tree-based semantics is equivalent to an optimized stack-based one.
 
 Another relevant mechanization is that of Kriener and King~\cite{2011king}, whose
 \rocqP{} source code we could not locate. Their semantics operates on programs in
@@ -3129,7 +3137,7 @@ semantics, due to Debray and Mishra, is based on a stack of
 alternatives: it is close to actual \prologP implementations,
 including the first-order fragment of \elpiP, but it leaves the scope
 of cut implicit in the shape of the stack, which makes it inconvenient
-for reasoning about cut. The second semantics is novel and is based on
+for reasoning about cut. The second semantics is based on
 And--Or trees, in which the scope of cut is given by the tree
 structure; it is well suited to stating introduction and elimination lemmas for
 disjunction in its presence. We show how to translate trees into
@@ -3157,8 +3165,9 @@ mechanization took us approximately nine months.
 % substitution, and to define the union of disjoint substitutions.
 To keep the mechanization axiom-free, we mechanized the Marelli-Montanari
 unification algorithm. It amounts to about 1,700 lines of
-\ssreflect{} code, including 200 lines for a termination proof based
-on a lexicographic ordering and 800 lines for correctness and
+\ssreflect{} code, including 200 lines for a termination proof
+%  based on a lexicographic ordering 
+and 800 lines for correctness and
 completeness.
 
 For the static analysis of determinacy, we use a semantics in which
@@ -3176,18 +3185,18 @@ were matched.
 % reformulated in terms of unification at the cost of this ground-input
 % assumption, under which unification and matching coincide.
 
-Fully modeling the \elpiP language, and thereby mechanizing
-\cite{fissore2026} in its entirety, requires accounting for
-higher-order variables, i.e., variables that stand for predicates.
-This extension is %ongoing work, 
-largely orthogonal to the present
-paper. Its main difficulty is that substitutions may then bind
-variables to predicates, whose signatures must remain compatible with
-those assumed statically, in the sense of the $\subseteq$ relation
-defined in~\cite[Section~5]{fissore2026}. Accommodating dynamic
-predicates %also 
-requires minor changes to the mutual
-exclusion conditions.
+% Fully modeling the \elpiP language, and thereby mechanizing
+% \cite{fissore2026} in its entirety, requires accounting for
+% higher-order variables, i.e., variables that stand for predicates.
+% This extension is %ongoing work, 
+% largely orthogonal to the present
+% paper. Its main difficulty is that substitutions may then bind
+% variables to predicates, whose signatures must remain compatible with
+% those assumed statically, in the sense of the $\subseteq$ relation
+% defined in~\cite[Section~5]{fissore2026}. Accommodating dynamic
+% predicates %also 
+% requires minor changes to the mutual
+% exclusion conditions.
 
 \section{Use of artificial intelligence}
 
