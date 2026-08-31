@@ -1730,13 +1730,13 @@ and $v'$ is the updated set of variables tracking freshly generated names.
 \begin{center}
 \small
 \begin{bprooftree}
-  \AxiomC{$A \quad (A ~\cuts)$}
+  \AxiomC{$A \quad (A ~\mathrm{cuts})$}
   \RightLabel{$(\lor_{il})$}
   \UnaryInfC{$A \lor B $}
 \end{bprooftree}\hspace{1em}
 %
 \begin{bprooftree}
-  \AxiomC{$\lnot A \quad (A ~\cuts)$}
+  \AxiomC{$\lnot A \quad (A ~\mathrm{cuts})$}
   \RightLabel{$(\lor_{ir1})$}
   \UnaryInfC{$\lnot (A \lor B) $}
 \end{bprooftree}\hspace{1em}
@@ -1753,7 +1753,7 @@ and $v'$ is the updated set of variables tracking freshly generated names.
   \AxiomC{[A]}
   \noLine
   \UnaryInfC{$C$}
-  \AxiomC{$(A ~\cuts)$}
+  \AxiomC{$(A ~\mathrm{cuts})$}
   \RightLabel{$(\lor_{e1})$}
   \TrinaryInfC{$C$}
 \end{bprooftree}\hspace{1em}
@@ -1857,12 +1857,12 @@ has been disproved.
 % \begin{center}  
 
 % \begin{bprooftree}
-%   \AxiomC{$A \quad (A ~\cuts)$}
+%   \AxiomC{$A \quad (A ~\mathrm{cuts})$}
 %   \RightLabel{$(\lor_{il})$}
 %   \UnaryInfC{$A \lor B $}
 % \end{bprooftree}
 % \begin{bprooftree}
-%   \AxiomC{$\lnot A \quad (A ~\cuts)$}
+%   \AxiomC{$\lnot A \quad (A ~\mathrm{cuts})$}
 %   \RightLabel{$(\lor_{ir1})$}
 %   \UnaryInfC{$\lnot (A \lor B) $}
 % \end{bprooftree}
@@ -1926,7 +1926,7 @@ This again reflects the depth-first traversal of the proof tree.
 %   \AxiomC{[A]}
 %   \noLine
 %   \UnaryInfC{$C$}
-%   \AxiomC{$(A ~\cuts)$}
+%   \AxiomC{$(A ~\mathrm{cuts})$}
 %   \RightLabel{$(\lor_{e1})$}
 %   \TrinaryInfC{$C$}
 % \end{bprooftree}
