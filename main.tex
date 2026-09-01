@@ -138,8 +138,8 @@ Mishra~\cite{Debray1988} for studying the optimizations employed by
 This semantics is based on a stack of alternatives, where the cut operator is
 represented by a pointer to a shorter stack. 
 
-The second semantics is novel and based on And-Or trees, which makes the structure of the
-alternative computations explicit and keeps it available throughout execution.
+The second semantics is novel and based on And-Or trees, which make the structure of the
+alternative computations explicit and keep it available throughout execution.
 % It combines the advantages of two earlier models: the tree-shaped states of
 % B\"orger and Rosenzweig~\cite{BorgerRosenzweig1995} and the cut-tracking of
 % Mogensen~\cite{1996mogensen}.
@@ -2187,11 +2187,11 @@ in \nur.
 As an example of a call to \ttl, we consider the tree and the stack in~\cref{fig:cc},
 taken respectively from \cref{tree-ex2,ex-elpi2}. The red arrows
 point from the head of an alternative in the tree to the head of the
-corresponding cell in the stack.
+corresponding stack cell. % in the stack.
 We focus on the deepest \orC{} node in the tree. This subtree
 is a disjunction with four children. The first is ignored, since it
 is None. The success node below $\sigma_3$ has \eI{f B C} and the cut
-operator as continuation, corresponding to the first cell in the stack.
+operator as continuation, corresponding to the first stack cell. % in the stack.
 We note that the cut operator points outside the
 stack, since the scope of this cut eliminates its right uncle. The
 success node below $\sigma_4$ has $R_1$ as continuation, where $R_1$ is
@@ -2207,7 +2207,7 @@ the translation of the subtree under $\sigma_2$, since that subtree is one
 
 The equivalence we are interested in states that a query produces the
 same substitution and alternatives under both semantics.
-
+%
 The tree-based semantics exposes more information than this comparison
 requires, so we hide the surplus behind existential quantifiers.
 
