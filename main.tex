@@ -1690,7 +1690,7 @@ and $v'$ is the updated set of variables tracking freshly generated names.
       \mathrm{step}\ \prog\ v\ \sigma\ t = (v',\ tag,\ t') \quad 
       \run\ \prog\ v'\ \sigma\ t' \arr (r,\ b,\ v'')}}
   \RightLabel{\rulelabel{\stept}}
-  \UnaryInfC{\ensuremath{\run\ \prog\ v\ \sigma\ t\ \arr (r,\ tag = \mathrm{CutBrothers}) \lor b,\ v'')}}
+  \UnaryInfC{\ensuremath{\run\ \prog\ v\ \sigma\ t\ \arr (r,\ tag = \mathrm{CutBrothers} \lor b,\ v'')}}
 \end{bprooftree}
 ~\\\vspace{0.5em}
 \begin{bprooftree}
