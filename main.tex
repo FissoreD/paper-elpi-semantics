@@ -2924,8 +2924,8 @@ terminates, it either fails or succeeds leaving no alternative to explore.
 % Below, we define \texttt{is\_det}.
 
 % \input{tex_code/is_detS.tex}
-\begin{definition}[\logo{}is\_det]\label{th:isdetS} $\lambda\ p\ \sigma\ t,\ \forall\ r\ v,\ t \cup \sigma \subseteq v \to$\\
-  $\phantom{xxx} \nur\ p\ v\ [\sigma,\ [t , []]]\ r \to r = \mathrm{None} \lor \exists\ \sigma' ,\ r = \mathrm{Some}\ ( \sigma' ,\ \mnil ) $
+\begin{definition}[\logo{}is\_det]\label{th:isdetS} $\lambda\ p\ t,\ \forall\ r\ v,\ t \subseteq v \to$\\
+  $\phantom{xxx} \nur\ p\ v\ [\varepsilon,\ [t , []]]\ r \to r = \mathrm{None} \lor \exists\ \sigma ,\ r = \mathrm{Some}\ ( \sigma ,\ \mnil ) $
 \end{definition}
 
 % denotes the function that tests whether the head of the term refers to a rigid
@@ -2941,7 +2941,7 @@ an invariant characterizing deterministic computations.
 % prove a lemma talking about determinacy declined on trees, and then reuse the
 % theorems from \cref{sec:equiv} to derive a proof of determinacy for stacks.
 
-\begin{definition}[\logo{}det\_tree]\label{th:isdetS} 
+\begin{definition}[\logo{}det\_tree]\label{th:isdetS0} 
   The det\_tree predicate, shown in~\cref{fig:dettree}, identifies trees
   whose interpretation does not generate choice points. 
 \end{definition}
@@ -3020,7 +3020,7 @@ mutual exclusion and rule-body checking as per~\cite{fissore2026}. %, and \emph{
 % \input{tex_code/det_check_tree.tex}
 \begin{lemma}[\logo{}det\_check\_tree]\label{th:detchecktree} $\forall\ \sigma\ v\ p\ t\ r\ b\ v',$\\
   $\phantom{xxx} t\ \cup\ \sigma \subseteq v \land \mathrm{det\_checked}\ p \land \mathrm{det\_tree}\ p\ t \to$\\
-	$\phantom{xxx}\phantom{xxx}\run\ p\ v\ \sigma\ t\ r\ b\ v' \to r = \mathrm{Zero} \lor \exists\ \sigma ,\ r = ( \mathrm{One}\ \sigma )$
+	$\phantom{xxx}\phantom{xxx}\run\ p\ v\ \sigma\ t\ r\ b\ v' \to r = \mathrm{Zero} \lor \exists\ \sigma' ,\ r = ( \mathrm{One}\ \sigma' )$
 \end{lemma}
 \begin{proof}
 By induction on \run using the fact that \step and \na
@@ -3034,9 +3034,9 @@ preserve det\_tree~\cref{th:dettreestep,th:dettreeprune}.
 \end{definition}
 
 % \input{tex_code/det_check_callS.tex}
-\begin{theorem}[\logo{}det\_check\_call]\label{th:detcheckcall}$\forall\ p\ \sigma\ t, $\\
+\begin{theorem}[\logo{}det\_check\_call]\label{th:detcheckcall}$\forall\ p\ t, $\\
   % \vspace{.8em}\\
-	$\phantom{xxx} \mathrm{det\_checked}\ p \land \mathrm{tm\_is\_det}\ p\ t \to \mathrm{is\_det}\ p\ \sigma\ (\mathrm{call}\ t)$
+	$\phantom{xxx} \mathrm{det\_checked}\ p \land \mathrm{tm\_is\_det}\ p\ t \to \mathrm{is\_det}\ p\ (\mathrm{call}\ t)$
 \end{theorem}
 \begin{proof}
 From \cref{th:detchecktree} we conclude that a call to a deterministic predicate
