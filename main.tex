@@ -3184,15 +3184,13 @@ mechanization took us approximately nine months.
 % disjointness between a set of variables and the domain of a
 % substitution, and to define the union of disjoint substitutions.
 
-For the static analysis of determinacy, we use a semantics in which
-input arguments are \emph{matched}, rather than unified, against rule
-heads. This choice agrees with the \elpiP interpreter, which is in
-turn inspired by \bprologP's ``matching clauses''~\cite{1991ait-wam,zhou2012}.
-Our results can nonetheless be applied to a semantics based entirely
-on unification, by adding two assumptions to
-\cref{th:detcheckcall}: the initial query must have ground inputs, and
-the program must be well-moded.
-Under these assumptions unification (of input arguments) and matching coincide.
+For the determinacy analysis we adopt a semantics in which input arguments are
+\emph{matched}, rather than unified, against rule heads, as in the \elpiP
+interpreter, which follows \bprologP's ``matching
+clauses''~\cite{1991ait-wam,zhou2012}. The results nonetheless carry over to a
+purely unification-based semantics, at the cost of two assumptions in
+\cref{th:detcheckcall}: the initial query has ground inputs and the program is
+well-moded. Under these, matching and unification of input arguments coincide.
 % Since well-moded predicates produce
 % ground outputs from ground inputs, a well-moded program run from a
 % query with ground inputs behaves exactly as if its input arguments
@@ -3217,7 +3215,7 @@ Under these assumptions unification (of input arguments) and matching coincide.
 \section*{Use of artificial intelligence}
 
 The research and the mechanization were carried out without resorting to AI
-tools. The English prose was improved with the help of free LLMs.
+tools. The English prose was improved with the help of LLMs.
 
 \begin{acks}
   Acknowledgments withheld for double-blind review.
