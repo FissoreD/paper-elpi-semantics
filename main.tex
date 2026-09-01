@@ -145,7 +145,7 @@ alternative computations explicit and keeps it available throughout execution.
 % Mogensen~\cite{1996mogensen}.
  On this structure the cut operator is characterized
 explicitly, as a function that prunes selected branches of the tree, and 
-thanks to the cut-tracking in the style of Mogensen~\cite{1996mogensen}
+thanks to cut-tracking, in the style of \cite{1996mogensen,miniKanren},
 we can
 formulate introduction and elimination rules for disjunction in the presence of
 cut, which, as expected, differ from those of classical logic.
@@ -229,7 +229,8 @@ position of the cut node in the tree. Our trees also keep the conjunctive
 structure of a goal explicit, instead of flattening it into a single node as in
 the SLD-trees used by Apt~\cite{Apt1990}. On this structure, the cut operator is
 characterized explicitly, as a function that prunes selected branches of the
-tree. Following Mogensen~\cite{1996mogensen}, each execution additionally reports
+tree. Following Mogensen~\cite{1996mogensen} and Rozplokhas et al.~\cite{miniKanren}, 
+each execution additionally reports
 whether a cut was executed; this information lets us formulate introduction and
 elimination rules for disjunction in the presence of cut which, as expected,
 differ from those of classical logic: for instance, $q_1 \lor q_2$ is not
@@ -464,7 +465,7 @@ the particular implementation chosen for that algorithm.
 % \end{figure}
 
 
-% Before going to the two semantcis, we show the piece of data structure that
+% Before going to the two semantics, we show the piece of data structure that
 % are shared by the them. The smallest unit of code that we can use in the
 % langauge is an atom. The atom inductive (see~\cref{type:atom}) is
 % either a cut or a call. A call
@@ -3098,7 +3099,12 @@ considered in this paper but cannot easily accommodate all the features covered
 in~\cite{fissore2026}, in particular dynamic predicates. More importantly, their
 mechanization does not relate the denotational semantics to an operational
 semantics of the kind underlying standard \prologP abstract machines, a link that
-our equivalence proof provides.
+our equivalence proof provides. 
+
+The last relevant mechanization we are aware of is Rozplokhas et
+al.~\cite{miniKanren}, where they mechanize in \rocqP{} a semantics featuring
+cut-tracking. Since they only consider green cuts, this semantics cannot be used
+as a basis for mechanizing~\cite{fissore2026}.
 
 Hanus and Prott~\cite{hanus2025} formalize in \rocqP{} a determinacy checker for
 the logic-functional language \curryP. There, choice points are denoted
