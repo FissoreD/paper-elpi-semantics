@@ -138,12 +138,24 @@ Mishra~\cite{Debray1988} for studying the optimizations employed by
 This semantics is based on a stack of alternatives, where the cut operator is
 represented by a pointer to a shorter stack. 
 
+<<<<<<< HEAD
 The second semantics is based on And-Or trees, which makes the structure of the
 alternative computations explicit and keeps it available throughout execution.
 It combines the advantages of two earlier models: the tree-shaped states of
 B\"orger and Rosenzweig~\cite{BorgerRosenzweig1995} and the cut-tracking of
 Mogensen~\cite{1996mogensen}. On this structure the cut operator is characterized
 explicitly, as a function that prunes selected branches of the tree, and we can
+=======
+The second semantics is novel and based on And-Or trees, which make the structure of the
+alternative computations explicit and keep it available throughout execution.
+% It combines the advantages of two earlier models: the tree-shaped states of
+% B\"orger and Rosenzweig~\cite{BorgerRosenzweig1995} and the cut-tracking of
+% Mogensen~\cite{1996mogensen}.
+ On this structure the cut operator is characterized
+explicitly, as a function that prunes selected branches of the tree, and 
+thanks to the cut-tracking in the style of Mogensen~\cite{1996mogensen}
+we can
+>>>>>>> f2fa280 (rework related)
 formulate introduction and elimination rules for disjunction in the presence of
 cut, which, as expected, differ from those of classical logic.
 
@@ -216,17 +228,21 @@ operator is represented as a pointer to a shorter stack. The relation
 between the rules being cut and the affected stack frames is therefore not
 immediately visible.
 
-For reasoning about cut we mechanize a second semantics, based on And-Or
-trees, that represents the history of the computation explicitly: for a given
-goal, each applicable rule produces an Or-branch, itself followed by an
-And-branch for each premise. The tree structure is a reconstruction, specialized
-to cut, of the computation tree of Börger and
-Rosenzweig~\cite{BorgerRosenzweig1995}. Following~\cite{1996mogensen} each execution
-additionally reports whether a cut was executed. This last piece of information
-lets us formulate introduction and elimination rules for disjunction in the
-presence of cut, which, as expected, differ from those of classical logic: for
-instance $q_1 \lor q_2$ is not equivalent to $q_2 \lor q_1$, since $q_2$ may be
-cut away by $q_1$.
+For reasoning about cut we design and mechanize a second semantics, based on
+And-Or trees, that makes the history of the computation explicit: for a given
+goal, each applicable rule yields an Or-branch, and each Or-branch carries one
+And-branch per premise of the rule. Unlike the computation tree of B\"orger and
+Rosenzweig~\cite{Borger1989,BorgerRosenzweig1995}, our data structure holds no
+extra pointers to implement cut: the scope of a cut is recovered from the
+position of the cut node in the tree. Our trees also keep the conjunctive
+structure of a goal explicit, instead of flattening it into a single node as in
+the SLD-trees used by Apt~\cite{Apt1990}. On this structure, the cut operator is
+characterized explicitly, as a function that prunes selected branches of the
+tree. Following Mogensen~\cite{1996mogensen}, each execution additionally reports
+whether a cut was executed; this information lets us formulate introduction and
+elimination rules for disjunction in the presence of cut which, as expected,
+differ from those of classical logic: for instance, $q_1 \lor q_2$ is not
+equivalent to $q_2 \lor q_1$, since $q_2$ may be cut away by $q_1$.
 
 Finally, we use the tree-based semantics to prove the soundness of the
 determinacy analysis from~\cite{fissore2026}. In \rocqP{}, we prove that any
@@ -2968,12 +2984,12 @@ deterministic predicate. The recursive cases correspond to the \andC and
 
 A conjunction behaves deterministically whenever its right-hand side is a
 deterministic tree. Two cases must then be considered.
-
+%
 If $\mathrm{prune}\ (\mathrm{success}\ A)\ A = \mathrm{None}$, then $A$ produces
 no choice points: it either always fails or contains a single successful
 execution path. Since $\mathrm{det\_tree}\ p\ B$ holds, the entire conjunction
 is therefore deterministic.
-
+%
 Otherwise, the left-hand side may introduce backtracking, potentially
 resuming the reset point, which must itself behave deterministically.
 In this case, either $A$ is deterministic, or both $B$ and the reset
@@ -3049,20 +3065,17 @@ that it also behaves deterministically when executed in \nur.
 
 \section{Related work}
 
-Representing the state of a \prologP computation as a tree is already present in
-B\"orger and Rosenzweig~\cite{BorgerRosenzweig1995}, where the state is a tree
-whose branching records the alternatives and where every goal is tagged with a \emph{cutpoint}: the
-node to which control returns when a cut is executed. 
-% Executing a cut discards the alternative clauses recorded between the current node and its cutpoint. 
-The main difference is that our
-\TREE{} datatype does not store a cutpoint pointer
-and the \cutl/\cutr pruning performed by \step{} 
-%can be read as
-%a formal reconstruction of this idea, except that we 
-recover the scope of a cut
-from the structure of the tree. The model
-of~\cite{BorgerRosenzweig1995} is defined on paper and is used as the first model
-of a refinement chain towards the Warren abstract
+The closest work to our tree-based semantics is arguably that of
+B\"orger and Rosenzweig~\cite{Borger1989,BorgerRosenzweig1995}, where the
+computation state is a tree: its branching records the alternatives, and every
+goal is tagged with a \emph{cutpoint} pointer, i.e.\ the node to which control
+returns when a cut is executed. The main difference is that our \TREE{} datatype
+stores no such pointer; instead, the \cutl/\cutr pruning performed by \step{}
+recovers the scope of a cut from the structure of the tree. This cutpoint
+pointer is similar in spirit to the cut-to alternatives of the stack-based
+semantics, and shares their shortcomings for reasoning about programs that use
+cut. In any case, the model of~\cite{BorgerRosenzweig1995} is defined on paper
+and serves as the first model of a refinement chain towards the Warren abstract
 machine~\cite{BorgerRosenzweigWAM1995}; that line of work targets compiler
 correctness and does not reason about the behaviour of individual programs.
 
@@ -3074,18 +3087,18 @@ domain records whether a cut is guaranteed to have been executed. His soundness
 argument is carried out on paper and the analysis is not connected to a stack- or
 machine-level semantics. %, and it is not mechanized.
 
-% \textbf{Operational semantics for Prolog}
-The only mechanization of an operational semantics for \prologP with cut we are
-aware of is that of Pusch in \isabelleP~\cite{10.1007/BFb0105415}. Starting from~\cite{BorgerRosenzweig1995}
-she mechanizes a chain of refinements towards the Warren abstract
-machine~\cite{warren1983abstract,1991ait-wam}.
-%, introducing its usual optimizations. 
-Unlike our case study, she does not use the semantics to prove
-properties of programs, and therefore does not run into the difficulty described
-in \cref{stack-sem} that led us to a semantics in which the effect of cut is
-explicit. 
-% The two developments are complementary: together they suggest
-% that our tree-based semantics is equivalent to an optimized stack-based one.
+The only mechanization of an operational semantics for \prologP with cut that we
+are aware of is Pusch's, in \isabelleP~\cite{10.1007/BFb0105415}. Starting from
+the model of~\cite{BorgerRosenzweig1995}, she mechanizes a chain of refinements
+towards the Warren abstract machine~\cite{warren1983abstract,1991ait-wam}.
+Unlike our case study, she does not use the semantics to prove program
+properties, and so does not run into the difficulty
+% , described in \cref{stack-sem}, 
+that led us to a semantics in which the effect of cut is
+explicit. The two developments are nonetheless complementary: together they
+suggest that our tree-based semantics is equivalent to an optimized stack-based
+one, though a fully machine-checked proof is out of reach, since the two are
+carried out in different provers.
 
 Another relevant mechanization is that of Kriener and King~\cite{2011king}, whose
 \rocqP{} source code we could not locate. Their semantics operates on programs in
@@ -3126,9 +3139,11 @@ educational treatments~\cite{smolka2014cl} and term-rewriting frameworks
 such as CoLoR~\cite{color} and CiME3~\cite{coccinelle} to relational engines
 like miniKanren~\cite{miniKanren}. With the sole aim of keeping our
 mechanization axiom-free, we give a self-contained implementation of the
-Martelli--Montanari algorithm, extend it with matching against frozen
-variables, and equip it with dedicated proofs of idempotency, termination,
-and invariance under renaming ($\alpha$-equivalence).
+Martelli--Montanari algorithm, extend it with matching
+% against frozen variables, 
+and prove its usual properties.
+%and equip it with dedicated proofs of idempotency, termination,
+%and invariance under renaming ($\alpha$-equivalence).
 
 \section{Conclusion}
 
@@ -3138,7 +3153,7 @@ semantics, due to Debray and Mishra, is based on a stack of
 alternatives: it is close to actual \prologP implementations,
 including the first-order fragment of \elpiP, but it leaves the scope
 of cut implicit in the shape of the stack, which makes it inconvenient
-for reasoning about cut. The second semantics is based on
+for reasoning about cut. The second semantics is novel and based on
 And--Or trees, in which the scope of cut is given by the tree
 structure; it is well suited to stating introduction and elimination lemmas for
 disjunction in its presence. We show how to translate trees into
@@ -3154,7 +3169,14 @@ Mathematical Components library~\cite{assia_mahboubi_2022_7118596} and
 its finmap~\cite{finmap} extension. Roughly 30\% of the proof code is
 devoted to the tree semantics, in particular the proofs in
 \cref{sec:runT}; 15\% to the stack semantics; 35\% to the equivalence
-proof; and the remaining 20\% to the determinacy checker. The
+proof; and the remaining 20\% to the determinacy checker. 
+To keep the mechanization axiom-free, we mechanized the Marelli-Montanari
+unification algorithm. It amounts to about 1,700 lines of
+\ssreflect{} code, including 200 lines for a termination proof
+%  based on a lexicographic ordering 
+and 800 lines for correctness and
+completeness.
+The
 mechanization took us approximately nine months. 
 % We believe that the
 % \ssreflect{} proof language, and the proof style it encourages, made
@@ -3164,12 +3186,6 @@ mechanization took us approximately nine months.
 % countable domain; it helped us express conditions such as the
 % disjointness between a set of variables and the domain of a
 % substitution, and to define the union of disjoint substitutions.
-To keep the mechanization axiom-free, we mechanized the Marelli-Montanari
-unification algorithm. It amounts to about 1,700 lines of
-\ssreflect{} code, including 200 lines for a termination proof
-%  based on a lexicographic ordering 
-and 800 lines for correctness and
-completeness.
 
 For the static analysis of determinacy, we use a semantics in which
 input arguments are \emph{matched}, rather than unified, against rule
@@ -3178,10 +3194,12 @@ turn inspired by \bprologP's ``matching clauses''~\cite{1991ait-wam,zhou2012}.
 Our results can nonetheless be applied to a semantics based entirely
 on unification, by adding two assumptions to
 \cref{th:detcheckcall}: the initial query must have ground inputs, and
-the program must be well-moded. Since well-moded predicates produce
-ground outputs from ground inputs, a well-moded program run from a
-query with ground inputs behaves exactly as if its input arguments
-were matched. 
+the program must be well-moded.
+Under these assumptions unification (of input arguments) and matching coincide.
+% Since well-moded predicates produce
+% ground outputs from ground inputs, a well-moded program run from a
+% query with ground inputs behaves exactly as if its input arguments
+% were matched. 
 % In other words, \cref{th:matchingdisj} could be
 % reformulated in terms of unification at the cost of this ground-input
 % assumption, under which unification and matching coincide.
@@ -3199,7 +3217,7 @@ were matched.
 % requires minor changes to the mutual
 % exclusion conditions.
 
-\section{Use of artificial intelligence}
+\section*{Use of artificial intelligence}
 
 The research and the mechanization were carried out without resorting to AI
 tools. The English prose was improved with the help of free LLMs.
