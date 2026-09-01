@@ -2231,36 +2231,36 @@ For each possible outcome, we prove the equivalence of the two semantics.
 
 % \input{tex_code/runS_to_runTCOne.tex}
 \begin{corollary}[\logo{}equiv\_one]\label{th:runStorunTO}%
-	$\forall\ p\ t\ \sigma'\ v,\ t \subseteq v \to$\\
+	$\forall\ p\ t\ \sigma\ v,\ t \subseteq v \to$\\
   $\phantom{xx}
-	\nur\ p\ v\ [\varepsilon ,\ [\mathrm{call}\ t,\ \mnil]]\ ( \mathrm{Some}\ ( \sigma' ,\ \mnil ) ) \leftrightarrow
+	\nur\ p\ v\ [\varepsilon ,\ [\mathrm{call}\ t,\ \mnil]]\ ( \mathrm{Some}\ ( \sigma ,\ \mnil ) ) \leftrightarrow
   $\\
 	$\phantom{xx}
-  \mathrm{\runo}\ p\ v\ \varepsilon\ ( \mathrm{call}\ t  )\ ( \mathrm{One}\ \sigma' ) 
+  \mathrm{\runo}\ p\ v\ \varepsilon\ ( \mathrm{call}\ t  )\ ( \mathrm{One}\ \sigma ) 
   $
 \end{corollary}
 
 % \input{tex_code/runS_to_runTCMany1.tex}
 \begin{corollary}[\logo{}sound\_many]\label{th:runStorunTM1}%
-	$\forall\ p\ t \sigma'\ t'\ v,\ t \subseteq v \to$\\
+  $\forall\ p\ t\ \sigma\ x\ \mathrm{xs}\ v,\ t \subseteq v \to$\\
   $\phantom{xx}
-	\mathrm{\runo}\ p\ v\ \varepsilon\ ( \mathrm{call}\ t  )\ ( \mathrm{Many}\ \sigma'\ t' ) \to
+  \nur\ p\ v\ [\varepsilon ,\ [\mathrm{call}\ t,\ \mnil]]\ ( \mathrm{Some}\ ( \sigma ,\ x\ \mathrm{::}\ \mathrm{xs} ) ) \to
   $\\
-  $\phantom{xx}
-	\nur\ p\ v\ [\varepsilon ,\ [\mathrm{call}\ t,\ \mnil]]\ ( \mathrm{Some}\ ( \sigma' ,\ \mathrm{t2s}\ t'\ \sigma\ \mnil ) )
-  $ 
+	$\phantom{xx}
+  \exists\ t' ,\ \mathrm{\runo}\ p\ v\ \varepsilon\ ( \mathrm{call}\ t  )\ ( \mathrm{Many}\ \sigma\ t' ) \land
+  \mathrm{t2s}\ t'\ \varepsilon\ \mnil = x\ \mathrm{::}\ \mathrm{xs}
+  $
 \end{corollary}
 
 % \input{tex_code/runS_to_runTCMany2.tex}
 \begin{corollary}[\logo{}complete\_many]\label{th:runStorunTM2}%
-	$\forall\ p\ t\ \sigma'\ x\ \mathrm{xs}\ v,\ t \subseteq v \to$\\
+	$\forall\ p\ t\ t'\ \sigma\ v,\ t \subseteq v \to$\\
   $\phantom{xx}
-  \nur\ p\ v\ [\varepsilon ,\ [\mathrm{call}\ t,\ \mnil]]\ ( \mathrm{Some}\ ( \sigma' ,\ x\ \mathrm{::}\ \mathrm{xs} ) ) \to
+	\mathrm{\runo}\ p\ v\ \varepsilon\ ( \mathrm{call}\ t  )\ ( \mathrm{Many}\ \sigma\ t' ) \to
   $\\
-	$\phantom{xx}
-  \exists\ t' ,\ \mathrm{\runo}\ p\ v\ \varepsilon\ ( \mathrm{call}\ t  )\ ( \mathrm{Many}\ \sigma'\ t' ) \land
-  \mathrm{t2s}\ t'\ \varepsilon\ \mnil = x\ \mathrm{::}\ \mathrm{xs}
-  $
+  $\phantom{xx}
+	\nur\ p\ v\ [\varepsilon ,\ [\mathrm{call}\ t,\ \mnil]]\ ( \mathrm{Some}\ ( \sigma ,\ \mathrm{t2s}\ t'\ \sigma\ \mnil ) )
+  $ 
 \end{corollary}
 
 Because both semantics rely on the same notion of substitution,
