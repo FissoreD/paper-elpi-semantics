@@ -1670,7 +1670,7 @@ and $v'$ is the updated set of variables tracking freshly generated names.
 \begin{prooftree}
 	\AxiomC{$\text{\dingv\ t} \quad \mathrm{next\_subst}\ \sigma\ t = \sigma'  \qquad \mathrm{prune}\ \mathrm{true}\ t = \mathrm{None} $}
   \RightLabel{$\rulelabel{\stopot} $}
-  \UnaryInfC{$\run\ \prog\ v\ \sigma\ t \arr (\mathrm{One}\ \sigma', \mathrm{false}, v)$}
+  \UnaryInfC{$\run\ \prog\ v\ \sigma\ t \arr (\mathrm{One}\ \sigma',\ \mathrm{false},\ v)$}
 \end{prooftree}
 \begin{bprooftree}
   \AxiomC{
@@ -1681,16 +1681,16 @@ and $v'$ is the updated set of variables tracking freshly generated names.
   {\mathrm{prune}\ \mathrm{true}\ t = \mathrm{Some}\ t' }
   }}
   \RightLabel{\rulelabel{\stopt}}
-  \UnaryInfC{\ensuremath{\run\ \prog\ v\ \sigma\ t \arr (\mathrm{Many}\ (\sigma', t'), \mathrm{false}, v)}}
+  \UnaryInfC{\ensuremath{\run\ \prog\ v\ \sigma\ t \arr (\mathrm{Many}\ (\sigma',\ t'),\ \mathrm{false},\ v)}}
 \end{bprooftree}
 \begin{bprooftree}
   \AxiomC{\ensuremath{
       %\mathrm{incomplete}\ t \quad 
       \dings\ t \quad 
-      \mathrm{step}\ \prog\ v\ \sigma\ t = (v', tg, t') \quad 
-      \run\ \prog\ v'\ \sigma\ t' \arr (r, b, v'')}}
+      \mathrm{step}\ \prog\ v\ \sigma\ t = (v',\ tag,\ t') \quad 
+      \run\ \prog\ v'\ \sigma\ t' \arr (r,\ b,\ v'')}}
   \RightLabel{\rulelabel{\stept}}
-  \UnaryInfC{\ensuremath{\run\ \prog\ v\ \sigma\ t\ \arr (r, (tg = \mathrm{CutBrothers}) \lor b, v'')}}
+  \UnaryInfC{\ensuremath{\run\ \prog\ v\ \sigma\ t\ \arr (r,\ tag = \mathrm{CutBrothers}) \lor b,\ v'')}}
 \end{bprooftree}
 ~\\\vspace{0.5em}
 \begin{bprooftree}
@@ -1705,7 +1705,7 @@ and $v'$ is the updated set of variables tracking freshly generated names.
 \begin{bprooftree}
   \AxiomC{\ensuremath{\mathrm{prune}\ \mathrm{false}\ t = \mathrm{None}}}
   \RightLabel{\rulelabel{\failt}}
-  \UnaryInfC{\ensuremath{\run\ \prog\ v\ \sigma\ t \arr (\mathrm{None}, \mathrm{false}, v)}}
+  \UnaryInfC{\ensuremath{\run\ \prog\ v\ \sigma\ t \arr (\mathrm{None},\ \mathrm{false},\ v)}}
 \end{bprooftree}
 \end{center}
 
