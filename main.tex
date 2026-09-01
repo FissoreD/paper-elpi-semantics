@@ -138,17 +138,13 @@ Mishra~\cite{Debray1988} for studying the optimizations employed by
 This semantics is based on a stack of alternatives, where the cut operator is
 represented by a pointer to a shorter stack. 
 
-The second semantics is novel and based on And-Or trees, which makes the structure of the
-alternative computations explicit and keeps it available throughout execution.
-% It combines the advantages of two earlier models: the tree-shaped states of
-% B\"orger and Rosenzweig~\cite{BorgerRosenzweig1995} and the cut-tracking of
-% Mogensen~\cite{1996mogensen}.
- On this structure the cut operator is characterized
-explicitly, as a function that prunes selected branches of the tree, and 
-thanks to cut-tracking, in the style of \cite{1996mogensen,miniKanren},
-we can
-formulate introduction and elimination rules for disjunction in the presence of
-cut, which, as expected, differ from those of classical logic.
+The second semantics is novel and based on And-Or trees that make the structure
+of the alternative computations explicit and preserve it throughout execution.
+On this structure the cut operator is characterized explicitly, as a function
+that prunes selected branches of the tree. Cut-tracking, in the style
+of~\cite{1996mogensen,miniKanren}, then lets us state introduction and
+elimination rules for disjunction under cut, which, as expected, differ from the
+classical ones.
 
 As a case study, we use the tree-based semantics to prove the soundness of
 the determinacy analysis introduced in~\cite{fissore2026}. By exploiting the
@@ -3101,10 +3097,11 @@ mechanization does not relate the denotational semantics to an operational
 semantics of the kind underlying standard \prologP abstract machines, a link that
 our equivalence proof provides. 
 
-The last relevant mechanization we are aware of is Rozplokhas et
-al.~\cite{miniKanren}, where they mechanize in \rocqP{} a semantics featuring
-cut-tracking. Since they only consider green cuts, this semantics cannot be used
-as a basis for mechanizing~\cite{fissore2026}.
+A further relevant mechanization is that of Rozplokhas et
+al.~\cite{miniKanren}, who mechanize in \rocqP{} a semantics that tracks cut.
+Since they consider only green cuts~\cite[Appendix C]{miniKanren}, it cannot
+serve as a basis for
+mechanizing~\cite{fissore2026}.
 
 Hanus and Prott~\cite{hanus2025} formalize in \rocqP{} a determinacy checker for
 the logic-functional language \curryP. There, choice points are denoted
