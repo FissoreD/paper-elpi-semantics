@@ -138,7 +138,8 @@ Mishra~\cite{Debray1988} for studying the optimizations employed by
 This semantics is based on a stack of alternatives, where the cut operator is
 represented by a pointer to a shorter stack. 
 
-The second semantics is novel and based on And-Or trees that make the structure
+The second semantics is novel and based on And-Or trees %~\cite{Kowalski1979}
+that make the structure
 of the alternative computations explicit and preserve it throughout execution.
 On this structure the cut operator is characterized explicitly, as a function
 that prunes selected branches of the tree. Cut-tracking, in the style
@@ -216,16 +217,16 @@ between the rules being cut and the affected stack frames is therefore not
 immediately visible.
 
 For reasoning about cut we design and mechanize a second semantics, based on
-And-Or trees, that makes the history of the computation explicit: for a given
+And-Or trees~\cite{Kowalski1979}, that makes the history of the computation explicit: for a given
 goal, each applicable rule yields an Or-branch, and each Or-branch carries one
-And-branch per premise of the rule. Unlike the computation tree of B\"orger and
-Rosenzweig~\cite{Borger1989,BorgerRosenzweig1995}, our data structure holds no
-extra pointers to implement cut: the scope of a cut is recovered from the
-position of the cut node in the tree. Our trees also keep the conjunctive
-structure of a goal explicit, instead of flattening it into a single node as in
-the SLD-trees used by Apt~\cite{Apt1990}. On this structure, the cut operator is
-characterized explicitly, as a function that prunes selected branches of the
-tree. Following Mogensen~\cite{1996mogensen} and Rozplokhas et al.~\cite{miniKanren}, 
+And-branch per premise of the rule. Unlike the computation trees of B\"orger and
+Rosenzweig~\cite{Borger1989,BorgerRosenzweig1995} and the SLD-trees used by
+Apt~\cite{Apt1990}, which branch only on clause alternatives and keep the
+remaining goals as a flat sequence in each node, our trees also branch on the
+premises of a rule. On this structure the cut operator is characterized
+explicitly, as a function that prunes selected branches of the tree, and its
+scope is read off the position of the cut node, so no cutpoint pointer is
+needed. Following Mogensen~\cite{1996mogensen} and Rozplokhas et al.~\cite{miniKanren}, 
 each execution additionally reports
 whether a cut was executed; this information lets us formulate introduction and
 elimination rules for disjunction in the presence of cut which, as expected,
@@ -1038,7 +1039,7 @@ in \cref{ex-elpi3}.
 % \label{fig:tree-ty}
 % \end{figure}
 
-An And-Or tree is a stratified, variable-width tree, defined as follows:
+An And-Or tree~\cite{Kowalski1979} is a stratified, variable-width tree, defined as follows:
 %
 $$
 \begin{array}{ll}
@@ -3054,15 +3055,17 @@ that it also behaves deterministically when executed in \nur.
 \section{Related work}
 
 The closest work to our tree-based semantics is arguably that of
-B\"orger and Rosenzweig~\cite{Borger1989,BorgerRosenzweig1995}, where the
-computation state is a tree: its branching records the alternatives, and every
-goal is tagged with a \emph{cutpoint} pointer, i.e.\ the node to which control
-returns when a cut is executed. The main difference is that our \TREE{} datatype
-stores no such pointer; instead, the \cutl/\cutr pruning performed by \step{}
-recovers the scope of a cut from the structure of the tree. This cutpoint
-pointer is similar in spirit to the cut-to alternatives of the stack-based
-semantics, and shares their shortcomings for reasoning about programs that use
-cut. In any case, the model of~\cite{BorgerRosenzweig1995} is defined on paper
+B\"orger and Rosenzweig~\cite{Borger1989,BorgerRosenzweig1995}. Their
+computation state is also a tree, but one that branches only on clause
+alternatives: the goals still to be solved are kept as a flat sequence inside
+each node, as in an SLD-tree, and cut is implemented by tagging every goal with a
+\emph{cutpoint} pointer to the node control returns to. Our trees branch on
+premises as well as on alternatives, so the scope of a cut is recovered from the
+position of the cut node and the \cutl/\cutr pruning performed by \step{} needs
+no cutpoint pointer. Such a pointer is similar in spirit to the cut-to
+alternatives of the stack-based semantics, and shares their shortcomings for
+reasoning about programs that use cut. In any case, the model
+of~\cite{BorgerRosenzweig1995} is defined on paper
 and serves as the first model of a refinement chain towards the Warren abstract
 machine~\cite{BorgerRosenzweigWAM1995}; that line of work targets compiler
 correctness and does not reason about the behaviour of individual programs.
