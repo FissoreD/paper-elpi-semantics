@@ -138,16 +138,8 @@ Mishra~\cite{Debray1988} for studying the optimizations employed by
 This semantics is based on a stack of alternatives, where the cut operator is
 represented by a pointer to a shorter stack. 
 
-<<<<<<< HEAD
-The second semantics is based on And-Or trees, which makes the structure of the
+The second semantics is novel and based on And-Or trees, which makes the structure of the
 alternative computations explicit and keeps it available throughout execution.
-It combines the advantages of two earlier models: the tree-shaped states of
-B\"orger and Rosenzweig~\cite{BorgerRosenzweig1995} and the cut-tracking of
-Mogensen~\cite{1996mogensen}. On this structure the cut operator is characterized
-explicitly, as a function that prunes selected branches of the tree, and we can
-=======
-The second semantics is novel and based on And-Or trees, which make the structure of the
-alternative computations explicit and keep it available throughout execution.
 % It combines the advantages of two earlier models: the tree-shaped states of
 % B\"orger and Rosenzweig~\cite{BorgerRosenzweig1995} and the cut-tracking of
 % Mogensen~\cite{1996mogensen}.
@@ -155,7 +147,6 @@ alternative computations explicit and keep it available throughout execution.
 explicitly, as a function that prunes selected branches of the tree, and 
 thanks to the cut-tracking in the style of Mogensen~\cite{1996mogensen}
 we can
->>>>>>> f2fa280 (rework related)
 formulate introduction and elimination rules for disjunction in the presence of
 cut, which, as expected, differ from those of classical logic.
 
